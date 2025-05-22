@@ -71,6 +71,7 @@ Every grep-anchor begins with `:ga:` preceded by the appropriate comment syntax 
 
 | Token | Purpose | Example |
 |-------|---------|---------|
+| `tldr` | Brief function/module summary | `// :ga:tldr Parse and validate user credentials` |
 | `sec` | Security critical | `// :ga:sec validate input` |
 | `temp` | Temporary code | `// :ga:temp remove after v2.0` |
 | `hack` | Workaround | `// :ga:hack browser bug` |
@@ -208,12 +209,13 @@ For complex metadata, use JSON:
 
 ## 6. Best Practices
 
-1. **Be Specific**: `// :ga:fix auth` is better than `// :ga:fix`
-2. **Use Standard Tokens**: Stick to conventional commit types when possible
-3. **Add Context**: Include brief description after tokens
-4. **Version Markers**: Use versions for temporary code
-5. **Assign Ownership**: Use `@username` for accountability
-6. **Combine Wisely**: `fix,sec,p0` clearly indicates critical security fix
+1. **Start with TLDR**: Every function/module should begin with `// :ga:tldr <summary>`
+2. **Be Specific**: `// :ga:fix auth` is better than `// :ga:fix`
+3. **Use Standard Tokens**: Stick to conventional commit types when possible
+4. **Add Context**: Include brief description after tokens
+5. **Version Markers**: Use versions for temporary code
+6. **Assign Ownership**: Use `@username` for accountability
+7. **Combine Wisely**: `fix,sec,p0` clearly indicates critical security fix
 
 ---
 

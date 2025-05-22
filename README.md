@@ -48,6 +48,7 @@ rg -n ":ga:sec"           # only security-related anchors
 
 | Intent                      | Anchor            | Comment example                                  |
 | --------------------------- | ----------------- | ------------------------------------------------ |
+| Function summary            | `:ga:tldr`        | `// :ga:tldr Validate user input and return errors` |
 | Security review needed      | `:ga:sec`         | `// :ga:sec validate signature length`           |
 | Temporary hack              | `:ga:temp`        | `# :ga:temp remove once cache is fixed`          |
 | Delegate to agent           | `:ga:@cursor`     | `/* :ga:@cursor please generate tests */`        |

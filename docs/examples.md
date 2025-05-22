@@ -4,17 +4,85 @@
 
 ---
 
-## 1. Security Review Patterns
+## 1. TLDR Pattern (Universal Summary)
+
+The `:ga:tldr` anchor should be the first line of every function, class, or module to provide a quick summary:
+
+### Function-Level TLDR
+
+```typescript
+// :ga:tldr Validate email format and check against blocklist
+// :ga:api,sec Email validation with security checks
+export function validateEmail(email: string): ValidationResult {
+  // :ga:tldr Check basic email format using regex
+  if (!EMAIL_REGEX.test(email)) {
+    return { valid: false, reason: 'invalid_format' };
+  }
+  
+  // :ga:tldr Check against known disposable email domains
+  // :ga:sec prevent spam accounts
+  if (isDisposableEmail(email)) {
+    return { valid: false, reason: 'disposable_email' };
+  }
+  
+  return { valid: true };
+}
+```
+
+### Module-Level TLDR
+
+```javascript
+// :ga:tldr User authentication and session management module
+// :ga:entry Authentication service entry point
+
+import { Strategy } from 'passport';
+import { User } from './models';
+
+// :ga:tldr Configure OAuth2 authentication strategy
+// :ga:config OAuth setup
+export function setupAuth(app) {
+  // Implementation...
+}
+
+// :ga:tldr Validate and refresh JWT tokens
+// :ga:api,sec Token management
+export async function refreshToken(token) {
+  // Implementation...
+}
+```
+
+### Class-Level TLDR
+
+```python
+# :ga:tldr Manages database connection pooling and query execution
+# :ga:api Core database interface
+class DatabaseManager:
+    # :ga:tldr Initialize connection pool with config
+    def __init__(self, config):
+        # :ga:config Database connection settings
+        self.pool = create_pool(**config)
+    
+    # :ga:tldr Execute query with automatic retry on connection failure
+    # :ga:error,perf Resilient query execution
+    async def execute(self, query, params=None):
+        # Implementation...
+```
+
+---
+
+## 2. Security Review Patterns
 
 ### Critical Security Fixes
 
 ```javascript
+// :ga:tldr Execute user query with potential SQL injection vulnerability
 // :ga:sec,p0 SQL injection vulnerability
 function queryUser(userId) {
   // UNSAFE: Direct string concatenation
   return db.query(`SELECT * FROM users WHERE id = ${userId}`);
 }
 
+// :ga:tldr Safely query user with parameterized SQL
 // :ga:fix,sec sanitize input
 function queryUserSafe(userId) {
   return db.query('SELECT * FROM users WHERE id = ?', [userId]);
@@ -24,6 +92,7 @@ function queryUserSafe(userId) {
 ### Authentication Boundaries
 
 ```python
+# :ga:tldr Delete user with proper authorization checks and audit logging
 # :ga:sec,review auth boundary check
 @require_auth
 def delete_user(user_id):
@@ -406,12 +475,13 @@ def process_checkout(cart, user):
 
 ## 10. Best Practices Summary
 
-1. **Layer your anchors**: `type,priority,owner` gives maximum context
-2. **Use JSON for deadlines**: `{"due":"2024-03-01"}` for time-sensitive items
-3. **Link to issues**: Include ticket IDs for traceability
-4. **Version your temps**: Always specify when temporary code should be removed
-5. **Assign ownership**: Use `@username` for accountability
-6. **Be specific**: "fix auth" is better than just "fix"
-7. **Group related work**: Use epic/task relationships for large features
+1. **Always start with TLDR**: Every function/class/module begins with `:ga:tldr`
+2. **Layer your anchors**: `type,priority,owner` gives maximum context
+3. **Use JSON for deadlines**: `{"due":"2024-03-01"}` for time-sensitive items
+4. **Link to issues**: Include ticket IDs for traceability
+5. **Version your temps**: Always specify when temporary code should be removed
+6. **Assign ownership**: Use `@username` for accountability
+7. **Be specific**: "fix auth" is better than just "fix"
+8. **Group related work**: Use epic/task relationships for large features
 
-Remember: The goal is to make your codebase discoverable for both human developers and AI agents. Well-placed grep-anchors act as semantic waypoints through your code.
+Remember: The goal is to make your codebase discoverable for both human developers and AI agents. Well-placed grep-anchors act as semantic waypoints through your code. The `:ga:tldr` anchor is especially crucial as it provides instant context for what any piece of code does.

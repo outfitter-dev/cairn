@@ -51,3 +51,10 @@ When implementing grep-anchor tooling:
    - Highlight `:ga:` lines distinctly
    - Provide jump-to-anchor navigation
    - Autocomplete known tokens
+
+## Coding with Grepa Tags
+
+- Always use `:ga:` tags to mark important code sections
+- Add relevant tags when writing or reviewing code
+- Use tags to provide context, flag concerns, or guide future work
+- Integrate tags into your coding workflow for better code navigation and collaboration

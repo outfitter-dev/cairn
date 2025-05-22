@@ -162,4 +162,268 @@ Scripts in `/scripts/hooks` showcase:
 
 ---
 
+## 10 Dogfooding: Grepa Tags in Grepa
+
+The grepa codebase itself should be extensively annotated with `:ga:` anchors to demonstrate best practices and provide navigation points for future development. These anchors will serve as memory waypoints for both human developers and AI agents working on the codebase.
+
+### 10.1 Anchor Strategy
+
+| Token | Usage | Example |
+|-------|-------|---------|
+| `:ga:tldr` | Brief function/module summary at the top | `// :ga:tldr Parse anchors from TypeScript files` |
+| `:ga:entry` | Main entry points and initialization | `// :ga:entry CLI main entry point` |
+| `:ga:api` | Public API surfaces | `// :ga:api Core parser exported interface` |
+| `:ga:config` | Configuration loading and resolution | `// :ga:config YAML schema validation` |
+| `:ga:parse` | Parsing logic and regex patterns | `// :ga:parse Anchor tokenizer implementation` |
+| `:ga:cmd:<name>` | Command implementations | `// :ga:cmd:lint Policy enforcement logic` |
+| `:ga:algo` | Key algorithms and data structures | `// :ga:algo AST traversal visitor pattern` |
+| `:ga:perf` | Performance-critical sections | `// :ga:perf File traversal optimization` |
+| `:ga:sec` | Security considerations | `// :ga:sec Path traversal prevention` |
+| `:ga:compat` | Compatibility and platform-specific code | `// :ga:compat Windows path handling` |
+| `:ga:error` | Error handling and recovery | `// :ga:error Config file not found fallback` |
+| `:ga:test` | Test utilities and fixtures | `// :ga:test Mock filesystem helper` |
+| `:ga:build` | Build configuration and scripts | `// :ga:build Binary compilation settings` |
+| `:ga:dep` | External dependency interfaces | `// :ga:dep Ripgrep spawn wrapper` |
+| `:ga:cache` | Caching mechanisms | `// :ga:cache Parsed config memoization` |
+| `:ga:v=<version>` | Version-specific code | `// :ga:v=0.1 Legacy token support` |
+| `:ga:extend` | Extension points for plugins | `// :ga:extend Custom command registration` |
+| `:ga:i18n` | Future internationalization points | `// :ga:i18n Error message strings` |
+| `:ga:metric` | Telemetry and statistics collection | `// :ga:metric Token usage counter` |
+
+### 10.2 Universal Anchors
+
+**Every function, class, and module file MUST start with:**
+- `:ga:tldr` - A concise one-line description of what it does
+
+Example:
+```typescript
+// :ga:tldr Validate and parse .grepa.yml configuration files
+export function loadConfig(path: string): Config {
+  // :ga:config YAML schema validation
+  // ...
+}
+```
+
+### 10.3 Required Anchors by Package
+
+#### @grepa/core
+- `:ga:tldr` - At the top of every file and function
+- `:ga:entry` - Package main export
+- `:ga:api` - All public functions/classes
+- `:ga:parse` - Regex patterns and tokenizer
+- `:ga:config` - Config loader and validator
+- `:ga:algo` - AST builder and visitor
+- `:ga:error` - Error classes and handling
+- `:ga:extend` - Plugin hooks
+
+#### @grepa/cli
+- `:ga:tldr` - At the top of every file and function
+- `:ga:entry` - CLI binary entry point
+- `:ga:cmd:*` - Each command implementation
+- `:ga:config` - CLI-specific config resolution
+- `:ga:dep` - Ripgrep integration points
+- `:ga:error` - User-facing error formatting
+- `:ga:perf` - Large file handling
+- `:ga:compat` - Cross-platform considerations
+
+### 10.4 Compound Anchors
+
+For complex scenarios, use multiple tokens:
+
+```typescript
+// :ga:api,extend Public plugin registration API
+// :ga:cmd:lint,sec Security policy enforcement
+// :ga:parse,perf Optimized regex for large files
+// :ga:config,v=0.1 Legacy config format support
+```
+
+### 10.5 Metadata Examples
+
+Rich metadata for critical sections:
+
+```typescript
+// :ga:{"type":"api","since":"v0.1","breaking":"v1.0","owner":"@core"}
+export interface Parser {
+  
+// :ga:{"type":"sec","severity":"high","review":"quarterly"}
+function validatePath(input: string): string {
+
+// :ga:{"type":"perf","benchmark":"parse-10k-files","target":"<100ms"}
+async function scanDirectory(path: string): Promise<Anchor[]> {
+```
+
+### 10.6 Search Patterns for Development
+
+Common grep commands for grepa development:
+
+```bash
+# Find all function summaries
+rg ":ga:tldr"
+
+# Find all entry points
+rg ":ga:entry"
+
+# Locate command implementations
+rg ":ga:cmd:"
+
+# Security review checklist
+rg ":ga:sec" --json | jq '.data.path.text'
+
+# Performance bottlenecks
+rg ":ga:perf" -A 5
+
+# API surface audit
+rg ":ga:api" packages/core/
+
+# Version-specific code
+rg ":ga:v=" --json | jq 'select(.data.submatches[0].match.text > "v0.1")'
+```
+
+### 10.7 CI Integration
+
+The grepa CI pipeline should enforce:
+
+1. All exported functions have `:ga:api`
+2. All commands have `:ga:cmd:<name>`
+3. No `:ga:temp` in release branches
+4. Security anchors have metadata
+5. Performance anchors have benchmarks
+
+---
+
+## 11 Implementation Checklist
+
+### Phase 1: Foundation
+- [ ] **Set up pnpm monorepo structure**
+  - [ ] Create root `package.json` with pnpm workspace configuration
+  - [ ] Create `pnpm-workspace.yaml` defining workspace locations
+  - [ ] Set up `.npmrc` for pnpm settings
+  - [ ] Create directory structure: `packages/`, `scripts/`
+
+- [ ] **Configure TypeScript**
+  - [ ] Create `tsconfig.base.json` with shared compiler options
+  - [ ] Set up path aliases for workspace packages
+  - [ ] Configure strict mode and ES module output
+
+- [ ] **Set up Turborepo**
+  - [ ] Create `turbo.json` with pipeline definitions
+  - [ ] Define tasks: `build`, `lint`, `test`, `clean`
+  - [ ] Configure caching and dependencies between workspaces
+
+### Phase 2: Core Package (`@grepa/core`)
+- [ ] **Create package structure**
+  - [ ] Initialize `packages/core/package.json`
+  - [ ] Set up `tsconfig.json` extending base
+  - [ ] Configure dual ESM/CJS build output
+
+- [ ] **Implement anchor parser**
+  - [ ] Define regex patterns for `:ga:` detection
+  - [ ] Create AST types for anchor representation
+  - [ ] Implement tokenizer for bare/json/array payloads
+  - [ ] Add separator handling (comma, pipe, whitespace)
+
+- [ ] **Config loader**
+  - [ ] Define `.grepa.yml` schema types
+  - [ ] Implement YAML parser integration
+  - [ ] Add config resolution logic (file → env → defaults)
+  - [ ] Create validation for config options
+
+- [ ] **Utility functions**
+  - [ ] File traversal with gitignore respect
+  - [ ] Pattern matching helpers
+  - [ ] Token dictionary management
+
+### Phase 3: CLI Package (`@grepa/cli`)
+- [ ] **Create package structure**
+  - [ ] Initialize `packages/cli/package.json`
+  - [ ] Set up binary entry point in `bin/`
+  - [ ] Configure Bun for production builds
+
+- [ ] **Implement commands**
+  - [ ] `list` command
+    - [ ] Basic token listing
+    - [ ] `--json` output format
+    - [ ] `--count` flag for statistics
+  - [ ] `grep` command
+    - [ ] Ripgrep integration
+    - [ ] Anchor-scoped search
+    - [ ] Pass-through rg flags
+  - [ ] `lint` command
+    - [ ] Policy enforcement engine
+    - [ ] `--forbid` token blocking
+    - [ ] `--max-age` date checking
+    - [ ] `--ci` mode for pipelines
+  - [ ] `stats` command
+    - [ ] Token histogram generation
+    - [ ] `--top N` filtering
+    - [ ] `--since` version filtering
+  - [ ] `format` command
+    - [ ] TODO/FIXME conversion
+    - [ ] Comment style detection
+    - [ ] `--dry-run` preview mode
+
+- [ ] **CLI framework**
+  - [ ] Argument parsing with commander/yargs
+  - [ ] Help text generation
+  - [ ] Error handling and exit codes
+  - [ ] Color output support
+
+### Phase 4: Configuration & Integration
+- [ ] **Config file support**
+  - [ ] `.grepa.yml` discovery (upward traversal)
+  - [ ] Environment variable fallbacks
+  - [ ] Default dictionary implementation
+  - [ ] File include/exclude patterns
+
+- [ ] **Pre-commit hooks**
+  - [ ] Create `scripts/hooks/grepa-lint.sh`
+  - [ ] Create `scripts/hooks/grepa-format.sh`
+  - [ ] Add installation instructions
+  - [ ] Test with Husky/lefthook
+
+### Phase 5: Build & Distribution
+- [ ] **Build pipeline**
+  - [ ] Configure esbuild/Bun for CLI compilation
+  - [ ] Set up source maps
+  - [ ] Implement tree-shaking
+  - [ ] Create standalone binary builds
+
+- [ ] **Testing**
+  - [ ] Unit tests for parser
+  - [ ] Integration tests for CLI commands
+  - [ ] End-to-end test scenarios
+  - [ ] Coverage reporting
+
+- [ ] **Release preparation**
+  - [ ] Set up Changesets
+  - [ ] Create npm publish configuration
+  - [ ] Binary build scripts for all platforms
+  - [ ] GitHub Release asset automation
+
+### Phase 6: Documentation
+- [ ] **User documentation**
+  - [ ] Update main README with installation
+  - [ ] Create CLI usage examples
+  - [ ] Document config file options
+  - [ ] Add migration guide from TODO/FIXME
+
+- [ ] **Developer documentation**
+  - [ ] API documentation for `@grepa/core`
+  - [ ] Plugin development guide
+  - [ ] Contributing guidelines
+  - [ ] Architecture diagrams
+
+### Phase 7: Optional Components (Future)
+- [ ] **ESLint plugin** (`@grepa/eslint-plugin`)
+  - [ ] Rule definitions
+  - [ ] Auto-fix capabilities
+  - [ ] Config presets
+
+- [ ] **Editor extensions**
+  - [ ] VS Code syntax highlighting
+  - [ ] Quick-fix providers
+  - [ ] CodeLens integration
+
+---
+
 #### End of spec v0
