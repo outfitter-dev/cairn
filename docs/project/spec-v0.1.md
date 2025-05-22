@@ -7,11 +7,21 @@
 ## 1 Overview
 
 Version 0.1 builds upon the v0 foundation to add:
-- Interactive `grepa init` command for project setup
-- Performance optimizations with caching and streaming
+- Interactive `grepa init` command for project setup with custom anchors
+- Language-agnostic scanner binary for Go, Rust, Python, and more
+- Bun-based build system for 10x faster builds
+- Homebrew distribution: `brew install grepa`
+- Performance optimizations with git-based caching and streaming
 - ESLint plugin for JavaScript/TypeScript projects
 - Cookbook repository with integration examples
-- Nextra-based documentation site
+- Nextra-based documentation site at docs.grepa.dev
+
+### Key Enhancements
+
+1. **Universal Language Support**: Rust-based scanner works with any language
+2. **Custom Anchors**: Users can choose their own anchor (e.g., `:todo:`, `:fix:`)
+3. **Native Performance**: Compiled binaries for all platforms
+4. **Enterprise Ready**: Homebrew, caching, and incremental scanning
 
 ---
 
@@ -205,9 +215,224 @@ jobs:
 
 ---
 
-## 5 Feature: ESLint Plugin
+## 5 Feature: Language-Agnostic Binary
 
-### 5.1 Package Structure
+### 5.1 Architecture
+
+Extract comment parsing into a standalone binary for non-JS environments:
+
+```
+packages/
+├── scanner/              # Language-agnostic scanner
+│   ├── src/
+│   │   ├── main.rs      # Rust implementation
+│   │   ├── comments.rs  # Comment pattern detection
+│   │   ├── parser.rs    # Anchor parsing logic
+│   │   └── output.rs    # JSON/stdout formatting
+│   ├── Cargo.toml
+│   └── build.rs
+└── core/
+    └── src/
+        └── scanner-bridge.ts  # Node.js FFI bridge
+```
+
+### 5.2 Comment Pattern Support
+
+```rust
+// comments.rs
+enum CommentStyle {
+    CStyle,      // /* */ and //
+    Hash,        // # (Python, Ruby, Shell)
+    DashDash,    // -- (SQL, Haskell)
+    Percent,     // % (LaTeX, Matlab)
+    Semicolon,   // ; (Lisp, Assembly)
+    Quote,       // " (Vim)
+}
+
+struct LanguageConfig {
+    extensions: Vec<&'static str>,
+    comment_styles: Vec<CommentStyle>,
+    string_delimiters: Vec<char>,
+}
+
+// Auto-detect by extension
+const LANGUAGES: &[LanguageConfig] = &[
+    LanguageConfig {
+        extensions: vec!["go"],
+        comment_styles: vec![CStyle],
+        string_delimiters: vec!['"', '`'],
+    },
+    LanguageConfig {
+        extensions: vec!["rs"],
+        comment_styles: vec![CStyle],
+        string_delimiters: vec!['"'],
+    },
+    LanguageConfig {
+        extensions: vec!["py"],
+        comment_styles: vec![Hash],
+        string_delimiters: vec!['"', '\''],
+    },
+    // ... more languages
+];
+```
+
+### 5.3 Binary Interface
+
+```bash
+# Scan files
+grepa-scanner --anchor ":ga:" --format json "**/*.go"
+
+# Pipe to grepa CLI
+grepa-scanner "**/*.rs" | grepa lint --stdin
+
+# Direct binary usage
+./grepa-scanner --help
+```
+
+### 5.4 Distribution
+
+- **Cargo**: `cargo install grepa-scanner`
+- **NPM**: Bundle with `@grepa/cli` using Node-API
+- **Homebrew**: Distribute as binary
+- **GitHub Releases**: Pre-built binaries for all platforms
+
+---
+
+## 6 Feature: Bun Workflow
+
+### 6.1 Bun-first Development
+
+Convert build pipeline to use Bun for speed:
+
+```typescript
+// bun.build.ts
+await Bun.build({
+  entrypoints: ['./packages/cli/src/cli.ts'],
+  outdir: './dist',
+  target: 'bun',
+  minify: true,
+  sourcemap: 'external',
+});
+```
+
+### 6.2 Bun Runtime Support
+
+```json
+// package.json updates
+{
+  "scripts": {
+    "dev": "bun run --watch packages/cli/src/cli.ts",
+    "build": "bun run build.ts",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}
+```
+
+### 6.3 Performance Targets
+
+- Build time: < 100ms (vs ~2s with tsup)
+- Test execution: 10x faster than Vitest
+- Binary size: ~50% smaller with Bun's minification
+
+---
+
+## 7 Feature: Homebrew Distribution
+
+### 7.1 Formula Structure
+
+```ruby
+# homebrew-grepa/Formula/grepa.rb
+class Grepa < Formula
+  desc "Semantic code navigation with grep-anchors"
+  homepage "https://grepa.dev"
+  version "0.1.0"
+  license "MIT"
+
+  if OS.mac? && Hardware::CPU.arm?
+    url "https://github.com/galligan/grepa/releases/download/v0.1.0/grepa-darwin-arm64.tar.gz"
+    sha256 "..."
+  elsif OS.mac?
+    url "https://github.com/galligan/grepa/releases/download/v0.1.0/grepa-darwin-x64.tar.gz"
+    sha256 "..."
+  elsif OS.linux?
+    url "https://github.com/galligan/grepa/releases/download/v0.1.0/grepa-linux-x64.tar.gz"
+    sha256 "..."
+  end
+
+  depends_on "ripgrep"
+
+  def install
+    bin.install "grepa"
+    bin.install "grepa-scanner"
+    
+    # Install shell completions
+    bash_completion.install "completions/grepa.bash"
+    zsh_completion.install "completions/_grepa"
+    fish_completion.install "completions/grepa.fish"
+  end
+
+  test do
+    system "#{bin}/grepa", "--version"
+    assert_match "grepa", shell_output("#{bin}/grepa list")
+  end
+end
+```
+
+### 7.2 Tap Repository
+
+```
+homebrew-grepa/
+├── Formula/
+│   └── grepa.rb
+├── README.md
+└── .github/
+    └── workflows/
+        └── publish.yml  # Auto-update on release
+```
+
+### 7.3 Installation Flow
+
+```bash
+# Add tap
+brew tap galligan/grepa
+
+# Install
+brew install grepa
+
+# Upgrade
+brew upgrade grepa
+```
+
+### 7.4 Release Automation
+
+```yaml
+# .github/workflows/homebrew-release.yml
+name: Update Homebrew Formula
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Formula
+        uses: dawidd6/action-homebrew-bump-formula@v3
+        with:
+          token: ${{ secrets.HOMEBREW_TOKEN }}
+          formula: grepa
+          tap: galligan/homebrew-grepa
+```
+
+---
+
+## 8 Feature: ESLint Plugin
+
+### 8.1 Package Structure
 
 ```
 packages/eslint-plugin/
@@ -226,7 +451,7 @@ packages/eslint-plugin/
 └── package.json
 ```
 
-### 5.2 Rule Implementations
+### 8.2 Rule Implementations
 
 #### `no-temp-anchor`
 ```typescript
@@ -260,7 +485,7 @@ packages/eslint-plugin/
 // Fixable: Yes
 ```
 
-### 5.3 Configuration
+### 8.3 Configuration
 
 ```javascript
 // .eslintrc.js
@@ -280,9 +505,9 @@ module.exports = {
 
 ---
 
-## 6 Feature: Documentation Site (Nextra)
+## 9 Feature: Documentation Site (Nextra)
 
-### 6.1 Site Structure
+### 9.1 Site Structure
 
 ```
 packages/docs/
@@ -312,7 +537,7 @@ packages/docs/
 └── package.json
 ```
 
-### 6.2 Deployment Configuration
+### 9.2 Deployment Configuration
 
 - **Domain**: `docs.grepa.dev`
 - **Platform**: Vercel (automatic from GitHub)
@@ -322,7 +547,7 @@ packages/docs/
   - Interactive examples
   - API playground
 
-### 6.3 Content Requirements
+### 9.3 Content Requirements
 
 - Quick start guide with animated terminal recordings
 - Interactive anchor playground
@@ -332,65 +557,106 @@ packages/docs/
 
 ---
 
-## 7 Implementation Plan
+## 10 Implementation Plan
 
-### Phase 1: Interactive Init (Week 1)
+### Phase 1: Interactive Init & Bun Migration (Week 1)
+- [ ] Convert build system to Bun
 - [ ] Create interactive prompts with `inquirer`
 - [ ] Implement anchor validation
 - [ ] Add hook installation logic
 - [ ] Update CLI with `init` command
 
-### Phase 2: Performance (Week 2)
+### Phase 2: Language-Agnostic Scanner (Week 2-3)
+- [ ] Set up Rust project structure
+- [ ] Implement comment pattern detection
+- [ ] Create anchor parser in Rust
+- [ ] Build Node.js FFI bridge
+- [ ] Package for multiple platforms
+
+### Phase 3: Performance & Caching (Week 4)
 - [ ] Implement git-based cache system
 - [ ] Add ripgrep JSON streaming
 - [ ] Create incremental scan logic
 - [ ] Add cache invalidation
+- [ ] Benchmark improvements
 
-### Phase 3: ESLint Plugin (Week 3)
+### Phase 4: Homebrew Distribution (Week 5)
+- [ ] Create homebrew tap repository
+- [ ] Write formula with platform detection
+- [ ] Add shell completions
+- [ ] Set up release automation
+- [ ] Test installation flow
+
+### Phase 5: ESLint Plugin (Week 6)
 - [ ] Set up plugin package structure
 - [ ] Implement four rules
 - [ ] Add comprehensive tests
 - [ ] Create rule documentation
+- [ ] Publish to npm
 
-### Phase 4: Cookbook & Examples (Week 4)
+### Phase 6: Cookbook & Examples (Week 7)
 - [ ] Create cookbook repository
 - [ ] Add CI/CD examples
 - [ ] Create hook configurations
 - [ ] Document best practices
+- [ ] Add language-specific examples
 
-### Phase 5: Documentation Site (Week 5-6)
+### Phase 7: Documentation Site (Week 8-9)
 - [ ] Set up Nextra site
 - [ ] Migrate existing docs
 - [ ] Create interactive examples
 - [ ] Configure deployment
+- [ ] Set up search integration
 
 ---
 
-## 8 Success Criteria
+## 11 Success Criteria
 
 1. **Init Command**
    - Interactive flow completes without errors
    - Generated config is valid
    - Hooks install correctly
+   - Custom anchors work throughout system
 
-2. **Performance**
+2. **Language-Agnostic Scanner**
+   - Supports 10+ languages correctly
+   - Binary size < 5MB
+   - Performance within 10% of ripgrep
+   - Works on Go, Rust, Python projects
+
+3. **Bun Migration**
+   - Build time < 100ms
+   - Test suite runs 10x faster
+   - Binary size reduced by 50%
+   - No regression in functionality
+
+4. **Homebrew Distribution**
+   - Install completes in < 30s
+   - Formula passes `brew audit`
+   - Auto-updates on release
+   - Works on M1 and Intel Macs
+
+5. **Performance**
    - 50%+ speed improvement on large repos
    - Cache hit rate > 90%
    - Memory usage remains constant
+   - Incremental scan < 100ms
 
-3. **ESLint Plugin**
+6. **ESLint Plugin**
    - All rules have 95%+ test coverage
    - Autofix works reliably
    - No false positives
+   - < 10ms overhead per file
 
-4. **Documentation**
+7. **Documentation**
    - Site loads in < 2s
    - Search returns relevant results
    - Examples are copy-pasteable
+   - Mobile responsive
 
 ---
 
-## 9 Migration Guide
+## 12 Migration Guide
 
 ### From v0 to v0.1
 
