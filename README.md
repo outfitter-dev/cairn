@@ -114,6 +114,17 @@ rg -n "^.*:ga:.*\bperf\b" --type ts,js
 
 ---
 
-### Attribution
+## 7. Inspiration: Lessons from OpenAI Codex
 
-Inspired by OpenAI Codex agents' internal *grepable anchor* practice, adapted for general OSS use.
+The idea for grep-anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
+
+> *"Make your codebase discoverable — a well-named and organised tree lets Codex navigate the filesystem as quickly as a brand-new engineer might."*
+
+They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `grep-anchor.yml` dictionary.
+
+That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:ga:` formalizes. Think of grepa as the portable follow-up to Codex's internal practice, distilled into a four-byte sigil any OSS project or LLM can rely on.
+
+### Sources
+
+* **Blog & transcript**: [latent.space/p/codex](https://www.latent.space/p/codex)
+* **Video**: [youtube.com/watch?v=LIHP4BqwSw0](https://www.youtube.com/watch?v=LIHP4BqwSw0)
