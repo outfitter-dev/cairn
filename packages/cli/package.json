@@ -1,0 +1,37 @@
+{
+  "name": "@grepa/cli",
+  "version": "0.0.0",
+  "description": "CLI for grep-anchor management",
+  "author": "Matt Galligan",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "grepa": "./dist/grepa.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup && mv dist/cli.js dist/grepa.js && chmod +x dist/grepa.js",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist coverage"
+  },
+  "dependencies": {
+    "@grepa/core": "workspace:*",
+    "commander": "^11.1.0",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1",
+    "execa": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "eslint": "^8.56.0",
+    "tsup": "^8.0.1",
+    "vitest": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -4,57 +4,123 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Grepa is a specification for **grep-anchors** - a standardized way to mark important code locations using the `:ga:` sigil in comments. This allows both humans and AI agents to quickly find relevant code sections using simple grep commands.
+Grepa is a monorepo implementing **grep-anchors** - a standardized way to mark important code locations using the `:ga:` sigil in comments. It provides both a core parser library and a full-featured CLI for managing anchors across codebases.
 
-## Core Concept
+## Project Structure
 
-The grep-anchor pattern: `<comment-leader> :ga:payload`
-- **`:ga:`** - the fixed four-character marker
-- **payload** - one or more tokens that classify the line
+```
+grepa/
+├── packages/
+│   ├── core/          # @grepa/core - Parser and utilities
+│   └── cli/           # @grepa/cli - Command-line interface
+├── scripts/
+│   └── hooks/         # Pre-commit hooks
+├── docs/              # Documentation
+└── .grepa.yml         # Project configuration
+```
 
-## Common Anchor Types
+## Development Commands
 
+```bash
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run tests
+pnpm test
+
+# Lint code
+pnpm lint
+
+# Clean build artifacts
+pnpm clean
+```
+
+## Core Concepts
+
+### The `:ga:tldr` Anchor
+**ALWAYS** start every function, class, and module with a `:ga:tldr` anchor that provides a brief one-line summary. This is the most important anchor and should be universally applied.
+
+### Common Anchor Types
+
+- `:ga:tldr` - Brief function/module summary (REQUIRED)
 - `:ga:sec` - Security-critical code requiring review
 - `:ga:temp` - Temporary hacks to be removed
 - `:ga:@cursor` - Delegation points for AI agents
 - `:ga:fix` - Conventional commit tie-ins
 - `:ga:placeholder` - Future work markers
 - `:ga:perf` - Performance-related sections
+- `:ga:api` - Public API surfaces
+- `:ga:config` - Configuration handling
+- `:ga:error` - Error handling logic
 
-## Search Commands
+### Search Commands
 
 ```bash
-# Find all anchors
-rg -n ":ga:"
+# Using the grepa CLI
+grepa list              # List all unique tokens
+grepa grep sec          # Find security anchors
+grepa lint --ci         # Run lint checks
+grepa stats --top 10    # Show top 10 tokens
 
-# Find specific anchor types
-rg -n ":ga:sec"           # security anchors
-rg -n ":ga:temp"          # temporary code
-rg -n ":ga:.*perf"        # performance-related
+# Using ripgrep directly
+rg -n ":ga:"           # Find all anchors
+rg -n ":ga:sec"        # Security anchors
+rg -n ":ga:temp"       # Temporary code
 ```
 
 ## Implementation Notes
 
-When implementing grep-anchor tooling:
+### Architecture
 
-1. **Parser Requirements**
-   - Support bare tokens: `sec`, `v0.2`, `@cursor`
-   - Support JSON metadata: `:ga:{"since":"v1.1","owner":"@security"}`
-   - Support multiple tokens: `:ga:perf,sec`
+The project uses a monorepo structure with:
+- **@grepa/core**: Parser, config loader, file traversal, linting engine
+- **@grepa/cli**: Command implementations, ripgrep integration, output formatting
 
-2. **CI Integration Ideas**
-   - Block merges if `:ga:temp` exists
-   - Warn on outdated version anchors
-   - Validate anchor syntax
+### Key Implementation Details
 
-3. **Editor Integration**
-   - Highlight `:ga:` lines distinctly
-   - Provide jump-to-anchor navigation
-   - Autocomplete known tokens
+1. **Parser** (`packages/core/src/parser.ts`)
+   - Regex-based anchor detection
+   - Support for bare tokens, JSON, and arrays
+   - Line number and file tracking
+
+2. **Config System** (`packages/core/src/config.ts`)
+   - YAML-based configuration
+   - Upward directory traversal for config discovery
+   - Environment variable overrides (GREPA_ANCHOR)
+
+3. **CLI Commands** (`packages/cli/src/commands/`)
+   - Each command in separate file
+   - Ripgrep integration for performance
+   - JSON output support for tooling
+
+4. **Linting Engine** (`packages/core/src/lint.ts`)
+   - Forbidden token detection
+   - Age-based validation
+   - CI mode with exit codes
+
+### Testing Approach
+
+When adding tests:
+- Unit tests for parser and tokenizer
+- Integration tests for CLI commands
+- E2E tests with fixture repositories
+
+### Contributing
+
+When making changes:
+1. **Always add `:ga:tldr` to new functions**
+2. Use appropriate anchors from the dictionary
+3. Run `grepa lint` before committing
+4. Update docs if adding new features
+5. Follow conventional commits
 
 ## Coding with Grepa Tags
 
-- Always use `:ga:` tags to mark important code sections
-- Add relevant tags when writing or reviewing code
-- Use tags to provide context, flag concerns, or guide future work
-- Integrate tags into your coding workflow for better code navigation and collaboration
+- **ALWAYS** start functions with `:ga:tldr`
+- Use `:ga:` tags to mark important code sections
+- Layer tags for context: `:ga:fix,sec,p0`
+- Document new tokens in `.grepa.yml`
+- Run `grepa lint --ci` in pre-commit hooks

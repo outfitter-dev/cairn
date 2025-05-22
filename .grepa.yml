@@ -1,0 +1,65 @@
+# :ga:tldr Grepa configuration for the grepa project itself
+# :ga:config Root configuration file
+
+anchor: ":ga:"
+
+files:
+  include:
+    - "**/*.ts"
+    - "**/*.js"
+    - "**/*.json"
+    - "**/*.yml"
+    - "**/*.yaml"
+    - "**/*.md"
+  exclude:
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/coverage/**"
+    - "**/.git/**"
+
+lint:
+  forbid:
+    - "temp"
+    - "debug"
+  maxAgeDays: 90
+  versionField: "since"
+
+dictionary:
+  # Universal
+  tldr: "Brief function/module summary"
+  
+  # Core functionality
+  entry: "Main entry points and initialization"
+  api: "Public API surfaces"
+  config: "Configuration loading and resolution"
+  parse: "Parsing logic and regex patterns"
+  algo: "Key algorithms and data structures"
+  
+  # Commands
+  "cmd:list": "List command implementation"
+  "cmd:grep": "Grep command implementation"
+  "cmd:lint": "Lint command implementation"
+  "cmd:stats": "Stats command implementation"
+  "cmd:format": "Format command implementation"
+  
+  # Quality & maintenance
+  sec: "Security considerations"
+  perf: "Performance-critical sections"
+  error: "Error handling and recovery"
+  test: "Test utilities and fixtures"
+  build: "Build configuration and scripts"
+  
+  # Development
+  temp: "Temporary code (blocked in lint)"
+  hack: "Workaround for known issues"
+  todo: "Future work"
+  fixme: "Known issues"
+  deprecated: "Deprecated functionality"
+  
+  # Platform & dependencies
+  compat: "Compatibility and platform-specific code"
+  dep: "External dependency interfaces"
+  extend: "Extension points for plugins"
+  cache: "Caching mechanisms"
+  i18n: "Future internationalization points"
+  metric: "Telemetry and statistics collection"

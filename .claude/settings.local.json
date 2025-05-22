@@ -7,7 +7,14 @@
       "Bash(git fetch:*)",
       "Bash(git merge:*)",
       "Bash(git commit:*)",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(chmod:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm build:*)",
+      "Bash(rm:*)",
+      "Bash(ls:*)",
+      "Bash(mv:*)"
     ],
     "deny": []
   }

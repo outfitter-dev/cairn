@@ -84,38 +84,158 @@ sep      ::= "," | "|" | whitespace+
 
 ---
 
-## 5. Using grep-anchors
+## 5. Installation
 
-### Add an anchor
-
-1. Choose the nearest comment above the code you're flagging.
-2. Insert `:ga:` followed by one or more tokens.
-
-### Search
-
+### From npm (coming soon)
 ```bash
-# all anchors
-rg -n ":ga:"  
-# anchors that mention performance
-rg -n "^.*:ga:.*\bperf\b" --type ts,js
+npm install -g @grepa/cli
+# or
+pnpm add -g @grepa/cli
 ```
 
-### Clean-up workflow (CI)
+### From source
+```bash
+git clone https://github.com/galligan/grepa.git
+cd grepa
+pnpm install
+pnpm build
+pnpm link --global # Link CLI globally
+```
 
-* **Block** merges to `main` if `:ga:temp` is present.
-* **Warn** when `:ga:v` is older than the current release tag (rot guard).
+## 6. CLI Usage
+
+The `grepa` CLI provides powerful tools for managing grep-anchors:
+
+### Commands
+
+#### `grepa list` - List unique tokens
+```bash
+# List all unique tokens
+grepa list
+
+# Show token counts
+grepa list --count
+
+# Output as JSON
+grepa list --json
+```
+
+#### `grepa grep <pattern>` - Search for anchors
+```bash
+# Find all security anchors
+grepa grep sec
+
+# Show only file names
+grepa grep todo --files
+
+# Output as JSON
+grepa grep perf --json
+```
+
+#### `grepa lint` - Enforce policies
+```bash
+# Run default lint rules from .grepa.yml
+grepa lint
+
+# Forbid specific tokens
+grepa lint --forbid temp debug
+
+# Set maximum age for anchors
+grepa lint --max-age 90
+
+# CI mode (exit 1 on violations)
+grepa lint --ci
+```
+
+#### `grepa stats` - Show statistics
+```bash
+# Show token distribution
+grepa stats
+
+# Show top 10 tokens
+grepa stats --top 10
+
+# Filter by version
+grepa stats --since v2.0
+
+# Output as JSON
+grepa stats --json
+```
+
+#### `grepa format` - Convert TODO/FIXME
+```bash
+# Convert TODO/FIXME comments to anchors
+grepa format
+
+# Preview changes without writing
+grepa format --dry-run
+
+# Specify comment style
+grepa format --comment-style hash  # Python, Ruby, Shell
+```
+
+### Configuration
+
+Create a `.grepa.yml` file in your project root:
+
+```yaml
+# :ga:tldr Grepa configuration
+anchor: ":ga:"  # Override the default anchor
+
+files:
+  include:
+    - "**/*.ts"
+    - "**/*.js"
+  exclude:
+    - "**/node_modules/**"
+    - "**/dist/**"
+
+lint:
+  forbid: ["temp", "debug"]  # Blocked in CI
+  maxAgeDays: 90
+  versionField: "since"
+
+dictionary:
+  tldr: "Brief function/module summary"
+  sec: "Security-critical code"
+  perf: "Performance hotspot"
+  temp: "Temporary hack"
+  todo: "Future work"
+```
+
+### Pre-commit Hooks
+
+Use the provided hooks to enforce policies:
+
+```bash
+# Install hooks
+cp scripts/hooks/grepa-lint.sh .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+
+# Or use with Husky
+npx husky add .husky/pre-commit "scripts/hooks/grepa-lint.sh"
+```
+
+## 7. Best Practices
+
+1. **Always start with `:ga:tldr`** - Every function, class, and module should begin with a brief summary
+2. **Layer your anchors** - Combine tokens for context: `:ga:fix,sec,p0`
+3. **Use standard tokens** - Stick to conventional commit types when possible
+4. **Document your dictionary** - Define project-specific tokens in `.grepa.yml`
+5. **Version temporary code** - Always specify when temp code should be removed: `:ga:temp,v2.0`
 
 ---
 
-## 6. Future Directions
+## 8. Future Directions
 
 * VS Code / NeoVim extension for colour-highlighting `:ga:` lines.
 * GitHub Action `grepa-lint` for automatic policy checks.
-* Shared `grep-anchor.yml` dictionary at repo root to document project-specific tokens.
+* ESLint plugin for JavaScript/TypeScript projects.
+* Language server protocol (LSP) integration.
 
 ---
 
-## 7. Inspiration: Lessons from OpenAI Codex
+## 9. Inspiration: Lessons from OpenAI Codex
 
 The idea for grep-anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
 

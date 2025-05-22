@@ -294,92 +294,92 @@ The grepa CI pipeline should enforce:
 ## 11 Implementation Checklist
 
 ### Phase 1: Foundation
-- [ ] **Set up pnpm monorepo structure**
-  - [ ] Create root `package.json` with pnpm workspace configuration
-  - [ ] Create `pnpm-workspace.yaml` defining workspace locations
-  - [ ] Set up `.npmrc` for pnpm settings
-  - [ ] Create directory structure: `packages/`, `scripts/`
+- [x] **Set up pnpm monorepo structure**
+  - [x] Create root `package.json` with pnpm workspace configuration
+  - [x] Create `pnpm-workspace.yaml` defining workspace locations
+  - [x] Set up `.npmrc` for pnpm settings
+  - [x] Create directory structure: `packages/`, `scripts/`
 
-- [ ] **Configure TypeScript**
-  - [ ] Create `tsconfig.base.json` with shared compiler options
-  - [ ] Set up path aliases for workspace packages
-  - [ ] Configure strict mode and ES module output
+- [x] **Configure TypeScript**
+  - [x] Create `tsconfig.base.json` with shared compiler options
+  - [x] Set up path aliases for workspace packages
+  - [x] Configure strict mode and ES module output
 
-- [ ] **Set up Turborepo**
-  - [ ] Create `turbo.json` with pipeline definitions
-  - [ ] Define tasks: `build`, `lint`, `test`, `clean`
-  - [ ] Configure caching and dependencies between workspaces
+- [x] **Set up Turborepo**
+  - [x] Create `turbo.json` with pipeline definitions
+  - [x] Define tasks: `build`, `lint`, `test`, `clean`
+  - [x] Configure caching and dependencies between workspaces
 
 ### Phase 2: Core Package (`@grepa/core`)
-- [ ] **Create package structure**
-  - [ ] Initialize `packages/core/package.json`
-  - [ ] Set up `tsconfig.json` extending base
-  - [ ] Configure dual ESM/CJS build output
+- [x] **Create package structure**
+  - [x] Initialize `packages/core/package.json`
+  - [x] Set up `tsconfig.json` extending base
+  - [x] Configure dual ESM/CJS build output
 
-- [ ] **Implement anchor parser**
-  - [ ] Define regex patterns for `:ga:` detection
-  - [ ] Create AST types for anchor representation
-  - [ ] Implement tokenizer for bare/json/array payloads
-  - [ ] Add separator handling (comma, pipe, whitespace)
+- [x] **Implement anchor parser**
+  - [x] Define regex patterns for `:ga:` detection
+  - [x] Create AST types for anchor representation
+  - [x] Implement tokenizer for bare/json/array payloads
+  - [x] Add separator handling (comma, pipe, whitespace)
 
-- [ ] **Config loader**
-  - [ ] Define `.grepa.yml` schema types
-  - [ ] Implement YAML parser integration
-  - [ ] Add config resolution logic (file → env → defaults)
-  - [ ] Create validation for config options
+- [x] **Config loader**
+  - [x] Define `.grepa.yml` schema types
+  - [x] Implement YAML parser integration
+  - [x] Add config resolution logic (file → env → defaults)
+  - [x] Create validation for config options
 
-- [ ] **Utility functions**
-  - [ ] File traversal with gitignore respect
-  - [ ] Pattern matching helpers
-  - [ ] Token dictionary management
+- [x] **Utility functions**
+  - [x] File traversal with gitignore respect
+  - [x] Pattern matching helpers
+  - [x] Token dictionary management
 
 ### Phase 3: CLI Package (`@grepa/cli`)
-- [ ] **Create package structure**
-  - [ ] Initialize `packages/cli/package.json`
-  - [ ] Set up binary entry point in `bin/`
-  - [ ] Configure Bun for production builds
+- [x] **Create package structure**
+  - [x] Initialize `packages/cli/package.json`
+  - [x] Set up binary entry point in `bin/`
+  - [x] Configure Bun for production builds
 
-- [ ] **Implement commands**
-  - [ ] `list` command
-    - [ ] Basic token listing
-    - [ ] `--json` output format
-    - [ ] `--count` flag for statistics
-  - [ ] `grep` command
-    - [ ] Ripgrep integration
-    - [ ] Anchor-scoped search
-    - [ ] Pass-through rg flags
-  - [ ] `lint` command
-    - [ ] Policy enforcement engine
-    - [ ] `--forbid` token blocking
-    - [ ] `--max-age` date checking
-    - [ ] `--ci` mode for pipelines
-  - [ ] `stats` command
-    - [ ] Token histogram generation
-    - [ ] `--top N` filtering
-    - [ ] `--since` version filtering
-  - [ ] `format` command
-    - [ ] TODO/FIXME conversion
-    - [ ] Comment style detection
-    - [ ] `--dry-run` preview mode
+- [x] **Implement commands**
+  - [x] `list` command
+    - [x] Basic token listing
+    - [x] `--json` output format
+    - [x] `--count` flag for statistics
+  - [x] `grep` command
+    - [x] Ripgrep integration
+    - [x] Anchor-scoped search
+    - [x] Pass-through rg flags
+  - [x] `lint` command
+    - [x] Policy enforcement engine
+    - [x] `--forbid` token blocking
+    - [x] `--max-age` date checking
+    - [x] `--ci` mode for pipelines
+  - [x] `stats` command
+    - [x] Token histogram generation
+    - [x] `--top N` filtering
+    - [x] `--since` version filtering
+  - [x] `format` command
+    - [x] TODO/FIXME conversion
+    - [x] Comment style detection
+    - [x] `--dry-run` preview mode
 
-- [ ] **CLI framework**
-  - [ ] Argument parsing with commander/yargs
-  - [ ] Help text generation
-  - [ ] Error handling and exit codes
-  - [ ] Color output support
+- [x] **CLI framework**
+  - [x] Argument parsing with commander/yargs
+  - [x] Help text generation
+  - [x] Error handling and exit codes
+  - [x] Color output support
 
 ### Phase 4: Configuration & Integration
-- [ ] **Config file support**
-  - [ ] `.grepa.yml` discovery (upward traversal)
-  - [ ] Environment variable fallbacks
-  - [ ] Default dictionary implementation
-  - [ ] File include/exclude patterns
+- [x] **Config file support**
+  - [x] `.grepa.yml` discovery (upward traversal)
+  - [x] Environment variable fallbacks
+  - [x] Default dictionary implementation
+  - [x] File include/exclude patterns
 
-- [ ] **Pre-commit hooks**
-  - [ ] Create `scripts/hooks/grepa-lint.sh`
-  - [ ] Create `scripts/hooks/grepa-format.sh`
-  - [ ] Add installation instructions
-  - [ ] Test with Husky/lefthook
+- [x] **Pre-commit hooks**
+  - [x] Create `scripts/hooks/grepa-lint.sh`
+  - [x] Create `scripts/hooks/grepa-format.sh`
+  - [x] Add installation instructions
+  - [x] Test with Husky/lefthook
 
 ### Phase 5: Build & Distribution
 - [ ] **Build pipeline**
@@ -394,8 +394,8 @@ The grepa CI pipeline should enforce:
   - [ ] End-to-end test scenarios
   - [ ] Coverage reporting
 
-- [ ] **Release preparation**
-  - [ ] Set up Changesets
+- [x] **Release preparation**
+  - [x] Set up Changesets
   - [ ] Create npm publish configuration
   - [ ] Binary build scripts for all platforms
   - [ ] GitHub Release asset automation
