@@ -16,7 +16,7 @@
 
 ## 1 Repository layout
 
-```
+```text
 /grepa (repo root)
 │  .grepa.yml          # repo default config
 │  .changeset/
@@ -42,7 +42,7 @@
 
 ---
 
-## 2 Tooling stack
+## 2 Tooling Stack
 
 | Concern                 | Choice                                                          |
 | ----------------------- | --------------------------------------------------------------- |
@@ -56,7 +56,7 @@
 
 ## 3 Anchor grammar (core)
 
-```
+```bnf
 anchor   ::= ":ga:" payload
 payload  ::= token ( sep token )*
 token    ::= bare | json | array
@@ -90,18 +90,18 @@ See `docs/syntax.md` for the full token list including conventional commit types
 
 ### 4.2 Commands
 
-| Command                | Aliases | Description                                                                                                                  |     |          |
-| ---------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- | --- | -------- |
-| `grepa list`           | `ls`    | Print unique anchor tokens. Flags: `--json`, `--count`.                                                                      |     |          |
-| `grepa grep <pattern>` |         | Ripgrep constrained to anchors. Inherits rg flags + `--files`. Adds value by respecting .grepa.yml excludes and scoping to anchor lines only. |     |          |
-| `grepa lint`           |         | Enforce policy. Flags: `--forbid`, `--max-age <days>`, `--ci`.                                                               |     |          |
-| `grepa stats`          |         | Histogram by token. Flags: `--top N`, `--since <version>`.                                                                   |     |          |
-| `grepa format`         |         | Rewrite conventional comment leaders (e.g., `TODO`, `FIXME`) into anchor syntax. Supports `--dry-run`, \`--comment-style \<c | xml | hash>\`. |
+| Command                | Aliases | Description                                                                                                                  |
+| ---------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `grepa list`           | `ls`    | Print unique anchor tokens. Flags: `--json`, `--count`.                                                                      |
+| `grepa grep <pattern>` |         | Ripgrep constrained to anchors. Inherits rg flags + `--files`. Adds value by respecting .grepa.yml excludes and scoping to anchor lines only. |
+| `grepa lint`           |         | Enforce policy. Flags: `--forbid`, `--max-age <days>`, `--ci`.                                                               |
+| `grepa stats`          |         | Histogram by token. Flags: `--top N`, `--since <version>`.                                                                   |
+| `grepa format`         |         | Rewrite conventional comment leaders (e.g., `TODO`, `FIXME`) into anchor syntax. Supports `--dry-run`, `--comment-style <c|xml|hash>`. |
 
 ### 4.3 Distribution
 
 * **npm**: `npx grepa …` (requires Node ≥ 18).
-* **Standalone binaries** via Bun compile for: macOS x64, macOS arm64, Linux x64, Linux arm64, Windows x64. Published as GitHub release assets; Homebrew formula taps macOS binary.
+* **Standalone binaries** via Bun compile for macOS x64, macOS arm64, Linux x64, Linux arm64, Windows x64. Published as GitHub release assets; Homebrew formula taps macOS binary.
 
 ---
 
@@ -137,7 +137,7 @@ Scripts in `/scripts/hooks` showcase:
 
 ## 7 Pipeline summary (GitHub Actions)
 
-*Not shipped in v0, but outlined for future reference*
+#### Not shipped in v0, but outlined for future reference
 
 * `ci.yml` → install pnpm, turbo build+test, run `grepa lint --ci`.
 * `release.yml` → triggered by Changesets, builds binaries, publishes to npm, attaches release assets.
@@ -162,4 +162,4 @@ Scripts in `/scripts/hooks` showcase:
 
 ---
 
-*End of spec v0*
+#### End of spec v0
