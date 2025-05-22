@@ -1,0 +1,165 @@
+# Grepa Monorepo – Specification (v0)
+
+> **Goal:** Deliver a cohesive TypeScript‑first monorepo that ships a greppable‑anchor ecosystem: core parser, CLI, and tooling scaffolding to grow into editors & CI.
+
+---
+
+## 0 Glossary
+
+| Term          | Meaning                                                                           |
+| ------------- | --------------------------------------------------------------------------------- |
+| **Anchor**    | A comment‑only token starting with `:ga:` followed by one or more payload tokens. |
+| **Grepa**     | The CLI and project namespace (`@grepa/*`).                                       |
+| **Workspace** | An npm package managed by pnpm within the repo.                                   |
+
+---
+
+## 1 Repository layout
+
+```text
+/grepa (repo root)
+│  .grepa.yml          # repo default config
+│  .changeset/
+│  package.json        # pnpm root, turbo pipeline
+│  turbo.json
+│  tsconfig.base.json
+│
+├─ packages/
+│   ├─ core/           # @grepa/core
+│   ├─ cli/            # @grepa/cli  (npx + binary)
+│   ├─ eslint-plugin/  # @grepa/eslint-plugin (optional rules)
+│   └─ future/…        # vscode-extension, github-action etc.
+└─ scripts/            # release helpers, pre‑commit hook templates
+```
+
+### 1.1 Workspaces
+
+| Package                  | Purpose                                               | Out‑dir                                        | Publish target        |
+| ------------------------ | ----------------------------------------------------- | ---------------------------------------------- | --------------------- |
+| **@grepa/core**          | Anchor parser, AST utils, shared regex, config loader | `dist/` (esm/cjs)                              | npm                   |
+| **@grepa/cli**           | User‑facing binary invoking core                      | `bin/grepa.js`; esbuild'ed binaries in `dist/` | npm + GitHub Releases |
+| **@grepa/eslint-plugin** | Optional lint rules that piggy‑back on core parser    | `dist/`                                        | npm                   |
+
+---
+
+## 2 Tooling Stack
+
+| Concern                 | Choice                                                          |
+| ----------------------- | --------------------------------------------------------------- |
+| **Package mgr**         | **pnpm** (workspace protocol)                                   |
+| **Build orchestration** | **Turborepo** tasks: `build`, `lint`, `test`, `release`         |
+| **Compiler**            | ts‑node for dev, **Bun** for production bundles and binaries    |
+| **CI**                  | GitHub Actions (install pnpm, run turbo pipeline, publish)      |
+| **Versioning**          | Semantic Versioning; **Changesets** automates changelogs & tags |
+
+---
+
+## 3 Anchor grammar (core)
+
+```bnf
+anchor   ::= ":ga:" payload
+payload  ::= token ( sep token )*
+token    ::= bare | json | array
+bare     ::= "@"? [A-Za-z0-9_.-]+   # sec, perf, @cursor, v=0.3
+json     ::= "{" … "}"
+array    ::= "[" … "]"
+sep      ::= "," | "|" | whitespace+
+```
+
+Reserved tokens (v0):
+
+* `sec`  – security sensitive (warn)
+* `perf` – performance hotspot (allow)
+* `temp` – temporary hack (block on `lint`)
+* `debug` – debug‑only (block)
+* `placeholder` – stub (allow)
+* `v=` / `since=` – version metadata (warn if < pkg.version)
+
+See `docs/syntax.md` for the full token list including conventional commit types and extended categories.
+
+---
+
+## 4 CLI (`grepa`)
+
+### 4.1 Resolution order
+
+1. `--anchor <sigil>` flag
+2. Repo `.grepa.yml` (nearest upward)
+3. `$GREPA_ANCHOR` env var
+4. Default `:ga:`
+
+### 4.2 Commands
+
+| Command                | Aliases | Description                                                                                                                  |
+| ---------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `grepa list`           | `ls`    | Print unique anchor tokens. Flags: `--json`, `--count`.                                                                      |
+| `grepa grep <pattern>` |         | Ripgrep constrained to anchors. Inherits rg flags + `--files`. Adds value by respecting .grepa.yml excludes and scoping to anchor lines only. |
+| `grepa lint`           |         | Enforce policy. Flags: `--forbid`, `--max-age <days>`, `--ci`.                                                               |
+| `grepa stats`          |         | Histogram by token. Flags: `--top N`, `--since <version>`.                                                                   |
+| `grepa format`         |         | Rewrite conventional comment leaders (e.g., `TODO`, `FIXME`) into anchor syntax. Supports `--dry-run`, `--comment-style <c|xml|hash>`. |
+
+### 4.3 Distribution
+
+* **npm**: `npx grepa …` (requires Node ≥ 18).
+* **Standalone binaries** via Bun compile for macOS x64, macOS arm64, Linux x64, Linux arm64, Windows x64. Published as GitHub release assets; Homebrew formula taps macOS binary.
+
+---
+
+## 5 Config file `.grepa.yml`
+
+```yaml
+anchor: ":ga:"            # override sigil (optional)
+files:
+  include: ["*.{ts,js,tsx}"]
+  exclude: ["dist/**"]
+lint:
+  forbid: ["temp", "debug"]
+  maxAgeDays: 90
+  versionField: "since"     # or "v"
+dictionary:
+  sec: Security‑sensitive code
+  perf: Performance hotspot
+```
+
+If absent, CLI uses built‑ins and scans all non‑gitignored files.
+
+---
+
+## 6 Pre‑commit hooks (templates)
+
+Scripts in `/scripts/hooks` showcase:
+
+1. `grepa lint --ci` – fail commit if forbidden anchors present.
+2. `grepa format --staged` – convert TODO → anchor on staged files.
+   Users can symlink via Husky or lefthook.
+
+---
+
+## 7 Pipeline summary (GitHub Actions)
+
+#### Not shipped in v0, but outlined for future reference
+
+* `ci.yml` → install pnpm, turbo build+test, run `grepa lint --ci`.
+* `release.yml` → triggered by Changesets, builds binaries, publishes to npm, attaches release assets.
+
+---
+
+## 8 Runtime & compatibility
+
+| Component        | Minimum                                       | Notes                                       |
+| ---------------- | --------------------------------------------- | ------------------------------------------- |
+| Core / CLI (npm) | **Node 18**                                   | Tested on 18 LTS & 20 LTS                   |
+| Binaries         | macOS x64/arm64, Linux x64/arm64, Windows x64 | Built with Bun; no runtime required         |
+
+---
+
+## 9 Roadmap beyond v0 (out of scope for this doc)
+
+* VS Code extension (syntax highlight, CodeLens, quick‑fix).
+* GitHub Action to block PRs with forbidden anchors.
+* Language‑server integration for other IDEs.
+* Metrics dashboard ingesting `grepa stats --json`.
+
+---
+
+#### End of spec v0
