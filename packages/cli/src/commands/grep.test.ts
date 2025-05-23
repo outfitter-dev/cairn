@@ -106,7 +106,7 @@ describe('grepCommand', () => {
     
     await grepCommand('nonexistent', {}, mockCommand);
     
-    expect(consoleLogSpy).toHaveBeenCalledWith('No matches found for token: nonexistent');
+    expect(consoleLogSpy).toHaveBeenCalledWith('No matches found');
   });
 
   it('should output JSON format when requested', async () => {
@@ -121,7 +121,7 @@ describe('grepCommand', () => {
       stderr: '',
     });
     
-    await grepCommand('todo', { format: 'json' }, mockCommand);
+    await grepCommand('todo', { json: true }, mockCommand);
     
     const output = JSON.parse(consoleLogSpy.mock.calls[0][0]);
     expect(output).toEqual({

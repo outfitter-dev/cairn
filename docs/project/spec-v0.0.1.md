@@ -69,6 +69,10 @@ describe('parser', () => {
 export class GrepaError extends Error {
   constructor(message: string, public code: string) {
     super(message);
+    // Fix prototype chain
+    Object.setPrototypeOf(this, new.target.prototype);
+    // Capture correct stack trace
+    if (Error.captureStackTrace) Error.captureStackTrace(this, this.constructor);
     this.name = 'GrepaError';
   }
 }
@@ -76,12 +80,20 @@ export class GrepaError extends Error {
 export class ConfigError extends GrepaError {
   constructor(message: string) {
     super(message, 'CONFIG_ERROR');
+    // Fix prototype chain
+    Object.setPrototypeOf(this, new.target.prototype);
+    // Capture correct stack trace
+    if (Error.captureStackTrace) Error.captureStackTrace(this, this.constructor);
   }
 }
 
 export class ParseError extends GrepaError {
   constructor(message: string, public file?: string, public line?: number) {
     super(message, 'PARSE_ERROR');
+    // Fix prototype chain
+    Object.setPrototypeOf(this, new.target.prototype);
+    // Capture correct stack trace
+    if (Error.captureStackTrace) Error.captureStackTrace(this, this.constructor);
   }
 }
 ```
@@ -111,7 +123,7 @@ node packages/cli/dist/cli.js --version
 
 # Test require/import
 node -e "require('@grepa/core')"
-node -e "import('@grepa/core')" --input-type=module
+node --input-type=module -e "import('@grepa/core')"
 
 # Run smoke tests
 pnpm test:smoke
