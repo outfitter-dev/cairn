@@ -132,7 +132,7 @@ export async function lintCommand(
     
     // :ga:output Show configuration summary
     console.log('\n' + chalk.gray('Configuration:'));
-    console.log(chalk.gray(`  Forbidden tokens: ${config.lint?.forbid?.join(', ') || 'none'}`));
+    console.log(chalk.gray(`  Forbidden tags: ${config.lint?.forbid?.join(', ') || 'none'}`));
     console.log(chalk.gray(`  Max age: ${config.lint?.maxAgeDays || 'none'} days`));
     console.log(chalk.gray(`  Files scanned: ${files.length}`));
     

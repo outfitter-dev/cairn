@@ -234,7 +234,7 @@ grepa help llms             # 10-line LLM primer
 
 ### Why grepa is better than grep/ripgrep alone:
 
-1. **Semantic Search**: Understands anchor structure and token relationships
+1. **Semantic Search**: Understands anchor structure and tag relationships
 2. **Smart Aliases**: `grepa security` finds sec, auth, crypto automatically  
 3. **Value Filters**: Search by priority, owner, version with operators
 4. **Logical Patterns**: AND/OR logic with intuitive syntax

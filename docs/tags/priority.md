@@ -1,6 +1,6 @@
 # Priority Tokens Reference
 
-Priority tokens help teams triage work, communicate urgency, and manage technical debt. This document covers various priority notation patterns for grep-anchors.
+Priority tags help teams triage work, communicate urgency, and manage technical debt. This document covers various priority notation patterns for grep-anchors.
 
 ## Standard Priority Levels
 
@@ -177,4 +177,4 @@ When choosing a priority scheme, consider:
 - **Release Cycle**: Continuous deployment vs. scheduled releases
 - **SLA Requirements**: Customer contracts may dictate priority levels
 
-Remember: Priority tokens are communication tools. The best system is one your entire team understands and uses consistently.
+Remember: Priority tags are communication tools. The best system is one your entire team understands and uses consistently.

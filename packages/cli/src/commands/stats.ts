@@ -116,10 +116,10 @@ export async function statsCommand(
       console.log(`  Total files scanned: ${chalk.cyan(files.length)}`);
       console.log(`  Files with anchors: ${chalk.cyan(fileStats.size)}`);
       console.log(`  Total anchors: ${chalk.cyan(totalAnchors)}`);
-      console.log(`  Unique tokens: ${chalk.cyan(tokenStats.size)}`);
+      console.log(`  Unique tags: ${chalk.cyan(tokenStats.size)}`);
       
-      // :ga:output Display token histogram
-      console.log('\n' + chalk.bold('Token Distribution:'));
+      // :ga:output Display tag histogram
+      console.log('\n' + chalk.bold('Tag Distribution:'));
       
       const displayTokens = options.top 
         ? sortedTokens.slice(0, options.top)

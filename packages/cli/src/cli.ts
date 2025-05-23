@@ -40,13 +40,13 @@ program
   .option('--anchor <sigil>', 'override anchor sigil (default: ":ga:")', ':ga:')
   .action(searchCommand);
 
-// :ga:cmd:list List tokens
+// :ga:cmd:list List tags
 program
   .command('list')
   .alias('ls')
-  .description('List unique anchor tokens')
+  .description('List unique anchor tags')
   .option('--json', 'output as JSON')
-  .option('--count', 'show token counts')
+  .option('--count', 'show tag counts')
   .option('--tree', 'show as tree structure')
   .action(listCommand);
 
@@ -54,7 +54,7 @@ program
 program
   .command('lint')
   .description('Enforce anchor policies')
-  .option('--forbid <tokens...>', 'forbidden tokens')
+  .option('--forbid <tags...>', 'forbidden tags')
   .option('--max-age <days>', 'maximum age in days', parseInt)
   .option('--ci', 'CI mode (exit 1 on violations)')
   .option('--fix', 'auto-fix issues where possible')
@@ -64,7 +64,7 @@ program
 program
   .command('stats')
   .description('Show anchor statistics')
-  .option('--top <n>', 'show top N tokens', parseInt)
+  .option('--top <n>', 'show top N tags', parseInt)
   .option('--since <version>', 'filter by version')
   .option('--json', 'output as JSON')
   .option('--chart', 'show ASCII chart visualization')

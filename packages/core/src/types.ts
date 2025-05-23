@@ -5,8 +5,9 @@ export interface Anchor {
   // :ga:tldr The full anchor text including :ga: prefix
   raw: string;
   
-  // :ga:tldr Array of parsed tokens from the payload
-  tokens: Token[];
+  // :ga:tldr Array of parsed anchor parts from the payload
+  // Note: Property name kept as 'tokens' for backwards compatibility
+  tokens: AnchorPart[];
   
   // :ga:tldr Line number where anchor was found
   line: number;
@@ -18,22 +19,36 @@ export interface Anchor {
   comment?: string;
 }
 
-export type Token = BareToken | JsonToken | ArrayToken;
+// New primary types using AnchorPart terminology
+export type AnchorPart = BareAnchorPart | JsonAnchorPart | ArrayAnchorPart;
 
-export interface BareToken {
+export interface BareAnchorPart {
   type: 'bare';
   value: string;
 }
 
-export interface JsonToken {
+export interface JsonAnchorPart {
   type: 'json';
   value: Record<string, unknown>;
 }
 
-export interface ArrayToken {
+export interface ArrayAnchorPart {
   type: 'array';
   value: string[];
 }
+
+// Backwards compatibility aliases (deprecated)
+/** @deprecated Use AnchorPart instead */
+export type Token = AnchorPart;
+
+/** @deprecated Use BareAnchorPart instead */
+export type BareToken = BareAnchorPart;
+
+/** @deprecated Use JsonAnchorPart instead */
+export type JsonToken = JsonAnchorPart;
+
+/** @deprecated Use ArrayAnchorPart instead */
+export type ArrayToken = ArrayAnchorPart;
 
 export interface ParseOptions {
   // :ga:tldr The anchor sigil to search for (default: ":ga:")
@@ -60,7 +75,7 @@ export interface Config {
     versionField?: 'since' | 'v';
   };
   
-  // :ga:tldr Token dictionary for documentation
+  // :ga:tldr Tag dictionary for documentation
   dictionary?: Record<string, string>;
 }
 

@@ -122,7 +122,7 @@ describe('listCommand', () => {
     
     await listCommand({}, mockCommand);
     
-    expect(consoleLogSpy).toHaveBeenCalledWith(chalk.yellow('No anchor tokens found'));
+    expect(consoleLogSpy).toHaveBeenCalledWith(chalk.yellow('No anchor tags found'));
   });
 
   it('should output JSON when format is json', async () => {
@@ -232,7 +232,7 @@ describe('listCommand', () => {
     
     await listCommand({}, mockCommand);
     
-    expect(consoleLogSpy).toHaveBeenCalledWith(chalk.yellow('No anchor tokens found'));
+    expect(consoleLogSpy).toHaveBeenCalledWith(chalk.yellow('No anchor tags found'));
   });
 });
 
