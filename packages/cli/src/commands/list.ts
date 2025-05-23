@@ -42,12 +42,8 @@ export async function listCommand(options: ListOptions, command: any): Promise<v
         
         for (const anchor of anchors) {
           totalAnchors++;
-          for (const token of anchor.tokens) {
-            if (token.type === 'bare') {
-              const count = tokenCounts.get(token.value) || 0;
-              tokenCounts.set(token.value, count + 1);
-            }
-          }
+          const count = tokenCounts.get(anchor.token) || 0;
+          tokenCounts.set(anchor.token, count + 1);
         }
       } catch (error) {
         // :ga:error Skip unreadable files

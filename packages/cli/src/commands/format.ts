@@ -13,15 +13,15 @@ interface FormatOptions {
 }
 
 // :ga:tldr Patterns to convert to anchors
-const CONVERSION_PATTERNS = [
-  { pattern: /TODO:?\s*/gi, token: 'todo' },
-  { pattern: /FIXME:?\s*/gi, token: 'fixme' },
-  { pattern: /HACK:?\s*/gi, token: 'hack' },
-  { pattern: /NOTE:?\s*/gi, token: 'note' },
-  { pattern: /XXX:?\s*/gi, token: 'fixme' },
-  { pattern: /DEPRECATED:?\s*/gi, token: 'deprecated' },
-  { pattern: /REFACTOR:?\s*/gi, token: 'refactor' }
-];
+// const CONVERSION_PATTERNS = [
+//   { pattern: /TODO:?\s*/gi, token: 'todo' },
+//   { pattern: /FIXME:?\s*/gi, token: 'fixme' },
+//   { pattern: /HACK:?\s*/gi, token: 'hack' },
+//   { pattern: /NOTE:?\s*/gi, token: 'note' },
+//   { pattern: /XXX:?\s*/gi, token: 'fixme' },
+//   { pattern: /DEPRECATED:?\s*/gi, token: 'deprecated' },
+//   { pattern: /REFACTOR:?\s*/gi, token: 'refactor' }
+// ];
 
 // :ga:tldr Comment patterns by style
 const COMMENT_PATTERNS: Record<string, RegExp[]> = {
@@ -74,12 +74,12 @@ export async function formatCommand(
         let fileChanges = 0;
         
         // :ga:algo Apply conversions
-        for (const pattern of patterns) {
+        for (const pattern of patterns || []) {
           const matches = Array.from(content.matchAll(pattern));
           
           for (const match of matches) {
             const [fullMatch, keyword, comment] = match;
-            const token = keyword.toLowerCase();
+            const token = keyword?.toLowerCase() || '';
             const replacement = fullMatch.replace(
               new RegExp(keyword + ':?\\s*', 'i'),
               `${anchor}${token} `

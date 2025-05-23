@@ -7,7 +7,8 @@ import {
   resolveConfig, 
   findConfigFile,
   lintAnchors,
-  type Config
+  type Config,
+  type Anchor
 } from '@grepa/core';
 import { readFileSync } from 'fs';
 import { relative } from 'path';
@@ -80,8 +81,17 @@ export async function lintCommand(
     
     spinner.text = `Linting ${allAnchors.length} anchors...`;
     
+    // :ga:algo Convert SimpleAnchor to Anchor for linting
+    const fullAnchors: Anchor[] = allAnchors.map(anchor => ({
+      raw: anchor.raw,
+      tokens: [{ type: 'bare', value: anchor.token }],
+      line: anchor.line,
+      file: anchor.file,
+      comment: anchor.comment
+    }));
+    
     // :ga:algo Run lint rules
-    const result = lintAnchors(allAnchors, config);
+    const result = lintAnchors(fullAnchors, config);
     
     spinner.stop();
     

@@ -63,21 +63,17 @@ export async function statsCommand(
             continue;
           }
           
-          for (const token of anchorObj.tokens) {
-            if (token.type === 'bare') {
-              const stats = tokenStats.get(token.value) || {
-                count: 0,
-                files: new Set(),
-                lines: []
-              };
-              
-              stats.count++;
-              stats.files.add(file);
-              stats.lines.push(anchorObj.line);
-              
-              tokenStats.set(token.value, stats);
-            }
-          }
+          const stats = tokenStats.get(anchorObj.token) || {
+            count: 0,
+            files: new Set(),
+            lines: []
+          };
+          
+          stats.count++;
+          stats.files.add(file);
+          stats.lines.push(anchorObj.line);
+          
+          tokenStats.set(anchorObj.token, stats);
         }
       } catch (error) {
         // :ga:error Skip unreadable files

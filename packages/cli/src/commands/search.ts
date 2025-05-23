@@ -9,7 +9,7 @@ import {
   type Anchor
 } from '@grepa/core';
 import { readFileSync } from 'fs';
-import { relative, basename } from 'path';
+import { relative } from 'path';
 import chalk from 'chalk';
 import ora from 'ora';
 import { execa } from 'execa';
@@ -149,8 +149,9 @@ async function execRipgrepEnhanced(
         console.log('\n' + chalk.bold.magenta(currentFile));
       } else if (line.match(/^\d+:/)) {
         // :ga:algo Format matching lines
-        const [lineNum, ...rest] = line.split(':');
-        const content = rest.join(':');
+        const parts = line.split(':');
+        const lineNum = parts[0];
+        const content = parts.slice(1).join(':');
         const highlighted = highlightAnchor(content, anchor, patterns);
         console.log(
           chalk.green(`  ${lineNum.padStart(4)}:`) + highlighted
@@ -227,7 +228,13 @@ async function internalSearchEnhanced(
             file: relative(process.cwd(), file),
             line: anchorObj.line,
             text: lines[anchorObj.line - 1] || anchorObj.raw,
-            anchor: anchorObj,
+            anchor: {
+              raw: anchorObj.raw,
+              tokens: [{ type: 'bare' as const, value: anchorObj.token }],
+              line: anchorObj.line,
+              file: anchorObj.file,
+              comment: anchorObj.comment
+            },
             context: options.context ? 
               getContext(lines, anchorObj.line - 1, options.context) : undefined
           };
