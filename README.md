@@ -104,75 +104,93 @@ pnpm link --global # Link CLI globally
 
 ## 6. CLI Usage
 
-The `grepa` CLI provides powerful tools for managing grep-anchors:
+The `grepa` CLI is a modern, ergonomic search tool for grep-anchors:
 
-### Commands
+### Default Search (No Subcommand!)
 
-#### `grepa list` - List unique tokens
 ```bash
-# List all unique tokens
-grepa list
+# Simple pattern search - it just works!
+grepa sec                    # Find security anchors
+grepa todo                   # Find todos
+grepa "fix,sec"             # Find anchors with both tokens
 
-# Show token counts
-grepa list --count
+# Smart aliases - search for concepts
+grepa security              # Expands to: sec, security, auth, crypto
+grepa performance           # Expands to: perf, performance, optimize, slow
+grepa bug                   # Expands to: fix, bug, fixme, broken
 
-# Output as JSON
-grepa list --json
+# Powerful options
+grepa sec -C 3              # Show 3 lines of context
+grepa todo -l               # List only filenames
+grepa api -i                # Case insensitive
+grepa error --open          # Open matches in editor
+grepa test --interactive    # Interactive fuzzy selection
 ```
 
-#### `grepa grep <pattern>` - Search for anchors
+### Advanced Search Features
+
 ```bash
-# Find all security anchors
-grepa grep sec
+# Context display (like grep -C)
+grepa sec -C 5              # Show 5 lines around matches
 
-# Show only file names
-grepa grep todo --files
+# Case variations
+grepa TODO -i               # Case insensitive matching
 
-# Output as JSON
-grepa grep perf --json
+# Output formats
+grepa api --json            # JSON for scripting
+grepa perf -l               # Files only (like grep -l)
+
+# Editor integration
+grepa bug --open            # Opens files in $EDITOR
+```
+
+### Other Commands
+
+#### `grepa list` - List all tokens
+```bash
+grepa list                  # List unique tokens
+grepa list --count          # Show usage counts
+grepa list --tree           # Tree visualization
 ```
 
 #### `grepa lint` - Enforce policies
 ```bash
-# Run default lint rules from .grepa.yml
-grepa lint
-
-# Forbid specific tokens
-grepa lint --forbid temp debug
-
-# Set maximum age for anchors
-grepa lint --max-age 90
-
-# CI mode (exit 1 on violations)
-grepa lint --ci
+grepa lint                  # Run configured rules
+grepa lint --fix            # Auto-fix issues
+grepa lint --ci             # CI mode
 ```
 
-#### `grepa stats` - Show statistics
+#### `grepa stats` - Analytics
 ```bash
-# Show token distribution
-grepa stats
-
-# Show top 10 tokens
-grepa stats --top 10
-
-# Filter by version
-grepa stats --since v2.0
-
-# Output as JSON
-grepa stats --json
+grepa stats                 # Token distribution
+grepa stats --chart         # ASCII visualization
+grepa stats --top 10        # Most used tokens
 ```
 
-#### `grepa format` - Convert TODO/FIXME
+#### `grepa format` - Convert comments
 ```bash
-# Convert TODO/FIXME comments to anchors
-grepa format
-
-# Preview changes without writing
-grepa format --dry-run
-
-# Specify comment style
-grepa format --comment-style hash  # Python, Ruby, Shell
+grepa format                # Convert TODO/FIXME
+grepa format --interactive  # Choose conversions
+grepa format --dry-run      # Preview only
 ```
+
+#### `grepa watch` - Live monitoring
+```bash
+grepa watch                 # Watch all changes
+grepa watch sec             # Watch security anchors
+grepa watch --notify        # Desktop notifications
+```
+
+### Why grepa is better than grep/ripgrep alone:
+
+1. **Semantic Search**: Understands anchor structure, not just text matching
+2. **Smart Aliases**: `grepa security` finds sec, auth, crypto automatically  
+3. **Token-Aware**: Searches tokens specifically, not full line content
+4. **Rich Output**: Syntax highlighting, context, grouped by file
+5. **Editor Integration**: `--open` to jump directly to matches
+6. **Interactive Mode**: Fuzzy finder for selecting matches
+7. **Policy Enforcement**: Built-in linting and age checking
+8. **Live Updates**: Watch mode for real-time monitoring
 
 ### Configuration
 

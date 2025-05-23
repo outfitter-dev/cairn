@@ -25,7 +25,16 @@
       "Bash(rg:*)",
       "Bash(grep:*)",
       "Bash(./packages/cli/dist/grepa.js stats)",
-      "Bash(git switch:*)"
+      "Bash(git switch:*)",
+      "Bash(./packages/cli/dist/grepa.js list --help)",
+      "Bash(./packages/cli/dist/grepa.js grep --help)",
+      "Bash(./packages/cli/dist/grepa.js lint --help)",
+      "Bash(./packages/cli/dist/grepa.js stats --help)",
+      "Bash(./packages/cli/dist/grepa.js format --help)",
+      "Bash(find:*)",
+      "Bash(./packages/cli/dist/grepa.js --help)",
+      "Bash(./packages/cli/dist/grepa.js tldr)",
+      "Bash(./packages/cli/dist/grepa.js tldr -l)"
     ],
     "deny": []
   }
