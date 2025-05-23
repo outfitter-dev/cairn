@@ -9,6 +9,7 @@ export * from './lint';
 
 // :ga:api Re-export commonly used functions
 export { parseAnchors } from './parser';
-export { loadConfig, resolveConfig, findConfigFile } from './config';
+export { loadConfig, loadConfigSync, resolveConfig, findConfigFile, validateConfig, mergeConfigs } from './config';
 export { findFiles } from './files';
 export { lintAnchors } from './lint';
+export { extractTokens, normalizeToken, validateToken } from './tokenizer';

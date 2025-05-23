@@ -25,9 +25,77 @@ export function findConfigFile(startPath: string): string | null {
   return null;
 }
 
-// :ga:tldr Load config from file with validation
+// :ga:tldr Load config from file path or create default
 // :ga:api,config Config loading
-export function loadConfig(path: string): Config {
+export async function loadConfig(startPath: string): Promise<any> {
+  const { promises: fs } = await import('fs');
+  const path = await import('path');
+  
+  // Default configuration
+  const defaultConfig = {
+    anchor: process.env.GREPA_ANCHOR || ':ga:',
+    defaultTokens: ['tldr', 'todo', 'fix', 'hack', 'temp'],
+    forbiddenTokens: [],
+    tokenDictionary: {
+      tldr: 'Brief function/module summary',
+      todo: 'Task to complete',
+      fix: 'Bug fix',
+      hack: 'Temporary workaround',
+      temp: 'Temporary code',
+      sec: 'Security-critical code',
+      perf: 'Performance-critical code',
+      api: 'Public API',
+      config: 'Configuration code',
+      error: 'Error handling',
+    },
+    ignorePatterns: ['node_modules/**', 'dist/**', '.git/**'],
+    scanExtensions: ['.js', '.ts', '.jsx', '.tsx', '.py', '.rb', '.go', '.java'],
+    scanDirectories: ['src', 'lib', 'app'],
+    maxAge: {},
+  };
+  
+  let currentPath = startPath;
+  
+  // Traverse up directory tree
+  while (currentPath !== path.dirname(currentPath)) {
+    const configPath = path.join(currentPath, CONFIG_FILENAME);
+    
+    try {
+      await fs.access(configPath);
+      const content = await fs.readFile(configPath, 'utf-8');
+      const config = parseYaml(content);
+      validateConfig(config);
+      return mergeConfigs(defaultConfig, config);
+    } catch (error: any) {
+      if (error.code !== 'ENOENT') {
+        if (error.message?.includes('Failed to parse')) {
+          throw new Error(`Failed to parse config at ${configPath}: ${error.message}`);
+        } else if (error.code === 'EACCES') {
+          throw new Error(`Failed to read config at ${configPath}: Permission denied`);
+        }
+        throw error;
+      }
+    }
+    
+    currentPath = path.dirname(currentPath);
+  }
+  
+  // Check root directory
+  const rootConfigPath = path.join('/', CONFIG_FILENAME);
+  try {
+    await fs.access(rootConfigPath);
+    const content = await fs.readFile(rootConfigPath, 'utf-8');
+    const config = parseYaml(content);
+    validateConfig(config);
+    return mergeConfigs(defaultConfig, config);
+  } catch {
+    // Return defaults if no config found
+    return defaultConfig;
+  }
+}
+
+// Keep sync version for backward compatibility
+export function loadConfigSync(path: string): Config {
   try {
     const content = readFileSync(path, 'utf8');
     const config = parseYaml(content) as Config;
@@ -70,11 +138,11 @@ export function resolveConfig(
   };
   
   // :ga:config Load file config if path provided
-  const fileConfig = configPath ? loadConfig(configPath) : {};
+  const fileConfig = configPath ? loadConfigSync(configPath) : {};
   
   // :ga:config Apply environment override
   if (envAnchor) {
-    fileConfig.anchor = envAnchor;
+    (fileConfig as any).anchor = envAnchor;
   }
   
   // :ga:config Deep merge with defaults
@@ -83,13 +151,31 @@ export function resolveConfig(
 
 // :ga:tldr Validate config object structure
 // :ga:config,sec Input validation
-function validateConfig(config: any): void {
+export function validateConfig(config: any): void {
   if (typeof config !== 'object' || config === null) {
     throw new Error('Config must be an object');
   }
   
-  if (config.anchor && typeof config.anchor !== 'string') {
-    throw new Error('Config anchor must be a string');
+  // Validate anchor format
+  if (config.anchor !== undefined) {
+    if (typeof config.anchor !== 'string') {
+      throw new Error('Config anchor must be a string');
+    }
+    if (!config.anchor.startsWith(':') || !config.anchor.endsWith(':')) {
+      throw new Error('Invalid anchor format');
+    }
+  }
+  
+  // Validate defaultTokens
+  if (config.defaultTokens !== undefined && !Array.isArray(config.defaultTokens)) {
+    throw new Error('defaultTokens must be an array');
+  }
+  
+  // Validate tokenDictionary
+  if (config.tokenDictionary !== undefined) {
+    if (typeof config.tokenDictionary !== 'object' || config.tokenDictionary === null || Array.isArray(config.tokenDictionary)) {
+      throw new Error('tokenDictionary must be an object');
+    }
   }
   
   if (config.files) {
@@ -113,16 +199,24 @@ function validateConfig(config: any): void {
 
 // :ga:tldr Deep merge two objects
 // :ga:algo Recursive merge
-function deepMerge(target: any, source: any): any {
-  const result = { ...target };
+export function mergeConfigs(base: any, custom: any): any {
+  if (!base) return custom || {};
+  if (!custom) return base || {};
   
-  for (const key in source) {
-    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-      result[key] = deepMerge(result[key] || {}, source[key]);
+  const result = { ...base };
+  
+  for (const key in custom) {
+    if (custom[key] && typeof custom[key] === 'object' && !Array.isArray(custom[key])) {
+      result[key] = mergeConfigs(result[key] || {}, custom[key]);
     } else {
-      result[key] = source[key];
+      result[key] = custom[key];
     }
   }
   
   return result;
+}
+
+// Keep internal deepMerge for backward compatibility
+function deepMerge(target: any, source: any): any {
+  return mergeConfigs(target, source);
 }

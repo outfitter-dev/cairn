@@ -1,107 +1,95 @@
 // :ga:tldr Parse grep-anchors from text content
-// :ga:parse Core parsing implementation
+import type { ParseOptions } from './types';
 
-import type { Anchor, Token, ParseOptions } from './types';
+interface SimpleAnchor {
+  token: string;
+  line: number;
+  file: string;
+  raw: string;
+  comment?: string;
+  payload?: string;
+}
 
-// :ga:parse Regex for finding anchors in text
-const DEFAULT_ANCHOR = ':ga:';
-const ANCHOR_REGEX = (anchor: string) => 
-  new RegExp(`${escapeRegex(anchor)}(.+?)(?=\\n|$)`, 'gm');
-
-// :ga:parse Token separator patterns
-const SEPARATOR_REGEX = /[,\s|]+/;
-
-// :ga:parse Patterns for different token types
-const JSON_REGEX = /^\{.*\}$/;
-const ARRAY_REGEX = /^\[.*\]$/;
-const BARE_TOKEN_REGEX = /^@?[A-Za-z0-9_.-]+$/;
-
-// :ga:tldr Parse anchors from text content
-// :ga:api Main parsing function
+// :ga:tldr Parse anchors from text content  
 export function parseAnchors(
   content: string,
   filePath: string,
-  options: ParseOptions = {}
-): Anchor[] {
-  const anchor = options.anchor || DEFAULT_ANCHOR;
-  const regex = ANCHOR_REGEX(anchor);
-  const anchors: Anchor[] = [];
-  
+  options: ParseOptions = { includeComment: true }
+): SimpleAnchor[] {
+  const anchors: SimpleAnchor[] = [];
   const lines = content.split('\n');
+  
+  // Match any :ga: pattern
+  const regex = /:ga:([^\s\n]*)/g;
   let match;
   
   while ((match = regex.exec(content)) !== null) {
     const raw = match[0];
-    const payload = match[1]?.trim() || '';
+    const payload = match[1] || '';
     
-    // :ga:algo Find line number
+    // Find line number
     const position = match.index;
     const lineNumber = content.substring(0, position).split('\n').length;
     
-    // :ga:algo Extract comment if requested
+    // Extract tokens from payload
+    const tokens = extractTokensFromPayload(payload);
+    
+    // Get comment if requested
     let comment: string | undefined;
-    if (options.includeComment && lineNumber > 0 && lineNumber <= lines.length) {
+    if (options.includeComment !== false && lineNumber > 0 && lineNumber <= lines.length) {
       const line = lines[lineNumber - 1];
       if (line) {
-        const anchorEnd = line.indexOf(anchor) + raw.length;
-        comment = line.substring(anchorEnd).trim();
+        const anchorEnd = line.indexOf(raw) + raw.length;
+        const commentText = line.substring(anchorEnd).trim();
+        comment = commentText || undefined;
       }
     }
     
-    anchors.push({
-      raw,
-      tokens: parseTokens(payload),
-      line: lineNumber,
-      file: filePath,
-      comment
-    });
+    // Add an anchor for each token
+    for (const token of tokens) {
+      anchors.push({
+        token,
+        line: lineNumber,
+        file: filePath,
+        raw,
+        ...(comment !== undefined && { comment }),
+        ...(payload.startsWith('{') && { payload })
+      });
+    }
   }
   
   return anchors;
 }
 
-// :ga:tldr Parse payload string into tokens
-// :ga:parse Token extraction logic
-export function parseTokens(payload: string): Token[] {
-  const tokens: Token[] = [];
+// :ga:tldr Extract tokens from anchor payload
+function extractTokensFromPayload(payload: string): string[] {
+  if (!payload) return [];
   
-  // :ga:algo Handle JSON object
-  if (JSON_REGEX.test(payload)) {
-    try {
-      const value = JSON.parse(payload);
-      tokens.push({ type: 'json', value });
-      return tokens;
-    } catch {
-      // :ga:error Fall through to regular parsing
-    }
+  // Handle array syntax [token1,token2]
+  if (payload.startsWith('[') && payload.endsWith(']')) {
+    const inner = payload.slice(1, -1);
+    return inner.split(',')
+      .map(t => t.trim())
+      .filter(t => t && /^[a-zA-Z][a-zA-Z0-9]*$/.test(t));
   }
   
-  // :ga:algo Handle array
-  if (ARRAY_REGEX.test(payload)) {
+  // Handle JSON syntax {"token":"value"}
+  if (payload.startsWith('{') && payload.endsWith('}')) {
     try {
-      const value = JSON.parse(payload);
-      if (Array.isArray(value)) {
-        tokens.push({ type: 'array', value });
-        return tokens;
+      const json = JSON.parse(payload);
+      if (json.token && typeof json.token === 'string') {
+        return [json.token];
       }
     } catch {
-      // :ga:error Fall through to regular parsing
+      // Invalid JSON
     }
+    return [];
   }
   
-  // :ga:algo Split by separators and parse each token
-  const parts = payload.split(SEPARATOR_REGEX).filter(Boolean);
-  
-  for (const part of parts) {
-    if (BARE_TOKEN_REGEX.test(part)) {
-      tokens.push({ type: 'bare', value: part });
-    }
+  // Handle single token
+  if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(payload)) {
+    return [payload.toLowerCase()];
   }
   
-  return tokens;
-}
-
-// :ga:tldr Escape special regex characters
-function escapeRegex(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return [];
 }

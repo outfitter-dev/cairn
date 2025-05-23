@@ -14,7 +14,18 @@
       "Bash(pnpm build:*)",
       "Bash(rm:*)",
       "Bash(ls:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm test:*)",
+      "Bash(touch:*)",
+      "Bash(pnpm list:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(./packages/cli/dist/grepa.js list --count)",
+      "Bash(rg:*)",
+      "Bash(grep:*)",
+      "Bash(./packages/cli/dist/grepa.js stats)",
+      "Bash(git switch:*)"
     ],
     "deny": []
   }

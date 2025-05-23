@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // :ga:tldr Main CLI entry point for grepa
 // :ga:entry CLI initialization
 
