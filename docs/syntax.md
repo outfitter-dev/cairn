@@ -79,8 +79,8 @@ The `grepa` parser recognizes these patterns:
 - `{}` - JSON objects
 
 **Separators** - Divide tags or values:
-- `,` - Comma separator for token chains and array items
-- `;` - Semicolon separator for token chains
+- `,` - Comma separator for tag chains and array items
+- `;` - Semicolon separator for tag chains
 
 **Connectors** - Join parts within a tag:
 - `-` - Hyphen connector (e.g., `p-high`, `fix-urgent`)
@@ -347,10 +347,10 @@ grepa find "(fix,sec)|temp"  # (fix AND sec) OR temp
 
 1. **Start with TLDR**: Every function/module should begin with `// :ga:tldr <summary>`
 2. **Be Specific**: `// :ga:fix,auth` is better than `// :ga:fix`
-3. **Use Common Tokens**: Stick to widely-understood tokens when possible
-4. **Build Token Chains**: Combine tokens to tell a complete story
-5. **Track Versions**: Use tokens like `v2.0` or `until(v3.0)` for lifecycle
-6. **Assign Ownership**: Use `@username` tokens for accountability
+3. **Use Common Tags**: Stick to widely-understood tags when possible
+4. **Build Tag Chains**: Combine tags to tell a complete story
+5. **Track Versions**: Use tags like `v2.0` or `until(v3.0)` for lifecycle
+6. **Assign Ownership**: Use `@username` tags for accountability
 7. **Reference Tasks**: Link to external systems with `todo(T-123)` patterns
 8. **Be Consistent**: Pick comma or semicolon separation and stick with it
 
@@ -358,7 +358,7 @@ grepa find "(fix,sec)|temp"  # (fix AND sec) OR temp
 
 ## 8. Anti-Patterns
 
-❌ **Don't use natural language as tokens**
+❌ **Don't use natural language as tags**
 ```javascript
 // Bad:  :ga:this-needs-to-be-fixed-eventually
 // Good: :ga:fix,p3 validation edge case
@@ -376,7 +376,7 @@ grepa find "(fix,sec)|temp"  # (fix AND sec) OR temp
 // Good: :ga:fix,test broken validation
 ```
 
-❌ **Don't over-tokenize**
+❌ **Don't over-tag**
 ```javascript
 // Bad:  :ga:fix,bug,error,problem,issue,urgent,asap,p0,critical
 // Good: :ga:fix,p0,@alice null pointer exception

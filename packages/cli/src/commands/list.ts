@@ -1,4 +1,4 @@
-// :ga:tldr List unique anchor tokens found in codebase
+// :ga:tldr List unique anchor tags found in codebase
 // :ga:cmd:list Implementation of grepa list command
 
 import { findFiles, parseAnchors, resolveConfig, findConfigFile } from '@grepa/core';
@@ -65,11 +65,11 @@ export async function listCommand(options: ListOptions, command: any): Promise<v
       console.log(JSON.stringify(output, null, 2));
     } else {
       if (sortedTokens.length === 0) {
-        console.log(chalk.yellow('No anchor tokens found'));
+        console.log(chalk.yellow('No anchor tags found'));
         return;
       }
       
-      console.log('\n' + chalk.bold('Anchor Tokens:'));
+      console.log('\n' + chalk.bold('Anchor Tags:'));
       for (const [token, count] of sortedTokens) {
         if (options.count) {
           console.log(`  ${chalk.cyan(token.padEnd(20))} ${chalk.gray(count.toString())}`);

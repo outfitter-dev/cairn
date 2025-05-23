@@ -1,10 +1,10 @@
-# Namespaced Tokens Reference
+# Namespaced Tags Reference
 
-The `grepa` parser recognizes a set of standard tokens with defined meanings. These namespaced tokens form the core vocabulary for grep-anchors, with aliases provided for flexibility and backwards compatibility.
+The `grepa` parser recognizes a set of standard tags with defined meanings. These namespaced tags form the core vocabulary for grep-anchors, with aliases provided for flexibility and backwards compatibility.
 
-## Token Namespace and Aliases
+## Tag Namespace and Aliases
 
-| Namespace Token | Aliases | Description |
+| Namespace Tag | Aliases | Description |
 |----------------|---------|-------------|
 | `tldr` | `summary`, `brief`, `desc` | Brief one-line summary of function/module/class |
 | `fix` | `bugfix`, `patch`, `fixes` | Bug fix or correction needed |
@@ -19,9 +19,9 @@ The `grepa` parser recognizes a set of standard tokens with defined meanings. Th
 | `chore` | `maint`, `maintenance`, `deps` | Routine maintenance tasks |
 | `revert` | `rollback`, `undo` | Reverting previous changes |
 
-## Extended Namespace Tokens
+## Extended Namespace Tags
 
-| Namespace Token | Aliases | Description |
+| Namespace Tag | Aliases | Description |
 |----------------|---------|-------------|
 | `sec` | `security`, `vuln`, `cve` | Security-critical code |
 | `temp` | `tmp`, `temporary`, `interim` | Temporary code to be removed |
@@ -107,10 +107,10 @@ aliases:
 
 ## Best Practices
 
-1. **Prefer Namespace Tokens**: Use the standard namespace token when possible
+1. **Prefer Namespace Tags**: Use the standard namespace tag when possible
 2. **Document Custom Aliases**: If you define custom aliases, document them
-3. **Avoid Ambiguity**: Don't create aliases that could be confused with other tokens
-4. **Consistency**: Pick either namespace tokens or specific aliases and stick with them
+3. **Avoid Ambiguity**: Don't create aliases that could be confused with other tags
+4. **Consistency**: Pick either namespace tags or specific aliases and stick with them
 
 ## Examples
 
@@ -134,4 +134,4 @@ aliases:
 // :ga:feature,sec,p0 new auth system
 ```
 
-Remember: While aliases provide flexibility, using consistent namespace tokens makes your codebase more searchable and maintainable. The aliases exist primarily for compatibility and personal preference.
+Remember: While aliases provide flexibility, using consistent namespace tags makes your codebase more searchable and maintainable. The aliases exist primarily for compatibility and personal preference.
