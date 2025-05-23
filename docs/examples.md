@@ -301,42 +301,110 @@ type NewClient struct {
 
 ---
 
-## 6. Search Patterns for Agents
+## 6. Search Patterns with grepa CLI
 
 ### Finding Security Issues
 ```bash
 # All security-related anchors
-rg ":ga:.*sec"
+grepa sec                    # Includes aliases: security, auth, crypto
+grepa security               # Smart alias expansion
 
 # Critical security issues only  
-rg ":ga:sec,p0|:ga:p0,sec"
+grepa sec p0                 # sec AND p0
+grepa sec p=0                # Explicit priority value
 
-# Security items assigned to someone
-rg ":ga:.*sec.*@"
+# Security with specific attributes
+grepa sec @alice             # Security items assigned to alice
+grepa sec '!temp'             # Security but NOT temporary (quoted bang)
+grepa sec owner~/alice|bob/  # Security owned by alice OR bob
+
+# Using explicit find verb
+grepa find sec -C 3          # With context lines
+grepa --json find sec        # JSON output (global flag first)
 ```
 
 ### Finding Work Items
 ```bash
-# All TODOs for a specific person
-rg ":ga:.*@alice"
+# All TODOs with various filters
+grepa todo=*                 # Any todo with a value
+grepa todo=T-123             # Exact ticket match  
+grepa todo!=T-123            # Todo NOT equal to T-123
+grepa blocks~=T-123          # Where T-123 appears in blocks array
+
+# Assignment patterns
+grepa todo @alice            # TODOs assigned to alice
+grepa *=@alice               # Any tag with value @alice
+grepa owner!=@me             # Items NOT owned by me
 
 # High priority fixes
-rg ":ga:fix,p[01]|:ga:p[01],fix"
+grepa fix p0 | fix p1        # P0 OR P1 fixes
+grepa find fix,p0 fix,p1 --any  # Using --any flag
 
-# Temporary code that needs removal
-rg ":ga:temp|:ga:hack"
+# Temporary code tracking
+grepa temp | hack            # temp OR hack
+grepa temp '!resolved'       # Temp but not resolved
+grepa temp since~=2024       # Temp code from 2024
 ```
 
 ### Finding Feature Work
 ```bash
 # All feature implementations
-rg ":ga:feat"
+grepa feat                   # All features
+grepa feat '!wip'            # Features not work-in-progress
 
 # Features for specific version
-rg ":ga:.*v2\.0"
+grepa feat v2.0              # Features tagged v2.0
+grepa feat version=2.0       # Using value filter
+grepa feat version~/^v2\./   # Regex match for v2.*
+
+# JSON payload queries
+grepa feat {type}=enhancement # Features with JSON type field
+grepa *={*}                  # Any tag with JSON payload
 
 # Breaking changes
-rg ":ga:breaking"
+grepa breaking               # All breaking changes
+grepa breaking v2.0          # Breaking changes in v2.0
+grepa breaking '!resolved'   # Unresolved breaking changes
+```
+
+### Advanced Pattern Combinations
+```bash
+# Complex queries with grouping
+grepa "(sec,p0)|temp"        # (security AND p0) OR temp
+grepa "fix,!test" p0         # Fixes at p0 that aren't tests
+grepa todo owner!=@me p0     # P0 todos not assigned to me
+
+# Value filter combinations
+grepa todo=* owner=@alice    # Alice's todos with any value
+grepa *=T-123                # Any tag referencing T-123
+grepa config={*} env=prod    # JSON configs for prod
+
+# Using global flags correctly
+grepa --json find sec        # JSON output (global before verb)
+grepa --files list todo      # Files only (global flag)
+grepa --literal find bug     # Literal search, no expansion
+```
+
+### Using Other Commands
+```bash
+# List unique tags
+grepa list                   # All unique tags
+grepa list --count           # With usage counts
+grepa list todo sec          # Only these tags
+
+# Generate reports
+grepa report                 # Tag distribution
+grepa report --top 10        # Most used tags
+grepa report --chart         # ASCII visualization
+
+# Lint for policy violations
+grepa lint                   # Run all rules
+grepa lint --fix             # Auto-fix issues
+grepa lint --ci              # CI mode (exits 1 on violations)
+
+# Watch for changes
+grepa watch sec p0           # Monitor critical security
+grepa watch todo --notify    # Desktop notifications (local)
 ```
 
 ---

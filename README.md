@@ -1,259 +1,138 @@
-# 🍇 Grep-Anchor (`:ga:`) Markers
+# 🍇 Grepa (grep-anchor)
 
-> **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
+> **A four-character tag (`:ga:`) you drop in comments so humans and AI agents can `grep` straight to the right spot.**
 
-> **grepa** /ɡrɛp·ə/ — a four-character tag (`:ga:`) you drop in comments so humans **and** AI agents can `grep` straight to the right spot.
+[![npm version](https://img.shields.io/npm/v/@grepa/cli.svg)](https://www.npmjs.com/package/@grepa/cli)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
+## What is Grepa?
 
-## 1. The Problem
+Grepa standardizes code annotations with **grep-anchors** - searchable markers that help both humans and AI navigate codebases efficiently. Instead of scattered TODOs and ad-hoc comments, use a consistent `:ga:` pattern that's instantly greppable.
 
-Even in well-structured repos it's painful to answer questions like:
-
-* *Where is the security-critical code?*
-* *What corners did we intentionally leave un-optimised for now?*
-* *Which lines must a release engineer double-check before merging a hot-fix?*
-
-Today we rely on ad-hoc **TODOs**, scattered issue links, or tribal knowledge. Those signals are:
-
-| Pain-point               | Why it hurts                                    |
-| ------------------------ | ----------------------------------------------- |
-| ✏️ Free-form wording     | Agents can't pattern-match reliably.            |
-| 🗺️ Buried in huge files | `grep "TODO"` returns hundreds of hits.         |
-| 🌱 Quickly rot           | Comments stay after fixes, reviewers miss them. |
-
----
-
-## 2. The Concept – `grep-anchor`
-
-A **grep-anchor** is a tiny, predictable token that lives *only* inside comments:
-
-```text
-<comment-leader> :ga:payload
+```javascript
+// :ga:tldr Validate user input and return JWT
+function authenticate(username, password) {
+    // :ga:sec,todo add rate limiting
+    // :ga:fixme,p1 timing attack vulnerability
+}
 ```
 
-* **`:ga:`** = the fixed, four-byte sigil (extremely rare in prose or code).
-* **payload**  = one or more *tokens* (see §4) that classify the line.
+Find what matters instantly:
+```bash
+grepa sec                # Find all security anchors
+grepa "fix,sec"         # Find security-related fixes  
+grepa p1 --open         # Open high-priority items in editor
+```
 
-Because the pattern is unique, both shell scripts and LLM agents can jump directly to relevant code with a one-liner:
+## Why Grepa?
+
+**For Humans:**
+
+- 🎯 **Precise Navigation** - Jump to exactly what you're looking for
+- 🏷️ **Consistent Tagging** - No more "TODO" vs "FIXME" vs "HACK" confusion
+- 📊 **Better Insights** - See patterns across your entire codebase
+
+**For AI Agents:**
+
+- 🤖 **Agent-Friendly** - AI assistants can navigate with surgical precision
+- 🔍 **Semantic Search** - Agents understand context, not just string matching
+- 📈 **Scalable** - Works in codebases of any size
+
+## Quick Start
+
+### Install
 
 ```bash
-rg -n ":ga:"              # list every anchor
-rg -n ":ga:sec"           # only security-related anchors
+npm install -g @grepa/cli
 ```
 
----
+### Basic Usage
 
-## 3. Quick Examples
+Add grep-anchors to your code:
+```python
+# :ga:tldr User authentication service
+class AuthService:
+    def login(self, username, password):
+        # :ga:sec,p0 prevent timing attacks
+        # :ga:todo(T-123) implement 2FA
+        return self.verify_credentials(username, password)
+```
+
+Search with the CLI:
+```bash
+grepa sec                    # Find security issues
+grepa todo                   # Find all TODOs
+grepa "p0,p1" --count        # Count high-priority items
+```
+
+## Three Ways to Search
+
+You can search for grep-anchors using any tool:
+
+### 1. Standard grep
+```bash
+grep -n ":ga:" **/*.js              # Find all anchors
+grep -n ":ga:sec" **/*.js           # Security anchors
+grep -n ":ga:todo" **/*.py          # TODOs in Python files
+```
+
+### 2. ripgrep (faster)
+```bash
+rg -n ":ga:"                        # Find all anchors
+rg -n ":ga:sec"                     # Security anchors
+rg -n ":ga:todo" -t py              # TODOs in Python files
+```
+
+### 3. grepa CLI (smartest)
+```bash
+grepa sec                           # Semantic search with aliases
+grepa "fix,sec"                     # Multiple tags
+grepa p1 --open                     # Open in editor
+```
+
+The grepa CLI provides semantic search, rich output, and editor integration. [See full CLI documentation →](docs/README.md#cli-usage)
+
+## Quick Examples
 
 | Intent                      | Anchor            | Comment example                                  |
 | --------------------------- | ----------------- | ------------------------------------------------ |
 | Function summary            | `:ga:tldr`        | `// :ga:tldr Validate user input and return errors` |
 | Security review needed      | `:ga:sec`         | `// :ga:sec validate signature length`           |
 | Temporary hack              | `:ga:temp`        | `# :ga:temp remove once cache is fixed`          |
-| Delegate to agent           | `:ga:@cursor`     | `/* :ga:@cursor please generate tests */`        |
+| Delegate to agent           | `:ga:@claude`     | `/* :ga:@claude please generate tests */`        |
 | Conventional-commit tie-in  | `:ga:fix`         | `// :ga:fix align error codes (will close #123)` |
 | Placeholder for future work | `:ga:placeholder` | `<!-- :ga:placeholder better SVG icon -->`       |
 
-Need multiple tags? Separate them with commas or spaces:
+## Documentation
 
-```python
-# :ga:perf,sec  optimise crypto loop
-```
+- **[Complete Documentation](docs/README.md)** - Comprehensive guide
+- **[Syntax Reference](docs/syntax.md)** - Full syntax specification
+- **[Examples](docs/examples.md)** - Real-world patterns
+- **[Tag Reference](docs/tags/namespace.md)** - Standard tags and aliases
 
----
-
-## 4. Minimal Grammar
-
-```ebnf
-anchor   ::= ":ga:" payload
-payload  ::= token ( sep token )*
-token    ::= bare | json | array
-bare     ::= "@"? [A-Za-z0-9_.-]+
-json     ::= "{" …balanced JSON… "}"
-array    ::= "[" …comma list… "]"
-sep      ::= "," | "|" | whitespace+
-```
-
-* **Bare tokens** simple strings: `sec`, `v0.2`, `@cursor`.
-* **Arrays / JSON** attach richer metadata when needed:
-
-  ```js
-  // :ga:{"since":"v1.1","owner":"@security"}
-  ```
-
----
-
-## 5. Installation
-
-### From npm (coming soon)
-```bash
-npm install -g @grepa/cli
-# or
-pnpm add -g @grepa/cli
-```
-
-### From source
-```bash
-git clone https://github.com/galligan/grepa.git
-cd grepa
-pnpm install
-pnpm build
-pnpm link --global # Link CLI globally
-```
-
-## 6. CLI Usage
-
-The `grepa` CLI is a modern, ergonomic search tool for grep-anchors:
-
-### Default Search (No Subcommand!)
-
-```bash
-# Simple pattern search - it just works!
-grepa sec                    # Find security anchors
-grepa todo                   # Find todos
-grepa "fix,sec"             # Find anchors with both tokens
-
-# Smart aliases - search for concepts
-grepa security              # Expands to: sec, security, auth, crypto
-grepa performance           # Expands to: perf, performance, optimize, slow
-grepa bug                   # Expands to: fix, bug, fixme, broken
-
-# Powerful options
-grepa sec -C 3              # Show 3 lines of context
-grepa todo -l               # List only filenames
-grepa api -i                # Case insensitive
-grepa error --open          # Open matches in editor
-grepa test --interactive    # Interactive fuzzy selection
-```
-
-### Advanced Search Features
-
-```bash
-# Context display (like grep -C)
-grepa sec -C 5              # Show 5 lines around matches
-
-# Case variations
-grepa TODO -i               # Case insensitive matching
-
-# Output formats
-grepa api --json            # JSON for scripting
-grepa perf -l               # Files only (like grep -l)
-
-# Editor integration
-grepa bug --open            # Opens files in $EDITOR
-```
-
-### Other Commands
-
-#### `grepa list` - List all tokens
-```bash
-grepa list                  # List unique tokens
-grepa list --count          # Show usage counts
-grepa list --tree           # Tree visualization
-```
-
-#### `grepa lint` - Enforce policies
-```bash
-grepa lint                  # Run configured rules
-grepa lint --fix            # Auto-fix issues
-grepa lint --ci             # CI mode
-```
-
-#### `grepa stats` - Analytics
-```bash
-grepa stats                 # Token distribution
-grepa stats --chart         # ASCII visualization
-grepa stats --top 10        # Most used tokens
-```
-
-#### `grepa format` - Convert comments
-```bash
-grepa format                # Convert TODO/FIXME
-grepa format --interactive  # Choose conversions
-grepa format --dry-run      # Preview only
-```
-
-#### `grepa watch` - Live monitoring
-```bash
-grepa watch                 # Watch all changes
-grepa watch sec             # Watch security anchors
-grepa watch --notify        # Desktop notifications
-```
-
-### Why grepa is better than grep/ripgrep alone:
-
-1. **Semantic Search**: Understands anchor structure, not just text matching
-2. **Smart Aliases**: `grepa security` finds sec, auth, crypto automatically  
-3. **Token-Aware**: Searches tokens specifically, not full line content
-4. **Rich Output**: Syntax highlighting, context, grouped by file
-5. **Editor Integration**: `--open` to jump directly to matches
-6. **Interactive Mode**: Fuzzy finder for selecting matches
-7. **Policy Enforcement**: Built-in linting and age checking
-8. **Live Updates**: Watch mode for real-time monitoring
-
-### Configuration
-
-Create a `.grepa.yml` file in your project root:
-
-```yaml
-# :ga:tldr Grepa configuration
-anchor: ":ga:"  # Override the default anchor
-
-files:
-  include:
-    - "**/*.ts"
-    - "**/*.js"
-  exclude:
-    - "**/node_modules/**"
-    - "**/dist/**"
-
-lint:
-  forbid: ["temp", "debug"]  # Blocked in CI
-  maxAgeDays: 90
-  versionField: "since"
-
-dictionary:
-  tldr: "Brief function/module summary"
-  sec: "Security-critical code"
-  perf: "Performance hotspot"
-  temp: "Temporary hack"
-  todo: "Future work"
-```
-
-### Pre-commit Hooks
-
-Use the provided hooks to enforce policies:
-
-```bash
-# Install hooks
-cp scripts/hooks/grepa-lint.sh .git/hooks/pre-commit
-chmod +x .git/hooks/pre-commit
-
-# Or use with Husky
-npx husky add .husky/pre-commit "scripts/hooks/grepa-lint.sh"
-```
-
-## 7. Best Practices
+## Best Practices
 
 1. **Always start with `:ga:tldr`** - Every function, class, and module should begin with a brief summary
-2. **Layer your anchors** - Combine tokens for context: `:ga:fix,sec,p0`
-3. **Use standard tokens** - Stick to conventional commit types when possible
-4. **Document your dictionary** - Define project-specific tokens in `.grepa.yml`
+2. **Layer your anchors** - Combine tags for context: `:ga:fix,sec,p0`
+3. **Use standard tags** - Stick to conventional commit types when possible
+4. **Document your dictionary** - Define project-specific tags in `.grepa.yml`
 5. **Version temporary code** - Always specify when temp code should be removed: `:ga:temp,v2.0`
 
----
+## Project Structure
 
-## 8. Future Directions
+This is a monorepo containing:
 
-* VS Code / NeoVim extension for colour-highlighting `:ga:` lines.
-* GitHub Action `grepa-lint` for automatic policy checks.
-* ESLint plugin for JavaScript/TypeScript projects.
-* Language server protocol (LSP) integration.
+- `packages/core` - Parser and core utilities
+- `packages/cli` - Command-line interface
 
----
+## Future Directions
 
-## 9. Inspiration: Lessons from OpenAI Codex
+- VS Code / NeoVim extension for color-highlighting `:ga:` lines
+- GitHub Action `grepa-lint` for automatic policy checks
+- ESLint plugin for JavaScript/TypeScript projects
+- Language server protocol (LSP) integration
+
+## Inspiration: Lessons from OpenAI Codex
 
 The idea for grep-anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
 
@@ -267,3 +146,11 @@ That mindset — pick a unique string, grep it everywhere, document the contract
 
 * **Blog & transcript**: [latent.space/p/codex](https://www.latent.space/p/codex)
 * **Video**: [youtube.com/watch?v=LIHP4BqwSw0](https://www.youtube.com/watch?v=LIHP4BqwSw0)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup.
+
+## License
+
+MIT © [Matt Galligan](https://github.com/galligan)
