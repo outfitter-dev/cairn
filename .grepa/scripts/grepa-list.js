@@ -3,22 +3,267 @@
 // :ga:meta grepa-list script - discovers all grep-anchors in your codebase
 
 import { execSync } from 'child_process';
-import { writeFileSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { argv, exit } from 'process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Configuration
 const DEFAULT_ANCHOR = ':ga:';
-const OUTPUT_FILE = join(process.cwd(), '.grepa', 'grepa-list.json');
+const CONFIG_FILE = join(process.cwd(), '.grepa', 'grepa-list.config.json');
+const DEFAULT_OUTPUT_FILE = join(process.cwd(), '.grepa', 'grepa-list.json');
 
-function findGrepAnchors(anchor = DEFAULT_ANCHOR) {
+// Precompiled regex patterns for performance
+const INLINE_CODE_PATTERN = /(?<!`)`(?!``)[^`]+`(?!`)/g;
+const LINK_PATTERN = /\[([^\]]+)\]\([^\)]+\)/g;
+const BLOCKQUOTE_PATTERN = /^\s*>/;
+const HEADING_PATTERN = /^#{1,6}\s+/;
+
+// Load configuration
+function loadConfig() {
+  if (existsSync(CONFIG_FILE)) {
+    try {
+      const content = readFileSync(CONFIG_FILE, 'utf8');
+      return JSON.parse(content);
+    } catch (e) {
+      console.warn(`⚠️  Warning: Could not load config file: ${e.message}`);
+    }
+  }
+  return {};
+}
+
+// Parse command line arguments
+function parseArgs(config) {
+  const args = {
+    anchor: config.anchor || DEFAULT_ANCHOR,
+    ignorePatterns: [],
+    ignoreExamples: false,
+    noGitignore: false,
+    configPath: null
+  };
+  
+  for (let i = 2; i < argv.length; i++) {
+    if (argv[i] === '--ignore' && i + 1 < argv.length) {
+      args.ignorePatterns.push(argv[++i]);
+    } else if (argv[i] === '--ignore-examples') {
+      args.ignoreExamples = true;
+    } else if (argv[i] === '--no-gitignore') {
+      args.noGitignore = true;
+    } else if (argv[i] === '--config' && i + 1 < argv.length) {
+      args.configPath = argv[++i];
+    } else if (!argv[i].startsWith('--')) {
+      args.anchor = argv[i];
+    }
+  }
+  
+  return args;
+}
+
+// Resolve ignore patterns from aliases and custom patterns
+function resolveIgnorePatterns(patterns, config) {
+  const globs = [];
+  const ignoreConfig = config.ignore || {};
+  const patternDefs = ignoreConfig.patterns || {};
+  
+  for (const pattern of patterns) {
+    if (patternDefs[pattern]) {
+      // It's a predefined pattern alias
+      globs.push(...(patternDefs[pattern].globs || []));
+    } else {
+      // It's a custom pattern
+      globs.push(pattern);
+    }
+  }
+  
+  return globs;
+}
+
+function isInMarkdownConstruct(filename, lineNum, anchorMatch, config, fileCache = null) {
+  // Only check markdown files
+  if (!filename.match(/\.(md|markdown|mdx)$/)) {
+    return false;
+  }
+  
   try {
+    // Use cached file contents if available
+    let lines;
+    if (fileCache && fileCache[filename]) {
+      lines = fileCache[filename];
+    } else {
+      const content = readFileSync(filename, 'utf8');
+      lines = content.split('\n');
+      if (fileCache) {
+        fileCache[filename] = lines;
+      }
+    }
+    
+    if (lineNum > lines.length) {
+      return false;
+    }
+    
+    const currentLine = lines[lineNum - 1];
+    const examplesConfig = config.examples || {};
+    
+    // Check code fences (```)
+    if (examplesConfig.detectCodeFences !== false) {
+      let inCodeFence = false;
+      for (let i = 0; i < lineNum - 1; i++) {
+        if (lines[i].trim().startsWith('```')) {
+          inCodeFence = !inCodeFence;
+        }
+      }
+      if (inCodeFence) {
+        return true;
+      }
+    }
+    
+    // Check code blocks (4-space indentation)
+    if (examplesConfig.detectCodeBlocks !== false) {
+      if (currentLine.startsWith('    ') && currentLine.includes(anchorMatch)) {
+        return true;
+      }
+    }
+    
+    // Check headings (lines starting with #)
+    if (examplesConfig.detectHeadings) {
+      if (HEADING_PATTERN.test(currentLine)) {
+        return true;
+      }
+    }
+    
+    // Check inline code (text between backticks)
+    if (examplesConfig.detectInlineCode) {
+      const anchorPos = currentLine.indexOf(anchorMatch);
+      if (anchorPos !== -1) {
+        const matches = [...currentLine.matchAll(INLINE_CODE_PATTERN)];
+        for (const match of matches) {
+          if (match.index <= anchorPos && anchorPos <= match.index + match[0].length) {
+            return true;
+          }
+        }
+      }
+    }
+    
+    // Check links [text](url)
+    if (examplesConfig.detectLinks) {
+      const anchorPos = currentLine.indexOf(anchorMatch);
+      if (anchorPos !== -1) {
+        const matches = [...currentLine.matchAll(LINK_PATTERN)];
+        for (const match of matches) {
+          if (match.index <= anchorPos && anchorPos <= match.index + match[0].length) {
+            return true;
+          }
+        }
+      }
+    }
+    
+    // Check blockquotes (lines starting with >)
+    if (examplesConfig.detectBlockquotes) {
+      if (BLOCKQUOTE_PATTERN.test(currentLine)) {
+        return true;
+      }
+    }
+    
+    // Check HTML comments
+    if (examplesConfig.detectHtmlComments) {
+      // Check if we're inside an HTML comment
+      const fullText = lines.slice(0, lineNum).join('\n');
+      const commentCount = (fullText.match(/<!--/g) || []).length;
+      const commentEndCount = (fullText.match(/-->/g) || []).length;
+      if (commentCount > commentEndCount) {
+        return true;
+      }
+      // Also check if the current line has a comment
+      if (currentLine.includes('<!--') && currentLine.includes(anchorMatch)) {
+        const commentStart = currentLine.indexOf('<!--');
+        const anchorPos = currentLine.indexOf(anchorMatch);
+        const commentEnd = currentLine.indexOf('-->', commentStart);
+        if (commentEnd === -1) {  // Comment continues on next line
+          if (anchorPos > commentStart) {
+            return true;
+          }
+        } else if (commentStart < anchorPos && anchorPos < commentEnd) {
+          return true;
+        }
+      }
+    }
+    
+    // Check front matter (YAML/TOML between --- or +++)
+    if (examplesConfig.detectFrontMatter) {
+      if (lineNum === 1) {
+        return false;
+      }
+      // Check if we're in front matter
+      if (lines[0].trim() === '---' || lines[0].trim() === '+++') {
+        const delimiter = lines[0].trim();
+        for (let i = 1; i < lineNum - 1; i++) {
+          if (lines[i].trim() === delimiter) {
+            return false;  // We passed the end of front matter
+          }
+        }
+        return true;  // Still in front matter
+      }
+    }
+    
+    return false;
+  } catch {
+    // If we can't read the file, assume it's not in a special construct
+    return false;
+  }
+}
+
+function findGrepAnchors(anchor = DEFAULT_ANCHOR, ignorePatterns = [], ignoreExamples = false, config = {}) {
+  try {
+    // Create file cache for markdown construct detection
+    const fileCache = {};
+    
     // Run ripgrep to find all anchors
     // -n: line numbers, -o: only matching, --no-heading: compact format
-    const rgCommand = `rg -n -o "${anchor}[^\\s]*" --no-heading`;
+    let rgCommand = `rg -n -o "${anchor}[^\\s]*" --no-heading`;
+    
+    // Check if we should respect gitignore
+    const ignoreConfig = config.ignore || {};
+    if (ignoreConfig.respectGitignore) {
+      // Check if .gitignore exists
+      const gitignorePath = join(process.cwd(), '.gitignore');
+      if (existsSync(gitignorePath)) {
+        // Add .gitignore patterns
+        rgCommand += ` --ignore-file "${gitignorePath}"`;
+      }
+      // Otherwise ripgrep respects .gitignore by default
+    } else {
+      // Explicitly disable gitignore
+      rgCommand += ' --no-ignore-vcs';
+    }
+    
+    // Resolve ignore patterns from config and command line
+    const allPatterns = [];
+    
+    // Add active patterns from config file
+    const patternDefs = ignoreConfig.patterns || {};
+    for (const [patternName, patternDef] of Object.entries(patternDefs)) {
+      if (patternDef.active) {
+        allPatterns.push(patternName);
+      }
+    }
+    
+    // Add custom patterns
+    allPatterns.push(...(ignoreConfig.custom || []));
+    
+    // Add patterns from command line (override config)
+    allPatterns.push(...ignorePatterns);
+    
+    // Resolve all patterns to globs
+    if (allPatterns.length > 0) {
+      const globs = resolveIgnorePatterns(allPatterns, config);
+      for (const glob of globs) {
+        rgCommand += ` -g "!${glob}"`;
+      }
+    }
+    
     const output = execSync(rgCommand, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] });
     
     if (!output.trim()) {
@@ -35,6 +280,11 @@ function findGrepAnchors(anchor = DEFAULT_ANCHOR) {
       if (!match) return;
       
       const [, filename, lineNum, fullMatch] = match;
+      
+      // Skip if we're ignoring examples and this is in a markdown construct
+      if (ignoreExamples && isInMarkdownConstruct(filename, parseInt(lineNum), fullMatch, config, fileCache)) {
+        return;
+      }
       
       // Extract the tag from the full match
       const tagMatch = fullMatch.match(new RegExp(`${anchor}([^\\s,\\]\\}]+)`));
@@ -143,32 +393,91 @@ function main() {
   console.log('🔍 Searching for grep-anchors...');
   
   try {
-    // Check if custom anchor is provided as argument
-    const anchor = process.argv[2] || DEFAULT_ANCHOR;
+    // Load configuration
+    let config = loadConfig();
     
-    const data = findGrepAnchors(anchor);
+    // Parse command line arguments
+    const args = parseArgs(config);
+    
+    // Load custom config if specified
+    if (args.configPath) {
+      if (existsSync(args.configPath)) {
+        try {
+          const content = readFileSync(args.configPath, 'utf8');
+          config = JSON.parse(content);
+        } catch (e) {
+          console.error(`❌ Error loading custom config: ${e.message}`);
+          exit(1);
+        }
+      }
+    }
+    
+    // Override config with command line args
+    const ignoreExamples = args.ignoreExamples || (config.examples?.ignore || false);
+    
+    // Handle gitignore override
+    if (args.noGitignore) {
+      if (!config.ignore) config.ignore = {};
+      config.ignore.respectGitignore = false;
+    }
+    
+    const data = findGrepAnchors(args.anchor, args.ignorePatterns, ignoreExamples, config);
     const report = generateReport(data);
     
-    // Ensure .grepa directory exists
-    const grepaDir = join(process.cwd(), '.grepa');
-    execSync(`mkdir -p "${grepaDir}"`, { stdio: 'ignore' });
+    // Get output file from config or use default
+    const outputConfig = config.output || {};
+    const outputFile = join(process.cwd(), outputConfig.file || '.grepa/inventory.generated.json');
+    const indent = outputConfig.indent || 2;
+    
+    // Ensure output directory exists
+    const outputDir = dirname(outputFile);
+    execSync(`mkdir -p "${outputDir}"`, { stdio: 'ignore' });
     
     // Write JSONC file with pretty printing
-    const jsonContent = JSON.stringify(report, null, 2);
-    writeFileSync(OUTPUT_FILE, jsonContent);
+    const jsonContent = JSON.stringify(report, null, indent);
+    writeFileSync(outputFile, jsonContent);
+    
+    // Gather all active patterns for display
+    const allActivePatterns = [];
+    const ignoreConfig = config.ignore || {};
+    const patternDefs = ignoreConfig.patterns || {};
+    
+    // Add active named patterns
+    for (const [patternName, patternDef] of Object.entries(patternDefs)) {
+      if (patternDef.active) {
+        allActivePatterns.push(patternName);
+      }
+    }
+    
+    // Add custom patterns
+    allActivePatterns.push(...(ignoreConfig.custom || []));
+    allActivePatterns.push(...args.ignorePatterns);
     
     // Print summary
-    console.log(`\n✅ Grep-anchor inventory generated!`);
-    console.log(`📍 Anchor pattern: ${anchor}`);
-    console.log(`📊 Found ${report.summary.totalAnchors} anchors across ${report.summary.filesWithAnchors} files`);
-    console.log(`🏷️  Discovered ${report.summary.uniqueTags} unique tags`);
-    console.log(`📄 Report saved to: ${OUTPUT_FILE}`);
+    const displayConfig = config.display || {};
+    if (displayConfig.showSummary !== false) {
+      console.log(`\n✅ Grep-anchor inventory generated!`);
+      console.log(`📍 Anchor pattern: ${args.anchor}`);
+      if (config.ignore?.respectGitignore) {
+        console.log(`📁 Respecting .gitignore patterns`);
+      }
+      if (allActivePatterns.length > 0) {
+        console.log(`🚫 Ignored patterns: ${allActivePatterns.join(', ')}`);
+      }
+      if (ignoreExamples) {
+        console.log(`🚫 Ignored code examples`);
+      }
+      console.log(`📊 Found ${report.summary.totalAnchors} anchors across ${report.summary.filesWithAnchors} files`);
+      console.log(`🏷️  Discovered ${report.summary.uniqueTags} unique tags`);
+      console.log(`📄 Inventory saved to: ${outputFile}`);
     
-    if (report.topTags.length > 0) {
-      console.log('\n🔝 Top 5 tags:');
-      report.topTags.slice(0, 5).forEach(({ tag, count, fileCount }) => {
-        console.log(`   ${tag}: ${count} uses in ${fileCount} file(s)`);
-      });
+      if (report.topTags.length > 0) {
+        const topCount = displayConfig.topTagsCount || 5;
+        console.log(`\n🔝 Top ${topCount} tags:`);
+        report.topTags.slice(0, topCount).forEach(({ tag, count, fileCount }) => {
+          console.log(`   ${tag}: ${count} uses in ${fileCount} file(s)`);
+        });
+      }
     }
     
   } catch (error) {

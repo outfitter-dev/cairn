@@ -41,7 +41,8 @@ coverage/
 Thumbs.db
 
 # Grepa generated files
-.grepa/grepa-list.json
+*.generated.json
+.grepa/*.generated.json
 
 # Test files
 test_detection.md
