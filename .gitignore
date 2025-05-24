@@ -20,6 +20,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# AI
+.claude/*.local.*
+
 # Environment
 .env
 .env.local

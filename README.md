@@ -22,7 +22,7 @@ Today we rely on ad-hoc **TODOs**, scattered issue links, or tribal knowledge. T
 
 ## The Concept – `grep-anchor`
 
-A **grep-anchor** is a tiny, predictable token that lives *only* inside comments:
+A **grep-anchor** is a tiny, predictable tag that lives *only* inside comments:
 
 ```text
 <comment-leader> :ga:payload
@@ -79,7 +79,7 @@ sep      ::= "," | "|" | whitespace+
 ### Add an anchor
 
 1. Choose the nearest comment above the code you're flagging.
-2. Insert `:ga:` followed by one or more tokens.
+2. Insert `:ga:` followed by one or more tags.
 
 ### Search
 
@@ -107,7 +107,7 @@ rg -n "^.*:ga:.*\bperf\b" --type ts,js
 
 ## Inspiration: Lessons from OpenAI Codex
 
-The idea for grep-anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
+The idea for grep-anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free tag:
 
 > *"Make your codebase discoverable — a well-named and organized tree lets Codex navigate the filesystem as quickly as a brand-new engineer might."*
 
