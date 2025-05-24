@@ -1,4 +1,6 @@
 # Clean Branches
+<!-- :ga:tldr AI command for cleaning up merged and stale git branches -->
+<!-- :ga:meta Claude Code command for branch cleanup and maintenance -->
 
 ## Instructions
 

@@ -1,4 +1,6 @@
 # Grep-Anchor Conventions
+<!-- :ga:tldr Standard patterns and practices for grep-anchors -->
+<!-- :ga:convention Central hub for all grep-anchor conventions -->
 
 Patterns and practices for making your codebase AI-navigable and human-friendly.
 

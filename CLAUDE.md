@@ -1,4 +1,6 @@
 # CLAUDE.md
+<!-- :ga:tldr AI agent instructions for working with the grepa repository -->
+<!-- :ga:meta Claude Code configuration and development guidelines -->
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -18,12 +20,14 @@ The grep-anchor pattern: `<comment-leader> :ga:payload`
 
 ## Common Anchor Types
 
-- `:ga:sec` - Security-critical code requiring review
+- `:ga:todo` - Work that needs doing
+- `:ga:security` - Security-critical code requiring review
 - `:ga:temp` - Temporary hacks to be removed  
-- `:ga:@cursor` - Delegation points for AI agents
-- `:ga:fix` - Conventional commit tie-ins
-- `:ga:placeholder` - Future work markers
+- `:ga:@agent` - Delegation points for AI agents
+- `:ga:@cursor` - Cursor-specific tasks
+- `:ga:context` - Important assumptions and constraints
 - `:ga:perf` - Performance-related sections
+- `:ga:bug` - Known issues to fix
 
 ## Search Commands
 
@@ -34,9 +38,16 @@ Using ripgrep (rg) is the primary way to work with grep-anchors:
 rg -n ":ga:"
 
 # Find specific anchor types
-rg -n ":ga:sec"           # security anchors
+rg -n ":ga:security"      # security anchors
 rg -n ":ga:temp"          # temporary code
+rg -n ":ga:todo"          # tasks to complete
+rg -n ":ga:@agent"        # AI agent instructions
 rg -n ":ga:.*perf"        # performance-related
+
+# Generate inventory (with options)
+.grepa/scripts/grepa-list.js              # Default: scan all files
+.grepa/scripts/grepa-list.js --ignore-md  # Ignore markdown files
+.grepa/scripts/grepa-list.js --ignore-examples  # Ignore code examples
 ```
 
 ## Current Repository Structure
@@ -44,11 +55,18 @@ rg -n ":ga:.*perf"        # performance-related
 ```
 grepa/
 ├── docs/                 # Documentation
-│   ├── styleguide/      # Tag conventions
-│   ├── project/         # Project specs
-│   └── about/           # Prior art
-├── .claude/             # AI agent configuration
-└── README.md            # Core concept overview
+│   ├── about/           # Prior art and history
+│   ├── conventions/     # Tag conventions and patterns
+│   ├── guides/          # User guides and tutorials
+│   ├── notation/        # Notation format details
+│   └── project/         # Project specifications
+├── .grepa/              # Grepa tools and scripts
+│   └── scripts/         # Automation scripts
+│       ├── grepa-list.js  # Inventory generator (Node.js)
+│       └── grepa-list.py  # Inventory generator (Python)
+├── README.md            # Core concept overview
+├── CLAUDE.md            # AI agent instructions
+└── llms.txt             # LLM-readable reference
 ```
 
 ## Development Guidelines

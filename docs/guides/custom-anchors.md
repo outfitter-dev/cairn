@@ -1,4 +1,6 @@
 # Custom Anchor Patterns
+<!-- :ga:tldr How to define and use custom anchor patterns instead of :ga: -->
+<!-- :ga:guide Guidance for teams wanting their own anchor pattern -->
 
 While `:ga:` (grep-anchor) is the recommended default, you can define your own anchor pattern that makes sense for your team or project.
 

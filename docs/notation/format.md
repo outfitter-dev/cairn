@@ -1,4 +1,6 @@
 # Grepa Notation Format Specification
+<!-- :ga:tldr Formal specification for grep-anchor notation format -->
+<!-- :ga:notation Technical format specification and grammar rules -->
 
 ## Core Format
 

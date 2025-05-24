@@ -1,4 +1,6 @@
 # Payload Types
+<!-- :ga:tldr Three payload types: bare tokens, JSON objects, and arrays -->
+<!-- :ga:notation Detailed payload type specifications and examples -->
 
 Payloads define what comes after the `:ga:` sigil. Grepa supports three payload types.
 

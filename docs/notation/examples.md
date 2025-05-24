@@ -1,4 +1,6 @@
 # Notation Examples
+<!-- :ga:tldr Pure notation examples showing format in various contexts -->
+<!-- :ga:notation Examples of grep-anchor notation across languages -->
 
 Pure notation examples showing the format in various contexts.
 

@@ -1,4 +1,6 @@
 # Quick Start Guide
+<!-- :ga:tldr Get started with grep-anchors in 5 minutes -->
+<!-- :ga:guide Essential quick start guide for new users -->
 
 Get started with grep-anchors in 5 minutes.
 

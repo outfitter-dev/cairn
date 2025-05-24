@@ -1,4 +1,6 @@
 # Progressive Enhancement Guide
+<!-- :ga:tldr How to adopt grep-anchors incrementally from simple to advanced -->
+<!-- :ga:guide Step-by-step adoption guide for individuals and teams -->
 
 Start simple, grow as needed. This guide shows how to adopt grep-anchors incrementally.
 

@@ -1,4 +1,6 @@
 # Advanced Grep-Anchor Patterns
+<!-- :ga:tldr Advanced patterns including JSON payloads and complex workflows -->
+<!-- :ga:guide Advanced usage patterns and sophisticated techniques -->
 
 This document covers advanced usage patterns for grep-anchors, including JSON payloads, complex metadata, and sophisticated workflows.
 

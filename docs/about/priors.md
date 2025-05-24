@@ -1,4 +1,6 @@
 # Historical Priors for `:ga:`-Style Anchors
+<!-- :ga:tldr Historical precedents and inspiration for grep-anchor patterns -->
+<!-- :ga:docs Analysis of prior art in code annotation systems -->
 
 *Version 0.1 – living document*
 

@@ -1,4 +1,6 @@
 # 🍇 Grepa (grep-anchor) - Better Code Navigation for AI Agents
+<!-- :ga:tldr Universal pattern for making codebases AI-navigable and greppable -->
+<!-- :ga:core Main project documentation and overview -->
 
 > **Make your codebase AI-navigable.** Grepa (`:ga:`) provides a universal pattern that AI agents can reliably find and humans can easily grep.
 

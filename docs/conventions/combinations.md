@@ -1,4 +1,6 @@
 # Tag Combinations
+<!-- :ga:tldr How to effectively combine multiple grep-anchor tags -->
+<!-- :ga:convention Guidelines for combining tags and multi-tag patterns -->
 
 How to combine multiple grep-anchor tags effectively.
 

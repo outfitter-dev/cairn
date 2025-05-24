@@ -1,4 +1,6 @@
 # Common Patterns
+<!-- :ga:tldr Essential grep-anchor patterns for any project -->
+<!-- :ga:convention Core patterns that work universally across codebases -->
 
 Core grep-anchor patterns that work across all projects.
 

@@ -1,4 +1,6 @@
 # Grep-Anchor Examples
+<!-- :ga:tldr Real-world examples of grep-anchor usage patterns -->
+<!-- :ga:example Comprehensive examples for AI agents and developers -->
 
 *Real-world patterns for AI agents and developers*
 

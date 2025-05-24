@@ -1,4 +1,6 @@
 # Domain-Specific Patterns
+<!-- :ga:tldr Specialized patterns for specific technical domains -->
+<!-- :ga:convention Domain-specific tags for security, performance, and more -->
 
 Specialized tags for specific technical domains and concerns.
 

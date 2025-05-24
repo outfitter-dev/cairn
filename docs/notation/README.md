@@ -1,4 +1,6 @@
 # Grepa Notation
+<!-- :ga:tldr Technical specification for grep-anchor notation format -->
+<!-- :ga:notation Core notation documentation and format rules -->
 
 The technical specification for grep-anchor notation - a lightweight marking system for code documentation.
 

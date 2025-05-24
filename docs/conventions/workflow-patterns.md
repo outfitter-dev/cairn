@@ -1,4 +1,6 @@
 # Workflow Patterns
+<!-- :ga:tldr Tags for managing work, collaboration, and process flow -->
+<!-- :ga:convention Patterns for team workflows and collaboration -->
 
 Tags for managing work, collaboration, and process flow.
 

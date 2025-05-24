@@ -1,4 +1,6 @@
 # Grepa Scripting Guide
+<!-- :ga:tldr Automate grep-anchor workflows with scripts and tools -->
+<!-- :ga:guide How to use and create scripts for grep-anchor automation -->
 
 Automate grep-anchor workflows with scripts from the `.grepa/scripts` directory.
 
@@ -28,12 +30,20 @@ The `grepa-list` script scans your codebase and generates a comprehensive invent
 - **File analysis**: Lists which files have the most anchors
 - **Custom anchors**: Works with any anchor pattern (`:ga:`, `:proj:`, etc.)
 - **JSONC output**: Generates `.grepa/grepa-list.json` with full details
+- **Flexible filtering**: 
+  - `--ignore-md`: Skip markdown files (useful for documentation-heavy repos)
+  - `--ignore-examples`: Skip anchors in code blocks (avoids counting examples)
 
 ### Usage
 
 ```bash
 # Basic usage (scans for :ga: anchors)
 .grepa/scripts/grepa-list.js
+
+# With options
+.grepa/scripts/grepa-list.js --ignore-md         # Ignore markdown files
+.grepa/scripts/grepa-list.js --ignore-examples   # Ignore code examples in docs
+.grepa/scripts/grepa-list.js --ignore-md --ignore-examples  # Both options
 
 # Custom anchor
 .grepa/scripts/grepa-list.py :tc:
@@ -43,6 +53,8 @@ The `grepa-list` script scans your codebase and generates a comprehensive invent
 
 ✅ Grep-anchor inventory generated!
 📍 Anchor pattern: :ga:
+🚫 Ignored markdown files
+🚫 Ignored code examples
 📊 Found 47 anchors across 12 files
 🏷️  Discovered 15 unique tags
 📄 Report saved to: .grepa/grepa-list.json

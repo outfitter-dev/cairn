@@ -1,4 +1,6 @@
 # Checkout to Main
+<!-- :ga:tldr AI command for safely switching to main branch -->
+<!-- :ga:meta Claude Code command for main branch checkout -->
 
 ## Instructions
 

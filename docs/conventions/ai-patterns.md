@@ -1,4 +1,6 @@
 # AI Patterns
+<!-- :ga:tldr Conventions for AI agent delegation and interaction -->
+<!-- :ga:convention Patterns specifically designed for AI agent workflows -->
 
 Conventions for AI agent delegation and interaction.
 
