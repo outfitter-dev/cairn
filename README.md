@@ -4,7 +4,15 @@
 
 > **A simple pattern for code navigation.** Grepa (`:ga:`) suggests a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
 
-## The Problem
+## 📚 Documentation
+
+- **[Quick Start](docs/guides/quick-start.md)** - Get started in 5 minutes
+- **[Examples](docs/examples.md)** - Real-world patterns and workflows  
+- **[Conventions](docs/conventions/)** - Common tags and best practices
+- **[Progressive Guide](docs/guides/progressive-enhancement.md)** - Adopt at your own pace
+- **[AI Patterns](docs/conventions/ai-patterns.md)** - Working with AI agents
+
+## 🤔 The Problem
 
 AI coding agents and developers face the same challenge: **How do you quickly navigate to the right spot in a codebase?**
 
@@ -21,7 +29,7 @@ Current approaches fail because they're:
 
 > **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
 
-## Proposed Solution: grep-anchor (`:ga:`)
+## 💡 Proposed Solution: grep-anchor (`:ga:`)
 
 A **grep-anchor** is a small, consistent marker that helps make comments more discoverable:
 
@@ -55,7 +63,7 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
 - **Monorepo?** You might use tags instead of different anchors: `:ga:auth-service`, `:ga:web-app`
 - **Document your choice** - If not using `:ga:`, it helps to note it in your README
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Start Simple
 - `:ga:todo` - Mark work that needs doing
@@ -92,7 +100,7 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
   // :ga:tmp,ctx remove after Redis upgrade
   ```
 
-## Core Patterns
+## 🎯 Core Patterns
 
 | Pattern | Purpose | Example |
 |---------|---------|---------|
@@ -103,7 +111,7 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
 | `:ga:sec` | Security concerns | `// :ga:sec validate all inputs` |
 | `:ga:tmp` | Temporary code | `// :ga:tmp remove after v2.0` |
 
-## Progressive Enhancement
+## 📈 Progressive Enhancement
 
 ### Level 1: Basic TODO Migration
 Start by enhancing your existing TODOs:
@@ -128,7 +136,7 @@ Add metadata when needed:
 // :ga:owner(@alice) payment integration
 ```
 
-## Example AI Agent Workflow
+## 🤖 Example AI Agent Workflow
 
 ### 1. Human marks the spot:
 ```python
@@ -169,7 +177,7 @@ def create_user(self, email: str, name: str):
     return self.user_repo.create(email=email, name=name)
 ```
 
-## Potential Benefits
+## ✨ Potential Benefits
 
 ### For AI Agents
 - **Reliable navigation**: Consistent pattern that's less likely to match prose
@@ -186,7 +194,7 @@ def create_user(self, email: str, name: str):
 - **Tool-friendly**: Works with grep, ripgrep, ag, and any search tool
 - **Adaptable**: Can evolve with changing needs
 
-## Common Patterns
+## 🔧 Common Patterns
 
 ### Security & Quality
 - `:ga:sec` - Security-critical code
@@ -212,7 +220,7 @@ def create_user(self, email: str, name: str):
 - `:ga:prompt` - AI instructions
 - `:ga:review` - AI should review
 
-## Escape Hatch
+## 🚪 Escape Hatch
 
 If you need to remove all grepa markers:
 
@@ -227,7 +235,7 @@ rg ":ga:.*$"
 find . -type f -exec sed -i.bak 's/:ga:[^*]*//g' {} +
 ```
 
-## Quick Reference
+## 📋 Quick Reference
 
 ```bash
 # Find everything
@@ -256,7 +264,7 @@ rg ":ga:" src/
 rg ":ga:(\w+)" -o | sort | uniq -c
 ```
 
-## Getting Started
+## 🎬 Getting Started
 
 1. **Try it now**: Add `// :ga:todo` to something in your code
 2. **Search for it**: Run `rg ":ga:"` 
@@ -265,7 +273,7 @@ rg ":ga:(\w+)" -o | sort | uniq -c
 
 **The goal is discoverability.** Start simple and let your patterns evolve with your needs.
 
-## Docs
+## 📖 Docs
 
 ### Core Documentation
 - [Quick Start Guide](docs/guides/quick-start.md) - Get started with grep-anchors in 5 minutes
