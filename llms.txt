@@ -42,6 +42,11 @@ Key principles:
 rg ":ga:"              # All anchors
 rg ":ga:security"      # Security concerns
 rg ":ga:@agent"        # AI tasks
+
+# Context searching (find related tags)
+rg -B1 -A1 ":ga:security"  # Show 1 line before/after
+rg -C2 ":ga:todo"          # Show 2 lines context
+rg -B2 -A2 ":ga:security" | rg ":ga:(security|todo)"
 ```
 
 ## Tag Reference
@@ -62,9 +67,13 @@ rg ":ga:@agent"        # AI tasks
 
 **Documentation:**
 - `api` - Public interfaces
-- `docs` - Documentation needed
+- `docs` - Documentation needed  
 - `example` - Usage examples
 - `business` - Business logic
+- `tldr` - Brief summary (often in HTML comments)
+- `core` - Core concepts
+- `guide` - How-to guides
+- `spec` - Specifications
 
 **Management:**
 - `issue(ID)` - Link to issue tracker
@@ -159,6 +168,13 @@ rg ":ga:.*security"    # All security issues
 # :ga:github(#789)
 ```
 
+### HTML Comments (for markdown)
+```markdown
+<!-- :ga:tldr Quick summary of the document -->
+<!-- :ga:core Essential concept explanation -->
+<!-- :ga:guide Step-by-step instructions -->
+```
+
 ## Best Practices
 
 1. **Separate concerns**: Use multiple comments for distinct topics
@@ -168,6 +184,7 @@ rg ":ga:.*security"    # All security issues
 5. **Be specific**: "validate UUID" not just "validate"
 6. **Link resources**: `:ga:docs(RFC-7231)`
 7. **Stay consistent**: Document team patterns
+8. **Use HTML comments in markdown**: `<!-- :ga:tldr summary -->` for non-rendered anchors
 
 ## Implementation
 
@@ -190,6 +207,21 @@ fi
 ### CI/CD
 Check for critical issues in pull requests.
 
+### grepa-list inventory tool
+```bash
+# Generate inventory of all anchors
+.grepa/scripts/grepa-list.py
+
+# Ignore markdown files  
+.grepa/scripts/grepa-list.py --ignore md
+
+# Ignore code examples in markdown
+.grepa/scripts/grepa-list.py --ignore-examples
+
+# Use custom config
+.grepa/scripts/grepa-list.py --config myconfig.json
+```
+
 ## Grammar
 
 ```ebnf
@@ -210,7 +242,19 @@ bare    ::= "@"? [A-Za-z0-9_.-]+
 
 ## Quick Reference
 
-Find all anchors: `rg ":ga:"`
-Remove all anchors: `find . -type f -exec sed -i.bak 's/:ga:[^*]*//g' {} +`
+```bash
+# Find all anchors
+rg ":ga:"
+
+# Find with context
+rg -C2 ":ga:security"     # 2 lines before/after
+rg -B3 -A3 ":ga:todo"     # 3 lines before, 3 after
+
+# Find in markdown (including HTML comments)  
+rg "<!-- :ga:" --type md
+
+# Remove all anchors (backup first!)
+find . -type f -exec sed -i.bak 's/:ga:[^*]*//g' {} +
+```
 
 Remember: The goal is discoverability. Start simple, grow naturally. 
