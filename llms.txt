@@ -64,14 +64,26 @@ rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
 - `perf` - Performance concerns
 - `bug` - Known issues
 - `debt` - Technical debt
+- `fix` / `fixme` - Broken code needing immediate fix
 - `error` - Error handling needed
 - `test` - Testing requirements
+- `breaking` - Breaking API changes
+- `freeze` - Code that must not be modified
+- `review` - Needs human review
+- `config` - Configuration values
+
+**Risk & Severity:**
+- `warn` / `warning` - Potential issues or gotchas
+- `crit` / `critical` - Critical code paths
+- `unsafe` - Dangerous operations
+- `danger` - Extremely risky code
 
 **Documentation:**
 - `api` - Public interfaces
 - `docs` - Documentation needed  
 - `example` - Usage examples
 - `business` - Business logic
+- `meta` - Metadata about files/scripts
 - `tldr` - Brief summary (often in HTML comments)
 - `core` - Core concepts
 - `guide` - How-to guides

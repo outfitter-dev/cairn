@@ -91,6 +91,80 @@ Why? Because you'll type these hundreds of times. Every character counts.
 // :ga:debt needs proper error handling
 ```
 
+### `:ga:fix` / `:ga:fixme`
+**Purpose**: Broken code needing immediate attention
+**Usage**: More urgent than bug or todo - this is actively broken
+```python
+# :ga:fix null pointer exception here
+# :ga:fixme race condition in auth flow
+```
+
+### `:ga:breaking`
+**Purpose**: Breaking changes to APIs or interfaces
+**Usage**: Mark changes that will break compatibility
+```typescript
+// :ga:breaking removed legacy auth method in v3.0
+// :ga:breaking changed return type from string to object
+```
+
+### `:ga:freeze`
+**Purpose**: Code that must not be modified
+**Usage**: Critical code, external dependencies, legal requirements
+```go
+// :ga:freeze regulatory compliance - do not modify
+// :ga:freeze external API contract - must match exactly
+```
+
+### `:ga:review`
+**Purpose**: Code needing human review before shipping
+**Usage**: Complex logic, security-sensitive, architectural decisions
+```rust
+// :ga:review ensure this handles all edge cases
+// :ga:review security team must approve this approach
+```
+
+### `:ga:config`
+**Purpose**: Configuration values or settings
+**Usage**: Values that might need environment-specific changes
+```javascript
+// :ga:config default timeout is 30s
+// :ga:config production uses different endpoint
+```
+
+## Risk & Severity Indicators
+
+### `:ga:warn` / `:ga:warning`
+**Purpose**: Potential issues or risky code
+**Usage**: Code that works but has risks or gotchas
+```python
+# :ga:warn this assumes sorted input
+# :ga:warning rate limit not enforced here
+```
+
+### `:ga:crit` / `:ga:critical`
+**Purpose**: Critical code requiring extreme care
+**Usage**: System-critical paths, data integrity, financial calculations
+```go
+// :ga:crit payment processing - must be idempotent
+// :ga:critical failover logic - test thoroughly
+```
+
+### `:ga:unsafe`
+**Purpose**: Potentially dangerous operations
+**Usage**: Memory operations, concurrency, security boundaries
+```rust
+// :ga:unsafe raw pointer manipulation
+// :ga:unsafe bypasses permission checks for admin
+```
+
+### `:ga:danger`
+**Purpose**: Extremely risky code that could cause major issues
+**Usage**: Data deletion, irreversible operations, system-wide effects
+```javascript
+// :ga:danger deletes all user data - no recovery
+// :ga:danger modifies production database directly
+```
+
 ## Documentation & API
 
 ### `:ga:api`
@@ -107,6 +181,15 @@ Why? Because you'll type these hundreds of times. Every character counts.
 ```go
 // :ga:docs explain rate limiting algorithm
 // :ga:docs add usage examples
+```
+
+### `:ga:meta`
+**Purpose**: Metadata about files, scripts, or generated content
+**Usage**: Configuration files, generated code, script purposes
+```javascript
+// :ga:meta Generated file - DO NOT EDIT MANUALLY
+// :ga:meta Configuration for production environment
+/* :ga:meta Script to generate security audit reports */
 ```
 
 ## Project Management

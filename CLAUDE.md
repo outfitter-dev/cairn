@@ -12,6 +12,10 @@ Currently undergoing an incremental rebuild (January 2025). The project is being
 
 Grepa is a specification for **grep-anchors** - a standardized way to mark important code locations using the `:ga:` sigil in comments. This allows both humans and AI agents to quickly find relevant code sections using simple grep commands.
 
+## Important Notes
+
+- This repository uses `grepa` grep-anchors (`:ga:`). Use @llms.txt for how to use.
+
 ## Core Concept
 
 The grep-anchor pattern: `<comment-leader> :ga:payload`
@@ -20,18 +24,46 @@ The grep-anchor pattern: `<comment-leader> :ga:payload`
 
 ## Common Anchor Types
 
-- `:ga:tldr` - Brief summary/overview (use at function/class start)
+### Essential Patterns
+- `:ga:tldr` - Brief summary/overview (use at function/class/doc start)
 - `:ga:todo` - Work that needs doing
 - `:ga:sec` - Security-critical code requiring review
-- `:ga:tmp` - Temporary hacks to be removed  
-- `:ga:@agent` - Delegation points for AI agents (generic)
+- `:ga:tmp` - Temporary hacks to be removed
+- `:ga:ctx` - Important context, assumptions, and constraints
+- `:ga:@agent` - AI agent instructions (generic)
 - `:ga:@cursor` - Cursor-specific tasks
 - `:ga:@claude` - Claude-specific tasks
-- `:ga:ctx` - Important assumptions and constraints
+
+### Quality & Management
 - `:ga:perf` - Performance-related sections
 - `:ga:bug` - Known issues to fix
+- `:ga:debt` - Technical debt markers
+- `:ga:fix` / `:ga:fixme` - Broken code needing immediate fix
+- `:ga:test` - Testing requirements
+- `:ga:api` - Public interfaces
+- `:ga:business` - Business logic documentation
+- `:ga:breaking` - Breaking API changes
+- `:ga:freeze` - Code that must not be modified
+- `:ga:review` - Needs human review
+- `:ga:config` - Configuration values
 
-**Tag Philosophy**: Keep tags terse. You'll type these hundreds of times, so `sec` beats `security`, `ctx` beats `context`, `tmp` beats `temp`.
+### Risk & Severity
+- `:ga:warn` - Potential issues or gotchas
+- `:ga:crit` - Critical code paths
+- `:ga:unsafe` - Dangerous operations
+- `:ga:danger` - Extremely risky code
+
+### Advanced Patterns
+- `:ga:issue(123)` - Link to issue tracker
+- `:ga:owner(@person)` - Assign responsibility
+- `:ga:deadline(2024-03-01)` - Time constraints
+- `:ga:depends(service-name)` - Dependencies
+
+### Tag Philosophy
+- Keep tags terse when possible (less than 8 chars)
+  - `sec` beats `security`
+  - `ctx` beats `context`
+  - `tmp` beats `temp`
 
 ## Search Commands
 
@@ -52,6 +84,12 @@ rg -n ":ga:.*perf"        # performance-related
 rg -B2 -A2 ":ga:sec"      # 2 lines before and after
 rg -C3 ":ga:todo"         # 3 lines context
 
+# Find related tags nearby
+rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
+
+# Find in markdown (including HTML comments)
+rg "<!-- :ga:" --type md
+
 # Generate inventory (with options)
 scripts/inventory.js              # Default: scan all files
 scripts/inventory.js --ignore-md  # Ignore markdown files
@@ -64,18 +102,35 @@ scripts/inventory.js --ignore-examples  # Ignore code examples
 grepa/
 ├── docs/                 # Documentation
 │   ├── about/           # Prior art and history
+│   │   └── priors.md    # Related concepts and inspiration
 │   ├── conventions/     # Tag conventions and patterns
+│   │   ├── README.md    # Convention overview
+│   │   ├── common-patterns.md     # Essential tags
+│   │   ├── ai-patterns.md         # AI agent patterns
+│   │   ├── workflow-patterns.md   # Task tracking
+│   │   ├── domain-specific.md     # Framework patterns
+│   │   └── combinations.md        # Multiple tags usage
 │   ├── guides/          # User guides and tutorials
-│   ├── notation/        # Notation format details
+│   │   ├── quick-start.md         # 5-minute intro
+│   │   ├── progressive-enhancement.md  # Adoption levels
+│   │   ├── custom-anchors.md      # Custom sigils
+│   │   └── scripting.md           # Automation tools
+│   ├── notation/        # Technical format spec
+│   │   ├── README.md    # Notation overview
+│   │   ├── format.md    # Syntax specification
+│   │   ├── payloads.md  # Payload structures
+│   │   └── examples.md  # Cross-language examples
 │   ├── project/         # Project specifications
-│   ├── advanced-patterns.md  # Complex usage scenarios
-│   └── what-ifs.md      # Vision for AI-native development
+│   │   └── specs/       # Version specifications
+│   ├── examples.md      # Real-world usage
+│   ├── advanced-patterns.md  # Complex scenarios
+│   └── what-ifs.md      # AI-native vision
 ├── scripts/             # Automation scripts
 │   ├── inventory.js     # Inventory generator (Node.js)
 │   └── inventory.py     # Inventory generator (Python)
-├── README.md            # Core concept overview
-├── CLAUDE.md            # AI agent instructions
-└── llms.txt             # LLM-readable reference
+├── README.md            # Main documentation with links
+├── CLAUDE.md            # AI agent instructions (this file)
+└── llms.txt             # LLM-readable quick reference
 ```
 
 ## Development Guidelines
@@ -91,10 +146,26 @@ The following packages exist in the archive branch and may be reintroduced:
 - @grepa/cli - Command-line interface
 - Additional integrations (ESLint, VS Code, etc.)
 
-## Contributing
+## Best Practices for This Repository
+
+### Using Grep-Anchors
+1. **Separate concerns**: Use multiple comments for distinct topics
+2. **Line limits**: Keep under ~80 chars for readable grep output
+3. **Layer carefully**: Combine tags only when closely related
+4. **Be specific**: "validate UUID" not just "validate"
+5. **Use HTML comments in markdown**: `<!-- :ga:tldr summary -->` for non-rendered anchors
+
+### Contributing
 
 When working on this project:
 1. Always use conventional commits
 2. Work on feature branches off main
-3. Use grep-anchors in any new code (`:ga:tldr` for functions)
+3. Use grep-anchors as comments in any new code or when you find code that doesn't yet have them
 4. Focus on simplicity and grep-ability
+5. Run inventory tool before commits to check anchor health
+
+### Documentation Standards
+- All markdown files should have `<!-- :ga:tldr -->` at the top
+- Use contextual tags like `<!-- :ga:guide -->` or `<!-- :ga:spec -->`
+- Keep documentation focused and scannable
+- Link related docs for navigation
