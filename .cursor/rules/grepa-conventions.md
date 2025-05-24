@@ -1,320 +1,178 @@
 ---
-description: "How to search and navigate using Grepa grep-anchors effectively"
+description: "How to write effective grep-anchors in your codebase"
 alwaysApply: true
 ---
 
-# Grepa Search and Navigation Guide
+# Grepa Writing Conventions
 
-This codebase uses grep-anchors (`:ga:` patterns) as a universal navigation system. Understanding how to search and utilize these anchors enables rapid code discovery, context gathering, and intelligent navigation for both development and AI-assisted tasks.
+This guide explains how to write grep-anchors (`:ga:` patterns) effectively in your codebase. While `grepa-use.md` focuses on searching, this document covers the conventions for adding anchors to your code.
 
-## Core Search Philosophy
+## Core Writing Principles
 
-Grep-anchors transform the codebase into a searchable knowledge graph. Every `:ga:` marker is a discoverable entry point that provides immediate context about the surrounding code. The search patterns are designed to be:
-- **Compositional** - Combine searches to find intersections
-- **Contextual** - Always show surrounding code
-- **Progressive** - Start broad, refine as needed
+### 1. Keep Tags Terse
+Shorter is better. Every character counts when you're writing hundreds of these:
+- ✅ `sec` not `security`
+- ✅ `ctx` not `context`  
+- ✅ `tmp` not `temporary`
+- ✅ `perf` not `performance`
 
-## Essential Search Patterns
+### 2. One Line, One Concern
+Each anchor should address a single, specific concern:
+```python
+# ✅ GOOD: Clear, separate concerns
+# :ga:sec validate user permissions
+# :ga:ctx assumes user is authenticated
+# :ga:todo add rate limiting
 
-### Finding All Anchors
-
-The most basic search shows all navigation points:
-
-```bash
-rg ":ga:"                    # All anchors in the codebase
-rg ":ga:" --stats            # Summary with counts
-rg -t py ":ga:"              # Python files only
+# ❌ BAD: Multiple concerns mixed
+# :ga:sec,ctx,todo validate permissions assuming auth and add rate limiting
 ```
 
-### Tag-Specific Searches
+### 3. Be Specific in Descriptions
+After the tag, add a brief, specific description:
+```javascript
+// ✅ GOOD: Specific
+// :ga:todo implement JWT token refresh
+// :ga:sec sanitize HTML to prevent XSS
 
-Target specific concerns by searching for tags:
-
-```bash
-rg ":ga:todo"                # All pending work
-rg ":ga:sec"                 # Security-sensitive code
-rg ":ga:@agent"              # AI agent tasks
-rg ":ga:ctx"                 # Important context/assumptions
-rg ":ga:tmp"                 # Temporary code to remove
+// ❌ BAD: Vague
+// :ga:todo fix this
+// :ga:sec security issue
 ```
 
-### Context-Aware Searching
+## Essential Patterns to Use
 
-Always search with context to understand the surrounding code:
-
-```bash
-rg -C2 ":ga:sec"             # 2 lines before and after
-rg -B3 -A3 ":ga:todo"        # 3 lines before, 3 after
-rg -B5 -A10 ":ga:@agent"     # Asymmetric context for AI tasks
+### Starting Every Function/Class/Module
+Always begin significant code blocks with `:ga:tldr`:
+```python
+def process_payment(amount, card_token):
+    # :ga:tldr handles payment processing with Stripe API
+    # :ga:sec validate amount before charging
+    # :ga:ctx amount is in cents, not dollars
 ```
 
-## Advanced Search Techniques
-
-### Multi-Tag Searches
-
-Find code with multiple concerns:
-
-```bash
-# Security TODOs
-rg ":ga:sec" | rg "todo"
-
-# Performance issues in payment service
-rg ":ga:payment" | rg "perf"
-
-# All context for security code
-rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|ctx)"
+### Marking Work
+```javascript
+// :ga:todo implement error retry logic
+// :ga:@agent add input validation for email format
+// :ga:@claude optimize this query for performance
 ```
 
-### File-Scoped Investigation
-
-Understand all anchors in a specific file:
-
-```bash
-# All anchors in a file
-rg ":ga:" path/to/file.js
-
-# With full context
-rg -C5 ":ga:" path/to/file.js
-
-# Specific concerns in a file
-rg ":ga:(sec|todo)" path/to/file.js
+### Documenting Context
+```go
+// :ga:ctx this endpoint is rate-limited to 100 req/min
+// :ga:ctx assumes database uses UTC timestamps
+// :ga:ctx legacy system expects XML response
 ```
 
-### Pattern-Based Discovery
-
-Use regex for flexible searches:
-
-```bash
-# All issue references
-rg ":ga:issue\([^)]+\)"
-
-# Deadline markers
-rg ":ga:.*deadline"
-
-# Owner assignments
-rg ":ga:.*owner\(@\w+\)"
+### Security Markers
+```ruby
+# :ga:sec never log credit card numbers
+# :ga:sec use parameterized queries to prevent SQL injection
+# :ga:sec constant-time comparison to prevent timing attacks
 ```
 
-## AI Agent Workflow Patterns
-
-### Task Discovery
-
-When working as an AI agent, follow this systematic approach:
-
-1. **Find assigned tasks**:
-```bash
-rg ":ga:@agent"
+### Temporary Code
+```typescript
+// :ga:tmp remove after migration to v2 API
+// :ga:tmp hardcoded for demo, use env var
 ```
 
-2. **Gather context for each task**:
-```bash
-# Get surrounding context
-rg -B10 -A10 ":ga:@agent" specific_file.py
+## Advanced Writing Patterns
 
-# Find related security/context markers
-rg ":ga:(ctx|sec)" specific_file.py
+### Linking to Issues
+```python
+# :ga:issue(GH-123) performance degradation above 1000 users
+# :ga:issue(JIRA-456) customer reported bug
 ```
 
-3. **Check for dependencies**:
-```bash
-# Find related TODOs
-rg -B5 -A5 ":ga:todo" specific_file.py
-
-# Check for temporary code
-rg ":ga:tmp" specific_file.py
+### Assigning Ownership
+```javascript
+// :ga:owner(@alice) payment integration
+// :ga:owner(@backend-team) API endpoints
 ```
 
-### Context Building
-
-Before modifying code, build complete context:
-
-```bash
-# Step 1: Find the specific anchor
-rg ":ga:@agent implement validation" 
-
-# Step 2: Get all context in that file
-rg ":ga:" user_service.py
-
-# Step 3: Find related patterns in codebase
-rg ":ga:.*validation" --type py
-
-# Step 4: Check for existing examples
-rg -A20 "def validate" --type py
+### Setting Deadlines
+```go
+// :ga:deadline(2024-03-01) remove deprecated endpoint
+// :ga:deadline(Q2-2024) implement new auth system
 ```
 
-## Search Strategies by Use Case
-
-### Security Audit
-
-```bash
-# All security markers
-rg ":ga:sec" --stats
-
-# Security with context
-rg -C5 ":ga:sec"
-
-# Unaddressed security TODOs
-rg -B2 -A2 ":ga:sec" | rg ":ga:todo"
-
-# Security in specific services
-rg ":ga:auth.*sec|:ga:sec.*auth"
+### Marking Dependencies
+```ruby
+# :ga:depends(redis) for session storage
+# :ga:depends(auth-service) must be running
 ```
 
-### Technical Debt Assessment
+## Writing for Different Contexts
 
-```bash
-# All debt markers
-rg ":ga:debt"
-
-# Temporary code inventory
-rg ":ga:tmp" --stats
-
-# Performance issues
-rg ":ga:perf" -C3
-
-# Combined debt indicators
-rg ":ga:(debt|tmp|perf|bug)"
+### In Documentation (Markdown)
+Use HTML comments to keep anchors invisible:
+```markdown
+<!-- :ga:tldr Quick setup guide for new developers -->
+<!-- :ga:guide Step-by-step AWS deployment -->
+<!-- :ga:spec API v2 specification -->
 ```
 
-### Task Prioritization
-
-```bash
-# High-priority items
-rg ":ga:.*p0|:ga:priority.*high"
-
-# Deadline-driven work
-rg ":ga:.*deadline" -C2
-
-# Blocked or dependent tasks
-rg ":ga:.*block|:ga:.*depend"
+### In Configuration Files
+```yaml
+# :ga:config production database settings
+# :ga:sec contains sensitive credentials
+database:
+  host: prod.db.example.com
 ```
 
-### Documentation Gaps
-
-```bash
-# Missing documentation
-rg ":ga:docs"
-
-# API documentation needs
-rg ":ga:api" | rg -v "documented"
-
-# Example requests
-rg ":ga:example"
+### In Tests
+```python
+# :ga:test unit test for user validation
+# :ga:ctx mocks external API calls
+def test_user_validation():
+    pass
 ```
 
-## Monorepo Navigation
+## Best Practices
 
-### Service-Specific Searches
+### Do's
+- ✅ Add `:ga:tldr` to every significant function/class
+- ✅ Use `:ga:ctx` liberally - more context is always better
+- ✅ Be specific about security concerns with `:ga:sec`
+- ✅ Tag temporary code immediately with `:ga:tmp`
+- ✅ Use `:ga:@agent` or `:ga:@claude` for AI-delegatable work
 
-```bash
-# All auth service anchors
-rg ":ga:auth"
+### Don'ts
+- ❌ Don't combine unrelated concerns in one anchor
+- ❌ Don't use prose instead of tags (e.g., `:ga:this is broken`)
+- ❌ Don't create new tags without documenting them
+- ❌ Don't use long tag names when short ones exist
+- ❌ Don't forget to remove `:ga:tmp` markers
 
-# Payment security concerns
-rg ":ga:payment.*sec|:ga:sec.*payment"
+## Team-Specific Patterns
 
-# Shared component changes
-rg ":ga:shared"
+Document your team's custom patterns:
+```javascript
+// :ga:api public endpoint, maintain compatibility
+// :ga:migration database schema change
+// :ga:feature(dark-mode) feature flag controlled
+// :ga:experiment(ab-test-checkout) A/B test code
 ```
 
-### Cross-Service Dependencies
+## Monorepo Conventions
 
-```bash
-# Find service interactions
-rg ":ga:.*api" | rg -E "(auth|payment|user)"
-
-# Breaking changes
-rg ":ga:.*breaking"
-
-# Compatibility concerns
-rg ":ga:.*compat|:ga:ctx.*version"
+In monorepos, use service prefixes in tags:
+```python
+# :ga:auth,todo implement 2FA
+# :ga:payment,sec validate card numbers
+# :ga:shared,api maintain backwards compatibility
 ```
 
-## Integration with Development Tools
+## Writing Workflow
 
-### IDE Integration
-
-Configure your IDE to highlight grep-anchors:
-- Set up custom search patterns for `:ga:` markers
-- Create quick actions to jump to next/previous anchor
-- Add syntax highlighting for anchor patterns
-
-### Command-Line Aliases
-
-Create useful aliases for common searches:
-
-```bash
-alias ga='rg ":ga:"'
-alias ga-todo='rg ":ga:todo" -C2'
-alias ga-sec='rg ":ga:sec" -C3'
-alias ga-agent='rg ":ga:@agent" -B5 -A10'
-alias ga-ctx='rg ":ga:ctx"'
-```
-
-### Git Integration
-
-Find anchors in staged changes:
-
-```bash
-# Check staged files for TODOs
-git diff --cached | grep ":ga:todo"
-
-# Find security markers in branch
-git diff main...feature | grep ":ga:sec"
-```
-
-## Best Practices for Effective Search
-
-### Start Broad, Refine Narrow
-
-1. Begin with `rg ":ga:"` to understand scope
-2. Filter by specific tags
-3. Add context with `-C`, `-B`, `-A` flags
-4. Combine with other grep patterns
-
-### Use Context Liberally
-
-Always search with context - naked anchors without surrounding code provide limited value:
-
-```bash
-# GOOD: Provides understanding
-rg -C3 ":ga:sec"
-
-# POOR: Just locations
-rg -l ":ga:sec"
-```
-
-### Combine Multiple Passes
-
-Build comprehensive understanding through multiple searches:
-
-```bash
-# First pass: Find feature
-rg ":ga:.*payment"
-
-# Second pass: Security concerns
-rg ":ga:sec" payment/
-
-# Third pass: Full context
-rg -C10 ":ga:" payment/critical_path.py
-```
-
-### Document Search Patterns
-
-When working on specific features, document useful search combinations:
-
-```bash
-# Payment refactoring searches
-rg ":ga:payment" | rg -E "(debt|refactor|todo)"
-rg -C5 ":ga:ctx" payment/ | rg -i "assumption"
-```
+1. **When writing new code**: Add `:ga:tldr` first
+2. **When you see missing context**: Add `:ga:ctx`
+3. **When you spot issues**: Add `:ga:todo` or `:ga:bug`
+4. **When delegating**: Add `:ga:@agent` with clear instructions
+5. **Before committing**: Search for `:ga:tmp` to ensure none remain
 
 ## Remember
 
-Grep-anchors are your navigation system through the codebase. Effective searching:
-- Provides instant access to relevant code sections
-- Reveals hidden dependencies and assumptions
-- Enables systematic task discovery
-- Supports both human and AI navigation
-
-The power of `:ga:` patterns lies not just in marking code, but in the rich search capabilities they enable. Master these search patterns to navigate any Grepa-enabled codebase with confidence.
+The goal is to make your codebase navigable. Every `:ga:` anchor you add is a searchable entry point that helps both humans and AI understand your code better. Start simple, be consistent, and let the patterns grow organically with your needs.
