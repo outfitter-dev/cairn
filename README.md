@@ -21,7 +21,7 @@ Current approaches fail because they're:
 
 > **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
 
-## The Solution: grep-anchor (`:ga:`)
+## Proposed Solution: grep-anchor (`:ga:`)
 
 A **grep-anchor** is a tiny, unique marker that makes any comment instantly discoverable:
 
