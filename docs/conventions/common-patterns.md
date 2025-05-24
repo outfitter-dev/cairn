@@ -109,13 +109,24 @@ Core grep-anchor patterns that work across all projects.
 
 ## Combining Patterns
 
-Patterns work best when combined:
+Combine tags judiciously for closely related concerns:
 
 ```typescript
+// Good: closely related tags
 // :ga:security,todo validate inputs
 // :ga:perf,debt refactor this loop
+
+// Better: separate lines for clarity
+// :ga:security check for SQL injection
+// :ga:todo add input validation for email format
+// :ga:perf this loop processes 10k items inefficiently
+// :ga:debt extract into separate service
+
+// Good: issue tracking with description
 // :ga:temp,issue(#123) workaround until fixed upstream
-// :ga:api,docs,breaking v2 changes signature
+
+// Avoid: too many tags, hard to grep
+// :ga:api,docs,breaking,v2,urgent v2 changes signature
 ```
 
 ## Tips

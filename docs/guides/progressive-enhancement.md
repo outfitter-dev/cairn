@@ -20,6 +20,12 @@ rg ":ga:"
 
 That's it! You've made your first grep-anchor.
 
+## Custom Anchors (Optional)
+
+While this guide uses `:ga:` (the recommended default), teams can choose their own anchor pattern like `:proj:`, `:team:`, or `:myco:`. See the [Custom Anchors Guide](./custom-anchors.md) for details.
+
+**Important**: Pick one anchor and stick with it across your entire project.
+
 ## Level 1: TODO Migration
 
 If you already use TODO comments, enhance them gradually:
@@ -123,7 +129,7 @@ Define patterns that make sense for your team:
 Pick one file at a time:
 ```bash
 # See current TODOs in a file
-grep "TODO\|FIXME" src/auth.js
+grep "TODO" --exclude-dir=.git src/auth.js
 
 # Enhance them
 sed -i 's/TODO/TODO :ga:/g' src/auth.js

@@ -80,3 +80,20 @@ Tokens can be separated by:
 - No space between sigil and payload: `:ga:todo` ✓
 - Space after payload recommended: `:ga:todo implement cache` ✓
 - Leading/trailing spaces trimmed: ` :ga:todo ` → `:ga:todo`
+
+## Line Length Considerations
+
+For better grep results and readability:
+- Keep total line length under ~80 characters
+- Use separate comments for distinct concerns
+- Combine only closely related tags
+
+```javascript
+// Good: Concise, related tags
+// :ga:security,todo validate inputs
+
+// Better: Clear separation of concerns
+// :ga:security check user permissions
+// :ga:todo implement rate limiting
+// :ga:context 100 requests/minute limit
+```

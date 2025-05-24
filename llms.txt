@@ -1,0 +1,216 @@
+# Grepa (grep-anchor)
+
+> Grepa provides a universal pattern (`:ga:`) that makes codebases AI-navigable and grep-friendly. Drop tiny, searchable markers in comments so AI agents and developers can instantly navigate to the right spot in any codebase.
+
+## Core Concept
+
+Grep-anchors are unique, searchable markers placed in code comments using the pattern `:ga:payload`. The default anchor is `:ga:` but teams can define custom anchors like `:proj:` or `:team:`. The payload consists of tags that classify the code location.
+
+Key principles:
+- **One anchor per project** - Maintain consistency across your codebase
+- **Tags, not prose** - Use structured tags for reliable pattern matching
+- **Progressive adoption** - Start with one tag, expand as needed
+- **AI-first design** - Optimized for LLM navigation and understanding
+
+## Essential Patterns
+
+### Basic Usage
+```javascript
+// :ga:todo implement validation
+// :ga:security check user permissions
+// :ga:context assumes UTC timestamps
+// :ga:@agent write unit tests
+// :ga:temp remove after v2.0
+```
+
+### Combined Tags (use judiciously)
+```python
+# :ga:security,todo validate inputs  # Good: related concerns, concise
+# :ga:perf,debt refactor this loop   # Good: both about code quality
+```
+
+### Separate Comments (often better)
+```python
+# :ga:security check SQL injection vulnerabilities
+# :ga:todo add input validation for email format
+# :ga:context user emails must be unique in database
+# Better: each concern gets proper description
+```
+
+### Searching
+```bash
+rg ":ga:"              # All anchors
+rg ":ga:security"      # Security concerns
+rg ":ga:@agent"        # AI tasks
+```
+
+## Tag Reference
+
+**Core Tags:**
+- `todo` - Work that needs doing
+- `context` - Important assumptions/constraints
+- `security` - Security-critical code
+- `@agent` - AI agent instructions
+- `temp` - Temporary code to remove
+
+**Quality Tags:**
+- `perf` - Performance concerns
+- `bug` - Known issues
+- `debt` - Technical debt
+- `error` - Error handling needed
+- `test` - Testing requirements
+
+**Documentation:**
+- `api` - Public interfaces
+- `docs` - Documentation needed
+- `example` - Usage examples
+- `business` - Business logic
+
+**Management:**
+- `issue(ID)` - Link to issue tracker
+- `owner(@person)` - Assign responsibility
+- `priority` - Priority level (p0, p1, etc.)
+- `deadline(date)` - Time constraints
+
+## Custom Anchors
+
+While `:ga:` is recommended, teams can use custom patterns:
+- Choose 2-4 character anchors: `:tc:`, `:proj:`
+- Document in README
+- One anchor per codebase
+- For monorepos, use tags not different anchors
+
+## AI Agent Workflows
+
+### 1. Human marks location
+```python
+class UserService:
+    # :ga:context all emails must be unique
+    def create_user(self, email: str):
+        # :ga:@agent implement with validation
+        # :ga:security prevent duplicates
+        pass
+```
+
+### 2. AI finds work
+```bash
+rg ":ga:@agent"
+# user_service.py:4: # :ga:@agent implement with validation
+```
+
+### 3. AI reads context
+```bash
+rg ":ga:context|:ga:security" user_service.py
+# user_service.py:2: # :ga:context all emails must be unique
+# user_service.py:5: # :ga:security prevent duplicates
+```
+
+### 4. AI implements with understanding
+
+## Migration Strategies
+
+### From TODO comments
+```bash
+# Phase 1: Enhance existing
+sed -i 's/TODO:/TODO :ga:/g' **/*.js
+
+# Phase 2: Pure anchors
+sed -i 's/TODO :ga:/:ga:todo/g' **/*.js
+```
+
+### Progressive adoption
+1. Start with `:ga:todo`
+2. Add `:ga:context` for clarity
+3. Use `:ga:@agent` for AI
+4. Link with `:ga:issue(123)`
+
+## Monorepo Patterns
+
+Use tags for service namespacing:
+```javascript
+// :ga:auth,todo implement OAuth
+// :ga:payment,security validate amounts
+// :ga:shared,api maintain compatibility
+```
+
+Search patterns:
+```bash
+rg ":ga:auth"          # Auth service only
+rg ":ga:.*security"    # All security issues
+```
+
+## Advanced Patterns
+
+### JSON metadata (optional)
+```javascript
+// :ga:{"deadline":"2024-03-01","owner":"@alice"}
+// :ga:{"epic":"user-auth","depends":["session"]}
+```
+
+### Arrays
+```javascript
+// :ga:["security","performance","breaking"]
+```
+
+### Issue linking
+```python
+# :ga:issue(123,{"status":"in-progress"})
+# :ga:jira(PROJ-456)
+# :ga:github(#789)
+```
+
+## Best Practices
+
+1. **Separate concerns**: Use multiple comments for distinct topics
+2. **Line limits**: Keep under ~80 chars for readable grep output
+3. **Layer tags carefully**: `:ga:security,todo` only when closely related
+4. **Add context liberally**: More context is better, use separate lines
+5. **Be specific**: "validate UUID" not just "validate"
+6. **Link resources**: `:ga:docs(RFC-7231)`
+7. **Stay consistent**: Document team patterns
+
+## Implementation
+
+### VS Code
+```json
+{
+  "todo-tree.regex.regex": ":ga:(\\w+)"
+}
+```
+
+### Git hooks
+```bash
+# Block commits with temp code
+if git diff --cached | grep -q ":ga:temp"; then
+  echo "Error: Remove :ga:temp markers"
+  exit 1
+fi
+```
+
+### CI/CD
+Check for critical issues in pull requests.
+
+## Grammar
+
+```ebnf
+anchor  ::= ":" sigil ":" payload
+sigil   ::= "ga" | custom
+payload ::= token ("," token)*
+token   ::= bare | json | array | function
+bare    ::= "@"? [A-Za-z0-9_.-]+
+```
+
+## Resources
+
+- [README](https://github.com/your-org/grepa/blob/main/README.md): Full documentation
+- [Examples](https://github.com/your-org/grepa/blob/main/docs/examples.md): Real-world patterns
+- [Custom Anchors](https://github.com/your-org/grepa/blob/main/docs/guides/custom-anchors.md): Define your own
+- [Progressive Guide](https://github.com/your-org/grepa/blob/main/docs/guides/progressive-enhancement.md): Adoption path
+- [Scripting](https://github.com/your-org/grepa/blob/main/docs/guides/scripting.md): Automation with grepa-list
+
+## Quick Reference
+
+Find all anchors: `rg ":ga:"`
+Remove all anchors: `find . -type f -exec sed -i.bak 's/:ga:[^*]*//g' {} +`
+
+Remember: The goal is discoverability. Start simple, grow naturally. 

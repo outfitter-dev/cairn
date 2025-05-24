@@ -38,6 +38,21 @@ rg ":ga:security"  # Jump to security concerns
 rg ":ga:todo"      # Find all tasks
 ```
 
+### Custom Anchors
+
+While `:ga:` is the recommended default, teams can choose their own anchor pattern:
+
+```javascript
+// :proj: for your project
+// :team: for your team  
+// :myco: for your company
+```
+
+**Best practices:**
+- **One anchor per project** - Don't mix different anchors in the same codebase
+- **Monorepo?** Use tags, not different anchors: `:ga:auth-service`, `:ga:web-app`
+- **Document your choice** - If not using `:ga:`, note it in your README
+
 ## Quick Start
 
 ### 1. Start Simple
@@ -220,6 +235,13 @@ rg ":ga:todo"
 rg ":ga:security"
 rg ":ga:@agent"
 
+# Find with context (lines before/after)
+rg -B1 -A1 ":ga:security"  # 1 line before and after
+rg -C2 ":ga:todo"          # 2 lines context
+
+# Find related tags nearby
+rg -B2 -A2 ":ga:security" | rg ":ga:(security|todo)"
+
 # Find combinations
 rg ":ga:security.*todo|:ga:todo.*security"
 
@@ -237,6 +259,19 @@ rg ":ga:(\w+)" -o | sort | uniq -c
 2. **Search for it**: Run `rg ":ga:"` 
 3. **Tell your AI**: "Look for :ga: markers to understand the codebase"
 4. **Evolve naturally**: Add patterns as you need them
+
+### Quick Setup
+
+Download the `.grepa` directory to get started with scripts and examples:
+```bash
+# Clone just the .grepa directory
+curl -L https://github.com/your-org/grepa/archive/main.tar.gz | tar -xz --strip=1 grepa-main/.grepa
+
+# Generate your first inventory
+.grepa/scripts/grepa-list.js
+```
+
+See the [Scripting Guide](docs/guides/scripting.md) for automation ideas.
 
 Remember: **The goal is to make your codebase discoverable.** Start simple, stay consistent, and let your patterns grow with your needs.
 

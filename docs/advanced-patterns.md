@@ -171,4 +171,55 @@ Define your own structured formats:
 4. **Keep it searchable**: Ensure your patterns are still greppable
 5. **Version your formats**: If schemas evolve, version them explicitly
 
-Remember: Advanced patterns are powerful but optional. Most use cases are well-served by simple tags. 
+Remember: Advanced patterns are powerful but optional. Most use cases are well-served by simple tags.
+
+## Monorepo Patterns
+
+In monorepos, maintain consistency by using one anchor with service/package tags:
+
+### Service Namespacing
+```javascript
+// In auth service
+// :ga:auth,todo implement OAuth flow
+// :ga:auth,security validate JWT expiry
+
+// In payment service
+// :ga:payment,todo add Stripe webhook
+// :ga:payment,perf optimize transaction queries
+
+// In shared libraries
+// :ga:shared,api maintain backward compatibility
+// :ga:shared,breaking v2.0 removes this method
+```
+
+### Cross-Service References
+```typescript
+// :ga:depends(auth-service) requires auth.validateToken
+// :ga:blocks(payment-service) breaking change affects checkout
+// :ga:see(shared/utils.ts) similar implementation
+```
+
+### Monorepo-Wide Searches
+```bash
+# All todos across services
+rg ":ga:.*todo"
+
+# Just auth service markers
+rg ":ga:auth"
+
+# Security issues in payment
+rg ":ga:payment.*security"
+
+# All breaking changes
+rg ":ga:.*breaking"
+```
+
+### Package-Specific Patterns
+```javascript
+// NPM workspace packages
+// :ga:@frontend/ui,todo add dark mode
+// :ga:@backend/api,perf cache this endpoint
+// :ga:@shared/types,breaking interface change
+```
+
+**Note**: Resist the temptation to use different anchors (`:auth:`, `:payment:`) for different services. One anchor with tags is much more searchable and maintainable.

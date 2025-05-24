@@ -14,9 +14,9 @@ Pure notation examples showing the format in various contexts.
 
 ### Multiple Tokens
 ```python
-# :ga:fix,sec
-# :ga:p0,urgent,breaking
-# :ga:todo,refactor,perf
+# :ga:fix,sec              # Good: closely related
+# :ga:p0,urgent            # Good: both priority indicators
+# :ga:todo,refactor,perf   # Consider splitting for clarity
 ```
 
 ### JSON Payloads
@@ -139,17 +139,36 @@ Pure notation examples showing the format in various contexts.
 
 ## Complex Examples
 
-### Multi-part Metadata
+### Multi-part Metadata (avoid long lines)
 ```javascript
+// Instead of:
 // :ga:bug,p0,@alice,{"blocker":true,"sprint":"2025-Q1"}
+
+// Better:
+// :ga:bug,p0 critical payment processing error
+// :ga:@alice assigned for immediate fix
+// :ga:{"blocker":true,"sprint":"2025-Q1"}
 ```
 
 ### Version Tracking
 ```javascript
+// Instead of:
 // :ga:introduced@v2.0,deprecated@v3.0,removed@v4.0
+
+// Better:
+// :ga:introduced@v2.0
+// :ga:deprecated@v3.0 use newMethod() instead  
+// :ga:removed@v4.0
 ```
 
-### Workflow Chain
+### Workflow Chain (separate for clarity)
 ```javascript
+// Instead of:
 // :ga:draft,needs-review,attn@senior,due@2025-01-30
+
+// Better:
+// :ga:draft API design document
+// :ga:needs-review architecture decisions
+// :ga:attn@senior security implications
+// :ga:due@2025-01-30
 ```

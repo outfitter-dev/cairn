@@ -25,6 +25,9 @@ Patterns for delegating work to AI agents and providing them context.
 ### [Progressive Enhancement Guide](../guides/progressive-enhancement.md)
 How to adopt grep-anchors incrementally, from simple to advanced.
 
+### [Custom Anchors Guide](../guides/custom-anchors.md)
+How to define your own anchor pattern (if not using `:ga:`).
+
 ### [Advanced Patterns](../advanced-patterns.md)
 JSON payloads, complex metadata, and sophisticated workflows.
 

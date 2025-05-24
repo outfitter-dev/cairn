@@ -47,11 +47,17 @@ Start with these essential tags:
 
 ## Combining Tags
 
-Use commas to combine multiple tags:
+Combine related tags with commas, or use separate lines for clarity:
 
 ```javascript
-// :ga:fix,sec,p0 critical security bug
-// :ga:todo,@bob,v2.1 assigned for next release
+// Good: related tags, concise
+// :ga:fix,sec critical security bug
+// :ga:todo,@bob implement for next release
+
+// Better: separate lines for different concerns
+// :ga:sec validate user permissions
+// :ga:todo implement rate limiting
+// :ga:@bob assigned for code review
 ```
 
 ## Mention Patterns

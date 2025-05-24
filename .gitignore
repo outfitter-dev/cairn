@@ -39,3 +39,6 @@ coverage/
 
 # OS files
 Thumbs.db
+
+# Grepa generated files
+.grepa/grepa-list.json
