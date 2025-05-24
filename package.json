@@ -1,7 +1,7 @@
 {
   "name": "grepa",
   "version": "0.1.0",
-  "description": "Grep-anchor specification and tools for making codebases discoverable",
+  "description": "Grep-anchor specification for making codebases discoverable",
   "keywords": [
     "grep",
     "grep-anchors",
@@ -23,11 +23,6 @@
   "license": "MIT",
   "author": "Matt Galligan",
   "type": "module",
-  "scripts": {
-    "inventory": "node .grepa/scripts/inventory.js",
-    "inventory:py": "python3 .grepa/scripts/inventory.py",
-    "test": "echo \"No tests yet - using ripgrep directly\""
-  },
   "engines": {
     "node": ">=18.0.0"
   }

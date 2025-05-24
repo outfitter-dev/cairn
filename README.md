@@ -263,19 +263,6 @@ rg ":ga:(\w+)" -o | sort | uniq -c
 3. **Tell your AI**: "Look for :ga: markers to understand the codebase"
 4. **Evolve naturally**: Add patterns as you need them
 
-### Quick Setup
-
-Download the `.grepa` directory to get started with scripts and examples:
-```bash
-# Clone just the .grepa directory
-curl -L https://github.com/your-org/grepa/archive/main.tar.gz | tar -xz --strip=1 grepa-main/.grepa
-
-# Generate your first inventory
-scripts/inventory.js
-```
-
-See the [Scripting Guide](docs/guides/scripting.md) for automation ideas.
-
 Remember: **The goal is to make your codebase discoverable.** Start simple, stay consistent, and let your patterns grow with your needs.
 
 ## Docs
@@ -301,7 +288,6 @@ Remember: **The goal is to make your codebase discoverable.** Start simple, stay
 
 ### Advanced Topics
 - [Custom Anchors](docs/guides/custom-anchors.md) - Creating your own sigils
-- [Scripting](docs/guides/scripting.md) - Automation and analysis tools
 - [Advanced Patterns](docs/advanced-patterns.md) - Complex usage scenarios
 - [What Ifs](docs/what-ifs.md) - Vision for AI-native development
 
