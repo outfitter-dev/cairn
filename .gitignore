@@ -42,3 +42,6 @@ Thumbs.db
 
 # Grepa generated files
 .grepa/grepa-list.json
+
+# Test files
+test_detection.md
