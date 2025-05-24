@@ -20,14 +20,18 @@ The grep-anchor pattern: `<comment-leader> :ga:payload`
 
 ## Common Anchor Types
 
+- `:ga:tldr` - Brief summary/overview (use at function/class start)
 - `:ga:todo` - Work that needs doing
 - `:ga:sec` - Security-critical code requiring review
 - `:ga:tmp` - Temporary hacks to be removed  
-- `:ga:@agent` - Delegation points for AI agents
+- `:ga:@agent` - Delegation points for AI agents (generic)
 - `:ga:@cursor` - Cursor-specific tasks
+- `:ga:@claude` - Claude-specific tasks
 - `:ga:ctx` - Important assumptions and constraints
 - `:ga:perf` - Performance-related sections
 - `:ga:bug` - Known issues to fix
+
+**Tag Philosophy**: Keep tags terse. You'll type these hundreds of times, so `sec` beats `security`, `ctx` beats `context`, `tmp` beats `temp`.
 
 ## Search Commands
 
@@ -44,10 +48,14 @@ rg -n ":ga:todo"          # tasks to complete
 rg -n ":ga:@agent"        # AI agent instructions
 rg -n ":ga:.*perf"        # performance-related
 
+# Find with context (lines before/after)
+rg -B2 -A2 ":ga:sec"      # 2 lines before and after
+rg -C3 ":ga:todo"         # 3 lines context
+
 # Generate inventory (with options)
-.grepa/scripts/grepa-list.js              # Default: scan all files
-.grepa/scripts/grepa-list.js --ignore-md  # Ignore markdown files
-.grepa/scripts/grepa-list.js --ignore-examples  # Ignore code examples
+scripts/inventory.js              # Default: scan all files
+scripts/inventory.js --ignore-md  # Ignore markdown files
+scripts/inventory.js --ignore-examples  # Ignore code examples
 ```
 
 ## Current Repository Structure
@@ -59,11 +67,12 @@ grepa/
 │   ├── conventions/     # Tag conventions and patterns
 │   ├── guides/          # User guides and tutorials
 │   ├── notation/        # Notation format details
-│   └── project/         # Project specifications
-├── .grepa/              # Grepa tools and scripts
-│   └── scripts/         # Automation scripts
-│       ├── grepa-list.js  # Inventory generator (Node.js)
-│       └── grepa-list.py  # Inventory generator (Python)
+│   ├── project/         # Project specifications
+│   ├── advanced-patterns.md  # Complex usage scenarios
+│   └── what-ifs.md      # Vision for AI-native development
+├── scripts/             # Automation scripts
+│   ├── inventory.js     # Inventory generator (Node.js)
+│   └── inventory.py     # Inventory generator (Python)
 ├── README.md            # Core concept overview
 ├── CLAUDE.md            # AI agent instructions
 └── llms.txt             # LLM-readable reference
