@@ -4,15 +4,13 @@
 
 > **grepa** /ɡrɛp·ə/ — a four-character tag (`:ga:`) you drop in comments so humans **and** AI agents can `grep` straight to the right spot.
 
----
-
-## 1. The Problem
+## The Problem
 
 Even in well-structured repos it's painful to answer questions like:
 
-* *Where is the security-critical code?*
-* *What corners did we intentionally leave un-optimised for now?*
-* *Which lines must a release engineer double-check before merging a hot-fix?*
+- *Where is the security-critical code?*
+- *What corners did we intentionally leave un-optimised for now?*
+- *Which lines must a release engineer double-check before merging a hot-fix?*
 
 Today we rely on ad-hoc **TODOs**, scattered issue links, or tribal knowledge. Those signals are:
 
@@ -22,9 +20,7 @@ Today we rely on ad-hoc **TODOs**, scattered issue links, or tribal knowledge. T
 | 🗺️ Buried in huge files | `grep "TODO"` returns hundreds of hits.         |
 | 🌱 Quickly rot           | Comments stay after fixes, reviewers miss them. |
 
----
-
-## 2. The Concept – `grep-anchor`
+## The Concept – `grep-anchor`
 
 A **grep-anchor** is a tiny, predictable token that lives *only* inside comments:
 
@@ -32,8 +28,9 @@ A **grep-anchor** is a tiny, predictable token that lives *only* inside comments
 <comment-leader> :ga:payload
 ```
 
-* **`:ga:`** = the fixed, four-byte sigil (extremely rare in prose or code).
-* **payload**  = one or more *tokens* (see §4) that classify the line.
+- **`:ga:`** = a fixed, few-byte sigil (extremely rare in prose or code).
+  - or use `:<your-sigil>` if you want to tailor the sigil to your project.
+- **payload**  = one or more *tokens* (see §4) that classify the line.
 
 Because the pattern is unique, both shell scripts and LLM agents can jump directly to relevant code with a one-liner:
 
@@ -42,9 +39,7 @@ rg -n ":ga:"              # list every anchor
 rg -n ":ga:sec"           # only security-related anchors
 ```
 
----
-
-## 3. Quick Examples
+## Quick Examples
 
 | Intent                      | Anchor            | Comment example                                  |
 | --------------------------- | ----------------- | ------------------------------------------------ |
@@ -60,9 +55,7 @@ Need multiple tags? Separate them with commas or spaces:
 # :ga:perf,sec  optimise crypto loop
 ```
 
----
-
-## 4. Minimal Grammar
+## Minimal Grammar
 
 ```ebnf
 anchor   ::= ":ga:" payload
@@ -74,16 +67,14 @@ array    ::= "[" …comma list… "]"
 sep      ::= "," | "|" | whitespace+
 ```
 
-* **Bare tokens** simple strings: `sec`, `v0.2`, `@cursor`.
-* **Arrays / JSON** attach richer metadata when needed:
+- **Bare tokens** simple strings: `sec`, `v0.2`, `@cursor`.
+- **Arrays / JSON** attach richer metadata when needed:
 
   ```js
   // :ga:{"since":"v1.1","owner":"@security"}
   ```
 
----
-
-## 5. Using grep-anchors
+## Using grep-anchors
 
 ### Add an anchor
 
@@ -101,24 +92,24 @@ rg -n "^.*:ga:.*\bperf\b" --type ts,js
 
 ### Clean-up workflow (CI)
 
-* **Block** merges to `main` if `:ga:temp` is present.
-* **Warn** when `:ga:v` is older than the current release tag (rot guard).
+- **Block** merges to `main` if `:ga:temp` is present.
+- **Warn** when `:ga:v` is older than the current release tag (rot guard).
 
----
+## Maybe in the future…
 
-## 6. Future Directions
+- @grepa/core: a library for working with grep-anchors (parse, validate, lint, format, etc.)
+- @grepa/cli: an opinionated CLI tool for working with grep-anchors
+- @grepa/github: a GitHub Action for automatically adding grep-anchors to PRs
+- @grepa/eslint: an ESLint plugin for enforcing grep-anchors
+- @grepa/lsp: a Language Server Protocol for working with grep-anchors
+- @grepa/vscode: a VS Code extension for highlighting grep-anchors
+- @grepa/neovim: a NeoVim plugin for highlighting grep-anchors
 
-* VS Code / NeoVim extension for colour-highlighting `:ga:` lines.
-* GitHub Action `grepa-lint` for automatic policy checks.
-* Shared `grep-anchor.yml` dictionary at repo root to document project-specific tokens.
-
----
-
-## 7. Inspiration: Lessons from OpenAI Codex
+## Inspiration: Lessons from OpenAI Codex
 
 The idea for grep-anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
 
-> *"Make your codebase discoverable — a well-named and organised tree lets Codex navigate the filesystem as quickly as a brand-new engineer might."*
+> *"Make your codebase discoverable — a well-named and organized tree lets Codex navigate the filesystem as quickly as a brand-new engineer might."*
 
 They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `grep-anchor.yml` dictionary.
 
@@ -126,5 +117,5 @@ That mindset — pick a unique string, grep it everywhere, document the contract
 
 ### Sources
 
-* **Blog & transcript**: [latent.space/p/codex](https://www.latent.space/p/codex)
-* **Video**: [youtube.com/watch?v=LIHP4BqwSw0](https://www.youtube.com/watch?v=LIHP4BqwSw0)
+- **Blog & transcript**: [latent.space/p/codex](https://www.latent.space/p/codex)
+- **Video**: [youtube.com/watch?v=LIHP4BqwSw0](https://www.youtube.com/watch?v=LIHP4BqwSw0)
