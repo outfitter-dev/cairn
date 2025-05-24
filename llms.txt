@@ -9,6 +9,7 @@ Grep-anchors are unique, searchable markers placed in code comments using the pa
 Key principles:
 - **One anchor per project** - Maintain consistency across your codebase
 - **Tags, not prose** - Use structured tags for reliable pattern matching
+- **Keep tags terse** - Prefer `sec` over `security`, `ctx` over `context`
 - **Progressive adoption** - Start with one tag, expand as needed
 - **AI-first design** - Optimized for LLM navigation and understanding
 
@@ -54,7 +55,7 @@ rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
 **Core Tags:**
 - `tldr` - Brief summary or overview ("Too Long; Didn't Read")
 - `todo` - Work that needs doing
-- `ctx` - Important assumptions/constraints
+- `ctx` - Important context/assumptions
 - `sec` - Security-critical code
 - `@agent` - AI agent instructions
 - `tmp` - Temporary code to remove
@@ -208,19 +209,19 @@ fi
 ### CI/CD
 Check for critical issues in pull requests.
 
-### grepa-list inventory tool
+### inventory tool
 ```bash
 # Generate inventory of all anchors
-.grepa/scripts/grepa-list.py
+scripts/inventory.py
 
 # Ignore markdown files  
-.grepa/scripts/grepa-list.py --ignore md
+scripts/inventory.py --ignore md
 
 # Ignore code examples in markdown
-.grepa/scripts/grepa-list.py --ignore-examples
+scripts/inventory.py --ignore-examples
 
 # Use custom config
-.grepa/scripts/grepa-list.py --config myconfig.json
+scripts/inventory.py --config myconfig.json
 ```
 
 ## Grammar
@@ -235,11 +236,11 @@ bare    ::= "@"? [A-Za-z0-9_.-]+
 
 ## Resources
 
-- [README](https://github.com/your-org/grepa/blob/main/README.md): Full documentation
-- [Examples](https://github.com/your-org/grepa/blob/main/docs/examples.md): Real-world patterns
-- [Custom Anchors](https://github.com/your-org/grepa/blob/main/docs/guides/custom-anchors.md): Define your own
-- [Progressive Guide](https://github.com/your-org/grepa/blob/main/docs/guides/progressive-enhancement.md): Adoption path
-- [Scripting](https://github.com/your-org/grepa/blob/main/docs/guides/scripting.md): Automation with grepa-list
+- [README](https://github.com/galligan/grepa/blob/main/README.md): Full documentation
+- [Examples](https://github.com/galligan/grepa/blob/main/docs/examples.md): Real-world patterns
+- [Custom Anchors](https://github.com/galligan/grepa/blob/main/docs/guides/custom-anchors.md): Define your own
+- [Progressive Guide](https://github.com/galligan/grepa/blob/main/docs/guides/progressive-enhancement.md): Adoption path
+- [Scripting](https://github.com/galligan/grepa/blob/main/docs/guides/scripting.md): Automation with inventory tool
 
 ## Quick Reference
 
