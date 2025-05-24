@@ -1,8 +1,8 @@
-# 🍇 Grepa (grep-anchor) - Code Navigation for AI Agents and Humans
+# 🍇 Grepa (grep-anchor) - Better Code Navigation for AI Agents
 <!-- :ga:tldr Universal pattern for making codebases AI-navigable and greppable -->
 <!-- :ga:core Main project documentation and overview -->
 
-> **A simple pattern for code navigation.** Grepa (`:ga:`) suggests a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
+> **Make your codebase AI-navigable.** Grepa (`:ga:`) provides a universal pattern that AI agents can reliably find and humans can easily grep.
 
 ## The Problem
 
@@ -21,9 +21,9 @@ Current approaches fail because they're:
 
 > **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
 
-## Proposed Solution: grep-anchor (`:ga:`)
+## The Solution: grep-anchor (`:ga:`)
 
-A **grep-anchor** is a small, consistent marker that helps make comments more discoverable:
+A **grep-anchor** is a tiny, unique marker that makes any comment instantly discoverable:
 
 ```javascript
 // :ga:todo add input validation
@@ -33,7 +33,7 @@ function processPayment(amount) {
 }
 ```
 
-Search examples:
+Find everything instantly:
 ```bash
 rg ":ga:"          # List all anchors
 rg ":ga:sec"  # Jump to security concerns
@@ -50,10 +50,10 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
 // :myco: for your company
 ```
 
-**Some suggestions:**
-- **One anchor per project** - Consider keeping the same anchor pattern throughout a codebase
-- **Monorepo?** You might use tags instead of different anchors: `:ga:auth-service`, `:ga:web-app`
-- **Document your choice** - If not using `:ga:`, it helps to note it in your README
+**Best practices:**
+- **One anchor per project** - Don't mix different anchors in the same codebase
+- **Monorepo?** Use tags, not different anchors: `:ga:auth-service`, `:ga:web-app`
+- **Document your choice** - If not using `:ga:`, note it in your README
 
 ## Quick Start
 
@@ -76,7 +76,7 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
   ```
 
 ### 3. Mark Important Context
-- `:ga:ctx` - Document important assumptions
+- `:ga:ctx` - Document critical assumptions
   ```go
   // :ga:ctx user_ids are always UUIDs, never integers
   func GetUser(userID string) (*User, error) {
@@ -113,7 +113,7 @@ Start by enhancing your existing TODOs:
 ```
 
 ### Level 2: Structured Tasks
-Or use standalone markers:
+Graduate to pure grepa markers:
 ```javascript
 // :ga:todo implement caching
 // :ga:task:auth add OAuth support
@@ -128,7 +128,7 @@ Add metadata when needed:
 // :ga:owner(@alice) payment integration
 ```
 
-## Example AI Agent Workflow
+## Real AI Agent Workflow
 
 ### 1. Human marks the spot:
 ```python
@@ -169,12 +169,12 @@ def create_user(self, email: str, name: str):
     return self.user_repo.create(email=email, name=name)
 ```
 
-## Potential Benefits
+## Why Grepa?
 
 ### For AI Agents
-- **Reliable navigation**: Consistent pattern that's less likely to match prose
+- **Reliable navigation**: Unique pattern that won't match prose
 - **Contextual understanding**: Find assumptions and constraints
-- **Clear task delegation**: Helps identify what needs doing
+- **Clear task delegation**: Know exactly what needs doing
 
 ### For Developers
 - **One command**: `rg ":ga:"` shows all important markers
@@ -184,7 +184,7 @@ def create_user(self, email: str, name: str):
 ### For Teams
 - **Shared language**: Consistent patterns across the codebase
 - **Tool-friendly**: Works with grep, ripgrep, ag, and any search tool
-- **Adaptable**: Can evolve with changing needs
+- **Future-proof**: Grows with AI capabilities
 
 ## Common Patterns
 
@@ -214,7 +214,7 @@ def create_user(self, email: str, name: str):
 
 ## Escape Hatch
 
-If you need to remove all grepa markers:
+Need to remove all grepa markers? Easy:
 
 ```bash
 # Find all files with :ga: markers
@@ -263,38 +263,20 @@ rg ":ga:(\w+)" -o | sort | uniq -c
 3. **Tell your AI**: "Look for :ga: markers to understand the codebase"
 4. **Evolve naturally**: Add patterns as you need them
 
-**The goal is discoverability.** Start simple and let your patterns evolve with your needs.
+### Quick Setup
 
-## Docs
+Download the `.grepa` directory to get started with scripts and examples:
+```bash
+# Clone just the .grepa directory
+curl -L https://github.com/your-org/grepa/archive/main.tar.gz | tar -xz --strip=1 grepa-main/.grepa
 
-### Core Documentation
-- [Quick Start Guide](docs/guides/quick-start.md) - Get started with grep-anchors in 5 minutes
-- [Examples](docs/examples.md) - Real-world grep-anchor usage patterns
-- [Progressive Enhancement](docs/guides/progressive-enhancement.md) - Three levels of adoption
+# Generate your first inventory
+.grepa/scripts/grepa-list.js
+```
 
-### Notation & Conventions
-- [Notation Overview](docs/notation/README.md) - Technical format specification
-- [Format Specification](docs/notation/format.md) - Detailed syntax rules
-- [Payload Rules](docs/notation/payloads.md) - How to structure tag payloads
-- [Examples](docs/notation/examples.md) - Notation examples across languages
+See the [Scripting Guide](docs/guides/scripting.md) for automation ideas.
 
-### Conventions & Patterns
-- [Conventions Overview](docs/conventions/README.md) - Usage patterns and best practices
-- [Common Patterns](docs/conventions/common-patterns.md) - Essential tags like `tldr`, `sec`, `tmp`
-- [AI Patterns](docs/conventions/ai-patterns.md) - Working with AI agents using `@cursor` and `@claude`
-- [Workflow Patterns](docs/conventions/workflow-patterns.md) - Task tracking and workflows
-- [Domain-Specific](docs/conventions/domain-specific.md) - Specialized patterns for frameworks
-- [Combinations](docs/conventions/combinations.md) - Using multiple tags effectively
-
-### Advanced Topics
-- [Custom Anchors](docs/guides/custom-anchors.md) - Creating your own sigils
-- [Advanced Patterns](docs/advanced-patterns.md) - Complex usage scenarios
-- [What Ifs](docs/what-ifs.md) - Vision for AI-native development
-
-### Project Information
-- [Prior Art](docs/about/priors.md) - Related concepts and inspiration
-- [V0 Specification](docs/project/specs/v0.md) - Initial specification
-- [V1 Specification](docs/project/specs/v1.md) - Current specification
+Remember: **The goal is to make your codebase discoverable.** Start simple, stay consistent, and let your patterns grow with your needs.
 
 ---
 

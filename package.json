@@ -1,0 +1,29 @@
+{
+  "name": "grepa",
+  "version": "0.1.0",
+  "description": "Grep-anchor specification for making codebases discoverable",
+  "keywords": [
+    "grep",
+    "grep-anchors",
+    "code-navigation",
+    "ai-navigation",
+    "documentation",
+    "developer-tools",
+    "ripgrep",
+    "code-search"
+  ],
+  "homepage": "https://github.com/galligan/grepa#readme",
+  "bugs": {
+    "url": "https://github.com/galligan/grepa/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/galligan/grepa.git"
+  },
+  "license": "MIT",
+  "author": "Matt Galligan",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

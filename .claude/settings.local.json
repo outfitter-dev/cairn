@@ -6,7 +6,10 @@
       "Bash(git push:*)",
       "Bash(git fetch:*)",
       "Bash(git merge:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm run inventory:py:*)",
+      "Bash(npm run inventory:*)",
+      "Bash(npm install)"
     ],
     "deny": []
   }
