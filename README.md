@@ -1,8 +1,8 @@
-# 🍇 Grepa (grep-anchor) - Better Code Navigation for AI Agents
+# 🍇 Grepa (grep-anchor) - Code Navigation for AI Agents and Humans
 <!-- :ga:tldr Universal pattern for making codebases AI-navigable and greppable -->
 <!-- :ga:core Main project documentation and overview -->
 
-> **Make your codebase AI-navigable.** Grepa (`:ga:`) provides a universal pattern that AI agents can reliably find and humans can easily grep.
+> **A simple pattern for code navigation.** Grepa (`:ga:`) suggests a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
 
 ## The Problem
 
@@ -23,7 +23,7 @@ Current approaches fail because they're:
 
 ## Proposed Solution: grep-anchor (`:ga:`)
 
-A **grep-anchor** is a tiny, unique marker that makes any comment instantly discoverable:
+A **grep-anchor** is a small, consistent marker that helps make comments more discoverable:
 
 ```javascript
 // :ga:todo add input validation
@@ -33,7 +33,7 @@ function processPayment(amount) {
 }
 ```
 
-Find everything instantly:
+Search examples:
 ```bash
 rg ":ga:"          # List all anchors
 rg ":ga:sec"  # Jump to security concerns
@@ -50,10 +50,10 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
 // :myco: for your company
 ```
 
-**Best practices:**
-- **One anchor per project** - Don't mix different anchors in the same codebase
-- **Monorepo?** Use tags, not different anchors: `:ga:auth-service`, `:ga:web-app`
-- **Document your choice** - If not using `:ga:`, note it in your README
+**Some suggestions:**
+- **One anchor per project** - Consider keeping the same anchor pattern throughout a codebase
+- **Monorepo?** You might use tags instead of different anchors: `:ga:auth-service`, `:ga:web-app`
+- **Document your choice** - If not using `:ga:`, it helps to note it in your README
 
 ## Quick Start
 
@@ -76,7 +76,7 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
   ```
 
 ### 3. Mark Important Context
-- `:ga:ctx` - Document critical assumptions
+- `:ga:ctx` - Document important assumptions
   ```go
   // :ga:ctx user_ids are always UUIDs, never integers
   func GetUser(userID string) (*User, error) {
@@ -113,7 +113,7 @@ Start by enhancing your existing TODOs:
 ```
 
 ### Level 2: Structured Tasks
-Graduate to pure grepa markers:
+Or use standalone markers:
 ```javascript
 // :ga:todo implement caching
 // :ga:task:auth add OAuth support
@@ -128,7 +128,7 @@ Add metadata when needed:
 // :ga:owner(@alice) payment integration
 ```
 
-## Real AI Agent Workflow
+## Example AI Agent Workflow
 
 ### 1. Human marks the spot:
 ```python
@@ -169,12 +169,12 @@ def create_user(self, email: str, name: str):
     return self.user_repo.create(email=email, name=name)
 ```
 
-## Why Grepa?
+## Potential Benefits
 
 ### For AI Agents
-- **Reliable navigation**: Unique pattern that won't match prose
+- **Reliable navigation**: Consistent pattern that's less likely to match prose
 - **Contextual understanding**: Find assumptions and constraints
-- **Clear task delegation**: Know exactly what needs doing
+- **Clear task delegation**: Helps identify what needs doing
 
 ### For Developers
 - **One command**: `rg ":ga:"` shows all important markers
@@ -184,7 +184,7 @@ def create_user(self, email: str, name: str):
 ### For Teams
 - **Shared language**: Consistent patterns across the codebase
 - **Tool-friendly**: Works with grep, ripgrep, ag, and any search tool
-- **Future-proof**: Grows with AI capabilities
+- **Adaptable**: Can evolve with changing needs
 
 ## Common Patterns
 
@@ -214,7 +214,7 @@ def create_user(self, email: str, name: str):
 
 ## Escape Hatch
 
-Need to remove all grepa markers? Easy:
+If you need to remove all grepa markers:
 
 ```bash
 # Find all files with :ga: markers
@@ -263,7 +263,7 @@ rg ":ga:(\w+)" -o | sort | uniq -c
 3. **Tell your AI**: "Look for :ga: markers to understand the codebase"
 4. **Evolve naturally**: Add patterns as you need them
 
-Remember: **The goal is to make your codebase discoverable.** Start simple, stay consistent, and let your patterns grow with your needs.
+**The goal is discoverability.** Start simple and let your patterns evolve with your needs.
 
 ## Docs
 
