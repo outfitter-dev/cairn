@@ -4,7 +4,25 @@
 
 Core grep-anchor patterns that work across all projects.
 
+## Tag Philosophy: Keep It Terse
+
+**Shorter is better.** Grep-anchors should be quick to type and easy to search:
+- ✅ `sec` not `security`
+- ✅ `perf` not `performance` 
+- ✅ `ctx` not `context`
+- ✅ `tmp` not `temporary`
+
+Why? Because you'll type these hundreds of times. Every character counts.
+
 ## Essential Patterns
+
+### `:ga:tldr`
+**Purpose**: Brief summary or overview ("Too Long; Didn't Read")
+**Usage**: Document key takeaways, function purposes, or section summaries
+```javascript
+// :ga:tldr validates user input and returns sanitized data
+// :ga:tldr handles all authentication flows for the app
+```
 
 ### `:ga:todo`
 **Purpose**: Work that needs to be done
@@ -14,21 +32,21 @@ Core grep-anchor patterns that work across all projects.
 // :ga:todo add unit tests
 ```
 
-### `:ga:context`
-**Purpose**: Important information that isn't obvious from the code
+### `:ga:ctx`
+**Purpose**: Important context that isn't obvious from the code
 **Usage**: Document assumptions, constraints, and critical knowledge
 ```python
-# :ga:context all timestamps are UTC
-# :ga:context user_ids are UUIDs, not integers
-# :ga:context this runs in a Lambda with 256MB RAM limit
+# :ga:ctx all timestamps are UTC
+# :ga:ctx user_ids are UUIDs, not integers
+# :ga:ctx this runs in a Lambda with 256MB RAM limit
 ```
 
-### `:ga:security`
+### `:ga:sec`
 **Purpose**: Security-critical code that needs careful attention
 **Usage**: Mark authentication, authorization, input validation, crypto
 ```go
-// :ga:security validate all inputs before SQL query
-// :ga:security ensure constant-time comparison
+// :ga:sec validate all inputs before SQL query
+// :ga:sec ensure constant-time comparison
 ```
 
 ### `:ga:@agent`
@@ -39,12 +57,12 @@ Core grep-anchor patterns that work across all projects.
 // :ga:@cursor write unit tests for edge cases
 ```
 
-### `:ga:temp`
+### `:ga:tmp`
 **Purpose**: Temporary code that should be removed
 **Usage**: Workarounds, quick fixes, migration code
 ```ruby
-# :ga:temp remove after v2.0 ships
-# :ga:temp workaround for Redis bug
+# :ga:tmp remove after v2.0 ships
+# :ga:tmp workaround for Redis bug
 ```
 
 ## Quality & Maintenance
@@ -115,17 +133,17 @@ Combine tags judiciously for closely related concerns:
 
 ```typescript
 // Good: closely related tags
-// :ga:security,todo validate inputs
+// :ga:sec,todo validate inputs
 // :ga:perf,debt refactor this loop
 
 // Better: separate lines for clarity
-// :ga:security check for SQL injection
+// :ga:sec check for SQL injection
 // :ga:todo add input validation for email format
 // :ga:perf this loop processes 10k items inefficiently
 // :ga:debt extract into separate service
 
 // Good: issue tracking with description
-// :ga:temp,issue(#123) workaround until fixed upstream
+// :ga:tmp,issue(#123) workaround until fixed upstream
 
 // Avoid: too many tags, hard to grep
 // :ga:api,docs,breaking,v2,urgent v2 changes signature
@@ -133,8 +151,9 @@ Combine tags judiciously for closely related concerns:
 
 ## Tips
 
-1. **Start with 3-5 patterns** - Don't try to use everything at once
-2. **Be consistent** - Pick a style and stick to it
-3. **Keep it searchable** - The whole point is grep-ability
-4. **Document your choices** - List your patterns in README
-5. **Let it evolve** - Add patterns as you need them
+1. **Start with tldr** - `:ga:tldr` for summaries is the most universally useful
+2. **Add todo and context** - These three cover 80% of use cases
+3. **Be consistent** - Pick a style and stick to it
+4. **Keep it searchable** - The whole point is grep-ability
+5. **Document your choices** - List your patterns in README
+6. **Let it evolve** - Add patterns as you need them

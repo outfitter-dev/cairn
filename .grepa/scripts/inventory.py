@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# :ga:meta grepa-list script - discovers all grep-anchors in your codebase
+# :ga:meta inventory script - discovers all grep-anchors in your codebase
 
 import json
 import subprocess
@@ -14,7 +14,7 @@ from typing import Dict, List, Tuple, Any, Optional
 
 # Configuration
 DEFAULT_ANCHOR = ':ga:'
-CONFIG_FILE = Path.cwd() / '.grepa' / 'grepa-list.config.json'
+CONFIG_FILE = Path.cwd() / '.grepa' / 'inventory.config.json'
 OUTPUT_FILE = Path.cwd() / '.grepa' / 'inventory.generated.json'
 
 # Precompiled regex patterns for performance
@@ -25,7 +25,7 @@ HEADING_PATTERN = re.compile(r'^#{1,6}\s+')
 
 
 def load_config() -> Dict[str, Any]:
-    """Load configuration from grepa-list.config.json if it exists."""
+    """Load configuration from inventory.config.json if it exists."""
     if CONFIG_FILE.exists():
         try:
             with open(CONFIG_FILE, 'r') as f:
@@ -156,7 +156,8 @@ def find_grep_anchors(anchor: str = DEFAULT_ANCHOR, ignore_patterns: List[str] =
     try:
         # Run ripgrep to find all anchors
         # -n: line numbers, -o: only matching, --no-heading: compact format
-        cmd = ['rg', '-n', '-o', f'{anchor}[^\\s]*', '--no-heading']
+        # Always exclude .git directory
+        cmd = ['rg', '-n', '-o', f'{anchor}[^\\s]*', '--no-heading', '-g', '!.git/']
         
         # Check if we should respect gitignore
         if config:
@@ -353,7 +354,7 @@ def main():
     config = load_config()
     
     # Parse command line arguments
-    parser = argparse.ArgumentParser(description='Discover all grep-anchors in your codebase')
+    parser = argparse.ArgumentParser(description='Generate inventory of all grep-anchors in your codebase')
     parser.add_argument('anchor', nargs='?', default=config.get('anchor', DEFAULT_ANCHOR), 
                         help=f'Custom anchor pattern (default: {config.get("anchor", DEFAULT_ANCHOR)})')
     parser.add_argument('--ignore', action='append', dest='ignore_patterns',

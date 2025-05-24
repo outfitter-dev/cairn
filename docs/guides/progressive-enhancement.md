@@ -59,12 +59,12 @@ Once comfortable with basic anchors, add context for clarity:
 # :ga:todo implement retry logic
 # becomes:
 # :ga:todo implement retry logic
-# :ga:context max 3 attempts with exponential backoff
+# :ga:ctx max 3 attempts with exponential backoff
 
-# :ga:security validate input
+# :ga:sec validate input
 # becomes:
-# :ga:security validate input
-# :ga:context prevent SQL injection and XSS
+# :ga:sec validate input
+# :ga:ctx prevent SQL injection and XSS
 ```
 
 ## Level 3: AI Agent Integration
@@ -77,7 +77,7 @@ Start delegating to AI agents:
 
 // With guidance
 // :ga:@agent implement pagination
-// :ga:context use cursor-based approach
+// :ga:ctx use cursor-based approach
 // :ga:requirement support both forward and backward
 
 // Specific agents
@@ -146,7 +146,7 @@ rg ":ga:" src/auth.js
 Adopt in one area first:
 ```bash
 # Start with security-critical code
-# Add :ga:security markers
+# Add :ga:sec markers
 
 # Then move to performance
 # Add :ga:perf markers
@@ -160,7 +160,7 @@ Adopt in one area first:
 Add anchors as you review:
 - See missing error handling? Add `:ga:error handle timeout`
 - Spot performance issue? Add `:ga:perf optimize query`
-- Notice assumption? Add `:ga:context assumes sorted input`
+- Notice assumption? Add `:ga:ctx assumes sorted input`
 
 ## Measuring Adoption
 
@@ -185,7 +185,7 @@ rg -o ":ga:(\w+)" -r '$1' | sort | uniq -c | sort -nr
 1. Start with `:ga:todo`
 2. Add `:ga:fixme` for bugs
 3. Add `:ga:@agent` for AI help
-4. Add `:ga:context` for clarity
+4. Add `:ga:ctx` for clarity
 
 ### For Teams
 1. Agree on 3-5 initial patterns
@@ -231,7 +231,7 @@ function processPayment(amount) {
 ```javascript
 function processPayment(amount) {
     // :ga:todo add validation
-    // :ga:context amount must be positive, max 10000
+    // :ga:ctx amount must be positive, max 10000
     chargeCard(amount);
 }
 ```
@@ -240,8 +240,8 @@ function processPayment(amount) {
 ```javascript
 function processPayment(amount) {
     // :ga:@agent add validation
-    // :ga:context amount must be positive, max 10000
-    // :ga:security prevent negative charges
+    // :ga:ctx amount must be positive, max 10000
+    // :ga:sec prevent negative charges
     chargeCard(amount);
 }
 ```
@@ -250,8 +250,8 @@ function processPayment(amount) {
 ```javascript
 function processPayment(amount) {
     // :ga:issue(PAY-456) add validation
-    // :ga:context amount must be positive, max 10000
-    // :ga:security prevent negative charges
+    // :ga:ctx amount must be positive, max 10000
+    // :ga:sec prevent negative charges
     chargeCard(amount);
 }
 ```

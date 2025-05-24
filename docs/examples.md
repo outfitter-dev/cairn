@@ -16,7 +16,7 @@
 
 ```javascript
 // :ga:@agent implement pagination
-// :ga:context use cursor-based pagination, not offset
+// :ga:ctx use cursor-based pagination, not offset
 // :ga:requirement handle empty results gracefully
 class PostsList {
   async fetchPosts(cursor?: string) {
@@ -27,18 +27,18 @@ class PostsList {
 ```
 
 ### Implementation Guidance
-- `:ga:context` - Critical information AI needs to know
+- `:ga:ctx` - Critical information AI needs to know
   - Document assumptions that aren't obvious from code
   - Explain business rules or constraints
   - Clarify architectural decisions
 
 ```python
-# :ga:context user_ids are UUIDs, not sequential integers
-# :ga:context all timestamps are UTC, convert for display only
+# :ga:ctx user_ids are UUIDs, not sequential integers
+# :ga:ctx all timestamps are UTC, convert for display only
 class UserService:
     # :ga:@agent implement with proper timezone handling
     def get_user_activity(self, user_id: str, date: datetime):
-        # :ga:security validate UUID format
+        # :ga:sec validate UUID format
         pass
 ```
 
@@ -50,7 +50,7 @@ class UserService:
 
 ```go
 // :ga:review check for race conditions
-// :ga:context concurrent access from multiple goroutines
+// :ga:ctx concurrent access from multiple goroutines
 func (c *Cache) Set(key string, value interface{}) {
     // :ga:todo add mutex protection
     c.data[key] = value
@@ -62,17 +62,17 @@ func (c *Cache) Set(key string, value interface{}) {
 ## 2. Security Patterns
 
 ### Input Validation
-- `:ga:security` - Mark security-critical code
+- `:ga:sec` - Mark security-critical code
   - Input sanitization points
   - Authentication boundaries
   - Sensitive data handling
 
 ```javascript
-// :ga:security validate all user inputs
-// :ga:context prevent SQL injection and XSS
+// :ga:sec validate all user inputs
+// :ga:ctx prevent SQL injection and XSS
 function updateUserProfile(userId, profileData) {
   // :ga:todo sanitize HTML content
-  // :ga:security check user owns this profile
+  // :ga:sec check user owns this profile
   const query = `UPDATE users SET profile = ? WHERE id = ?`;
   return db.execute(query, [profileData, userId]);
 }
@@ -86,13 +86,13 @@ function updateUserProfile(userId, profileData) {
 
 ```python
 # :ga:auth verify user permissions
-# :ga:security ensure proper scoping
+# :ga:sec ensure proper scoping
 @require_auth
 def delete_resource(resource_id: str, user: User):
-    # :ga:context only owners and admins can delete
+    # :ga:ctx only owners and admins can delete
     resource = Resource.get(resource_id)
     
-    # :ga:security prevent unauthorized access
+    # :ga:sec prevent unauthorized access
     if resource.owner_id != user.id and not user.is_admin:
         raise Forbidden("Cannot delete resource")
     
@@ -113,7 +113,7 @@ def delete_resource(resource_id: str, user: User):
 
 ```ruby
 # :ga:perf N+1 query detected
-# :ga:context each post triggers separate comment count query
+# :ga:ctx each post triggers separate comment count query
 def get_posts_with_stats
   posts = Post.all
   
@@ -137,7 +137,7 @@ end
 
 ```typescript
 // :ga:cache expensive calculation
-// :ga:context called on every request
+// :ga:ctx called on every request
 function calculatePricing(items: CartItem[]): number {
   // :ga:perf consider memoization
   // :ga:todo add Redis caching with TTL
@@ -153,18 +153,18 @@ function calculatePricing(items: CartItem[]): number {
 ## 4. Code Quality & Maintenance
 
 ### Temporary Code
-- `:ga:temp` - Code that should be removed
+- `:ga:tmp` - Code that should be removed
   - Workarounds for bugs
   - Quick fixes
   - Migration shims
 
 ```javascript
-// :ga:temp remove after Chrome 120 fix ships
-// :ga:context workaround for scrolling bug
+// :ga:tmp remove after Chrome 120 fix ships
+// :ga:ctx workaround for scrolling bug
 // :ga:issue(CHR-4823) track browser fix
 function patchChromeScroll() {
   if (navigator.userAgent.includes('Chrome/120')) {
-    // :ga:temp force repaint hack
+    // :ga:tmp force repaint hack
     document.body.style.display = 'none';
     document.body.offsetHeight; // trigger reflow
     document.body.style.display = '';
@@ -180,7 +180,7 @@ function patchChromeScroll() {
 
 ```python
 # :ga:debt refactor to use dependency injection
-# :ga:context tightly coupled to database implementation
+# :ga:ctx tightly coupled to database implementation
 class OrderService:
     def __init__(self):
         # :ga:debt hardcoded connection
@@ -192,7 +192,7 @@ class OrderService:
         if not self._validate_order(order_data):
             return False
         
-        # :ga:context 500+ lines of business logic below
+        # :ga:ctx 500+ lines of business logic below
         # :ga:refactor split into smaller methods
 ```
 
@@ -209,7 +209,7 @@ class OrderService:
 ```rust
 // :ga:docs add comprehensive examples
 // :ga:api public interface - maintain compatibility
-// :ga:context returns Err for invalid inputs, not panic
+// :ga:ctx returns Err for invalid inputs, not panic
 pub fn parse_config(path: &Path) -> Result<Config, ConfigError> {
     // :ga:docs explain config file format
     // :ga:example show valid TOML structure
@@ -230,18 +230,18 @@ pub fn parse_config(path: &Path) -> Result<Config, ConfigError> {
 
 ```java
 // :ga:business payment processing rules
-// :ga:context max transaction: $10,000
+// :ga:ctx max transaction: $10,000
 // :ga:compliance PCI-DSS requirements
 public class PaymentProcessor {
     // :ga:business retry failed payments up to 3 times
-    // :ga:context exponential backoff: 1s, 2s, 4s
+    // :ga:ctx exponential backoff: 1s, 2s, 4s
     public PaymentResult processPayment(Payment payment) {
         // :ga:audit log all payment attempts
-        // :ga:security never log full card numbers
+        // :ga:sec never log full card numbers
         
         // :ga:business validate amount limits
         if (payment.getAmount() > 10000) {
-            // :ga:context requires manual approval
+            // :ga:ctx requires manual approval
             return PaymentResult.requiresApproval();
         }
         
@@ -263,7 +263,7 @@ public class PaymentProcessor {
 
 ```typescript
 // :ga:test needs comprehensive unit tests
-// :ga:context handle null, undefined, empty arrays
+// :ga:ctx handle null, undefined, empty arrays
 export function mergeConfigs(...configs: Config[]): Config {
   // :ga:test edge case: circular references
   // :ga:test edge case: conflicting values
@@ -283,7 +283,7 @@ export function mergeConfigs(...configs: Config[]): Config {
 
 ```go
 // :ga:error add proper error handling
-// :ga:context network calls can fail
+// :ga:ctx network calls can fail
 func FetchUserData(userID string) (*User, error) {
     // :ga:todo handle timeout errors
     resp, err := http.Get(fmt.Sprintf("/api/users/%s", userID))
@@ -293,7 +293,7 @@ func FetchUserData(userID string) (*User, error) {
     }
     
     // :ga:error check response status
-    // :ga:context API returns 404 for missing users
+    // :ga:ctx API returns 404 for missing users
     var user User
     json.NewDecoder(resp.Body).Decode(&user)
     return &user, nil
@@ -312,7 +312,7 @@ func FetchUserData(userID string) (*User, error) {
 
 ```python
 # :ga:feature new checkout flow
-# :ga:context 10% rollout to test conversion
+# :ga:ctx 10% rollout to test conversion
 # :ga:metrics track success rate
 def checkout_process(cart: Cart, user: User) -> Order:
     # :ga:feature check flag status
@@ -338,7 +338,7 @@ router.post('/api/v2/users', async (req, res) => {
   // :ga:breaking returns different response format
   // :ga:migration guide at docs/v2-migration.md
   
-  // :ga:context v2 uses JSON:API format
+  // :ga:ctx v2 uses JSON:API format
   const user = await createUser(req.body);
   
   // :ga:todo add pagination headers
@@ -364,13 +364,13 @@ router.post('/api/v2/users', async (req, res) => {
 
 ```ruby
 # :ga:integration Stripe payment API
-# :ga:context requires API key in env vars
+# :ga:ctx requires API key in env vars
 # :ga:error handle rate limiting (429)
 class PaymentGateway
   # :ga:todo add circuit breaker
-  # :ga:context timeout after 30 seconds
+  # :ga:ctx timeout after 30 seconds
   def charge_card(amount, token)
-    # :ga:security never log tokens
+    # :ga:sec never log tokens
     # :ga:audit record all transactions
     
     begin
@@ -399,19 +399,19 @@ end
 rg ":ga:@agent"
 
 # Security issues
-rg ":ga:security"
+rg ":ga:sec"
 
 # Performance problems
 rg ":ga:perf"
 
 # Temporary code to remove
-rg ":ga:temp"
+rg ":ga:tmp"
 ```
 
 ### Finding Context
 ```bash
 # All contextual information
-rg ":ga:context"
+rg ":ga:ctx"
 
 # Business rules
 rg ":ga:business"
@@ -423,13 +423,13 @@ rg ":ga:integration"
 ### Complex Searches
 ```bash
 # Security TODOs
-rg ":ga:security.*todo|:ga:todo.*security"
+rg ":ga:sec.*todo|:ga:todo.*security"
 
 # AI tasks with context
 rg -B2 -A2 ":ga:@agent"
 
 # Temporary code with deadlines
-rg ":ga:temp.*2024"
+rg ":ga:tmp.*2024"
 ```
 
 ---
@@ -438,13 +438,13 @@ rg ":ga:temp.*2024"
 
 1. **Layer your tags**: Combine tags for richer meaning
    ```javascript
-   // :ga:security,todo,p0 critical auth fix needed
+   // :ga:sec,todo,p0 critical auth fix needed
    ```
 
 2. **Add context liberally**: More context helps AI and humans
    ```python
-   # :ga:context database uses UTC timestamps
-   # :ga:context user_ids are case-sensitive
+   # :ga:ctx database uses UTC timestamps
+   # :ga:ctx user_ids are case-sensitive
    ```
 
 3. **Be specific with AI instructions**:

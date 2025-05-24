@@ -21,11 +21,11 @@ The grep-anchor pattern: `<comment-leader> :ga:payload`
 ## Common Anchor Types
 
 - `:ga:todo` - Work that needs doing
-- `:ga:security` - Security-critical code requiring review
-- `:ga:temp` - Temporary hacks to be removed  
+- `:ga:sec` - Security-critical code requiring review
+- `:ga:tmp` - Temporary hacks to be removed  
 - `:ga:@agent` - Delegation points for AI agents
 - `:ga:@cursor` - Cursor-specific tasks
-- `:ga:context` - Important assumptions and constraints
+- `:ga:ctx` - Important assumptions and constraints
 - `:ga:perf` - Performance-related sections
 - `:ga:bug` - Known issues to fix
 
@@ -38,8 +38,8 @@ Using ripgrep (rg) is the primary way to work with grep-anchors:
 rg -n ":ga:"
 
 # Find specific anchor types
-rg -n ":ga:security"      # security anchors
-rg -n ":ga:temp"          # temporary code
+rg -n ":ga:sec"          # security anchors
+rg -n ":ga:tmp"           # temporary code
 rg -n ":ga:todo"          # tasks to complete
 rg -n ":ga:@agent"        # AI agent instructions
 rg -n ":ga:.*perf"        # performance-related

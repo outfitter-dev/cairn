@@ -2,29 +2,29 @@
 
 This directory contains tools and scripts for working with grep-anchors.
 
-## grepa-list
+## inventory
 
-The `grepa-list` script discovers all grep-anchors in your codebase and generates an inventory report. Available in both Python and JavaScript versions.
+The `inventory` script discovers all grep-anchors in your codebase and generates an inventory report. Available in both Python and JavaScript versions.
 
 ### Quick Start
 
 ```bash
 # Run with default settings
-python3 .grepa/scripts/grepa-list.py
+python3 .grepa/scripts/inventory.py
 
 # Or using Node.js
-node .grepa/scripts/grepa-list.js
+node .grepa/scripts/inventory.js
 
 # Ignore documentation files
-python3 .grepa/scripts/grepa-list.py --ignore docs
+python3 .grepa/scripts/inventory.py --ignore docs
 
 # Ignore markdown files and code examples
-python3 .grepa/scripts/grepa-list.py --ignore md --ignore-examples
+python3 .grepa/scripts/inventory.py --ignore md --ignore-examples
 ```
 
 ### Configuration
 
-The script can be configured using `.grepa/grepa-list.config.json`. This allows you to set default ignore patterns, output settings, and display preferences.
+The script can be configured using `.grepa/inventory.config.json`. This allows you to set default ignore patterns, output settings, and display preferences.
 
 #### Configuration File Format
 
@@ -90,16 +90,16 @@ You can ignore files using:
 Examples:
 ```bash
 # Ignore all documentation
-python3 .grepa/scripts/grepa-list.py --ignore docs
+python3 .grepa/scripts/inventory.py --ignore docs
 
 # Ignore test files
-python3 .grepa/scripts/grepa-list.py --ignore "*.test.js"
+python3 .grepa/scripts/inventory.py --ignore "*.test.js"
 
 # Multiple ignores
-python3 .grepa/scripts/grepa-list.py --ignore md --ignore "*.spec.ts"
+python3 .grepa/scripts/inventory.py --ignore md --ignore "*.spec.ts"
 
 # Override gitignore respect from config
-python3 .grepa/scripts/grepa-list.py --no-gitignore
+python3 .grepa/scripts/inventory.py --no-gitignore
 ```
 
 ### Output

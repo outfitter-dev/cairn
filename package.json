@@ -24,8 +24,8 @@
   "author": "Matt Galligan",
   "type": "module",
   "scripts": {
-    "grepa-list": "node .grepa/scripts/grepa-list.js",
-    "grepa-list:py": "python3 .grepa/scripts/grepa-list.py",
+    "inventory": "node .grepa/scripts/inventory.js",
+    "inventory:py": "python3 .grepa/scripts/inventory.py",
     "test": "echo \"No tests yet - using ripgrep directly\""
   },
   "engines": {

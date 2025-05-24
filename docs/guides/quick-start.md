@@ -41,10 +41,11 @@ Start with these essential tags:
 
 | Tag | Purpose | Example |
 |-----|---------|---------|
+| `tldr` | Brief summary | `// :ga:tldr handles user auth` |
 | `todo` | Future work | `// :ga:todo add tests` |
+| `ctx` | Key assumptions | `// :ga:ctx UTC only` |
 | `fixme` | Broken code | `// :ga:fixme null pointer` |
 | `sec` | Security critical | `// :ga:sec validate input` |
-| `perf` | Performance | `// :ga:perf optimize loop` |
 | `@person` | Assign to someone | `// :ga:@alice review this` |
 
 ## Combining Tags
@@ -69,7 +70,7 @@ Assign work and request attention:
 ```javascript
 // :ga:@alice please review
 // :ga:owner@bob payment module
-// :ga:attn@security needs audit
+// :ga:attn@sec needs audit
 ```
 
 ## Next Steps

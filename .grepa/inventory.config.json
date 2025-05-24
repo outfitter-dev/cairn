@@ -39,7 +39,7 @@
   },
   
   "output": {
-    "file": ".grepa/grepa-list.json",
+    "file": ".grepa/inventory.generated.json",
     "format": "json",
     "indent": 2,
     "includeMetadata": true

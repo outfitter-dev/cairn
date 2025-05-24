@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// :ga:meta grepa-list script - discovers all grep-anchors in your codebase
+// :ga:meta inventory script - discovers all grep-anchors in your codebase
 
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
@@ -13,7 +13,7 @@ const __dirname = dirname(__filename);
 
 // Configuration
 const DEFAULT_ANCHOR = ':ga:';
-const CONFIG_FILE = join(process.cwd(), '.grepa', 'grepa-list.config.json');
+const CONFIG_FILE = join(process.cwd(), '.grepa', 'inventory.config.json');
 const DEFAULT_OUTPUT_FILE = join(process.cwd(), '.grepa', 'grepa-list.json');
 
 // Precompiled regex patterns for performance
@@ -222,7 +222,8 @@ function findGrepAnchors(anchor = DEFAULT_ANCHOR, ignorePatterns = [], ignoreExa
     
     // Run ripgrep to find all anchors
     // -n: line numbers, -o: only matching, --no-heading: compact format
-    let rgCommand = `rg -n -o "${anchor}[^\\s]*" --no-heading`;
+    // Always exclude .git directory
+    let rgCommand = `rg -n -o "${anchor}[^\\\\s]*" --no-heading -g "!.git/"`;
     
     // Check if we should respect gitignore
     const ignoreConfig = config.ignore || {};

@@ -27,7 +27,7 @@ What if your pre-commit hooks could enforce semantic patterns?
 ```
 
 **Auto-enforced patterns:**
-- Security-sensitive files MUST have `:ga:security` markers
+- Security-sensitive files MUST have `:ga:sec` markers
 - TODO comments require `:ga:issue(123)` links
 - API changes need `:ga:breaking` or `:ga:compatible` markers
 - Performance-critical paths require `:ga:perf` documentation
@@ -51,7 +51,7 @@ jobs:
           
       - name: AI Security Audit
         run: |
-          # AI agent reviews new :ga:security markers
+          # AI agent reviews new :ga:sec markers
           # Validates they're in appropriate locations
           
       - name: Suggest Missing Markers
@@ -66,7 +66,7 @@ jobs:
 
 Imagine these features in your editor:
 
-- **Hover Intelligence:** Hover over `:ga:security` to see security docs, threat models
+- **Hover Intelligence:** Hover over `:ga:sec` to see security docs, threat models
 - **Quick Navigation:** `Cmd+Shift+G` opens fuzzy grep-anchor search
 - **Context Panels:** See all related markers when viewing a file
 - **Smart Completion:** AI suggests appropriate tags based on code context
@@ -88,7 +88,7 @@ What if AI could detect missing markers?
 ```python
 # AI agent scans for unmarked patterns
 def detect_missing_markers(codebase):
-    # Find security-sensitive functions without :ga:security
+    # Find security-sensitive functions without :ga:sec
     security_patterns = [
         r'def.*auth.*\(',
         r'password.*=',
@@ -142,10 +142,10 @@ What if markers cleaned themselves up?
 ```bash
 # AI-driven marker maintenance
 grepa clean --strategy=smart
-# - Remove :ga:temp markers for shipped features
+# - Remove :ga:tmp markers for shipped features
 # - Archive :ga:issue(123) for closed issues  
 # - Update :ga:deadline dates from sprint planning
-# - Consolidate duplicate :ga:security markers
+# - Consolidate duplicate :ga:sec markers
 ```
 
 ### Lifecycle Stages
@@ -180,7 +180,7 @@ def build_architecture_map():
 What if you could instantly answer:
 - "What breaks if we change the auth service?" → Follow `:ga:depends(auth)` markers
 - "Which components are performance-critical?" → Map `:ga:perf` marker density
-- "What security assumptions exist?" → Aggregate `:ga:context,security` content
+- "What security assumptions exist?" → Aggregate `:ga:ctx,sec` content
 
 ## What If... AI Could Plan Your Migrations?
 
@@ -259,8 +259,8 @@ def review_pull_request(diff):
 **With Grepa Vision:**
 ```bash
 # Instant security landscape
-rg ":ga:security" | rg "auth"
-rg ":ga:context.*security"
+rg ":ga:sec" | rg "auth"
+rg ":ga:ctx.*sec"
 rg ":ga:assumes.*trust"
 
 # AI agent immediately understands:
@@ -283,7 +283,7 @@ rg ":ga:assumes.*trust"
 **Self-Documenting Codebase:**
 ```bash
 # New developer day 1
-rg ":ga:context" | head -20    # Key assumptions
+rg ":ga:ctx" | head -20       # Key assumptions
 rg ":ga:business"              # Business logic
 rg ":ga:api"                   # Public interfaces
 rg ":ga:@newbie"               # Beginner tasks

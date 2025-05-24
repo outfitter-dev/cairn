@@ -60,22 +60,22 @@ def process_payment(amount):
 ### Good: Related tags, concise
 
 ```javascript
-// :ga:security,todo validate user input
+// :ga:sec,todo validate user input
 // :ga:perf,p0 optimize this query
 ```
 
 ### Better: Separate lines for clarity
 
 ```javascript
-// :ga:security sanitize HTML to prevent XSS
+// :ga:sec sanitize HTML to prevent XSS
 // :ga:todo add rate limiting to this endpoint
-// :ga:context max 100 requests per minute per user
+// :ga:ctx max 100 requests per minute per user
 ```
 
 ### Avoid: Multiple tags with descriptions
 
 ```javascript
-// :ga:security,todo,perf validate inputs, add caching, check permissions
+// :ga:sec,todo,perf validate inputs, add caching, check permissions
 // ❌ Too long, hard to grep, mixed concerns
 ```
 
@@ -85,15 +85,15 @@ When tags are split across lines, use context flags:
 
 ```bash
 # Find security tags with 2 lines context
-rg -C2 ":ga:security"
+rg -C2 ":ga:sec"
 
 # Find files with both security and todo tags
-for f in $(rg -l ":ga:security"); do 
+for f in $(rg -l ":ga:sec"); do 
   rg -l ":ga:todo" "$f" && echo "$f has both"
 done
 
 # Find security/todo within 3 lines of each other
-rg -B3 -A3 ":ga:security" | rg -B3 -A3 ":ga:todo"
+rg -B3 -A3 ":ga:sec" | rg -B3 -A3 ":ga:todo"
 ```
 
 ## TODO: Expand this documentation

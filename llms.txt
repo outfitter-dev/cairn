@@ -17,46 +17,47 @@ Key principles:
 ### Basic Usage
 ```javascript
 // :ga:todo implement validation
-// :ga:security check user permissions
-// :ga:context assumes UTC timestamps
+// :ga:sec check user permissions
+// :ga:ctx assumes UTC timestamps
 // :ga:@agent write unit tests
-// :ga:temp remove after v2.0
+// :ga:tmp remove after v2.0
 ```
 
 ### Combined Tags (use judiciously)
 ```python
-# :ga:security,todo validate inputs  # Good: related concerns, concise
+# :ga:sec,todo validate inputs  # Good: related concerns, concise
 # :ga:perf,debt refactor this loop   # Good: both about code quality
 ```
 
 ### Separate Comments (often better)
 ```python
-# :ga:security check SQL injection vulnerabilities
+# :ga:sec check SQL injection vulnerabilities
 # :ga:todo add input validation for email format
-# :ga:context user emails must be unique in database
+# :ga:ctx user emails must be unique in database
 # Better: each concern gets proper description
 ```
 
 ### Searching
 ```bash
 rg ":ga:"              # All anchors
-rg ":ga:security"      # Security concerns
+rg ":ga:sec"          # Security concerns
 rg ":ga:@agent"        # AI tasks
 
 # Context searching (find related tags)
-rg -B1 -A1 ":ga:security"  # Show 1 line before/after
+rg -B1 -A1 ":ga:sec"      # Show 1 line before/after
 rg -C2 ":ga:todo"          # Show 2 lines context
-rg -B2 -A2 ":ga:security" | rg ":ga:(security|todo)"
+rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
 ```
 
 ## Tag Reference
 
 **Core Tags:**
+- `tldr` - Brief summary or overview ("Too Long; Didn't Read")
 - `todo` - Work that needs doing
-- `context` - Important assumptions/constraints
-- `security` - Security-critical code
+- `ctx` - Important assumptions/constraints
+- `sec` - Security-critical code
 - `@agent` - AI agent instructions
-- `temp` - Temporary code to remove
+- `tmp` - Temporary code to remove
 
 **Quality Tags:**
 - `perf` - Performance concerns
@@ -94,10 +95,10 @@ While `:ga:` is recommended, teams can use custom patterns:
 ### 1. Human marks location
 ```python
 class UserService:
-    # :ga:context all emails must be unique
+    # :ga:ctx all emails must be unique
     def create_user(self, email: str):
         # :ga:@agent implement with validation
-        # :ga:security prevent duplicates
+        # :ga:sec prevent duplicates
         pass
 ```
 
@@ -109,9 +110,9 @@ rg ":ga:@agent"
 
 ### 3. AI reads context
 ```bash
-rg ":ga:context|:ga:security" user_service.py
-# user_service.py:2: # :ga:context all emails must be unique
-# user_service.py:5: # :ga:security prevent duplicates
+rg ":ga:ctx|:ga:sec" user_service.py
+# user_service.py:2: # :ga:ctx all emails must be unique
+# user_service.py:5: # :ga:sec prevent duplicates
 ```
 
 ### 4. AI implements with understanding
@@ -129,7 +130,7 @@ sed -i 's/TODO :ga:/:ga:todo/g' **/*.js
 
 ### Progressive adoption
 1. Start with `:ga:todo`
-2. Add `:ga:context` for clarity
+2. Add `:ga:ctx` for clarity
 3. Use `:ga:@agent` for AI
 4. Link with `:ga:issue(123)`
 
@@ -138,14 +139,14 @@ sed -i 's/TODO :ga:/:ga:todo/g' **/*.js
 Use tags for service namespacing:
 ```javascript
 // :ga:auth,todo implement OAuth
-// :ga:payment,security validate amounts
+// :ga:payment,sec validate amounts
 // :ga:shared,api maintain compatibility
 ```
 
 Search patterns:
 ```bash
 rg ":ga:auth"          # Auth service only
-rg ":ga:.*security"    # All security issues
+rg ":ga:.*sec"        # All security issues
 ```
 
 ## Advanced Patterns
@@ -158,7 +159,7 @@ rg ":ga:.*security"    # All security issues
 
 ### Arrays
 ```javascript
-// :ga:["security","performance","breaking"]
+// :ga:["sec","performance","breaking"]
 ```
 
 ### Issue linking
@@ -179,7 +180,7 @@ rg ":ga:.*security"    # All security issues
 
 1. **Separate concerns**: Use multiple comments for distinct topics
 2. **Line limits**: Keep under ~80 chars for readable grep output
-3. **Layer tags carefully**: `:ga:security,todo` only when closely related
+3. **Layer tags carefully**: `:ga:sec,todo` only when closely related
 4. **Add context liberally**: More context is better, use separate lines
 5. **Be specific**: "validate UUID" not just "validate"
 6. **Link resources**: `:ga:docs(RFC-7231)`
@@ -197,9 +198,9 @@ rg ":ga:.*security"    # All security issues
 
 ### Git hooks
 ```bash
-# Block commits with temp code
-if git diff --cached | grep -q ":ga:temp"; then
-  echo "Error: Remove :ga:temp markers"
+# Block commits with tmp code
+if git diff --cached | grep -q ":ga:tmp"; then
+  echo "Error: Remove :ga:tmp markers"
   exit 1
 fi
 ```
@@ -247,7 +248,7 @@ bare    ::= "@"? [A-Za-z0-9_.-]+
 rg ":ga:"
 
 # Find with context
-rg -C2 ":ga:security"     # 2 lines before/after
+rg -C2 ":ga:sec"         # 2 lines before/after
 rg -B3 -A3 ":ga:todo"     # 3 lines before, 3 after
 
 # Find in markdown (including HTML comments)  

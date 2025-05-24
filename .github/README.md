@@ -28,7 +28,7 @@ A **grep-anchor** is a tiny, unique marker that makes any comment instantly disc
 ```javascript
 // :ga:todo add input validation
 function processPayment(amount) {
-    // :ga:security verify amount is positive
+    // :ga:sec verify amount is positive
     chargeCard(amount);
 }
 ```
@@ -36,7 +36,7 @@ function processPayment(amount) {
 Find everything instantly:
 ```bash
 rg ":ga:"          # List all anchors
-rg ":ga:security"  # Jump to security concerns
+rg ":ga:sec"  # Jump to security concerns
 rg ":ga:todo"      # Find all tasks
 ```
 
@@ -76,11 +76,11 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
   ```
 
 ### 3. Mark Important Context
-- `:ga:context` - Document critical assumptions
+- `:ga:ctx` - Document critical assumptions
   ```go
-  // :ga:context user_ids are always UUIDs, never integers
+  // :ga:ctx user_ids are always UUIDs, never integers
   func GetUser(userID string) (*User, error) {
-      // :ga:security validate UUID format to prevent injection
+      // :ga:sec validate UUID format to prevent injection
       return db.FindUser(userID)
   }
   ```
@@ -88,19 +88,20 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
 ### 4. Combine as Needed
 - Stack multiple tags for richer meaning
   ```typescript
-  // :ga:security,todo fix rate limiting
-  // :ga:temp,context remove after Redis upgrade
+  // :ga:sec,todo fix rate limiting
+  // :ga:tmp,ctx remove after Redis upgrade
   ```
 
 ## Core Patterns
 
 | Pattern | Purpose | Example |
 |---------|---------|---------|
+| `:ga:tldr` | Brief summary/overview | `// :ga:tldr handles user authentication` |
 | `:ga:todo` | Work to be done | `// :ga:todo add error handling` |
+| `:ga:ctx` | Important context | `// :ga:ctx expects UTC timestamps` |
 | `:ga:@agent` | AI agent tasks | `// :ga:@agent implement this function` |
-| `:ga:security` | Security concerns | `// :ga:security validate all inputs` |
-| `:ga:context` | Important assumptions | `// :ga:context expects UTC timestamps` |
-| `:ga:temp` | Temporary code | `// :ga:temp remove after v2.0` |
+| `:ga:sec` | Security concerns | `// :ga:sec validate all inputs` |
+| `:ga:tmp` | Temporary code | `// :ga:tmp remove after v2.0` |
 
 ## Progressive Enhancement
 
@@ -108,7 +109,7 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
 Start by enhancing your existing TODOs:
 ```javascript
 // TODO :ga: implement caching
-// FIXME :ga:security sanitize user input
+// FIXME :ga:sec sanitize user input
 ```
 
 ### Level 2: Structured Tasks
@@ -132,10 +133,10 @@ Add metadata when needed:
 ### 1. Human marks the spot:
 ```python
 class UserService:
-    # :ga:context all users must have unique emails
+    # :ga:ctx all users must have unique emails
     def create_user(self, email: str, name: str):
         # :ga:@agent implement with proper validation
-        # :ga:security prevent duplicate emails
+        # :ga:sec prevent duplicate emails
         # :ga:todo add rate limiting
         pass
 ```
@@ -148,9 +149,9 @@ user_service.py:4: # :ga:@agent implement with proper validation
 
 ### 3. AI reads the context:
 ```bash
-$ rg ":ga:context|:ga:security" user_service.py
-user_service.py:2: # :ga:context all users must have unique emails
-user_service.py:5: # :ga:security prevent duplicate emails
+$ rg ":ga:ctx|:ga:sec" user_service.py
+user_service.py:2: # :ga:ctx all users must have unique emails
+user_service.py:5: # :ga:sec prevent duplicate emails
 ```
 
 ### 4. AI implements with full understanding:
@@ -160,7 +161,7 @@ def create_user(self, email: str, name: str):
     if not self._is_valid_email(email):
         raise ValueError("Invalid email format")
     
-    # :ga:context enforcing unique email constraint
+    # :ga:ctx enforcing unique email constraint
     if self.user_repo.exists_by_email(email):
         raise DuplicateEmailError(f"Email {email} already exists")
     
@@ -188,7 +189,7 @@ def create_user(self, email: str, name: str):
 ## Common Patterns
 
 ### Security & Quality
-- `:ga:security` - Security-critical code
+- `:ga:sec` - Security-critical code
 - `:ga:audit` - Needs review
 - `:ga:perf` - Performance concerns
 - `:ga:bug` - Known issues
@@ -234,18 +235,18 @@ rg ":ga:"
 
 # Find by type
 rg ":ga:todo"
-rg ":ga:security"
+rg ":ga:sec"
 rg ":ga:@agent"
 
 # Find with context (lines before/after)
-rg -B1 -A1 ":ga:security"  # 1 line before and after
+rg -B1 -A1 ":ga:sec"  # 1 line before and after
 rg -C2 ":ga:todo"          # 2 lines context
 
 # Find related tags nearby
-rg -B2 -A2 ":ga:security" | rg ":ga:(security|todo)"
+rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
 
 # Find combinations
-rg ":ga:security.*todo|:ga:todo.*security"
+rg ":ga:sec.*todo|:ga:todo.*sec"
 
 # Find in specific files
 rg ":ga:" --type js

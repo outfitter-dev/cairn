@@ -111,7 +111,7 @@ Conventions for AI agent delegation and interaction.
 
 ### Providing Context
 ```javascript
-// :ga:context uses Redux for state management
+// :ga:ctx uses Redux for state management
 // :ga:note@ai follows clean architecture
 // :ga:assume@agent typescript strict mode
 ```
@@ -156,7 +156,7 @@ Conventions for AI agent delegation and interaction.
 ### Contextual Generation
 ```javascript
 // :ga:generate@ai rest endpoint
-// :ga:context follow existing patterns in /api
+// :ga:ctx follow existing patterns in /api
 // :ga:requirement use zod for validation
 ```
 

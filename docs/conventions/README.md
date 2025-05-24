@@ -9,10 +9,10 @@ Patterns and practices for making your codebase AI-navigable and human-friendly.
 Begin with these five essential patterns:
 
 1. `:ga:todo` - Work that needs doing
-2. `:ga:context` - Important assumptions or constraints
-3. `:ga:security` - Security-critical code
+2. `:ga:ctx` - Important assumptions or constraints
+3. `:ga:sec` - Security-critical code
 4. `:ga:@agent` - AI agent instructions
-5. `:ga:temp` - Temporary code to remove
+5. `:ga:tmp` - Temporary code to remove
 
 That's it! You can search all of these with `rg ":ga:"`.
 
@@ -54,7 +54,7 @@ Level 0: Try one pattern (:ga:todo)
    ↓
 Level 1: Enhance existing TODOs (TODO :ga:)
    ↓
-Level 2: Add context (:ga:context)
+Level 2: Add context (:ga:ctx)
    ↓
 Level 3: Delegate to AI (:ga:@agent)
    ↓

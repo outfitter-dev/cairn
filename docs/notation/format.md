@@ -92,10 +92,10 @@ For better grep results and readability:
 
 ```javascript
 // Good: Concise, related tags
-// :ga:security,todo validate inputs
+// :ga:sec,todo validate inputs
 
 // Better: Clear separation of concerns
-// :ga:security check user permissions
+// :ga:sec check user permissions
 // :ga:todo implement rate limiting
-// :ga:context 100 requests/minute limit
+// :ga:ctx 100 requests/minute limit
 ```

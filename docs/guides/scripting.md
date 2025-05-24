@@ -140,16 +140,16 @@ Use ripgrep's context flags to find related tags on nearby lines:
 
 ```bash
 # Show 1 line before and after each match
-rg -B1 -A1 ":ga:security"
+rg -B1 -A1 ":ga:sec"
 
 # Show 2 lines of context (before and after)
 rg -C2 ":ga:todo"
 
 # Find security markers and check if todos are nearby
-rg -B2 -A2 ":ga:security" | rg -E ":ga:(security|todo)"
+rg -B2 -A2 ":ga:sec" | rg -E ":ga:(security|todo)"
 
 # Find both security AND todo in the same area (within 3 lines)
-rg -U -B3 -A3 ":ga:security" | rg -B3 -A3 ":ga:todo"
+rg -U -B3 -A3 ":ga:sec" | rg -B3 -A3 ":ga:todo"
 ```
 
 ### Example: Find Security TODOs
@@ -159,12 +159,12 @@ rg -U -B3 -A3 ":ga:security" | rg -B3 -A3 ":ga:todo"
 # Find places where security and todo appear near each other
 
 echo "=== Security issues with nearby TODOs ==="
-for file in $(rg -l ":ga:security"); do
+for file in $(rg -l ":ga:sec"); do
   # Check if file also has todos
   if rg -q ":ga:todo" "$file"; then
     echo -e "\n📁 $file:"
     # Show security markers with 3 lines context
-    rg -B3 -A3 ":ga:security" "$file" | grep -E "(:|ga:)" --color=always
+    rg -B3 -A3 ":ga:sec" "$file" | grep -E "(:|ga:)" --color=always
   fi
 done
 ```
@@ -174,7 +174,7 @@ done
 ```bash
 # Find where multiple related tags appear together
 rg -U -A5 ":ga:" | awk '
-/:ga:security/ { sec=$0; sec_nr=NR }
+/:ga:sec/ { sec=$0; sec_nr=NR }
 /:ga:todo/ { 
   if (NR-sec_nr <= 5 && sec) { 
     print "Found related tags:"; 
@@ -215,7 +215,7 @@ import json
 
 # Find all security anchors
 result = subprocess.run(
-    ['rg', '-n', ':ga:security', '--json'],
+    ['rg', '-n', ':ga:sec', '--json'],
     capture_output=True,
     text=True
 )
@@ -243,12 +243,12 @@ const changedFiles = execSync('git diff --name-only HEAD~1')
 
 // Check each file has context anchors
 for (const file of changedFiles) {
-  const hasContext = execSync(`rg -c ":ga:context" "${file}" || echo 0`)
+  const hasContext = execSync(`rg -c ":ga:ctx" "${file}" || echo 0`)
     .toString()
     .trim();
   
   if (hasContext === '0') {
-    console.error(`❌ ${file} missing :ga:context anchors`);
+    console.error(`❌ ${file} missing :ga:ctx anchors`);
     process.exit(1);
   }
 }
