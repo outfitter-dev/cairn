@@ -1,29 +1,127 @@
-# Common Tags
+# Common Patterns
 
-Common grep-anchor tags used across projects.
+Core grep-anchor patterns that work across all projects.
 
-## General Purpose Tags
+## Essential Patterns
 
-### `:ga:tldr`
-**Purpose**: Mark the "too long; didn't read" summary of a function or module.
-**Usage**: Place at the beginning of functions to provide a quick overview.
-
+### `:ga:todo`
+**Purpose**: Work that needs to be done
+**Replaces**: Traditional TODO comments
 ```javascript
-// :ga:tldr Parse and validate user input before processing
-function processUserInput(data) {
-  // ...
-}
+// :ga:todo implement error handling
+// :ga:todo add unit tests
 ```
 
+### `:ga:context`
+**Purpose**: Important information that isn't obvious from the code
+**Usage**: Document assumptions, constraints, and critical knowledge
+```python
+# :ga:context all timestamps are UTC
+# :ga:context user_ids are UUIDs, not integers
+# :ga:context this runs in a Lambda with 256MB RAM limit
+```
+
+### `:ga:security`
+**Purpose**: Security-critical code that needs careful attention
+**Usage**: Mark authentication, authorization, input validation, crypto
+```go
+// :ga:security validate all inputs before SQL query
+// :ga:security ensure constant-time comparison
+```
+
+### `:ga:@agent`
+**Purpose**: Direct AI agents to help with implementation
+**Usage**: Can use generic @agent or specific ones like @cursor, @claude
+```typescript
+// :ga:@agent implement pagination logic
+// :ga:@cursor write unit tests for edge cases
+```
+
+### `:ga:temp`
+**Purpose**: Temporary code that should be removed
+**Usage**: Workarounds, quick fixes, migration code
+```ruby
+# :ga:temp remove after v2.0 ships
+# :ga:temp workaround for Redis bug
+```
+
+## Quality & Maintenance
+
+### `:ga:perf`
+**Purpose**: Performance-sensitive code
+**Usage**: Mark bottlenecks, optimization opportunities
+```javascript
+// :ga:perf N+1 query issue
+// :ga:perf consider caching this result
+```
+
+### `:ga:bug`
+**Purpose**: Known bugs or issues
+**Usage**: Document problems that need fixing
+```python
+# :ga:bug race condition when concurrent requests
+# :ga:bug doesn't handle Unicode properly
+```
+
+### `:ga:debt`
+**Purpose**: Technical debt that needs addressing
+**Usage**: Shortcuts taken, refactoring needed
+```java
+// :ga:debt tightly coupled to database
+// :ga:debt needs proper error handling
+```
+
+## Documentation & API
+
 ### `:ga:api`
-**Purpose**: Mark public API entry points.
-**Usage**: Identify functions, classes, or modules that form the public interface.
+**Purpose**: Public API surface
+**Usage**: Mark public interfaces, REST endpoints, exported functions
+```rust
+// :ga:api public interface - maintain compatibility
+// :ga:api REST endpoint: POST /users
+```
 
-### `:ga:internal`
-**Purpose**: Mark internal implementation details.
-**Usage**: Flag code that should not be used by external consumers.
+### `:ga:docs`
+**Purpose**: Documentation needed or important notes
+**Usage**: Complex algorithms, public APIs, business logic
+```go
+// :ga:docs explain rate limiting algorithm
+// :ga:docs add usage examples
+```
 
-## TODO: Expand this documentation
-- Add more common tags
-- Include examples from real codebases
-- Define naming conventions for custom tags
+## Project Management
+
+### `:ga:issue(ID)`
+**Purpose**: Link to issue tracker
+**Usage**: Connect code to tickets, PRs, or issues
+```javascript
+// :ga:issue(PROJ-123) implement user story
+// :ga:issue(#456) fix reported bug
+```
+
+### `:ga:owner(@person)`
+**Purpose**: Assign responsibility
+**Usage**: Mark who should handle something
+```python
+# :ga:todo,@alice implement authentication
+# :ga:owner(@backend-team) optimize query
+```
+
+## Combining Patterns
+
+Patterns work best when combined:
+
+```typescript
+// :ga:security,todo validate inputs
+// :ga:perf,debt refactor this loop
+// :ga:temp,issue(#123) workaround until fixed upstream
+// :ga:api,docs,breaking v2 changes signature
+```
+
+## Tips
+
+1. **Start with 3-5 patterns** - Don't try to use everything at once
+2. **Be consistent** - Pick a style and stick to it
+3. **Keep it searchable** - The whole point is grep-ability
+4. **Document your choices** - List your patterns in README
+5. **Let it evolve** - Add patterns as you need them

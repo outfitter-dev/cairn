@@ -1,121 +1,245 @@
-# 🍇 Grep-Anchor (`:ga:`) Markers
+# 🍇 Grepa (grep-anchor) - Better Code Navigation for AI Agents
 
-> **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
-
-> **grepa** /ɡrɛp·ə/ — a four-character tag (`:ga:`) you drop in comments so humans **and** AI agents can `grep` straight to the right spot.
+> **Make your codebase AI-navigable.** Grepa (`:ga:`) provides a universal pattern that AI agents can reliably find and humans can easily grep.
 
 ## The Problem
 
-Even in well-structured repos it's painful to answer questions like:
+AI coding agents and developers face the same challenge: **How do you quickly navigate to the right spot in a codebase?**
 
-- *Where is the security-critical code?*
-- *What corners did we intentionally leave un-optimised for now?*
-- *Which lines must a release engineer double-check before merging a hot-fix?*
+Even in well-structured repos, critical information is scattered across:
+- Ad-hoc TODOs with inconsistent formatting
+- Security concerns buried in comment threads  
+- Temporary hacks that overstay their welcome
+- Context and assumptions that only exist in developers' heads
 
-Today we rely on ad-hoc **TODOs**, scattered issue links, or tribal knowledge. Those signals are:
+Current approaches fail because they're:
+- **Unpredictable**: Every project uses different conventions
+- **Invisible to AI**: Agents can't reliably pattern-match free-form comments
+- **Hard to search**: `grep TODO` returns hundreds of results with no structure
 
-| Pain-point               | Why it hurts                                    |
-| ------------------------ | ----------------------------------------------- |
-| ✏️ Free-form wording     | Agents can't pattern-match reliably.            |
-| 🗺️ Buried in huge files | `grep "TODO"` returns hundreds of hits.         |
-| 🌱 Quickly rot           | Comments stay after fixes, reviewers miss them. |
+> **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
 
-## The Concept – `grep-anchor`
+## The Solution: grep-anchor (`:ga:`)
 
-A **grep-anchor** is a tiny, predictable tag that lives *only* inside comments:
+A **grep-anchor** is a tiny, unique marker that makes any comment instantly discoverable:
 
-```text
-<comment-leader> :ga:payload
+```javascript
+// :ga:todo add input validation
+function processPayment(amount) {
+    // :ga:security verify amount is positive
+    chargeCard(amount);
+}
 ```
 
-- **`:ga:`** = a fixed, few-byte sigil (extremely rare in prose or code).
-  - or use `:<your-sigil>` if you want to tailor the sigil to your project.
-- **payload**  = one or more *tokens* (see §4) that classify the line.
-
-Because the pattern is unique, both shell scripts and LLM agents can jump directly to relevant code with a one-liner:
-
+Find everything instantly:
 ```bash
-rg -n ":ga:"              # list every anchor
-rg -n ":ga:sec"           # only security-related anchors
+rg ":ga:"          # List all anchors
+rg ":ga:security"  # Jump to security concerns
+rg ":ga:todo"      # Find all tasks
 ```
 
-## Quick Examples
+## Quick Start
 
-| Intent                      | Anchor            | Comment example                                  |
-| --------------------------- | ----------------- | ------------------------------------------------ |
-| Security review needed      | `:ga:sec`         | `// :ga:sec validate signature length`           |
-| Temporary hack              | `:ga:temp`        | `# :ga:temp remove once cache is fixed`          |
-| Delegate to agent           | `:ga:@cursor`     | `/* :ga:@cursor please generate tests */`        |
-| Conventional-commit tie-in  | `:ga:fix`         | `// :ga:fix align error codes (will close #123)` |
-| Placeholder for future work | `:ga:placeholder` | `<!-- :ga:placeholder better SVG icon -->`       |
-
-Need multiple tags? Separate them with commas or spaces:
-
-```python
-# :ga:perf,sec  optimise crypto loop
-```
-
-## Minimal Grammar
-
-```ebnf
-anchor   ::= ":ga:" payload
-payload  ::= token ( sep token )*
-token    ::= bare | json | array
-bare     ::= "@"? [A-Za-z0-9_.-]+
-json     ::= "{" …balanced JSON… "}"
-array    ::= "[" …comma list… "]"
-sep      ::= "," | "|" | whitespace+
-```
-
-- **Bare tokens** simple strings: `sec`, `v0.2`, `@cursor`.
-- **Arrays / JSON** attach richer metadata when needed:
-
-  ```js
-  // :ga:{"since":"v1.1","owner":"@security"}
+### 1. Start Simple
+- `:ga:todo` - Mark work that needs doing
+  ```python
+  # :ga:todo implement retry logic
+  def api_call():
+      response = requests.get(url)
+      return response
   ```
 
-## Using grep-anchors
+### 2. Add AI Instructions
+- `:ga:@agent` - Direct AI agents to specific tasks
+  ```javascript
+  // :ga:@agent write unit tests for edge cases
+  function divide(a, b) {
+      return a / b;  // :ga:todo handle division by zero
+  }
+  ```
 
-### Add an anchor
+### 3. Mark Important Context
+- `:ga:context` - Document critical assumptions
+  ```go
+  // :ga:context user_ids are always UUIDs, never integers
+  func GetUser(userID string) (*User, error) {
+      // :ga:security validate UUID format to prevent injection
+      return db.FindUser(userID)
+  }
+  ```
 
-1. Choose the nearest comment above the code you're flagging.
-2. Insert `:ga:` followed by one or more tags.
+### 4. Combine as Needed
+- Stack multiple tags for richer meaning
+  ```typescript
+  // :ga:security,todo fix rate limiting
+  // :ga:temp,context remove after Redis upgrade
+  ```
 
-### Search
+## Core Patterns
 
-```bash
-# all anchors
-rg -n ":ga:"  
-# anchors that mention performance
-rg -n "^.*:ga:.*\bperf\b" --type ts,js
+| Pattern | Purpose | Example |
+|---------|---------|---------|
+| `:ga:todo` | Work to be done | `// :ga:todo add error handling` |
+| `:ga:@agent` | AI agent tasks | `// :ga:@agent implement this function` |
+| `:ga:security` | Security concerns | `// :ga:security validate all inputs` |
+| `:ga:context` | Important assumptions | `// :ga:context expects UTC timestamps` |
+| `:ga:temp` | Temporary code | `// :ga:temp remove after v2.0` |
+
+## Progressive Enhancement
+
+### Level 1: Basic TODO Migration
+Start by enhancing your existing TODOs:
+```javascript
+// TODO :ga: implement caching
+// FIXME :ga:security sanitize user input
 ```
 
-### Clean-up workflow (CI)
+### Level 2: Structured Tasks
+Graduate to pure grepa markers:
+```javascript
+// :ga:todo implement caching
+// :ga:task:auth add OAuth support
+// :ga:issue(42) fix memory leak
+```
 
-- **Block** merges to `main` if `:ga:temp` is present.
-- **Warn** when `:ga:v` is older than the current release tag (rot guard).
+### Level 3: Rich Context
+Add metadata when needed:
+```javascript
+// :ga:epic(user-onboarding) new user flow
+// :ga:deadline(2024-03-01) compliance update
+// :ga:owner(@alice) payment integration
+```
 
-## Maybe in the future…
+## Real AI Agent Workflow
 
-- @grepa/core: a library for working with grep-anchors (parse, validate, lint, format, etc.)
-- @grepa/cli: an opinionated CLI tool for working with grep-anchors
-- @grepa/github: a GitHub Action for automatically adding grep-anchors to PRs
-- @grepa/eslint: an ESLint plugin for enforcing grep-anchors
-- @grepa/lsp: a Language Server Protocol for working with grep-anchors
-- @grepa/vscode: a VS Code extension for highlighting grep-anchors
-- @grepa/neovim: a NeoVim plugin for highlighting grep-anchors
+### 1. Human marks the spot:
+```python
+class UserService:
+    # :ga:context all users must have unique emails
+    def create_user(self, email: str, name: str):
+        # :ga:@agent implement with proper validation
+        # :ga:security prevent duplicate emails
+        # :ga:todo add rate limiting
+        pass
+```
 
-## Inspiration: Lessons from OpenAI Codex
+### 2. AI agent finds the work:
+```bash
+$ rg ":ga:@agent"
+user_service.py:4: # :ga:@agent implement with proper validation
+```
 
-The idea for grep-anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free tag:
+### 3. AI reads the context:
+```bash
+$ rg ":ga:context|:ga:security" user_service.py
+user_service.py:2: # :ga:context all users must have unique emails
+user_service.py:5: # :ga:security prevent duplicate emails
+```
 
-> *"Make your codebase discoverable — a well-named and organized tree lets Codex navigate the filesystem as quickly as a brand-new engineer might."*
+### 4. AI implements with full understanding:
+```python
+def create_user(self, email: str, name: str):
+    # Validate email format
+    if not self._is_valid_email(email):
+        raise ValueError("Invalid email format")
+    
+    # :ga:context enforcing unique email constraint
+    if self.user_repo.exists_by_email(email):
+        raise DuplicateEmailError(f"Email {email} already exists")
+    
+    # Create user with validated data
+    return self.user_repo.create(email=email, name=name)
+```
 
-They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `grep-anchor.yml` dictionary.
+## Why Grepa?
 
-That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:ga:` formalizes. Think of grepa as the portable follow-up to Codex's internal practice, distilled into a four-byte sigil any OSS project or LLM can rely on.
+### For AI Agents
+- **Reliable navigation**: Unique pattern that won't match prose
+- **Contextual understanding**: Find assumptions and constraints
+- **Clear task delegation**: Know exactly what needs doing
 
-### Sources
+### For Developers
+- **One command**: `rg ":ga:"` shows all important markers
+- **Flexible vocabulary**: Use patterns that make sense for your team
+- **Progressive adoption**: Start simple, add richness over time
 
-- **Blog & transcript**: [latent.space/p/codex](https://www.latent.space/p/codex)
-- **Video**: [youtube.com/watch?v=LIHP4BqwSw0](https://www.youtube.com/watch?v=LIHP4BqwSw0)
+### For Teams
+- **Shared language**: Consistent patterns across the codebase
+- **Tool-friendly**: Works with grep, ripgrep, ag, and any search tool
+- **Future-proof**: Grows with AI capabilities
+
+## Common Patterns
+
+### Security & Quality
+- `:ga:security` - Security-critical code
+- `:ga:audit` - Needs review
+- `:ga:perf` - Performance concerns
+- `:ga:bug` - Known issues
+
+### Project Management
+- `:ga:todo` - General tasks
+- `:ga:task:` - Specific work items
+- `:ga:issue(123)` - Link to issue tracker
+- `:ga:epic(auth)` - Feature grouping
+
+### Priority Examples (define your own!)
+- `:ga:p0` - Critical priority
+- `:ga:urgent` - Needs immediate attention
+- `:ga:next-sprint` - Upcoming work
+- `:ga:someday` - Future considerations
+
+### AI-Specific
+- `:ga:@agent` - Any AI can help
+- `:ga:@cursor` - Cursor-specific
+- `:ga:prompt` - AI instructions
+- `:ga:review` - AI should review
+
+## Escape Hatch
+
+Need to remove all grepa markers? Easy:
+
+```bash
+# Find all files with :ga: markers
+rg -l ":ga:" 
+
+# Preview what would be removed
+rg ":ga:.*$" 
+
+# Remove all :ga: markers (backup first!)
+find . -type f -exec sed -i.bak 's/:ga:[^*]*//g' {} +
+```
+
+## Quick Reference
+
+```bash
+# Find everything
+rg ":ga:"
+
+# Find by type
+rg ":ga:todo"
+rg ":ga:security"
+rg ":ga:@agent"
+
+# Find combinations
+rg ":ga:security.*todo|:ga:todo.*security"
+
+# Find in specific files
+rg ":ga:" --type js
+rg ":ga:" src/
+
+# Count by type
+rg ":ga:(\w+)" -o | sort | uniq -c
+```
+
+## Getting Started
+
+1. **Try it now**: Add `// :ga:todo` to something in your code
+2. **Search for it**: Run `rg ":ga:"` 
+3. **Tell your AI**: "Look for :ga: markers to understand the codebase"
+4. **Evolve naturally**: Add patterns as you need them
+
+Remember: **The goal is to make your codebase discoverable.** Start simple, stay consistent, and let your patterns grow with your needs.
+
+---
+
+*Inspired by the [OpenAI Codex team's practices](https://www.latent.space/p/codex) for making codebases AI-navigable.*

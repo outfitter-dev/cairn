@@ -1,58 +1,63 @@
-# Grepa Conventions
+# Grep-Anchor Conventions
 
-Community patterns and best practices for using grep-anchors effectively.
+Patterns and practices for making your codebase AI-navigable and human-friendly.
 
-## What are Conventions?
+## Quick Start
 
-While **notation** defines how to write grep-anchors, **conventions** define:
-- What tags to use for specific purposes
-- When to apply certain patterns
-- How teams organize their anchor usage
+Begin with these five essential patterns:
+
+1. `:ga:todo` - Work that needs doing
+2. `:ga:context` - Important assumptions or constraints
+3. `:ga:security` - Security-critical code
+4. `:ga:@agent` - AI agent instructions
+5. `:ga:temp` - Temporary code to remove
+
+That's it! You can search all of these with `rg ":ga:"`.
 
 ## Convention Categories
 
 ### [Common Patterns](./common-patterns.md)
-General-purpose tags used across most projects:
-- `:ga:tldr` - Function summaries
-- `:ga:api` - Public interfaces
-- `:ga:internal` - Private implementation
-
-### [Domain Specific](./domain-specific.md)
-Specialized tags for specific concerns:
-- `:ga:sec` - Security critical
-- `:ga:perf` - Performance sensitive
-- `:ga:a11y` - Accessibility
-
-### [Workflow Patterns](./workflow-patterns.md)
-Process and collaboration tags:
-- `:ga:todo` - Future work
-- `:ga:review` - Needs review
-- `:ga:attn@mention` - Attention needed
-- `:ga:owner@mention` - Ownership
+Start here. Core patterns that work in any codebase.
 
 ### [AI Patterns](./ai-patterns.md)
-Agent delegation and AI assistance:
-- `:ga:@cursor` - Cursor AI
-- `:ga:@claude` - Claude
-- `:ga:generate` - Code generation
+Patterns for delegating work to AI agents and providing them context.
 
-### [Combinations](./combinations.md)
-Effective tag combinations:
-- `:ga:fix,sec,p0` - Critical security fix
-- `:ga:todo,@alice,v2.1` - Assigned future work
+### [Progressive Enhancement Guide](../guides/progressive-enhancement.md)
+How to adopt grep-anchors incrementally, from simple to advanced.
 
-## Creating Team Conventions
+### [Advanced Patterns](../advanced-patterns.md)
+JSON payloads, complex metadata, and sophisticated workflows.
 
-Teams should document their specific conventions:
+### [Domain-Specific](./domain-specific.md)
+Patterns for specific domains: web, mobile, DevOps, data science.
 
-1. **Choose a core set** - Start with 5-10 tags
-2. **Define meanings** - Clear descriptions
-3. **Add examples** - Show usage in context
-4. **Evolve gradually** - Add patterns as needed
+### [Workflow Patterns](./workflow-patterns.md)
+Patterns for code review, deployment, and team processes.
 
-## Best Practices
+## Core Principles
 
-- **Be consistent** - Use the same tags for same purposes
-- **Stay simple** - Prefer common tags over custom ones
-- **Document locally** - Keep a CONVENTIONS.md in your repo
-- **Review regularly** - Audit and clean up stale anchors
+1. **Start Simple**: Begin with 3-5 patterns, expand as needed
+2. **AI-First**: Design patterns that help AI agents navigate and understand
+3. **Grepability**: Every pattern must be easily searchable
+4. **Flexibility**: Teams should define their own vocabulary
+5. **Progressive**: Add complexity only when it provides value
+
+## Adoption Path
+
+```
+Level 0: Try one pattern (:ga:todo)
+   ↓
+Level 1: Enhance existing TODOs (TODO :ga:)
+   ↓
+Level 2: Add context (:ga:context)
+   ↓
+Level 3: Delegate to AI (:ga:@agent)
+   ↓
+Level 4: Link to issues (:ga:issue(123))
+   ↓
+Level 5: Team-specific patterns
+```
+
+## Remember
+
+The goal is **discoverability**, not perfection. Even one `:ga:` marker makes your codebase more navigable than none.
