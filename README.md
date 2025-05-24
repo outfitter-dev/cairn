@@ -2,9 +2,10 @@
 <!-- :ga:tldr Universal pattern for making codebases AI-navigable and greppable -->
 <!-- :ga:core Main project documentation and overview -->
 
-> [!TIP]
+> [!IMPORTANT]
 > **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/galligan/grepa/issues) or share your thoughts!
 
+> [!TIP]
 > **A simple pattern for code navigation.** Grepa (`:ga:`) suggests a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
 
 ## 📚 Documentation
