@@ -10,18 +10,18 @@ The `.grepa` directory contains ready-to-use scripts for common tasks:
 
 ```bash
 # Generate an inventory of all grep-anchors
-.grepa/scripts/grepa-list.js
+.grepa/scripts/inventory.js
 
 # Or use the Python version
-.grepa/scripts/grepa-list.py
+.grepa/scripts/inventory.py
 
 # Use with custom anchor
-.grepa/scripts/grepa-list.js :proj:
+.grepa/scripts/inventory.js :proj:
 ```
 
-## grepa-list Script
+## inventory Script
 
-The `grepa-list` script scans your codebase and generates a comprehensive inventory of all grep-anchors.
+The `inventory` script scans your codebase and generates a comprehensive inventory of all grep-anchors.
 
 ### Features
 
@@ -29,7 +29,7 @@ The `grepa-list` script scans your codebase and generates a comprehensive invent
 - **Tag statistics**: Shows usage counts and file locations
 - **File analysis**: Lists which files have the most anchors
 - **Custom anchors**: Works with any anchor pattern (`:ga:`, `:proj:`, etc.)
-- **JSONC output**: Generates `.grepa/grepa-list.json` with full details
+- **JSONC output**: Generates `.grepa/inventory.generated.json` with full details
 - **Flexible filtering**: 
   - `--ignore-md`: Skip markdown files (useful for documentation-heavy repos)
   - `--ignore-examples`: Skip anchors in code blocks (avoids counting examples)
@@ -38,15 +38,15 @@ The `grepa-list` script scans your codebase and generates a comprehensive invent
 
 ```bash
 # Basic usage (scans for :ga: anchors)
-.grepa/scripts/grepa-list.js
+.grepa/scripts/inventory.js
 
 # With options
-.grepa/scripts/grepa-list.js --ignore-md         # Ignore markdown files
-.grepa/scripts/grepa-list.js --ignore-examples   # Ignore code examples in docs
-.grepa/scripts/grepa-list.js --ignore-md --ignore-examples  # Both options
+.grepa/scripts/inventory.js --ignore md         # Ignore markdown files
+.grepa/scripts/inventory.js --ignore-examples   # Ignore code examples in docs
+.grepa/scripts/inventory.js --ignore md --ignore-examples  # Both options
 
 # Custom anchor
-.grepa/scripts/grepa-list.py :tc:
+.grepa/scripts/inventory.py :tc:
 
 # Output
 🔍 Searching for grep-anchors...
@@ -57,19 +57,19 @@ The `grepa-list` script scans your codebase and generates a comprehensive invent
 🚫 Ignored code examples
 📊 Found 47 anchors across 12 files
 🏷️  Discovered 15 unique tags
-📄 Report saved to: .grepa/grepa-list.json
+📄 Report saved to: .grepa/inventory.generated.json
 
 🔝 Top 5 tags:
    todo: 12 uses in 8 file(s)
-   context: 10 uses in 5 file(s)
-   security: 8 uses in 4 file(s)
+   ctx: 10 uses in 5 file(s)
+   sec: 8 uses in 4 file(s)
    @agent: 6 uses in 3 file(s)
-   temp: 5 uses in 2 file(s)
+   tmp: 5 uses in 2 file(s)
 ```
 
 ### Output Format
 
-The generated `.grepa/grepa-list.json` contains:
+The generated `.grepa/inventory.generated.json` contains:
 
 ```jsonc
 {
@@ -100,8 +100,8 @@ The generated `.grepa/grepa-list.json` contains:
       "totalAnchors": 8,
       "tags": {
         "todo": 3,
-        "security": 2,
-        "context": 3
+        "sec": 2,
+        "ctx": 3
       },
       "lines": [23, 34, 45, 56, 67, 78, 89, 90]
     }
@@ -146,7 +146,7 @@ rg -B1 -A1 ":ga:sec"
 rg -C2 ":ga:todo"
 
 # Find security markers and check if todos are nearby
-rg -B2 -A2 ":ga:sec" | rg -E ":ga:(security|todo)"
+rg -B2 -A2 ":ga:sec" | rg -E ":ga:(sec|todo)"
 
 # Find both security AND todo in the same area (within 3 lines)
 rg -U -B3 -A3 ":ga:sec" | rg -B3 -A3 ":ga:todo"
@@ -262,7 +262,7 @@ Add to `.git/hooks/pre-commit`:
 ```bash
 #!/bin/bash
 # Generate fresh inventory before each commit
-.grepa/scripts/grepa-list.js
+.grepa/scripts/inventory.js
 ```
 
 ### CI/CD
@@ -271,7 +271,7 @@ Add to `.git/hooks/pre-commit`:
 # GitHub Actions example
 - name: Generate grep-anchor inventory
   run: |
-    .grepa/scripts/grepa-list.py
+    .grepa/scripts/inventory.py
     # Upload as artifact
     
 - name: Check for critical issues
@@ -289,7 +289,7 @@ Add to `.git/hooks/pre-commit`:
 {
   "label": "Update Grepa Inventory",
   "type": "shell",
-  "command": ".grepa/scripts/grepa-list.js",
+  "command": ".grepa/scripts/inventory.js",
   "problemMatcher": []
 }
 ```
@@ -297,7 +297,7 @@ Add to `.git/hooks/pre-commit`:
 ## Best Practices
 
 1. **Run regularly**: Keep your inventory fresh
-2. **Check into git**: Share the scripts (but not grepa-list.json)
+2. **Check into git**: Share the scripts (but not inventory.generated.json)
 3. **Customize for your team**: Add scripts for your workflow
 4. **Automate**: Use in CI/CD and git hooks
 5. **Monitor trends**: Track tag growth over time
@@ -305,8 +305,8 @@ Add to `.git/hooks/pre-commit`:
 ## Tips
 
 - Scripts can accept custom anchors as arguments
-- Output is always `.grepa/grepa-list.json` (git-ignored)
+- Output is always `.grepa/inventory.generated.json` (git-ignored)
 - Both JS and Python versions produce identical output
 - Use the inventory for dashboards and reporting
 
-Remember: Scripts make grep-anchors actionable. Start with `grepa-list`, then build your own! 
+Remember: Scripts make grep-anchors actionable. Start with `inventory`, then build your own! 
