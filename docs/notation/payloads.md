@@ -20,6 +20,26 @@ Simple string identifiers. Most common and readable.
 // :ga:high-priority
 // :ga:@alice
 // :ga:api_endpoint
+
+## Parameterised Tokens
+
+Sometimes a token needs a specific *parameter* (e.g., an issue number or RFC).  Append the parameter in parentheses – the combination is still treated as **one token**.
+
+### Format
+- `marker(parameter)` – no spaces inside parentheses
+- Use a hash (`#`) or hyphen (`-`) as the internal delimiter if needed (`issue#4`, not `issue/4`)
+
+### Examples
+```javascript
+// :ga:gh(issue#4)     // links to GitHub issue 4
+// :ga:rfc(9110)       // references RFC 9110
+// :ga:feature(flag-x) // feature flag
+```
+
+### When to use
+- Linking to external trackers (issues, PRs, tickets)
+- Pointing at standards or documents (RFCs, ADRs)
+- Feature toggles / AB-tests (`abtest(group-a)`) 
 ```
 
 ## JSON Objects

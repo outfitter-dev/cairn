@@ -22,8 +22,9 @@ Every grep-anchor follows this pattern:
 anchor      ::= comment-leader sigil payload
 sigil       ::= ":ga:" | ":" identifier ":"
 payload     ::= token ( separator token )*
-token       ::= bare-token | json-object | array
+token       ::= bare-token | parameter | json-object | array
 bare-token  ::= ["@"] [a-zA-Z0-9_.-]+
+parameter   ::= bare-token "(" [^)]* ")"    # optional parameter payload
 json-object ::= "{" valid-json "}"
 array       ::= "[" item ("," item)* "]"
 separator   ::= "," | " " | "|"
@@ -76,6 +77,24 @@ Tokens can be separated by:
 - Comma: `:ga:fix,sec`
 - Space: `:ga:fix sec`
 - Pipe: `:ga:fix|sec` (rare)
+
+## Parameterised Markers
+
+A marker can carry a single *parameter* wrapped in round-brackets to give a more precise reference (for example an issue number or RFC identifier).
+
+```javascript
+// :ga:gh(issue#4)          // marker = gh, parameter = issue#4
+// :ga:rfc(7231)            // marker = rfc, parameter = 7231
+// :ga:feature(flag-login)  // marker = feature, parameter = flag-login
+```
+
+Guidelines:
+
+1. Prefer a hash (`#`) or hyphen (`-`) as an internal delimiter instead of `/` to avoid path-like ambiguity (`issue#4`, not `issue/4`).
+2. No whitespace or newlines inside the parameter payload.
+3. Tooling should treat the entire `marker(parameter)` sequence as **one token** for search / linting purposes.
+
+This maps directly to the `parameter` production added in the formal grammar above.
 
 ## Whitespace Rules
 
