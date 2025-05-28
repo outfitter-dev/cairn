@@ -1,8 +1,12 @@
 <!-- :ga:tldr comprehensive implementation plan for grepa syntax updates and specification refinements -->
 # Grepa Syntax Updates - Implementation Plan
 
+> **Architecture Document**: This is a forward-looking architectural specification that extends beyond the "simple pattern" approach described in the root README.md. It outlines comprehensive syntax enhancements and advanced features for future implementation.
+
 <!-- :ga:meta comprehensive architectural design document for syntax updates -->
 This document outlines the complete implementation plan for updating grepa's syntax specification, core patterns, and tooling integration based on architectural analysis and syntax refinement discussions.
+
+> **Migration Note**: This specification uses the new `priority:high` syntax. Until global migration is complete, existing documentation may still show the legacy `priority.high` format.
 
 <!-- :ga:status completed implementation plan with comprehensive specifications -->
 ## Implementation Status
@@ -15,14 +19,14 @@ All major architectural decisions have been finalized. This document serves as t
 ### Core Architectural Principles
 
 <!-- :ga:principle fundamental design constraint for grammar consistency -->
-1. **Single Token Preference**: When introducing markers, prefer those that LLMs tokenize to single tokens
-2. **Logical Unit Coherence**: Each grep-anchor represents one complete logical unit of information  
-3. **Comma-Only Separation**: Multiple markers within anchors use comma separation exclusively
-4. **Quote Protection**: Prose containing commas must be wrapped in quotes
-5. **Space Boundary Rule**: First space after structured markers delimits prose boundary
+1. **Single Token Preference**: When introducing markers, prefer markers that LLMs tokenize **as** single tokens.
+2. **Logical Unit Coherence**: Each grep-anchor represents one complete logical unit of information.
+3. **Comma-Only Separation**: Multiple markers within anchors use comma separation exclusively.
+4. **Quote Protection**: Prose containing commas must be wrapped in quotes.
+5. **Space Boundary Rule**: The first space following the last structured marker delimits the prose boundary.
 
 <!-- :ga:arch delimiter semantic distinction for parser consistency -->
-### Delimiter Semantics Framework
+## Delimiter Semantics Framework
 
 **Colon (:) Usage - Scope and Classification:**
 - **Purpose**: Express type:value relationships, classifications, states
@@ -31,7 +35,7 @@ All major architectural decisions have been finalized. This document serves as t
 
 **Parentheses Usage - Parameters and Arguments:**
 - **Purpose**: Associate structured parameters with markers
-- **Examples**: `blocked(by:issue:4)`, `config(timeout:30)`
+- **Examples**: `blocked(by:issue:4)` (inner colons are literal), `config(timeout:30)`
 - **Grammar**: `marker(param:value,param2:value2)`
 
 **Dot Notation - Hierarchical Organization:**
@@ -44,7 +48,7 @@ All major architectural decisions have been finalized. This document serves as t
 - Use dots (`.`) for genuine hierarchies: object structures, code organization
 - Use colons (`:`) for type:value relationships: classifications, states, categories  
 - Use parentheses `()` for parameters: structured data associated with markers
-- Mixed patterns allowed: `api.v2:deprecated` (v2 of api IS deprecated)
+- Mixed patterns allowed: `api.v2:deprecated` (v2 of api *is* deprecated)
 
 <!-- :ga:todo update all documentation to reflect colon delimiter usage for priority -->
 **Required Documentation Updates:**
@@ -62,7 +66,8 @@ Teams can configure their preferred priority notation system in `grepaconfig.yam
 **Numeric Scheme Configuration:**
 ```yaml
 priorities:
-  scheme: "numeric"  # Primary notation uses p0/p1/p2
+# Primary notation uses p0/p1/p2
+  scheme: "numeric"
   numeric:
     p0: "critical"     # :ga:p0 → :ga:priority:critical
     p1: "high"         # :ga:p1 → :ga:priority:high  
@@ -74,7 +79,8 @@ priorities:
 **Named Scheme Configuration:**
 ```yaml
 priorities:
-  scheme: "named"    # Primary notation uses critical/high/medium
+# Primary notation uses critical/high/medium
+  scheme: named
   named:
     critical: "p0"     # :ga:critical → :ga:priority:critical
     high: "p1"         # :ga:high → :ga:priority:high
@@ -87,9 +93,9 @@ priorities:
 ```yaml
 priorities:
   aliases:
-    urgent: "critical"      # :ga:urgent → :ga:priority:critical
-    blocker: "critical"     # :ga:blocker → :ga:priority:critical
-    nice-to-have: "trivial" # :ga:nice-to-have → :ga:priority:trivial
+    "urgent": "critical"      # :ga:urgent → :ga:priority:critical
+    "blocker": "critical"     # :ga:blocker → :ga:priority:critical
+    "nice-to-have": "trivial" # :ga:nice-to-have → :ga:priority:trivial
 ```
 
 <!-- :ga:benefit tool integration advantages for team consistency -->
@@ -169,21 +175,21 @@ Multi-line anchor syntax for comment formats that support it, while preserving t
 
 ```html
 <!-- :ga:
-  todo,
-  priority:critical,
-  blocked(by:issue:4),
-  owner@alice fix authentication bug
+    todo,
+    priority:critical,
+    blocked(by:issue:4),
+    owner@alice fix authentication bug
 -->
 ```
 
 ```javascript
 /* :ga:
-   config:env[
-     prod(api-prod.company.com),
-     staging(api-staging.company.com),
-     dev(localhost:3000)
-   ]
-   endpoint configuration for environments
+    config:env[
+        prod(api-prod.company.com),
+        staging(api-staging.company.com),
+        dev(localhost:3000)
+    ]
+    endpoint configuration for environments
 */
 ```
 
@@ -418,124 +424,16 @@ Universal relational markers using consistent `marker(relation-type:target-ident
 - `perf` ↔ `performance` (1:1 substitution)
 - `tmp` ↔ `temp` ↔ `placeholder` (multiple synonyms)
 
-## Conditional Scope System
+## Future Feature References
 
-<!-- :ga:conditional environment and platform-aware marker values -->
-### Context-Aware Configuration
+The following advanced features have been moved to separate design documents for future consideration:
 
-Conditional values based on environment, platform, or other contexts using standardized scope syntax.
+- **[Plugin Architecture](../future/plugin-architecture.md)** - Configuration bundles for workflow standardization
+- **[Conditional Scopes](../future/conditional-scopes.md)** - Environment and platform-aware marker values  
+- **[Template Engine](../future/template-engine.md)** - Advanced placeholder syntax with parameter interpolation
+- **[UUID ID System](../future/uuid-ids.md)** - Automatic UUID strategies and cross-reference mechanics
+- **[AI Agent Triggers](../future/agent-triggers.md)** - Integration patterns for Claude, Cursor, and other AI assistants
 
-**Syntax Pattern:**
-```
-marker:scope[condition1(value1),condition2(value2)]
-```
-
-**Standard Scope Examples:**
-```javascript
-// :ga:config:env[prod(sk-live-123),dev(sk-test-789)]
-// :ga:endpoint:region[us(api-us.com),eu(api-eu.com)]
-// :ga:timeout:platform[ios(30),android(60),web(45)]
-// :ga:auth:env[prod(clerk),dev(none),test(mock)]
-```
-
-**Predefined Scope Types:**
-1. **env** - Environment/deployment context (dev, staging, prod, test, local)
-2. **platform** - Operating system or runtime (ios, android, web, windows, linux, macos)  
-3. **build** - Build configuration (debug, release, profile, test)
-4. **region** - Geographic or datacenter region (us, eu, asia, us-east-1)
-5. **version** - Version constraints (version numbers, ranges)
-6. **tier** - Service tier or plan level (free, pro, enterprise)
-7. **mode** - Application mode (readonly, maintenance, normal)
-
-**Scope Markers as Standalone:**
-```javascript
-// :ga:env:prod use production settings
-// :ga:platform:ios handle iOS-specific behavior
-// :ga:build:debug include debug assertions
-// :ga:region:eu comply with GDPR requirements
-```
-
-## Plugin Architecture as Configuration Bundles
-
-<!-- :ga:arch pattern package system without external dependencies -->
-### Pattern Packages for Workflow Standardization
-
-Plugins as configuration bundles that set up conventions, templates, aliases, and patterns for specific workflows without external dependencies.
-
-**Issue Tracking Plugin Example:**
-```yaml
-# @grepa/issues plugin
-name: "@grepa/issues"
-description: "Issue tracking patterns for internal documentation"
-
-templates:
-  issue: "issue,id:$1,status:$status ?? open,owner:$owner ?? @unclaimed"
-  bug: "issue,type:bug,priority:$priority ?? medium,id:$1"
-  task: "issue,type:task,epic:$epic,id:$1"
-
-directories:
-  create: ["docs/issues/", "docs/specs/", "docs/decisions/"]
-
-aliases:
-  bug: "issue,type:bug"
-  enhancement: "issue,type:enhancement"
-  epic: "issue,type:epic"
-
-search-shortcuts:
-  open-issues: ["status:open", "status:in-progress"]
-  my-issues: ["owner:$user"]
-  bugs: ["type:bug"]
-```
-
-**Monorepo Service Plugin Example:**
-```yaml
-# @grepa/monorepo plugin
-name: "@grepa/monorepo"
-description: "Service-oriented monorepo patterns"
-
-templates:
-  service-todo: "todo,service:$1,team:$team ?? @unclaimed"
-  service-config: "config,service:$1,env:$env ?? dev"
-  cross-service: "rel(depends:$1),service:$2"
-
-search-shortcuts:
-  auth-service: ["service:auth", "repo:services/auth-*", "#auth"]
-  payment-service: ["service:payment", "repo:services/payment-*", "#payment"]
-
-service-mapping:
-  auth: { directory: "services/auth-service", team: "@auth-team" }
-  payment: { directory: "services/payment-service", team: "@payments-team" }
-```
-
-**AI Agent Plugin Example:**
-```yaml
-# @grepa/ai-agents plugin
-name: "@grepa/ai-agents"
-description: "AI agent interaction patterns"
-
-templates:
-  claude-task: "@claude($1),priority:$priority ?? medium"
-  claude-review: "@claude(review:$1),type:code-review"
-  cursor-implement: "@cursor(implement:$1),complexity:$complexity ?? medium"
-
-aliases:
-  ai-help: "@claude"
-  code-review: "@claude(review)"
-  auto-implement: "@cursor(implement)"
-
-agent-patterns:
-  "@claude": { description: "Claude AI tasks", triggers: ["review", "implement", "explain"] }
-  "@cursor": { description: "Cursor AI tasks", triggers: ["implement", "refactor", "test"] }
-```
-
-<!-- :ga:benefit plugin system advantages for team standardization -->
-**Plugin Benefits:**
-1. **No External Dependencies** - Pure configuration, no API calls
-2. **Pattern Standardization** - Teams share conventions via plugins
-3. **Gradual Adoption** - Start simple, add workflow plugins as needed
-4. **Customizable** - Teams can fork/modify for specific needs
-5. **Composable** - Multiple plugins work together
-6. **Discoverable** - Plugin registry for common patterns
 
 ## Breadcrumb Protocol Framework
 
@@ -578,89 +476,6 @@ agent-patterns:
 - **Human-friendly** - readable prose alongside structured markers
 - **Relationship-aware** - breadcrumbs can point to other breadcrumbs
 
-## Advanced Syntax Features
-
-<!-- :ga:advanced sophisticated patterns for complex use cases -->
-### Template System with Parameter Interpolation
-
-**Positional Parameters:**
-```javascript
-// Template Definition:
-// jira: "issue(jira:$1)"
-
-// Usage → Expansion:
-// :ga:jira(PROJ-123)      → :ga:issue(jira:PROJ-123)
-```
-
-**Named Parameters with Defaults:**
-```javascript
-// Template Definition:
-// assigned: "todo,owner@$owner,priority:$priority ?? medium"
-
-// Usage → Expansion:
-// :ga:assigned(owner:alice,priority:high) → :ga:todo,owner@alice,priority:high
-// :ga:assigned(owner:bob)                 → :ga:todo,owner@bob,priority:medium
-```
-
-**Complex Templates with Array Handling:**
-```javascript
-// Template Definition:
-// multi-block: "blocked(by:$1[*]),priority:$2"
-
-// Usage → Expansion:
-// :ga:multi-block([issue:4,issue:7],high)
-// → :ga:blocked(by:issue:4,issue:7),priority:high
-```
-
-### ID System and Cross-Referencing
-
-**Manual ID Assignment:**
-```javascript
-// :ga:todo,id:auth-impl implement authentication
-// :ga:sec,id:validate-input,priority:high validate all inputs
-```
-
-**Referencing with # Symbol:**
-```javascript
-// :ga:see(#auth-impl)
-// :ga:blocked(by:#validate-input)
-// :ga:depends(on:#mem-leak-1)
-// :ga:related(#auth-impl,#validate-input)
-```
-
-**Future UUID Enhancement Concept:**
-```javascript
-// Automatic UUID assignment potential:
-// :ga:todo implement auth
-// Could auto-assign: :ga:todo,uuid:7f3d2a1b implement auth
-
-// UUID generation strategies:
-// 1. Short hash (6-8 chars): 7f3d2a1b
-// 2. Timestamp-based: 20240115-4a2f  
-// 3. Content-based: hash of file+line+content
-// 4. Sequential: proj-0001, proj-0002
-```
-
-### Tag System and Semantic Navigation
-
-**Implicit Tags from Markers:**
-```javascript
-// :ga:todo,priority:high creates implicit tags: #todo, #priority:high
-// :ga:component:auth.oauth creates: #component:auth.oauth
-```
-
-**Explicit Tags in Prose:**
-```javascript
-// :ga:todo implement OAuth for #aisdk using #auth.oauth.google
-// :ga:doc API reference for #api.v2.users #breaking-change
-```
-
-**Hierarchical Tag Navigation:**
-```javascript
-#auth               // matches all auth-related
-#auth.oauth         // matches auth.oauth and deeper
-#auth.oauth.google  // specific match
-```
 
 ## Implementation Roadmap
 
@@ -709,13 +524,7 @@ agent-patterns:
    - Configurable version style preferences
    - Validation for version constraint syntax
 
-3. **Plugin System Foundation**
-   - Plugin loading and configuration
-   - Template interpolation engine
-   - Alias resolution system
-   - Search shortcut definitions
-
-### Phase 3: Advanced Feature Implementation
+### Phase 3: Core Feature Implementation
 
 **Multi-line Anchor Support:**
 - Parser updates for multi-line comment detection
@@ -728,29 +537,20 @@ agent-patterns:
 - Dependency chain analysis
 - Cross-reference validation
 
-**Template System:**
-- Parameter interpolation engine
-- Named parameter support with defaults
-- Array handling in templates
-- Template validation and error reporting
-
 ### Phase 4: Tool Integration and Validation
 
 **Search and Discovery:**
 - Enhanced ripgrep pattern generation
 - Multi-line anchor search support
-- Template-aware search functionality
-- Hierarchical tag navigation
+- Relational marker search patterns
 
 **Validation and Linting:**
 - Syntax validation for complex patterns
 - Relationship consistency checking
-- Template parameter validation
-- Plugin configuration validation
+- Multi-line syntax validation
 
 **Documentation Generation:**
 - Auto-generated pattern documentation
-- Plugin usage documentation
 - Configuration reference generation
 - Migration guide creation
 
@@ -771,13 +571,13 @@ agent-patterns:
 
 **Phase 3: Gradual Migration**
 - Team-by-team adoption of enhanced features
-- Plugin-based workflow standardization
 - Configuration-driven syntax preferences
+- Feature-by-feature rollout
 
 **Phase 4: Full Feature Utilization**
 - Advanced relational mapping
-- Complex template utilization
-- Comprehensive plugin ecosystems
+- Comprehensive search and discovery tools
+- Robust validation and linting systems
 
 <!-- :ga:validation implementation verification checkpoints -->
 ## Validation Checkpoints
@@ -791,20 +591,20 @@ agent-patterns:
 ### Documentation Coherence Validation  
 - All examples use current syntax patterns
 - Search patterns work with documented syntax
-- Plugin examples are functional and tested
+- Future feature references are clear and accessible
 - Migration guides are accurate and complete
 
 ### Tool Integration Validation
 - ripgrep patterns find intended anchors
 - Multi-line search patterns work correctly
-- Template interpolation produces valid syntax
-- Plugin loading and configuration functions properly
+- Relational marker resolution functions properly
+- Configuration systems validate correctly
 
 ### User Experience Validation
 - Syntax is learnable and memorable
 - Error messages are clear and actionable
 - Documentation flow supports progressive learning
-- Plugin ecosystem supports common workflows
+- Migration path is well-defined and tested
 
 <!-- :ga:completion comprehensive implementation plan finalized -->
 ## Conclusion
