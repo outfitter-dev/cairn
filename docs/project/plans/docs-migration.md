@@ -60,7 +60,7 @@ Dots can be ambiguous (hierarchy vs literal).  New rule keeps dots **only** insi
 | `()`      | parameter list (1-N values)   | `blocked(issue:4)` |
 
 **Docs to touch**  
-`docs/notation/format.md`, `docs/notation/examples.md`, `docs/guides/progressive-enhancement.md`.
+`docs/magic-anchors/format.md`, `docs/magic-anchors/examples.md`, `docs/guides/progressive-enhancement.md`.
 
 ## 5  Spacing & quoting rules
 
@@ -72,7 +72,7 @@ Dots can be ambiguous (hierarchy vs literal).  New rule keeps dots **only** insi
 • Single quotes for spaces / special chars.  
 • Double quotes if single quotes appear inside.
 
-Add a quick table to `docs/notation/payloads.md`.  Update any sample sed/rg commands that rely on unquoted values.
+Add a quick table to `docs/magic-anchors/payloads.md`.  Update any sample sed/rg commands that rely on unquoted values.
 
 ## 6  Universal parameters & todo consolidation
 
@@ -92,7 +92,7 @@ Tasks
 Actions
 1. Create a new table in `docs/conventions/common-patterns.md` listing the six groups with 1-sentence purpose.  
 2. Update search examples: `rg ":A:.*notice"` etc.  
-3. Add group tags to the glossary in `docs/notation/README.md`.
+3. Add group tags to the glossary in `docs/magic-anchors/README.md`.
 
 ## 8  Anchor density guidelines
 
@@ -119,7 +119,7 @@ To do
 `grepa-updates.md#L1127-L1190`.
 
 Steps
-1. Move parameter-group table into `docs/notation/payloads.md` (it belongs with value syntax).  
+1. Move parameter-group table into `docs/magic-anchors/payloads.md` (it belongs with value syntax).  
 2. Cross-link from `docs/conventions/common-patterns.md`.  
 3. Add examples per group in `docs/examples.md`.
 
@@ -127,10 +127,23 @@ Steps
 
 ## Style & wording checklist
 
-Follow `docs/notation/LANGUAGE.md` when describing *notation* (use “accommodates”, “recommends”, etc.).  Use `docs/toolset/LANGUAGE.md` when writing about *tools* (use “enforces”, “validates”, …).
+Follow `docs/magic-anchors/LANGUAGE.md` when describing *notation* (use “accommodates”, “recommends”, etc.).  Use `docs/grepa/LANGUAGE.md` when writing about *tools* (use “enforces”, “validates”, …).
 
 ---
 
 ## Tracking progress
 
 Add `[x]` checkboxes once each item is completed.  When all sections above are fully migrated, close issue **#doc-migration**.
+
+### Progress snapshot (v0.1.1 – 2025-05-28)
+
+- [x] Repo restructure (`notation`→`magic-anchors`, `toolset`→`grepa`).
+- [x] Changelogs created (`magic-anchors/CHANGELOG.md`, `grepa/CHANGELOG.md`).
+- [x] Anchor prefix examples updated in **core spec** & **grepa-updates.md**.  (Guides / README still pending.)
+- [ ] Dot-notation purge across *all* docs – main spec done; guides & conventions still need sweeps.
+- [ ] Colon-delimiter rule reflected in every example (partial).
+- [ ] Spacing & quoting rules table in `magic-anchors/payloads.md` (todo).
+- [ ] Marker-group table in `conventions/common-patterns.md` (todo).
+- [ ] Parameter-group table moved to `magic-anchors/payloads.md` (todo).
+- [ ] Density guidelines integrated into guides (todo).
+- [ ] Hashtag section in advanced docs (todo).

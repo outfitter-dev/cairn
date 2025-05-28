@@ -285,10 +285,10 @@ rg ":ga:(\w+)" -o | sort | uniq -c
 - [Progressive Enhancement](docs/guides/progressive-enhancement.md) - Three levels of adoption
 
 ### Notation & Conventions
-- [Notation Overview](docs/notation/README.md) - Technical format specification
-- [Format Specification](docs/notation/format.md) - Detailed syntax rules
-- [Payload Rules](docs/notation/payloads.md) - How to structure tag payloads
-- [Examples](docs/notation/examples.md) - Notation examples across languages
+- [Magic-Anchor Overview](docs/magic-anchors/README.md) - Technical format specification
+- [Format Specification](docs/magic-anchors/format.md) - Detailed syntax rules
+- [Payload Rules](docs/magic-anchors/payloads.md) - How to structure tag payloads
+- [Examples](docs/magic-anchors/examples.md) - Notation examples across languages
 
 ### Conventions & Patterns
 - [Conventions Overview](docs/conventions/README.md) - Usage patterns and best practices

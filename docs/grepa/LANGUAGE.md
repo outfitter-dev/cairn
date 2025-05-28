@@ -73,7 +73,7 @@ Tools are opinionated implementations that make specific choices about syntax en
 > grepa validate ":ga:config(redis)"
 > ```
 > 
-> This enforcement ensures consistent parsing, though the underlying notation accommodates both forms. See [notation language guide](../notation/LANGUAGE.md) for pattern flexibility.
+> This enforcement ensures consistent parsing, though the underlying notation accommodates both forms. See [notation language guide](../magic-anchors/LANGUAGE.md) for pattern flexibility.
 
 ## Cross-References
 
