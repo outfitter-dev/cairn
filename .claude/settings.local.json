@@ -10,7 +10,8 @@
       "Bash(npm run inventory:py:*)",
       "Bash(npm run inventory:*)",
       "Bash(npm install)",
-      "mcp__time__get_current_time"
+      "mcp__time__get_current_time",
+      "mcp__sequentialthinking__sequentialthinking"
     ],
     "deny": []
   }
