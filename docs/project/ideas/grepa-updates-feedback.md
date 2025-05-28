@@ -38,7 +38,7 @@ This document captures a complete red-pen review of `docs/project/ideas/grepa-up
 | 233-235 | over-escaped regex | single backslash inside single quotes |
 | 395-397 | `rel()` delimiter policy | decide colon vs param form |
 | 410-411 | `owner@alice` delimiter | consider `owner:@alice` or document `@` rule |
-| — | **Closing sentinel for multi-line anchors** | Adopt a consistent terminator—draft proposal `:V:` | 
+| — | **Closing sentinel for multi-line anchors** | Adopt a consistent terminator—draft proposal `:V:` |
 | 499 | comma collision in template | document escaping or alternate delimiter |
 | 560-561 | hyphen in value | add charset note |
 | 598-602 | `$var ?? default` syntax | add formal description |
@@ -69,17 +69,17 @@ This document captures a complete red-pen review of `docs/project/ideas/grepa-up
 3. Update all README / guide examples to `priority:high` (add a temporary migration call-out until complete).
 4. Add explicit *error* examples in the Validation section showing linter output.
 5. Split the **Plugin Architecture** portion into its own document (see below).
-6. Experiment with a *closing sentinel* for multi-line anchors—placeholder proposal `:V:` (e.g. `:V -->`).
+6. Experiment with a *closing sentinel* for multi-line anchors—placeholder proposal `:V:` (e.g. `:V: -->`).
 
 ---
 
 ## 4. Future (move each item to `docs/project/future/`)
 
-* **plugin-architecture.md** – Full pattern-package system (current §“Plugin Architecture as Configuration Bundles”).
-* **conditional-scopes.md** – Environment / platform-based value selection engine.
-* **uuid-ids.md** – Automatic UUID strategies and cross-reference mechanics.
-* **agent-triggers.md** – `@claude`, `@cursor` and AI-agent integration model.
-* **template-engine.md** – Advanced placeholder syntax (`$var ?? default`, array handling, etc.).
+- **plugin-architecture.md** – Full pattern-package system (current §“Plugin Architecture as Configuration Bundles”).
+- **conditional-scopes.md** – Environment / platform-based value selection engine.
+- **uuid-ids.md** – Automatic UUID strategies and cross-reference mechanics.
+- **agent-triggers.md** – `@claude`, `@cursor` and AI-agent integration model.
+- **template-engine.md** – Advanced placeholder syntax (`$var ?? default`, array handling, etc.).
 
 ---
 

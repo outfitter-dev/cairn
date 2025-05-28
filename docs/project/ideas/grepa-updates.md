@@ -9,23 +9,28 @@ This document outlines the complete implementation plan for updating grepa's syn
 ## Key Decisions
 
 **Core syntax decisions:**
+
 - `:A:` anchor replaces `:ga:` for speed and clarity
 - Eliminate dot notation except for literals (versions, file paths, URLs, decimals)
 - Colon (`:`) for classifications, parentheses `()` for value attachment
-- @mentions work as implicit assignment (`@alice` = `assign:@alice`)
+- Require colon delimiter for all markers with values (including mentions: `owner:@alice`)
 - Bracket arrays for multiple values: `blocked:[4,7]`, optional for single values
 
 **Marker organization:**
+
 - 6 marker groups: `todo`, `info`, `notice`, `trigger`, `domain`, `status`
 - ~40 specific markers organized by semantic purpose
 - Group-level searching: `rg ":A:.*notice"` finds all warnings
+- Work markers can be standalone OR parameters to `todo`
 
 **Parameter system:**
+
 - 6 parameter groups: `mention`, `relation`, `workflow`, `priority`, `lifecycle`, `scope`
 - Universal parameters work across all marker types
 - Context-aware interpretation (teams configure issue formats)
 
 **Scope limitations:**
+
 - No JSON or YAML syntax within anchors
 - No regex/pattern matching as core feature
 - Magic anchor syntax must be expressive enough on its own
@@ -86,6 +91,42 @@ delimiter     ::= ":" | "(" | "["             # colon / paren / array start
 
 > Draft tagline for the README: **`grep:A:` — Magic Anchors for Codebases**.
 
+### Prose Formatting Guidelines
+
+**Optional but Recommended**: For enhanced clarity, prose following markers can be formatted with colon prefixes and/or quotes.
+
+**Colon prefix** - Visually separates markers from descriptive text:
+
+```javascript
+// :A: todo: need to implement user validation
+// :A: context: this function assumes Redis is available  
+// :A: security: all inputs must be sanitized here
+```
+
+**Quoted prose** - Provides clear boundaries, especially with complex text:
+
+```javascript
+// :A: todo(assign:@alice): "implement OAuth with PKCE flow"
+// :A: warn: "this function modifies global state"
+// :A: explain: "algorithm uses recursive descent parsing"
+```
+
+**Combined approach** - Both colon and quotes for maximum clarity:
+
+```javascript
+// :A: todo(priority:high): "fix race condition in auth service"
+// :A: context(since:v1.2): "legacy support for old session format"
+```
+
+**Benefits:**
+
+- **Visual clarity** - Clear separation between structured markers and human text
+- **Parsing friendly** - Tools can easily distinguish markers from prose
+- **Familiar syntax** - Colon prefix mirrors function signatures and type annotations
+- **Flexible adoption** - Teams can choose their preferred style consistently
+
+**Note**: While not required by the grammar, consistent prose formatting improves readability and tool integration.
+
 <!-- :A: status completed implementation plan with comprehensive specifications -->
 ## Implementation Status
 
@@ -118,19 +159,19 @@ All major architectural decisions have been finalized. This document serves as t
 - **Examples**: `blocked(by:issue:4)` (inner colons are literal), `config(timeout:30)`
 - **Grammar**: `marker(param:value,param2:value2)`
 
-**Dot Notation - Hierarchical Organization:**
+**Bracket Arrays - Multiple Values:**
 
-- **Purpose**: Express genuine parent.child relationships
-- **Examples**: `api.v2.users`, `module.auth.login`
-- **Grammar**: `parent.child.grandchild`
+- **Purpose**: Express multiple values for parameters  
+- **Examples**: `blocked:[4,7]`, `tags:[auth,api,security]`
+- **Grammar**: `marker:[value1,value2,value3]` or single `marker:value`
 
 <!-- :A: decision critical architectural choice affecting all syntax patterns -->
 **Decision Framework Application:**
 
-- Use dots (`.`) for genuine hierarchies: object structures, code organization
+- Use dots (`.`) **only** for literals: versions, file paths, URLs, decimals
 - Use colons (`:`) for type:value relationships: classifications, states, categories  
 - Use parentheses `()` for parameters: structured data associated with markers
-- Mixed patterns allowed: `api.v2:deprecated` (v2 of api *is* deprecated)
+- Use brackets `[]` for multiple values: `blocked:[4,7]`, optional for single values
 
 <!-- :A: todo update all documentation to reflect colon delimiter usage for priority -->
 **Required Documentation Updates:**
@@ -247,82 +288,42 @@ versioning:
 
 ## Multi-line Anchor Syntax
 
-<!-- :A: syntax advanced multi-line support for complex anchor patterns -->
-### Enhanced Readability for Complex Anchors
+<!-- :A: decision simplified single-line approach maintains grep-ability -->
+### Decision: Single-line Anchors with Multiple Lines
 
-Multi-line anchor syntax for comment formats that support it, while preserving the "single anchor == one complete thought" principle.
+**Current approach**: Recommend single-line anchors under 120 characters. For additional context, use multiple anchor lines rather than multi-line syntax.
 
-**Supported Comment Formats:**
+**Rationale**: Multi-line anchors break the core grep-ability value proposition. `rg ":A: todo"` must reliably find all todo items.
 
-- HTML: `<!-- :A: ... -->`
-- CSS/JS/C++: `/* :A: ... */`
-- Python docstrings: `""" :A: ... """`
+**Future consideration**: CLI tooling may add multi-line search helpers, but the basic pattern stays grep-friendly.
 
-**Syntax Rules:**
-
-1. **Opening Pattern**: Comment start + `:A:` on first line
-2. **Marker Lines**: Indented markers, one per line or comma-separated
-3. **Prose Constraint**: Optional prose must be on same line as final marker
-4. **Closing Pattern**: Comment end maintains marker boundary
-
-**Examples:**
-
-```html
-<!-- :A:
-    todo,
-    priority:critical,
-    blocked(by:issue:4),
-    owner@alice fix authentication bug
--->
-```
+**Recommended Patterns:**
 
 ```javascript
-/* :A:
-    config:env[
-        prod(api-prod.company.com),
-        staging(api-staging.company.com),
-        dev(localhost:3000)
-    ]
-    endpoint configuration for environments
-*/
+// Single-line anchors (preferred)
+// :A: todo(assign:@alice,priority:high) implement OAuth integration
+
+// Multiple related anchor lines for context
+// :A: todo(assign:@alice,priority:high) implement OAuth integration  
+// :A: context OAuth flow requires PKCE for security compliance
+// :A: depends(service:session-api) user sessions must exist first
+
+function setupAuth() {
+  // implementation
+}
 ```
 
-```python
-""" :A:
-    api,
-    module:auth,
-    since:v2.0 main authentication module
-"""
-```
+**Benefits:**
 
-<!-- :A: warning ripgrep search implications for multi-line patterns -->
-**Search Pattern Implications:**
+- `rg ":A: todo"` always finds todo items
+- `rg ":A: context"` finds all context anchors
+- Simple, consistent search patterns
+- No complex multi-line parsing required
 
-Single-line patterns won't find multi-line anchors:
+**Future Enhancement:**
+A future `grepa` CLI might add commands like `grepa search --multi-line` for more sophisticated search patterns, but the core notation stays grep-friendly.
 
-```bash
-# This WON'T find multi-line anchors
-rg ":A: todo"                    # Misses multi-line variants
-```
-
-Multi-line search patterns required:
-
-```bash
-# Find opening patterns (good starting point)  
-rg "<!-- :A:|/\* :A:|\"\"\" :A:"
-
-# Multi-line search with context
-rg -U ":A:.*todo.*-->" --type html    # Multi-line mode
-rg -A 10 "<!-- :A:" | rg "todo"      # Find opens, then search content
-```
-
-<!-- :A: decision backwards compatibility with single-line preference -->
-**Implementation Decision:**
-
-- All existing single-line anchors continue to work unchanged
-- Multi-line is opt-in syntax for complex cases only
-- Simple markers should remain single-line: `<!-- :A: todo fix this -->`
-- Complex parameter lists and conditional configurations can use multi-line
+**Note**: Advanced multi-line syntax considerations have been moved to `docs/project/future/multi-line-anchors.md` for future exploration.
 
 ## Escape and Quoting Mechanisms
 
@@ -531,8 +532,8 @@ Universal relational markers using consistent `marker(relation-type:target-ident
 **Mention-Required Markers:**
 
 ```javascript
-// :A: owner@alice                     // Responsibility assignment
-// :A: assignee[@alice,@bob]           // Multi-person assignment
+// :A: owner:@alice                     // Responsibility assignment
+// :A: assignee:[@alice,@bob]           // Multi-person assignment
 ```
 
 <!-- :A: synonym marker aliasing system for consistency -->
@@ -549,7 +550,7 @@ The following advanced features have been moved to separate design documents for
 
 - **[Plugin Architecture](../future/plugin-architecture.md)** - Configuration bundles for workflow standardization
 - **[Conditional Scopes](../future/conditional-scopes.md)** - Environment and platform-aware marker values  
-- **[Template Engine](../future/template-engine.md)** - Advanced placeholder syntax with parameter interpolation
+- **[Variables and Templates](../future/variables-and-templates.md)** - Variable system, parameterized templates, and alias shortcuts
 - **[UUID ID System](../future/uuid-ids.md)** - Automatic UUID strategies and cross-reference mechanics
 - **[AI Agent Triggers](../future/agent-triggers.md)** - Integration patterns for Claude, Cursor, and other AI assistants
 
@@ -743,301 +744,3 @@ The following advanced features have been moved to separate design documents for
 This implementation plan provides a comprehensive framework for updating grepa's syntax specification with enhanced readability, powerful relational capabilities, flexible configuration systems, and robust plugin architecture. The systematic approach ensures backward compatibility while enabling advanced features that support both human understanding and AI agent efficiency.
 
 All architectural decisions have been finalized and documented. Implementation can proceed with confidence in the design's coherence and extensibility.
-
----
-
-
-
-## Doc Updates
-
-### Eliminate Dot Notation (Except Literals)
-
-**Decision**: Remove dot notation from structural/hierarchical markers, keeping dots only for literal values where they have established meaning.
-
-**Keep dots for literals:**
-
-- Version numbers: `since:1.2.0`, `until:v2.3.1`
-- File paths: `file:src/auth.js`, `path:/usr/local/bin`
-- URLs/domains: `endpoint:api.company.com`
-- Decimal numbers: `timeout:3.5`, `rate:0.25`
-
-**Replace hierarchical dots with simplified delimiter rules:**
-
-```javascript
-// Old: api.v2.users → New: api:v2-users or api(v2-users)
-// Old: module.auth.login → New: auth:login-module or auth(login-module)
-// Old: service.payment.stripe → New: payment(stripe-service)
-```
-
-**Apply simplified delimiter rules:**
-
-- `:` for classifications: `priority:high`, `env:production`
-- `()` for attaching values: `blocked(issue:4)`, `depends(auth-service,user-db)`
-- Remove redundant prepositions: `blocked(by:issue:4)` → `blocked(issue:4)`
-
-**Change notes:**
-
-- Update all `priority.high` → `priority:high` patterns
-- File path dots remain literal: `config.yaml`, `auth.service.ts`
-
-**Benefits:**
-
-- Familiar function-call syntax for developers
-- Eliminates parser ambiguity between structural vs literal dots
-- Clear semantic distinction: colon for classification, parentheses for attachment
-- Consistent search patterns: `rg ":A:.*auth"` works reliably
-
-### Require Colon Delimiter for All Markers
-
-**Decision**: All markers with values must use colon delimiter syntax, including mentions.
-
-**Change notes:**
-
-- `owner@alice` → `owner:@alice`
-- `assignee@bob` → `assignee:@bob`
-- All markers follow consistent `marker:value` pattern
-
-### Simplified Delimiter Rules
-
-**Decision**: Use clear, consistent delimiter rules based on function-call familiarity.
-
-**Rules:**
-
-- `:` for classifications: `priority:high`, `status:blocked`
-- `()` for attaching values to markers: `blocked(issue:4)`, `owner(@alice,@bob)`
-- Remove redundant prepositions: `blocked(by:issue:4)` → `blocked(issue:4)`
-
-**Patterns:**
-```javascript
-// Simple classifications
-// :A: priority:high, status:blocked
-
-// Single parameter attachment  
-// :A: blocked(issue:4), owner(@alice), due(2024-03-15)
-
-// Multiple parameter attachment
-// :A: depends(auth-service,user-db,redis)
-// :A: tags(security,auth,api)
-// :A: owner(@alice,@bob)
-```
-
-**Change notes:**
-
-- Remove preposition words inside parentheses where context is clear
-- Parentheses can contain single or multiple values
-- Structured data inside parentheses can still use colons: `config(timeout:30,retries:3)`
-
-### Spacing and Quoting Rules
-
-**Decision**: Handle spaces and special characters consistently across all parameters.
-
-**Quoting guidelines:**
-- **No quotes needed**: Simple values without spaces or special characters
-  - `path:src/auth.js`, `service:auth-api`, `issue:123`
-- **Single quotes required**: Values containing spaces or special characters
-  - `path:'src/user service.js'`, `service:'user management api'`
-  - `url:'https://example.com/api reference'`, `endpoint:'/api/user profiles'`
-- **Double quotes for complex cases**: When single quotes appear in the value
-  - `message:"Can't connect to service"`, `pattern:"user's-\d+"` 
-
-**Benefits:**
-- Handles real-world file paths with spaces (especially Windows)
-- Supports service names and API endpoints with spaces
-- Consistent with established quoting mechanisms
-- Clean syntax for simple cases, robust handling for complex ones
-
-### Universal Parameters and Todo Consolidation
-
-**Decision**: Recognize universal parameters that work across markers, and consolidate work-related markers into `todo`.
-
-**Universal parameters (work across all markers):**
-- `owner:@alice` or `owners:[@alice,@bob]` - responsibility assignment
-- `assignee:@charlie` - active work assignment  
-- `parent:epic-123` - hierarchical organization
-- `related:[4,7,docs-auth]` - connected items
-- `priority:high` - importance/urgency level
-
-**Todo as work container:**
-
-```javascript
-// Simple todos
-// :A: todo implement validation
-// :A: todo(priority:high) fix login bug
-
-// Todo with work-specific parameters
-// :A: todo(blocked:[4,7],status:in-progress) waiting for API fixes
-// :A: todo(blocking:[12,15],owners:[@alice,@bob]) auth redesign
-
-// Universal parameters work with any marker
-// :A: sec(owner:@bob,priority:critical) validate user inputs
-// :A: ctx(parent:user-stories) explains authentication flow
-```
-
-**Bracket usage guidelines:**
-- Single values: `blocked:4` or `blocked:[4]` (brackets optional but aid future editing)
-- Multiple values: `blocked:[4,7]` (brackets required)
-- Preference: Use brackets for parameters that commonly become multiple (`owners`, `blocked`, `tags`)
-
-**Change notes:**
-- Consolidate `bug`, `fixme`, `debt` → `todo(type:bug)`, `todo(type:debt)`, etc.
-- Universal parameters provide consistent context across marker types
-- Reserve braces `{}` for future use
-
-### Core Marker Groups System
-
-**Decision**: Organize markers into 6 semantic groups for flexible usage and searchability.
-
-**Core Marker Groups:**
-
-1. **`todo` group (work needed):**
-   - `todo` - general work that needs doing
-   - `bug` - defects to fix
-   - `fix` / `fixme` - broken code requiring immediate attention
-   - `task` - specific work items
-   - `issue` / `ticket` - tracked work items
-   - `pr` - pull request related work
-   - `review` - code/design review needed
-
-2. **`info` group (explanations/guidance):**
-   - `context` - important background information for understanding code
-   - `note` - general observations or explanations
-   - `docs` - documentation needed or references
-   - `explain` - detailed explanations of complex logic
-   - `tldr` - brief summaries or overviews
-   - `example` - usage examples or demonstrations
-   - `guide` - step-by-step instructions
-   - `rule` - behavioral rules for humans or agents
-
-3. **`notice` group (warnings/alerts):**
-   - `warn` - general warnings or cautions
-   - `freeze` - code must not be modified
-   - `critical` - critical issues requiring immediate attention
-   - `unsafe` - potentially dangerous code
-   - `deprecated` - code scheduled for removal
-   - `unstable` - subject to change without notice
-   - `experiment` - new features being tested
-   - `changing` - code that will change in future versions
-
-4. **`trigger` group (automated behaviors):**
-   - `action` - general automated actions
-   - `notify` - send notifications when conditions met
-   - `alert` - urgent notifications
-   - `hook` - integration with external systems
-
-5. **`domain` group (specialized contexts):**
-   - `api` - public interface definitions
-   - `security` - security-sensitive code
-   - `perf` - performance-critical sections
-   - `deploy` - deployment-related code
-   - `test` - testing-related markers
-   - `data` - data handling or storage
-   - `config` - configuration management
-   - `lint` - code quality and style
-
-6. **`status` group (lifecycle states):**
-   - `temp` - temporary code to be removed
-   - `placeholder` - incomplete implementations
-   - `stub` - minimal implementations for testing
-   - `mock` - fake implementations
-   - `draft` - preliminary versions
-   - `prototype` - experimental implementations
-   - `complete` - finished implementations
-   - `ready` - ready for next phase
-   - `broken` - known non-functional code
-
-**Benefits:**
-
-- **Flexible searching**: `rg ":A:.*notice"` finds all warnings, or `rg ":A:.*warn"` for specific types
-- **Semantic clarity**: Write precise markers (`freeze`, `critical`) rather than generic ones
-- **Extensible**: Add new markers to existing groups without core changes
-- **LLM-friendly**: Clear categorization helps AI agents understand intent
-
-### Universal Parameter Groups
-
-**Decision**: Organize parameters into 6 semantic groups that work across all marker types.
-
-**Parameter Groups:**
-
-1. **`mention` group (who/what entity):**
-   - `owner:@alice` - who maintains/owns this code
-   - `by:@agent` - who created this (useful for agent attribution)
-   - `team:@frontend` - which team is responsible
-   - `assign:@bob` - who should work on this (equivalent to `@bob`)
-
-2. **`relation` group (connections):**
-   - `parent:epic-123` - belongs to larger work item or hierarchy
-   - `related:[4,7,docs-auth]` - connected items, cross-references
-   - `depends:[auth-service,user-db]` - external dependencies required
-   - `path:src/auth.js` - file or directory references
-   - `url:https://docs.example.com` - web documentation or external links
-   - `service:auth-api` - microservice or external service references
-   - `endpoint:/api/users` - API endpoint references
-   - `repo:frontend/components` - repository or codebase references
-   - `issue:4` - issue tracker references (alternative to blocked/related)
-   - `pr:123` - pull request references
-   - `commit:a1b2c3d` - git commit references
-
-3. **`workflow` group (work coordination):**
-   - `blocked:[4,7]` - what prevents this work from proceeding
-   - `blocking:[12,15]` - what this work prevents from proceeding  
-   - `on:change` - trigger condition for automated actions
-   - `reason:compliance` - explanation for why something exists
-
-4. **`priority` group (importance/urgency):**
-   - `priority:high` - importance level for triage
-   - `severity:critical` - risk/impact level (especially for warnings)
-   - `complexity:high` - difficulty level for code understanding
-
-5. **`lifecycle` group (timing/state):**
-   - `since:1.2.0` - version when introduced
-   - `until:2.0.0` - version scheduled for removal
-   - `status:in-progress` - current state of work
-   - `type:bug` - classification category
-
-6. **`scope` group (environment/context):**
-   - `env:prod` - environment context (dev, staging, prod)
-   - `platform:ios` - platform-specific behavior (ios, android, web)
-   - `region:us-east` - geographic or deployment region
-   - `build:debug` - build configuration context
-
-**Usage Examples:**
-
-```javascript
-// Universal parameters work with any marker
-// :A: todo(assign:@alice,priority:high,blocked:[4,7]) implement auth
-// :A: security(owner:@bob,severity:critical,url:compliance-docs) validate inputs
-// :A: context(complexity:high,since:1.2.0,path:algorithms/auth.js) recursive algorithm
-
-// Specific reference types for clear context
-// :A: api(endpoint:/users,service:user-api,path:routes/users.js) user management
-// :A: deploy(depends:[auth-service],env:prod,repo:infrastructure) production setup
-// :A: bug(issue:123,commit:a1b2c3d,related:[124,125]) fix authentication flow
-
-// @mentions are equivalent to assign parameter
-// :A: todo @alice implement auth
-// :A: review @team-leads check performance impact
-```
-
-**Search Benefits:**
-
-```bash
-# Group-level searches
-rg ":A:.*mention"        # All assignments/ownership
-rg ":A:.*relation"       # All connections/references
-rg ":A:.*workflow"       # All work coordination
-rg ":A:.*priority"       # All importance/urgency markers
-
-# Specific parameter searches  
-rg ":A:.*blocked"        # Just blocked items
-rg ":A:.*severity:critical"  # Critical severity items
-rg ":A:.*path:"          # All file references
-rg ":A:.*service:"       # All service references
-rg ":A:.*endpoint:"      # All API endpoint references
-```
-
-**Benefits:**
-
-- **Universal application**: Same parameters work across all marker groups
-- **Flexible searching**: Group-level or specific parameter searches
-- **Clear semantics**: Parameters grouped by purpose and meaning
-- **Extensible**: Add new parameters to existing groups without syntax changes
