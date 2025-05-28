@@ -132,6 +132,17 @@ delimiter     ::= ":" | "(" | "["             # colon / paren / array start
 
 All major architectural decisions have been finalized. This document serves as the authoritative implementation plan for syntax updates across the entire grepa project.
 
+**Completed work since v0 draft**
+
+- Documentation folders have been streamlined:
+  - `docs/notation/` → `docs/magic-anchors/`
+  - `docs/toolset/`  → `docs/grepa/`
+- A `CHANGELOG.md` was added under `docs/magic-anchors/` to track language-level changes.
+- Created `docs/magic-anchors/advanced/` for deep-dive topics (moved `advanced-patterns.md`).
+- Added `docs/grepa/CHANGELOG.md` and `docs/grepa/ROADMAP.md` for tooling version history and future milestones.
+- Archived superseded drafts to `docs/project/archive/` for historical reference.
+- Version milestone **v0.1.1** recorded in both `docs/magic-anchors/CHANGELOG.md` and `docs/grepa/CHANGELOG.md`.
+
 <!-- :A: ctx this plan implements decisions from extensive syntax analysis and architectural discussions -->
 ## Implementation Overview
 
@@ -156,7 +167,7 @@ All major architectural decisions have been finalized. This document serves as t
 **Parentheses Usage - Parameters and Arguments:**
 
 - **Purpose**: Associate structured parameters with markers
-- **Examples**: `blocked(by:issue:4)` (inner colons are literal), `config(timeout:30)`
+ - **Examples**: `blocked(issue:4)`, `config(timeout:30)`
 - **Grammar**: `marker(param:value,param2:value2)`
 
 **Bracket Arrays - Multiple Values:**
@@ -335,9 +346,9 @@ A future `grepa` CLI might add commands like `grepa search --multi-line` for mor
 1. **Single Quotes for Literal Strings:**
 
    ```javascript
-   // :A: regex('user-\d+')              // literal regex pattern
-   // :A: path('/path/with spaces')      // path with spaces
-   // :A: message('Error: invalid ()')   // message with special chars
+   // :A: match('user-123')              // literal string match
+   // :A: path('src/scripts/data migration.sql') // path with spaces
+   // :A: message('Error: invalid payload (too large)')   // message with special chars
    ```
 
 2. **Double Quotes for Interpolated Strings:**
@@ -360,22 +371,22 @@ A future `grepa` CLI might add commands like `grepa search --multi-line` for mor
 ```javascript
 // :A: message('Can\'t connect')      // escaped single quote
 // :A: path("C:\\Program Files")      // escaped backslash
-// :A: regex("user\.\d+")             // escaped dots in regex
-// :A: json('{"key": "value"}')       // JSON in single quotes
+// :A: match("user.123")              // escaped dots in string
+// :A: data('config-file')            // reference to data storage
 ```
 
 **Complex Use Cases:**
 
-**Regex Patterns:**
+**String Patterns:**
 
 ```javascript
-// Simple patterns (no quotes needed)
+// Simple strings (no quotes needed)
 // :A: match(user-123)                // literal match
-// :A: pattern(\d+)                   // simple regex
+// :A: contains(email)                // simple substring
 
-// Complex patterns (quoted)
-// :A: regex('^\\w+@[\\w.-]+\\.\\w{2,}$') // email regex
-// :A: match('user-\\d+-(test|prod)')  // complex pattern
+// Complex strings (quoted)
+// :A: match('user@example.com')      // email string
+// :A: contains('user-test')          // string with dash
 ```
 
 **File Paths:**
@@ -386,7 +397,7 @@ A future `grepa` CLI might add commands like `grepa search --multi-line` for mor
 // :A: path(/usr/local/bin)           // Unix path
 
 // Paths with special chars (quoted)
-// :A: file('src/user service.js')    // spaces
+// :A: file('src/components/User Profile.jsx') // spaces in filename
 // :A: path('C:\Program Files\App')   // Windows path
 ```
 
@@ -394,11 +405,11 @@ A future `grepa` CLI might add commands like `grepa search --multi-line` for mor
 
 ```javascript
 // Simple arrays (no quotes)
-// :A: tags[auth,api,v2]              // simple identifiers
+// :A: tags:[auth,api,v2]             // simple identifiers
 
 // Complex arrays (quoted elements)
-// :A: patterns['user-\\d+','admin-.*'] // regex patterns
-// :A: files['src/auth.js','lib/util.js'] // file paths
+// :A: matches:['user-123','admin-456'] // string matches
+// :A: files:['src/services/auth.js','lib/utils.js'] // file paths
 ```
 
 <!-- :A: guideline parsing strategy for robust character handling -->
@@ -410,139 +421,97 @@ A future `grepa` CLI might add commands like `grepa search --multi-line` for mor
 4. **Validation**: Ensure balanced parens/brackets/braces
 5. **Error Handling**: Clear messages for malformed syntax
 
-## Universal Relational Marker System
+## Relationship and Dependency Examples
 
-<!-- :A: arch unified relationship expression pattern for consistency -->
-### Canonized Relational Patterns
+<!-- :A: arch unified relationship expression pattern reflecting updated decisions -->
+### Updated Relational Examples
 
-Universal relational markers using consistent `marker(relation-type:target-identifier)` pattern for expressing all types of relationships.
+Relationships are now expressed directly through dedicated markers (e.g. `depends`, `blocked`, `related`) without the legacy `rel()` wrapper and without redundant prepositions.
 
-**Dependency Relations:**
-
-```javascript
-// :A: depends(on:auth-service)        // requires auth service to function
-// :A: requires(api:user.login)        // needs specific API endpoint
-// :A: needs(config:redis.connection)  // requires configuration
-```
-
-**Blocking/Flow Relations:**
+**Dependency Relations**
 
 ```javascript
-// :A: blocked(by:issue:4)             // blocked by specific issue
-// :A: blocking(issue:[7,10])          // blocks other issues
-// :A: awaits(approval:@security-team) // waiting for approval
-// :A: prevents(deployment:prod)       // prevents action
+// :A: depends(auth-service)           // requires auth service to function
+// :A: requires(api:v2-login)          // needs specific API endpoint
+// :A: needs(config:redis-connection)  // requires configuration
 ```
 
-**Event/Message Relations:**
+**Blocking / Flow Relations**
 
 ```javascript
-// :A: emits(event:user.created)       // publishes this event
-// :A: listens(to:payment.completed)   // subscribes to events
-// :A: triggers(workflow:deploy.prod)  // initiates process
-// :A: responds(to:webhook.stripe)     // handles incoming event
+// :A: blocked(issue:AUTH-123)         // blocked by specific JIRA ticket
+// :A: blocking:[PAY-45,UI-77]         // blocks other tasks
 ```
 
-**API Contract Relations:**
+**Event / Message Relations**
 
 ```javascript
-// :A: consumes(api:v2/users)          // calls this API endpoint
-// :A: provides(api:auth/login)        // implements this endpoint
-// :A: exposes(endpoint:/health)       // makes endpoint available
-// :A: calls(service:payment.charge)   // invokes external service
+// :A: emits(event:user-created)       // publishes this event
+// :A: listens(payment-completed)      // subscribes to events
+// :A: triggers(workflow:deploy-prod)  // initiates process
 ```
 
-**Data Flow Relations:**
+These examples follow the updated delimiter guidelines:
+
+1. No structural dots—use hyphens or slashes for hierarchy (`user-created`, `deploy-prod`).
+2. No redundant prepositions (`on`, `by`, `to`, etc.).
+3. Arrays retain the colon before the bracket when listing multiple targets (e.g. `blocking:[7,10]`).
+
+## Core Marker Groups System
+
+<!-- :A: spec canonical list of first-class markers -->
+Magic Anchors organize their **markers** into six semantic groups.  Group names are *not* written in anchors – they simply help you remember which marker to reach for and make it easier to run group-level searches.
+
+| Group | Purpose | Primary markers (synonyms in parentheses) |
+|-------|---------|-------------------------------------------|
+| **todo** | Work that needs to be done | `todo`, standalone work markers: `bug`, `fix`/`fixme`, `task`, `issue`/`ticket`, `pr`, `review` |
+| **info** | Explanations & guidance | `context` (`ctx`), `note`, `docs`, `explain`, `tldr`/`about`, `example`, `guide`, `rule`, `decision` |
+| **notice** | Warnings & alerts | `warn`, `flag`, `freeze`, `critical`, `unsafe`, `deprecated`, `unstable`, `experiment`, `changing` |
+| **trigger** | Automated behaviour hooks | `action`, `notify`, `alert`, `hook` |
+| **domain** | Domain-specific focus areas | `api`, `security`/`sec`, `perf`/`performance`, `deploy`, `test`, `data`, `config`, `lint` |
+| **status** | Lifecycle / completeness | `temp`/`tmp`/`placeholder`, `stub`, `mock`, `draft`, `prototype`, `complete`, `ready`, `broken` |
+
+**Marker usage rules**
+
+1. You may combine multiple markers with commas: `// :A: todo,bug(priority:high) fix login timeout`.
+2. If `todo` appears it must be the **first** marker – this makes `rg ":A: todo"` always work.
+3. Work markers (bug, task, etc.) may appear standalone *or* as parameters to `todo` for structured queries: `bug(auth-timeout)` → `todo(bug:auth-timeout)`.
+
+### Quick search examples
+
+```bash
+# All warnings / alerts
+rg ":A:.*notice"
+
+# All security-related anchors
+rg ":A:.*security"
+```
+
+---
+
+## Universal Parameter Groups
+
+<!-- :A: spec canonical parameter taxonomy -->
+Parameters are also grouped into six semantic families.  Any marker can take any parameter:
+
+| Group | Purpose | Examples |
+|-------|---------|----------|
+| **mention** | People / entities | `owner:@alice`, `assign:@bob`, `team:@frontend`, `by:@bot` |
+| **relation** | Links & references | `parent:epic-123`, `related:[4,7]`, `depends:[auth-svc,user-db]`, `path:src/auth.js`, `url:https://docs.example.com` |
+| **workflow** | Coordination | `blocked:[4,7]`, `blocking:[12,15]`, `reason:compliance` |
+| **priority** | Importance / risk | `priority:high`, `severity:critical`, `complexity:high` |
+| **lifecycle** | Time / state | `since:1.2.0`, `until:2.0.0`, `status:in-progress`, `type:bug` |
+| **scope** | Environment / context | `env:prod`, `platform:ios`, `region:us-east`, `build:debug` |
+
+### Parameter examples
 
 ```javascript
-// :A: reads(from:user-db)             // reads from data source
-// :A: writes(to:analytics-queue)      // sends data to destination
-// :A: caches(in:redis.sessions)       // uses cache layer
-// :A: stores(data:user.preferences)   // persists data
+// :A: todo(assign:@alice,priority:high,blocked:[AUTH-123,API-456]) implement auth flow
+// :A: security(owner:@bob,severity:critical,url:https://compliance.example.com) validate inputs
+// :A: api(endpoint:/users,service:user-api,path:src/routes/users.js) user management
 ```
 
-**Infrastructure Relations:**
-
-```javascript
-// :A: deploys(with:payment-service)   // same deployment boundary
-// :A: scales(based-on:api-traffic)    // scaling relationship
-// :A: monitors(via:prometheus.alerts) // observability relationship
-// :A: routes(through:api-gateway)     // network routing
-```
-
-**Array Targets for Multiple Relationships:**
-
-```javascript
-// :A: depends(on:[auth-service,user-db,redis])
-// :A: triggers(workflow:[deploy.staging,run.tests])
-// :A: blocked(by:[issue:4,approval:@alice])
-// :A: consumes(api:[v2/users,v2/auth,v1/billing])
-```
-
-<!-- :A: benefit automation and tooling integration advantages -->
-**Automation Benefits:**
-
-- **Service Discovery**: Auto-generate service topology maps
-- **Impact Analysis**: Understand blast radius of changes  
-- **Event Tracing**: Follow data flows across distributed systems
-- **Deployment Planning**: Understand service deployment dependencies
-
-## Enhanced Core Marker Set
-
-<!-- :A: core expanded standard marker definitions for agent efficiency -->
-### Agent-Optimized Core Markers
-
-**Navigation Markers for AI Efficiency:**
-
-```javascript
-// :A: entry                           // Entry points for understanding code flow
-// :A: entry(api)                      // API entry point
-// :A: entry(auth)                     // Authentication entry point
-// :A: explains(auth-flow)             // Documentation content
-// :A: explains(business-logic)        // Business rule explanations
-```
-
-**Code Quality Assessment:**
-
-```javascript
-// :A: impact:high                     // Change impact assessment
-// :A: impact([perf:high,api:low])     // Multi-dimensional impact
-// :A: pattern(singleton)              // Design pattern documentation
-// :A: state:global                    // State management markers
-// :A: state:immutable                 // Immutability constraints
-```
-
-**Enhanced Reference System:**
-
-```javascript
-// :A: rel(implements:auth-redesign)   // Universal relationship marker
-// :A: rel(depends:auth-service)       // Dependency relationship
-// :A: rel(blocks:issue:4)             // Blocking relationship
-```
-
-**Field Markers with Rich Semantics:**
-
-```javascript
-// :A: due(2024-03-15)                 // Due date field
-// :A: since:^1.2.0                    // Version introduced
-// :A: until:[3.0.0,)                  // Version for removal
-// :A: type(migration)                 // Type classification
-```
-
-**Mention-Required Markers:**
-
-```javascript
-// :A: owner:@alice                     // Responsibility assignment
-// :A: assignee:[@alice,@bob]           // Multi-person assignment
-```
-
-<!-- :A: synonym marker aliasing system for consistency -->
-**Synonym System:**
-
-- `ctx` ↔ `context` (1:1 substitution)
-- `sec` ↔ `security` (1:1 substitution)
-- `perf` ↔ `performance` (1:1 substitution)
-- `tmp` ↔ `temp` ↔ `placeholder` (multiple synonyms)
+---
 
 ## Future Feature References
 
@@ -571,11 +540,11 @@ The following advanced features have been moved to separate design documents for
    - `:A: todo` - "work needed here"
    - `:A: sec` - "security-sensitive location"
    - `:A: ctx` - "important context to understand"
-   - `:A: entry` - "start here for understanding"
+   - `:A: context` - "start here for understanding"
 
 2. **Navigation Paths** - Relationships between marked locations
-   - `:A: rel(depends:auth-service)` - "this connects to auth"
-   - `:A: rel(blocks:feature-x)` - "this prevents that"
+   - `:A: depends(auth-service)` - "this connects to auth"
+   - `:A: blocking(feature-x)` - "this prevents that"
    - `:A: see(auth.js:42)` - "related code over there"
 
 3. **Context Clues** - Human-readable explanations
@@ -603,17 +572,17 @@ The following advanced features have been moved to separate design documents for
 
 **Documentation Updates Required:**
 
-1. **docs/notation/SPEC.md** ✅ COMPLETED
+1. **docs/magic-anchors/SPEC.md** – needs update to new delimiter / marker rules
    - Implement delimiter semantics framework
    - Add relational marker specifications
    - Include multi-line syntax rules
    - Define escape and quoting mechanisms
 
-2. **docs/notation/LANGUAGE.md** ✅ COMPLETED
+2. **docs/magic-anchors/LANGUAGE.md** – pending update to `:A:` sigil and examples
    - Language guidelines for notation flexibility
    - "Accommodates", "recommends", "enables" terminology
 
-3. **docs/toolset/LANGUAGE.md** ✅ COMPLETED
+3. **docs/grepa/LANGUAGE.md** – pending update to reflect removal of `rel()` and new array syntax
    - Language guidelines for tool requirements
    - "Requires", "enforces", "validates" terminology
 
@@ -645,15 +614,10 @@ The following advanced features have been moved to separate design documents for
 
 ### Phase 3: Core Feature Implementation
 
-**Multi-line Anchor Support:**
-
-- Parser updates for multi-line comment detection
-- Search pattern adaptation for multi-line anchors
-- Tool integration for complex anchor structures
-
+<!-- Multi-line anchor support removed – current spec focuses on single-line anchors for grep-ability -->
 **Relational System:**
 
-- Universal `rel()` marker implementation
+- Implement core relationship markers (`depends`, `blocked`, `related`, `requires`, etc.)
 - Relationship mapping and visualization
 - Dependency chain analysis
 - Cross-reference validation
@@ -663,14 +627,14 @@ The following advanced features have been moved to separate design documents for
 **Search and Discovery:**
 
 - Enhanced ripgrep pattern generation
-- Multi-line anchor search support
+<!-- multi-line anchor search support removed; single-line anchors remain the core pattern -->
 - Relational marker search patterns
 
 **Validation and Linting:**
 
 - Syntax validation for complex patterns
 - Relationship consistency checking
-- Multi-line syntax validation
+<!-- multi-line syntax validation removed -->
 
 **Documentation Generation:**
 
