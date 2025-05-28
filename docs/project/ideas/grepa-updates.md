@@ -4,7 +4,7 @@
 <!-- :ga:todo work through this list -->
 ## TODO
 
-- [ ] Use "breadcrumb protocol" as one possible definition for the the grep-anchor format
+- [x] Use "breadcrumb protocol" as one possible definition for the the grep-anchor format
 - [x] Further define the `.` dot notation specs
 - [x] Further define the `:` delimiter and how it relates to `.`
 - [x] Parameterized token clarity
@@ -13,8 +13,8 @@
 - [x] Namespace/scope patterns
   - [x] Formal namespace syntax (e.g. `:ga:service.component.tag`)
   - [x] Hierarchical organization patterns
-  - [ ] Cross-reference patterns between services
-  - [ ] Monorepo patterns
+  - [x] Cross-reference patterns between services
+  - [x] Monorepo patterns
 - [x] Linkage/reference patterns:
   - [x] File references: `:ga:see(path/to/file.js:42)`
   - [x] Symbol references: `:ga:impl(UserService.validate)`
@@ -24,11 +24,11 @@
   - [x] Feature flags: `:ga:flag(dark-mode)`
   - [x] Build variants: `:ga:platform(ios)`
 - [x] Further definition of the `grepa` tool-marker
-- [ ] Multi-line anchors for compatible file formats (HTML, Markdown, etc.)
-- [ ] Escape/quote mechanism (regex, etc.)
-  - [ ] Special characters in params
-  - [ ] Multi-line anchors
-  - [ ] Regex patterns in payloads
+- [x] Multi-line anchors for compatible file formats (HTML, Markdown, etc.)
+- [x] Escape/quote mechanism (regex, etc.)
+  - [x] Special characters in params
+  - [x] Multi-line anchors
+  - [x] Regex patterns in payloads
 
 ## Decisions
 
@@ -57,7 +57,8 @@
 ### Additional Terminology Details
 
 - **Custom Sigil**: An identifier other than `ga` used within the colons e.g. `:wham:`
-- **Alias**: A marker that has a 1:1 definition with a core marker. They can be used interchangeably with core markers, and can be included or excluded within the scope of searching for its counterparts.
+- **Synonym**: A marker that has a 1:1 definition with another marker. Different words for the exact same concept. They can be used interchangeably and are just search/display preferences. Examples: `ctx` ↔ `context`, `start-here` ↔ `entry`
+- **Alias**: A shortcut that expands to more complex patterns or syntax. Involves actual syntax transformation during processing. Examples: `p0` → `priority:critical`, `blocked` → `rel(blocked-by:$1)`
 
 ### Terminology Notes
 
@@ -90,14 +91,34 @@ Core Markers can be considered a standard or base set, which have an established
 ### General Markers
 
 - `context`
-  - Aliases:
-    - `ctx`: This is shorter, but `context` is still preferred since it's unambiguous and is still short.
+  - Synonyms: `ctx`
 <!-- :ga:todo add definition for 'meta' -->
 - `meta`: ...
+- `needs`: Prerequisites or missing requirements
+  - Examples: `needs(specs)`, `needs(documentation)`, `needs(review)`
+  - Synonyms: `requires`, `missing`
 - `temp`: Temporary code intended for replacement
-  - Aliases: `tmp`, `placeholder`
+  - Synonyms: `tmp`, `placeholder`
 - `todo`: A task
-  - Aliases: `fixme`, `bug`, `task`, `issue` (see [issue markers](#issue-markers))
+  - Synonyms: `fixme`, `bug`, `task`, `issue` (see [issue markers](#issue-markers))
+
+### Navigation Markers
+
+- `entry`: Entry points and main interfaces for understanding code flow
+  - Examples: `entry`, `entry(api)`, `entry(auth)`
+  - Synonyms: `start-here`
+- `explains`: Documentation and explanatory content
+  - Examples: `explains(auth-flow)`, `explains(business-logic)`
+  - Synonyms: `about`, `why`, `describes`, `clarifies`
+
+### Code Quality Markers
+
+- `impact`: Change impact assessment with typed severity
+  - Examples: `impact:high`, `impact([perf:high,api:low])`, `impact([breaking:api,security:medium])`
+- `pattern`: Design pattern documentation
+  - Examples: `pattern(singleton)`, `pattern(observer)`, `pattern(factory)`
+- `state`: State management and mutability markers
+  - Examples: `state:global`, `state:immutable`, `state:cached`
 
 ### Field Markers
 
@@ -106,6 +127,12 @@ Core Markers can be considered a standard or base set, which have an established
 - `since|until(version)`: A field for versioning where the payload is a version number
   - `since`: Version introduced
   - `until`: Version for removal
+  - Version notation supports multiple styles (configurable):
+    - Semver: `^1.2.0`, `~1.2.0`, `>=1.2.0`, `>=1.2.0 <2.0.0`
+    - Python: `==1.2.0`, `~=1.2.0`, `>=1.2.0,<2.0.0`
+    - Maven: `[1.2.0]`, `[1.2.0,2.0.0)`, `[1.2.0,)`
+    - Ruby: `~> 1.2.0`, `>= 1.2.0, < 2.0`
+    - Examples: `:ga:since:^1.2.0`, `:ga:until:[3.0.0,)`, `:ga:compat:>=1.2.0,<2.0.0`
 - `type(value)`
   - Aliases: `kind`, `category`
 
@@ -247,6 +274,25 @@ dictionary:
     description: "Security-sensitive code"
     aliases: ["security"]
 
+priorities:
+  scheme: "numeric"  # or "named"
+  numeric:
+    p0: "critical"
+    p1: "high"
+    p2: "medium"
+    p3: "low"
+    p4: "trivial"
+  named:
+    critical: "p0"
+    high: "p1"
+    medium: "p2"
+    low: "p3"
+    trivial: "p4"
+  aliases:
+    urgent: "critical"
+    blocker: "critical"
+    nice-to-have: "trivial"
+
 todos:
   marker: issue
   status:
@@ -272,6 +318,28 @@ pull-requests: github # or gitlab, bitbucket, etc.
   # optional url: https://github.com/owner/repo
 
 variables:
+
+versioning:
+  style: "semver"  # or "python", "ruby", "maven", "go", etc.
+  
+  # Style definitions (examples)
+  semver:
+    exact: "=1.2.0"
+    compatible: "^1.2.0" 
+    patch-level: "~1.2.0"
+    minimum: ">=1.2.0"
+    range: ">=1.2.0 <2.0.0"
+    
+  python:
+    exact: "==1.2.0"
+    compatible: "~=1.2.0"
+    minimum: ">=1.2.0"
+    range: ">=1.2.0,<2.0.0"
+    
+  maven:
+    exact: "[1.2.0]"
+    range: "[1.2.0,2.0.0)"
+    minimum: "[1.2.0,)"
 
 ```
 
@@ -342,10 +410,63 @@ user:
 
 ### Breadcrumb Protocol Definition
 
-- Conceptual framework for grep-anchors as navigation breadcrumbs
-- How anchors create a traversable path through code
-- Relationship to AI agent navigation patterns
-- Examples of breadcrumb trails in practice
+**Core Concept:** Grepa as a "breadcrumb protocol" - a standardized way to leave navigational markers throughout codebases that both humans and AI agents can follow.
+
+**The Breadcrumb Metaphor:**
+
+**Traditional breadcrumbs** (Hansel & Gretel): Leave a trail to find your way back  
+**Web breadcrumbs**: Show navigation path (Home > Products > Laptops > Dell)  
+**Grep-anchor breadcrumbs**: Mark important locations for future discovery and navigation
+
+**As a breadcrumb protocol, grepa provides:**
+
+1. **Trail Markers** - Standardized markers for important code locations
+   - `:ga:todo` - "work needed here"
+   - `:ga:sec` - "security-sensitive location" 
+   - `:ga:ctx` - "important context to understand"
+   - `:ga:bug` - "known issue location"
+
+2. **Navigation Paths** - Relationships between marked locations
+   - `:ga:rel(depends:auth-service)` - "this connects to auth"
+   - `:ga:rel(blocks:feature-x)` - "this prevents that"
+   - `:ga:see(auth.js:42)` - "related code over there"
+
+3. **Context Clues** - Human-readable explanations
+   - Prose after markers explains WHY this location matters
+   - `:ga:todo,priority:high implement rate limiting before launch`
+
+4. **Discovery Mechanism** - Tools to follow the trail
+   - `rg ":ga:todo"` - find all work locations
+   - `grepa trace --from auth --to payment` - follow dependency trail
+   - `grepa map --service auth` - see all auth-related breadcrumbs
+
+**Protocol Benefits:**
+
+- **Leaves a trail** for future developers (including your future self)
+- **AI-navigable** - agents can follow breadcrumbs to understand code structure
+- **Cross-project consistency** - same breadcrumb format across all codebases
+- **Searchable and parseable** - tools can build navigation maps
+- **Human-friendly** - readable prose alongside structured markers
+- **Relationship-aware** - breadcrumbs can point to other breadcrumbs
+
+**Breadcrumb Trail Examples:**
+
+```javascript
+// Trail from feature request to implementation
+// docs/features/oauth.md: :ga:feature,id:oauth-impl OAuth integration feature
+// src/auth/oauth.js: :ga:rel(implements:oauth-impl),todo add Google provider
+// src/auth/providers/google.js: :ga:rel(implements:oauth-impl) Google OAuth provider
+// tests/auth/oauth.test.js: :ga:rel(tests:oauth-impl) OAuth integration tests
+```
+
+**Why "Protocol":**
+- **Standardized format** - consistent syntax rules across languages/projects
+- **Interoperable** - works with any text-based codebase
+- **Tool-agnostic** - readable by grep, ripgrep, custom parsers
+- **Extensible** - teams can add domain-specific breadcrumb types
+- **Versioned** - protocol can evolve while maintaining compatibility
+
+The breadcrumb protocol framing positions grepa as a fundamental navigation infrastructure for codebases, not just a commenting convention. It's about creating a **navigational mesh** that makes codebases more discoverable and understandable.
 
 ### Multi-Parameter Patterns
 
@@ -354,13 +475,340 @@ user:
 - Trade-offs between `marker(p1,p2)` vs `marker(key1:val1,key2:val2)`
 - Recommendation on standard approach
 
+### Priority Scheme Configuration
+
+**Core Concept:** Teams can configure their preferred priority notation system in grepaconfig.yaml.
+
+**Scheme Types:**
+
+1. **Numeric Scheme (`scheme: "numeric"`)** - Primary notation is p0/p1/p2
+```yaml
+priorities:
+  scheme: "numeric"
+  numeric:
+    p0: "critical"     # :ga:p0 → :ga:priority:critical
+    p1: "high"         # :ga:p1 → :ga:priority:high
+    p2: "medium"       # :ga:p2 → :ga:priority:medium
+    p3: "low"          # :ga:p3 → :ga:priority:low
+    p4: "trivial"      # :ga:p4 → :ga:priority:trivial
+```
+
+2. **Named Scheme (`scheme: "named"`)** - Primary notation is critical/high/medium
+```yaml
+priorities:
+  scheme: "named"
+  named:
+    critical: "p0"     # :ga:critical → :ga:priority:critical
+    high: "p1"         # :ga:high → :ga:priority:high
+    medium: "p2"       # :ga:medium → :ga:priority:medium
+    low: "p3"          # :ga:low → :ga:priority:low
+    trivial: "p4"      # :ga:trivial → :ga:priority:trivial
+```
+
+**Search Behavior:**
+```bash
+# Both schemes allow searching by any notation
+grepa find priority:critical    # Works regardless of scheme
+grepa find p0                   # Works regardless of scheme
+grepa find high                 # Works regardless of scheme
+
+# Tools can normalize display based on scheme preference
+grepa list --priority
+# Numeric scheme shows: p0, p1, p2, p3, p4
+# Named scheme shows: critical, high, medium, low, trivial
+```
+
+**Custom Aliases:**
+```yaml
+priorities:
+aliases:
+    nice-to-have: "trivial" # :ga:nice-to-have → :ga:priority:trivial
+```
+
+**Benefits:**
+- Team consistency (everyone uses same notation)
+- Tool integration (IDEs can show dropdowns with team's preferred scheme)
+- Search normalization (all priority searches work regardless of input format)
+- Migration support (can gradually shift from one scheme to another)
+
+### Multi-line Anchor Syntax
+
+**Core Concept:** Allow anchor markers to span multiple lines for readability while preserving the "single anchor == one complete thought" principle.
+
+**Supported in multi-line comment formats:**
+- HTML: `<!-- :ga: ... -->`
+- CSS/JS/C++: `/* :ga: ... */`
+- Python docstrings: `""" :ga: ... """`
+
+**Syntax Rules:**
+
+1. **Opening pattern:** Comment start + `:ga:` on first line
+2. **Marker lines:** Indented markers, one per line or comma-separated
+3. **Prose constraint:** Optional prose must be on same line as final marker
+4. **Closing pattern:** Comment end
+
+**Examples:**
+
+```html
+<!-- :ga:
+  todo,
+  priority:critical,
+  blocked(by:issue:4),
+  owner@alice fix authentication bug
+-->
+```
+
+```javascript
+/* :ga:
+   config:env[
+     prod(api-prod.company.com),
+     staging(api-staging.company.com),
+     dev(localhost:3000)
+   ]
+   endpoint configuration for environments
+*/
+```
+
+```python
+""" :ga:
+    api,
+    module:auth,
+    since:v2.0 main authentication module
+"""
+```
+
+**Formatting Guidelines:**
+- Use consistent indentation (2-4 spaces)
+- Align related markers vertically when possible
+- Keep prose on final marker line (maintains single-thought principle)
+- Break long parameter lists across lines for readability
+
+**ripgrep Search Implications:**
+
+**Standard single-line search patterns won't work:**
+```bash
+# This WON'T find multi-line anchors
+rg ":ga:todo"                    # Misses multi-line variants
+rg ":ga:config:env\[.*\]"        # Misses multi-line parameters
+```
+
+**Multi-line search patterns required:**
+```bash
+# Find opening patterns (good starting point)
+rg "<!-- :ga:|/\* :ga:|\"\"\" :ga:"
+
+# Multi-line search with context
+rg -U ":ga:.*todo.*-->" --type html    # Multi-line mode
+rg -U ":ga:.*config.*\*/" --type js    # Find config blocks
+
+# Structured approach - find opening, then check content
+rg -A 10 "<!-- :ga:" | rg "todo"      # Find opens, then search content
+```
+
+**Tool Considerations:**
+- Grepa CLI must parse multi-line comments to extract structured markers
+- Single-line anchors remain fully grep-compatible  
+- Multi-line anchors require structured parsing but offer better readability
+- Teams can choose: single-line for grep-ability vs multi-line for complex markers
+
+**When to use multi-line:**
+- ✅ Complex conditional configurations with many conditions
+- ✅ Multiple related markers that would create very long lines
+- ✅ Parameter lists that are hard to read on single line
+- ❌ Simple markers (keep single-line: `<!-- :ga:todo fix this -->`)
+- ❌ Short parameter lists (keep single-line: `<!-- :ga:config:env[prod,dev] -->`)
+
+**Backwards Compatibility:**
+- All existing single-line anchors continue to work unchanged
+- Multi-line is opt-in syntax for complex cases
+- ripgrep users get same results for simple searches
+- Advanced searches require multi-line patterns or grepa CLI
+
 ### Escape and Quoting Mechanisms
 
-- How to handle special characters in parameters
-- Escape sequences for quotes, colons, parentheses
-- Multi-line content in comments (HTML/markdown)
-- Regex patterns within parameters
-- Shell-safe considerations
+**Core Concept:** Handle special characters in parameters while maintaining grep-ability and shell-safety.
+
+**Problem Characters:**
+- **Commas** `,` - conflict with marker separation
+- **Parentheses** `()` - conflict with parameter syntax
+- **Brackets** `[]` - conflict with array syntax
+- **Braces** `{}` - conflict with JSON syntax
+- **Colons** `:` - conflict with type:value syntax
+- **Quotes** `"'` - conflict with string delimiters
+- **Pipes** `|` - conflict with OR syntax
+- **Backslashes** `\` - escape character conflicts
+
+**Quoting Rules:**
+
+1. **Single quotes for literal strings:**
+```javascript
+// :ga:regex('user-\d+')              // literal regex pattern
+// :ga:path('/path/with spaces')      // path with spaces
+// :ga:message('Error: invalid ()')   // message with special chars
+```
+
+2. **Double quotes for interpolated strings:**
+```javascript
+// :ga:template("User: $name ($id)")  // template with variables
+// :ga:query("SELECT * FROM users")   // SQL with interpolation potential
+```
+
+3. **No quotes when unambiguous:**
+```javascript
+// :ga:user(alice)                    // simple identifier
+// :ga:priority:high                  // simple type:value
+// :ga:version(2.0.1)                 // version number
+```
+
+**Escape Sequences:**
+
+Within quoted strings, use backslash escapes:
+```javascript
+// :ga:message('Can\'t connect')      // escaped single quote
+// :ga:path("C:\\Program Files")      // escaped backslash
+// :ga:regex("user\\.\\d+")           // escaped dots in regex
+// :ga:json('{"key": "value"}')       // JSON in single quotes (no escaping needed)
+```
+
+**Special Cases:**
+
+1. **Regex Patterns:**
+```javascript
+// Simple patterns (no quotes needed)
+// :ga:match(user-123)                // literal match
+// :ga:pattern(\d+)                   // simple regex
+
+// Complex patterns (quoted)
+// :ga:regex('^\w+@[\w.-]+\.\w{2,}$') // email regex
+// :ga:match('user-\d+-(test|prod)')  // complex pattern
+```
+
+2. **File Paths:**
+```javascript
+// Simple paths (no quotes)
+// :ga:file(src/auth.js)              // standard path
+// :ga:path(/usr/local/bin)           // Unix path
+
+// Paths with special chars (quoted)
+// :ga:file('src/user service.js')    // spaces
+// :ga:path('C:\Program Files\App')   // Windows path
+// :ga:url('https://api.com/v1?q=x')  // URL with query params
+```
+
+3. **Shell Commands:**
+```javascript
+// Simple commands (no quotes)
+// :ga:cmd(npm install)               // simple command
+// :ga:run(make build)                // build command
+
+// Complex commands (quoted)
+// :ga:cmd('npm run test -- --watch') // args with spaces/dashes
+// :ga:shell('find . -name "*.js"')   // command with quotes
+```
+
+4. **Arrays with Special Characters:**
+```javascript
+// Simple arrays (no quotes)
+// :ga:tags[auth,api,v2]              // simple identifiers
+// :ga:users[@alice,@bob]             // mentions
+
+// Complex arrays (quoted elements)
+// :ga:patterns['user-\d+','admin-.*'] // regex patterns
+// :ga:files['src/auth.js','lib/util.js'] // file paths
+// :ga:messages['Error: failed','Warning: slow'] // text with colons
+```
+
+**JSON Parameters:**
+
+For complex structured data, use JSON with single-quote wrapper:
+```javascript
+// :ga:config('{"env":"prod","timeout":30,"retries":3}')
+// :ga:metadata('{"tags":["auth","api"],"priority":"high"}')
+```
+
+**Shell Safety:**
+
+Parameters should be shell-safe when used in scripts:
+```bash
+# These should work without additional escaping
+rg ":ga:user(alice)"
+rg ":ga:priority:high"
+rg ":ga:version(2.0.1)"
+
+# Quoted parameters need care in shell
+rg ":ga:message('Can\\'t connect')"  # Need to escape for shell
+```
+
+**Parsing Strategy:**
+
+1. **Unquoted**: Parse until `,`, `)`, `]`, `}`, or whitespace
+2. **Single-quoted**: Parse until unescaped `'`, handle `\'` escapes
+3. **Double-quoted**: Parse until unescaped `"`, handle `\"` escapes and `$var` substitution
+4. **Validation**: Ensure balanced parens/brackets/braces
+5. **Error handling**: Clear messages for malformed syntax
+
+**Best Practices:**
+
+- **Default to unquoted** for simple identifiers and values
+- **Use single quotes** for literal strings with special chars
+- **Use double quotes** when template variables are needed
+- **Escape minimally** - only when necessary for parsing
+- **Validate syntax** - tools should catch malformed quoting
+- **Document team conventions** - consistent quoting style in config
+
+**Examples by Use Case:**
+
+```javascript
+// File references
+// :ga:see(auth.js:42)                // simple file:line
+// :ga:see('user service.js:15')      // file with spaces
+// :ga:path('/complex path/file.js')  // quoted path
+
+// Regex patterns  
+// :ga:match(user-123)                // literal
+// :ga:regex('^\w+@[\w.-]+\.\w{2,}$') // email pattern
+// :ga:pattern('(test|prod)-\d+')     // alternation
+
+// Messages and text
+// :ga:todo fix the login bug         // simple prose
+// :ga:error('Authentication failed') // quoted message
+// :ga:note('TODO: review (urgent)')  // message with special chars
+
+// Commands and tools
+// :ga:cmd(npm test)                  // simple command
+// :ga:run('npm run build -- --prod') // command with args
+// :ga:tool('grep -r "pattern" src/') // complex command
+
+// URLs and references
+// :ga:docs(https://example.com)      // simple URL
+// :ga:api('https://api.com/v1?key=x') // URL with query params
+// :ga:issue('https://github.com/owner/repo/issues/123') // full URL
+```
+
+### Monorepo Patterns (Placeholder)
+
+**Status:** Needs further exploration - moving to ideas directory for deeper investigation.
+
+**Core Question:** How should grep-anchors adapt to different monorepo structures without over-engineering?
+
+**Key Insights from Discussion:**
+- Every repo is unique - hard to predict all organizational patterns
+- Self-documentation is valuable (path-based references)
+- `repo:*` pattern could be universal: `:ga:repo:packages/auth-service,todo implement OAuth`
+- Tools could enhance with context (OpenAPI, package.json, git blame)
+- Config files could define search aliases rather than rigid namespace rules
+
+**Potential Approaches to Explore:**
+1. Universal `repo:` prefix with actual file paths
+2. Tool integration for enhanced context (OpenAPI, package manifests)
+3. Configuration-based search aliases vs hardcoded namespace patterns
+4. Service discovery through existing project files vs explicit anchor organization
+
+**Next Steps:**
+- Create detailed exploration in ideas directory
+- Prototype `repo:` pattern with real monorepo examples
+- Design tool integration for automatic context enhancement
+- Test search patterns with various monorepo structures
 
 ### Alias System
 
@@ -1000,3 +1448,320 @@ grepa find ":env["
 - When issue #4 closes → find all `:ga:blocked(by:issue:4)`
 - Can trace dependency chains through blocking relationships
 - GitHub Actions can parse and update these relationships
+
+### Cross-Service Relational Markers
+
+**Core Concept:** Canonized relational markers that express relationships between services, components, or systems for relationship mapping in APIs and tooling. Uses pattern `marker(relation-type:target-identifier)`.
+
+**Grammar:** `relational-marker(relation-type:target-identifier)`
+
+**Relationship Categories:**
+
+**1. Dependency Relations**
+```javascript
+// :ga:depends(on:auth-service)        // requires auth service to function
+// :ga:requires(api:user.login)        // needs specific API endpoint
+// :ga:needs(config:redis.connection)  // requires configuration
+```
+
+**2. Blocking/Flow Relations** 
+```javascript
+// :ga:blocked(by:issue:4)             // blocked by specific issue  
+// :ga:blocking(issue:[7,10])          // blocks other issues (from above)
+// :ga:awaits(approval:@security-team) // waiting for approval
+// :ga:prevents(deployment:prod)       // prevents action
+```
+
+**3. Event/Message Relations**
+```javascript
+// :ga:emits(event:user.created)       // publishes this event
+// :ga:listens(to:payment.completed)   // subscribes to events
+// :ga:triggers(workflow:deploy.prod)  // initiates process
+// :ga:responds(to:webhook.stripe)     // handles incoming event
+```
+
+**4. API Contract Relations**
+```javascript
+// :ga:consumes(api:v2/users)          // calls this API endpoint
+// :ga:provides(api:auth/login)        // implements this endpoint
+// :ga:exposes(endpoint:/health)       // makes endpoint available
+// :ga:calls(service:payment.charge)   // invokes external service
+```
+
+**5. Data Flow Relations**
+```javascript
+// :ga:reads(from:user-db)             // reads from data source
+// :ga:writes(to:analytics-queue)      // sends data to destination
+// :ga:caches(in:redis.sessions)       // uses cache layer
+// :ga:stores(data:user.preferences)   // persists data
+```
+
+**6. Infrastructure Relations**
+```javascript
+// :ga:deploys(with:payment-service)   // same deployment boundary
+// :ga:scales(based-on:api-traffic)    // scaling relationship
+// :ga:monitors(via:prometheus.alerts) // observability relationship
+// :ga:routes(through:api-gateway)     // network routing
+```
+
+**7. Temporal Relations**
+```javascript
+// :ga:runs(after:database.migration)  // execution order
+// :ga:follows(step:user.validation)   // workflow sequence
+// :ga:precedes(task:email.notification) // happens before
+// :ga:schedules(job:daily.cleanup)    // timing relationship
+```
+
+**Array Targets for Multiple Relationships:**
+```javascript
+// :ga:depends(on:[auth-service,user-db,redis])
+// :ga:triggers(workflow:[deploy.staging,run.tests])
+// :ga:blocked(by:[issue:4,approval:@alice])
+// :ga:consumes(api:[v2/users,v2/auth,v1/billing])
+```
+
+**Bidirectional Relationship Examples:**
+```javascript
+// :ga:depends(on:auth-service),provides(api:user.profile)
+// :ga:consumes(api:payment.charge),emits(event:payment.success)
+// :ga:listens(to:user.events),triggers(workflow:analytics.process)
+// :ga:blocked(by:issue:4),blocking(release:v2.0)
+```
+
+**Query Examples for Relationship Mapping:**
+
+```bash
+# Service dependency analysis
+rg ":ga:.*depends.*on:" --type js      # Find all dependencies
+rg ":ga:.*provides.*api:" --type js    # Find all API providers
+rg ":ga:.*consumes.*api:" --type js    # Find all API consumers
+
+# Event flow tracing
+rg ":ga:.*emits.*event:" --type js     # Find event publishers
+rg ":ga:.*listens.*to:" --type js      # Find event subscribers
+rg ":ga:.*triggers.*workflow:" --type js # Find workflow initiators
+
+# Infrastructure mapping  
+rg ":ga:.*deploys.*with:" --type js    # Find deployment groups
+rg ":ga:.*scales.*based-on:" --type js # Find scaling relationships
+rg ":ga:.*routes.*through:" --type js  # Find routing dependencies
+
+# Blocking analysis
+rg ":ga:.*blocked.*by:" --type js      # Find what's blocked
+rg ":ga:.*blocking.*" --type js        # Find what's blocking others
+rg ":ga:.*prevents.*" --type js        # Find prevention relationships
+
+# Data flow mapping
+rg ":ga:.*reads.*from:" --type js      # Find data sources
+rg ":ga:.*writes.*to:" --type js       # Find data destinations
+rg ":ga:.*caches.*in:" --type js       # Find cache usage
+```
+
+**API Integration Examples:**
+
+```bash
+# Generate service relationship graph
+grepa map --relationships --output service-graph.json
+
+# Find circular dependencies  
+grepa validate --check-cycles --type dependency
+
+# Trace event flows end-to-end
+grepa trace --event "user.created" --show-flow
+
+# Impact analysis for service changes
+grepa impact --service auth-service --show-dependents
+
+# API contract validation
+grepa validate --contracts --against openapi.yaml
+
+# Deployment dependency ordering
+grepa deploy --plan --check-dependencies
+```
+
+**Future Linting and Validation (Stubbed):**
+- **Relation type validation**: Restrict to approved relation types for consistency
+- **Target identifier validation**: Ensure targets exist (services, APIs, events)
+- **Circular dependency detection**: Prevent infinite dependency loops
+- **Contract verification**: Match API relations with actual OpenAPI specs
+- **Event flow validation**: Ensure emitters have corresponding listeners
+- **Infrastructure consistency**: Validate deployment and scaling relationships
+
+**Benefits for Tooling:**
+- **Service Discovery**: Auto-generate service topology maps
+- **Impact Analysis**: Understand blast radius of changes
+- **Event Tracing**: Follow data flows across distributed systems  
+- **Deployment Planning**: Understand service deployment dependencies
+- **API Documentation**: Auto-generate service interface contracts
+- **Integration Testing**: Identify required test scenarios
+- **Monitoring Setup**: Configure alerts based on service relationships
+
+### Plugin Architecture (Configuration Bundles)
+
+**Core Concept:** Plugins as pattern packages that configure grep-anchor usage without external dependencies. Plugins set up conventions, templates, aliases, and directory structures for specific workflows.
+
+**Plugin Types:**
+
+**1. Pattern Configuration Plugins**
+
+Plugins primarily configure templates, aliases, and search patterns:
+
+```yaml
+# @grepa/issues plugin
+name: "@grepa/issues"
+description: "Issue tracking patterns for internal documentation"
+
+templates:
+  issue: "issue,id:$1,status:$status ?? open,owner:$owner ?? @unclaimed"
+  bug: "issue,type:bug,priority:$priority ?? medium,id:$1"
+  task: "issue,type:task,epic:$epic,id:$1"
+
+directories:
+  create: ["docs/issues/", "docs/specs/", "docs/decisions/"]
+
+aliases:
+  bug: "issue,type:bug"
+  enhancement: "issue,type:enhancement"
+  epic: "issue,type:epic"
+
+search-shortcuts:
+  open-issues: ["status:open", "status:in-progress"]
+  my-issues: ["owner:$user"]
+  bugs: ["type:bug"]
+```
+
+**2. Workflow-Specific Plugins**
+
+```yaml
+# @grepa/monorepo plugin  
+name: "@grepa/monorepo"
+description: "Service-oriented monorepo patterns"
+
+templates:
+  service-todo: "todo,service:$1,team:$team ?? @unclaimed"
+  service-config: "config,service:$1,env:$env ?? dev"
+  cross-service: "rel(depends:$1),service:$2"
+
+search-shortcuts:
+  auth-service: ["service:auth", "repo:services/auth-*", "#auth"]
+  payment-service: ["service:payment", "repo:services/payment-*", "#payment"]
+  shared-libs: ["repo:packages/shared-*", "repo:libs/*", "#shared"]
+
+service-mapping:
+  auth: { directory: "services/auth-service", team: "@auth-team" }
+  payment: { directory: "services/payment-service", team: "@payments-team" }
+```
+
+**3. AI Agent Plugins**
+
+```yaml
+# @grepa/ai-agents plugin
+name: "@grepa/ai-agents"  
+description: "AI agent interaction patterns"
+
+templates:
+  claude-task: "@claude($1),priority:$priority ?? medium"
+  claude-review: "@claude(review:$1),type:code-review" 
+  cursor-implement: "@cursor(implement:$1),complexity:$complexity ?? medium"
+
+aliases:
+  ai-help: "@claude"
+  code-review: "@claude(review)"
+  auto-implement: "@cursor(implement)"
+
+agent-patterns:
+  "@claude": { description: "Claude AI tasks", triggers: ["review", "implement", "explain"] }
+  "@cursor": { description: "Cursor AI tasks", triggers: ["implement", "refactor", "test"] }
+```
+
+**4. Domain-Specific Plugins**
+
+```yaml
+# @grepa/security plugin
+name: "@grepa/security"
+description: "Security review and compliance patterns"
+
+templates:
+  security-review: "sec,review-required,owner:@security-team,id:$1"
+  compliance-check: "compliance,standard:$1,status:$status ?? pending"
+  vulnerability: "sec,type:vulnerability,severity:$severity,id:$1"
+
+required-markers:
+  - marker: "sec"
+    when: { file-patterns: ["*/auth/*", "*/payment/*"] }
+    message: "Security review required for auth/payment code"
+
+linting:
+  enforce:
+    - pattern: ":ga:sec"
+      in-directories: ["src/auth/", "src/payment/"]
+      message: "All auth/payment code must have security markers"
+```
+
+**Plugin Installation and Usage:**
+
+```bash
+# Install pattern packages
+grepa plugin install @grepa/issues
+grepa plugin install @grepa/monorepo
+
+# Enable plugins in config
+# grepaconfig.yaml
+plugins:
+  enabled: ["@grepa/issues", "@grepa/monorepo"]
+  
+# Use plugin patterns
+# :ga:issue(auth-redesign,status:in-progress)  ← uses @grepa/issues template
+# :ga:service-todo(auth,fix-oauth)             ← uses @grepa/monorepo template
+```
+
+**Plugin Benefits:**
+
+1. **No External Dependencies** - Pure configuration, no API calls or external services
+2. **Pattern Standardization** - Teams share common conventions via plugins  
+3. **Gradual Adoption** - Start with core grep-anchors, add workflow plugins as needed
+4. **Customizable** - Teams can fork/modify plugins for their specific needs
+5. **Composable** - Multiple plugins can work together
+6. **Discoverable** - Plugin registry for common patterns
+
+**Plugin Registry Concept:**
+
+```yaml
+# Community plugins
+@grepa/issues          # Internal issue tracking
+@grepa/monorepo        # Service-oriented patterns  
+@grepa/security        # Security review workflows
+@grepa/api-docs        # API documentation patterns
+@grepa/testing         # Test planning and coverage
+@grepa/migrations      # Database/schema migrations
+@grepa/feature-flags   # Feature flag management
+@grepa/ai-agents       # AI assistant integrations
+```
+
+**Future Plugin Ideas:**
+
+**@grepa/markdown-footnotes (Future Concept):**
+Potential plugin enabling inline markdown footnote syntax for anchors:
+
+```markdown
+This code implements OAuth[^ga-auth-redesign] for user authentication.
+
+The payment system[^ga-payment-redesign] handles Stripe integration.
+
+<!-- Footnote anchor definitions -->
+[^ga-auth-redesign]: :ga:rel(implements:auth-redesign) OAuth implementation  
+[^ga-payment-redesign]: :ga:rel(implements:payment-redesign) Stripe integration
+```
+
+Benefits of footnote syntax:
+- Non-intrusive inline references
+- Maintains document readability  
+- Anchor definitions stay in comments (spec-compliant)
+- Links code mentions to formal anchor system
+
+**Implementation Notes:**
+- Plugins are configuration-only packages
+- No runtime dependencies or external API calls
+- Distributed as npm packages or git repos
+- Applied via grepaconfig.yaml inclusion
+- Can be version-controlled alongside project
