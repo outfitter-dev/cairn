@@ -1,58 +1,58 @@
-# Grep-Anchor Examples
-<!-- :ga:tldr Real-world examples of grep-anchor usage patterns -->
-<!-- :ga:example Comprehensive examples for AI agents and developers -->
+# Magic Anchor Examples
+<!-- :A: tldr Real-world examples of grep-anchor usage patterns -->
+<!-- :A: example Comprehensive examples for AI agents and developers -->
 
-*Examples and patterns for working with grep-anchors*
+*Examples and patterns for working with Magic Anchors*
 
 ---
 
 ## 1. AI Agent Workflows
 
 ### Task Delegation
-- `:ga:@agent` - Direct any AI agent to implement or complete code
+- `:A: @agent` - Direct any AI agent to implement or complete code
   - Use when you want AI to write implementation
   - Can specify particular agents like `@cursor`, `@claude`, `@copilot`
   - Combine with other tags for context
 
 ```javascript
-// :ga:@agent implement pagination
-// :ga:ctx use cursor-based pagination, not offset
-// :ga:requirement handle empty results gracefully
+// :A: @agent implement pagination
+// :A: ctx use cursor-based pagination, not offset
+// :A: requirement handle empty results gracefully
 class PostsList {
   async fetchPosts(cursor?: string) {
-    // :ga:todo implementation needed
+    // :A: todo implementation needed
     throw new Error("Not implemented");
   }
 }
 ```
 
 ### Implementation Guidance
-- `:ga:ctx` - Critical information AI needs to know
+- `:A: ctx` - Critical information AI needs to know
   - Document assumptions that aren't obvious from code
   - Explain business rules or constraints
   - Clarify architectural decisions
 
 ```python
-# :ga:ctx user_ids are UUIDs, not sequential integers
-# :ga:ctx all timestamps are UTC, convert for display only
+# :A: ctx user_ids are UUIDs, not sequential integers
+# :A: ctx all timestamps are UTC, convert for display only
 class UserService:
-    # :ga:@agent implement with proper timezone handling
+    # :A: @agent implement with proper timezone handling
     def get_user_activity(self, user_id: str, date: datetime):
-        # :ga:sec validate UUID format
+        # :A: sec validate UUID format
         pass
 ```
 
 ### Code Review Requests
-- `:ga:review` - Mark code for AI or human review
+- `:A: review` - Mark code for AI or human review
   - Security implications
   - Performance concerns
   - Best practices
 
 ```go
-// :ga:review check for race conditions
-// :ga:ctx concurrent access from multiple goroutines
+// :A: review check for race conditions
+// :A: ctx concurrent access from multiple goroutines
 func (c *Cache) Set(key string, value interface{}) {
-    // :ga:todo add mutex protection
+    // :A: todo add mutex protection
     c.data[key] = value
 }
 ```
@@ -62,41 +62,41 @@ func (c *Cache) Set(key string, value interface{}) {
 ## 2. Security Patterns
 
 ### Input Validation
-- `:ga:sec` - Mark security-critical code
+- `:A: sec` - Mark security-critical code
   - Input sanitization points
   - Authentication boundaries
   - Sensitive data handling
 
 ```javascript
-// :ga:sec validate all user inputs
-// :ga:ctx prevent SQL injection and XSS
+// :A: sec validate all user inputs
+// :A: ctx prevent SQL injection and XSS
 function updateUserProfile(userId, profileData) {
-  // :ga:todo sanitize HTML content
-  // :ga:sec check user owns this profile
+  // :A: todo sanitize HTML content
+  // :A: sec check user owns this profile
   const query = `UPDATE users SET profile = ? WHERE id = ?`;
   return db.execute(query, [profileData, userId]);
 }
 ```
 
 ### Authentication & Authorization
-- `:ga:auth` - Authentication/authorization checkpoints
+- `:A: auth` - Authentication/authorization checkpoints
   - Permission boundaries
   - Token validation
   - Access control
 
 ```python
-# :ga:auth verify user permissions
-# :ga:sec ensure proper scoping
+# :A: auth verify user permissions
+# :A: sec ensure proper scoping
 @require_auth
 def delete_resource(resource_id: str, user: User):
-    # :ga:ctx only owners and admins can delete
+    # :A: ctx only owners and admins can delete
     resource = Resource.get(resource_id)
     
-    # :ga:sec prevent unauthorized access
+    # :A: sec prevent unauthorized access
     if resource.owner_id != user.id and not user.is_admin:
         raise Forbidden("Cannot delete resource")
     
-    # :ga:audit log deletion for compliance
+    # :A: audit log deletion for compliance
     audit_log.record("resource_deleted", resource_id, user.id)
     resource.delete()
 ```
@@ -106,22 +106,22 @@ def delete_resource(resource_id: str, user: User):
 ## 3. Performance Optimization
 
 ### Database Queries
-- `:ga:perf` - Performance-sensitive code
+- `:A: perf` - Performance-sensitive code
   - N+1 query problems
   - Inefficient algorithms
   - Resource-intensive operations
 
 ```ruby
-# :ga:perf N+1 query detected
-# :ga:ctx each post triggers separate comment count query
+# :A: perf N+1 query detected
+# :A: ctx each post triggers separate comment count query
 def get_posts_with_stats
   posts = Post.all
   
-  # :ga:todo use includes or join
+  # :A: todo use includes or join
   posts.map do |post|
     {
       title: post.title,
-      # :ga:perf this hits DB for each post
+      # :A: perf this hits DB for each post
       comment_count: post.comments.count,
       author: post.author.name
     }
@@ -130,17 +130,17 @@ end
 ```
 
 ### Caching Opportunities
-- `:ga:cache` - Places where caching would help
+- `:A: cache` - Places where caching would help
   - Expensive computations
   - Frequent API calls
   - Static data
 
 ```typescript
-// :ga:cache expensive calculation
-// :ga:ctx called on every request
+// :A: cache expensive calculation
+// :A: ctx called on every request
 function calculatePricing(items: CartItem[]): number {
-  // :ga:perf consider memoization
-  // :ga:todo add Redis caching with TTL
+  // :A: perf consider memoization
+  // :A: todo add Redis caching with TTL
   return items.reduce((total, item) => {
     const discount = calculateComplexDiscount(item);
     return total + (item.price * item.quantity * discount);
@@ -153,18 +153,18 @@ function calculatePricing(items: CartItem[]): number {
 ## 4. Code Quality & Maintenance
 
 ### Temporary Code
-- `:ga:tmp` - Code that should be removed
+- `:A: tmp` - Code that should be removed
   - Workarounds for bugs
   - Quick fixes
   - Migration shims
 
 ```javascript
-// :ga:tmp remove after Chrome 120 fix ships
-// :ga:ctx workaround for scrolling bug
-// :ga:issue(CHR-4823) track browser fix
+// :A: tmp remove after Chrome 120 fix ships
+// :A: ctx workaround for scrolling bug
+// :A: issue(CHR-4823) track browser fix
 function patchChromeScroll() {
   if (navigator.userAgent.includes('Chrome/120')) {
-    // :ga:tmp force repaint hack
+    // :A: tmp force repaint hack
     document.body.style.display = 'none';
     document.body.offsetHeight; // trigger reflow
     document.body.style.display = '';
@@ -173,27 +173,27 @@ function patchChromeScroll() {
 ```
 
 ### Technical Debt
-- `:ga:debt` - Known technical debt
+- `:A: debt` - Known technical debt
   - Shortcuts taken
   - Refactoring needed
   - Architecture improvements
 
 ```python
-# :ga:debt refactor to use dependency injection
-# :ga:ctx tightly coupled to database implementation
+# :A: debt refactor to use dependency injection
+# :A: ctx tightly coupled to database implementation
 class OrderService:
     def __init__(self):
-        # :ga:debt hardcoded connection
+        # :A: debt hardcoded connection
         self.db = PostgresConnection("prod-db-url")
     
-    # :ga:todo make database configurable
+    # :A: todo make database configurable
     def process_order(self, order_data):
-        # :ga:debt extract validation logic
+        # :A: debt extract validation logic
         if not self._validate_order(order_data):
             return False
         
-        # :ga:ctx 500+ lines of business logic below
-        # :ga:refactor split into smaller methods
+        # :A: ctx 500+ lines of business logic below
+        # :A: refactor split into smaller methods
 ```
 
 ---
@@ -201,51 +201,51 @@ class OrderService:
 ## 5. Documentation & Context
 
 ### API Documentation
-- `:ga:docs` - Documentation needed
+- `:A: docs` - Documentation needed
   - API endpoints
   - Complex algorithms
   - Public interfaces
 
 ```rust
-// :ga:docs add comprehensive examples
-// :ga:api public interface - maintain compatibility
-// :ga:ctx returns Err for invalid inputs, not panic
+// :A: docs add comprehensive examples
+// :A: api public interface - maintain compatibility
+// :A: ctx returns Err for invalid inputs, not panic
 pub fn parse_config(path: &Path) -> Result<Config, ConfigError> {
-    // :ga:docs explain config file format
-    // :ga:example show valid TOML structure
+    // :A: docs explain config file format
+    // :A: example show valid TOML structure
     let contents = fs::read_to_string(path)
         .map_err(|e| ConfigError::IoError(e))?;
     
-    // :ga:docs list all possible error types
+    // :A: docs list all possible error types
     toml::from_str(&contents)
         .map_err(|e| ConfigError::ParseError(e.to_string()))
 }
 ```
 
 ### Business Logic
-- `:ga:business` - Business rule documentation
+- `:A: business` - Business rule documentation
   - Domain logic
   - Compliance requirements
   - Policy implementations
 
 ```java
-// :ga:business payment processing rules
-// :ga:ctx max transaction: $10,000
-// :ga:compliance PCI-DSS requirements
+// :A: business payment processing rules
+// :A: ctx max transaction: $10,000
+// :A: compliance PCI-DSS requirements
 public class PaymentProcessor {
-    // :ga:business retry failed payments up to 3 times
-    // :ga:ctx exponential backoff: 1s, 2s, 4s
+    // :A: business retry failed payments up to 3 times
+    // :A: ctx exponential backoff: 1s, 2s, 4s
     public PaymentResult processPayment(Payment payment) {
-        // :ga:audit log all payment attempts
-        // :ga:sec never log full card numbers
+        // :A: audit log all payment attempts
+        // :A: sec never log full card numbers
         
-        // :ga:business validate amount limits
+        // :A: business validate amount limits
         if (payment.getAmount() > 10000) {
-            // :ga:ctx requires manual approval
+            // :A: ctx requires manual approval
             return PaymentResult.requiresApproval();
         }
         
-        // :ga:todo implement retry logic
+        // :A: todo implement retry logic
         return attemptPayment(payment);
     }
 }
@@ -256,19 +256,19 @@ public class PaymentProcessor {
 ## 6. Testing & Quality Assurance
 
 ### Test Coverage
-- `:ga:test` - Testing requirements
+- `:A: test` - Testing requirements
   - Missing tests
   - Edge cases
   - Test scenarios
 
 ```typescript
-// :ga:test needs comprehensive unit tests
-// :ga:ctx handle null, undefined, empty arrays
+// :A: test needs comprehensive unit tests
+// :A: ctx handle null, undefined, empty arrays
 export function mergeConfigs(...configs: Config[]): Config {
-  // :ga:test edge case: circular references
-  // :ga:test edge case: conflicting values
+  // :A: test edge case: circular references
+  // :A: test edge case: conflicting values
   
-  // :ga:@agent write tests for all edge cases
+  // :A: @agent write tests for all edge cases
   return configs.reduce((merged, config) => {
     return deepMerge(merged, config);
   }, {});
@@ -276,24 +276,24 @@ export function mergeConfigs(...configs: Config[]): Config {
 ```
 
 ### Error Handling
-- `:ga:error` - Error handling needed
+- `:A: error` - Error handling needed
   - Missing try-catch
   - Unhandled edge cases
   - Error recovery
 
 ```go
-// :ga:error add proper error handling
-// :ga:ctx network calls can fail
+// :A: error add proper error handling
+// :A: ctx network calls can fail
 func FetchUserData(userID string) (*User, error) {
-    // :ga:todo handle timeout errors
+    // :A: todo handle timeout errors
     resp, err := http.Get(fmt.Sprintf("/api/users/%s", userID))
     if err != nil {
-        // :ga:error add retry logic
+        // :A: error add retry logic
         return nil, err
     }
     
-    // :ga:error check response status
-    // :ga:ctx API returns 404 for missing users
+    // :A: error check response status
+    // :A: ctx API returns 404 for missing users
     var user User
     json.NewDecoder(resp.Body).Decode(&user)
     return &user, nil
@@ -305,43 +305,43 @@ func FetchUserData(userID string) (*User, error) {
 ## 7. Feature Development
 
 ### Feature Flags
-- `:ga:feature` - Feature-flagged code
+- `:A: feature` - Feature-flagged code
   - Experimental features
   - Gradual rollouts
   - A/B tests
 
 ```python
-# :ga:feature new checkout flow
-# :ga:ctx 10% rollout to test conversion
-# :ga:metrics track success rate
+# :A: feature new checkout flow
+# :A: ctx 10% rollout to test conversion
+# :A: metrics track success rate
 def checkout_process(cart: Cart, user: User) -> Order:
-    # :ga:feature check flag status
+    # :A: feature check flag status
     if feature_flags.is_enabled("new-checkout-v2", user):
-        # :ga:todo implement new flow
-        # :ga:@agent create optimized checkout
+        # :A: todo implement new flow
+        # :A: @agent create optimized checkout
         return new_checkout_flow(cart, user)
     else:
-        # :ga:deprecated remove after full rollout
+        # :A: deprecated remove after full rollout
         return legacy_checkout(cart, user)
 ```
 
 ### API Versioning
-- `:ga:version` - Version-specific code
+- `:A: version` - Version-specific code
   - API compatibility
   - Migration paths
   - Deprecation notices
 
 ```javascript
-// :ga:version v2 API endpoint
-// :ga:deprecated v1 endpoint - remove in v3
+// :A: version v2 API endpoint
+// :A: deprecated v1 endpoint - remove in v3
 router.post('/api/v2/users', async (req, res) => {
-  // :ga:breaking returns different response format
-  // :ga:migration guide at docs/v2-migration.md
+  // :A: breaking returns different response format
+  // :A: migration guide at docs/v2-migration.md
   
-  // :ga:ctx v2 uses JSON:API format
+  // :A: ctx v2 uses JSON:API format
   const user = await createUser(req.body);
   
-  // :ga:todo add pagination headers
+  // :A: todo add pagination headers
   res.json({
     data: {
       type: 'users',
@@ -357,32 +357,32 @@ router.post('/api/v2/users', async (req, res) => {
 ## 8. Integration Points
 
 ### External Services
-- `:ga:integration` - External service touchpoints
+- `:A: integration` - External service touchpoints
   - API calls
   - Third-party libraries
   - Service dependencies
 
 ```ruby
-# :ga:integration Stripe payment API
-# :ga:ctx requires API key in env vars
-# :ga:error handle rate limiting (429)
+# :A: integration Stripe payment API
+# :A: ctx requires API key in env vars
+# :A: error handle rate limiting (429)
 class PaymentGateway
-  # :ga:todo add circuit breaker
-  # :ga:ctx timeout after 30 seconds
+  # :A: todo add circuit breaker
+  # :A: ctx timeout after 30 seconds
   def charge_card(amount, token)
-    # :ga:sec never log tokens
-    # :ga:audit record all transactions
+    # :A: sec never log tokens
+    # :A: audit record all transactions
     
     begin
-      # :ga:integration Stripe charge creation
-      # :ga:docs see https://stripe.com/docs/api/charges
+      # :A: integration Stripe charge creation
+      # :A: docs see https://stripe.com/docs/api/charges
       Stripe::Charge.create(
         amount: amount,
         currency: 'usd',
         source: token
       )
     rescue Stripe::RateLimitError => e
-      # :ga:todo implement exponential backoff
+      # :A: todo implement exponential backoff
       raise PaymentError.new("Rate limited")
     end
   end
@@ -396,40 +396,40 @@ end
 ### Finding Work
 ```bash
 # All AI agent tasks
-rg ":ga:@agent"
+rg ":A: @agent"
 
 # Security issues
-rg ":ga:sec"
+rg ":A: sec"
 
 # Performance problems
-rg ":ga:perf"
+rg ":A: perf"
 
 # Temporary code to remove
-rg ":ga:tmp"
+rg ":A: tmp"
 ```
 
 ### Finding Context
 ```bash
 # All contextual information
-rg ":ga:ctx"
+rg ":A: ctx"
 
 # Business rules
-rg ":ga:business"
+rg ":A: business"
 
 # Integration points
-rg ":ga:integration"
+rg ":A: integration"
 ```
 
 ### Complex Searches
 ```bash
 # Security TODOs
-rg ":ga:sec.*todo|:ga:todo.*security"
+rg ":A: sec.*todo|:A: todo.*security"
 
 # AI tasks with context
-rg -B2 -A2 ":ga:@agent"
+rg -B2 -A2 ":A: @agent"
 
 # Temporary code with deadlines
-rg ":ga:tmp.*2024"
+rg ":A: tmp.*2024"
 ```
 
 ---
@@ -438,33 +438,33 @@ rg ":ga:tmp.*2024"
 
 1. **Layer your tags**: Combine tags for richer meaning
    ```javascript
-   // :ga:sec,todo,p0 critical auth fix needed
+   // :A: sec,todo,p0 critical auth fix needed
    ```
 
 2. **Add context liberally**: More context helps AI and humans
    ```python
-   # :ga:ctx database uses UTC timestamps
-   # :ga:ctx user_ids are case-sensitive
+   # :A: ctx database uses UTC timestamps
+   # :A: ctx user_ids are case-sensitive
    ```
 
 3. **Be specific with AI instructions**:
    ```javascript
-   // :ga:@agent implement using async/await, not callbacks
-   // :ga:@agent add comprehensive error handling
+   // :A: @agent implement using async/await, not callbacks
+   // :A: @agent add comprehensive error handling
    ```
 
 4. **Link to external resources**:
    ```go
-   // :ga:docs see RFC-7231 section 6.5.1
-   // :ga:issue(PROJ-123) tracking in Jira
+   // :A: docs see RFC-7231 section 6.5.1
+   // :A: issue(PROJ-123) tracking in Jira
    ```
 
 5. **Use consistent vocabulary**: Define patterns for your team
    ```ruby
    # Team convention:
-   # :ga:shipit - ready for production
-   # :ga:holdup - needs review before merge
-   # :ga:dragon - here be dragons, proceed carefully
+   # :A: shipit - ready for production
+   # :A: holdup - needs review before merge
+   # :A: dragon - here be dragons, proceed carefully
    ```
 
-The goal is to help make codebases more discoverable. Well-placed grep-anchors can serve as waypoints through your code.
+The goal is to help make codebases more discoverable. Well-placed Magic Anchors can serve as waypoints through your code.
