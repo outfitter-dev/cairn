@@ -1,4 +1,4 @@
-# 🍇 Grepa (grep-anchor) - Code Navigation for AI Agents and Humans
+# 🔱 Grepa - Magic Anchors for Semantic Code Navigation by AI Agents
 <!-- :A: tldr Universal pattern for making codebases AI-navigable and greppable -->
 <!-- :A: core Main project documentation and overview -->
 
@@ -21,12 +21,14 @@
 AI coding agents and developers face the same challenge: **How do you quickly navigate to the right spot in a codebase?**
 
 Even in well-structured repos, critical information is scattered across:
+
 - Ad-hoc TODOs with inconsistent formatting
 - Security concerns buried in comment threads  
 - Temporary hacks that overstay their welcome
 - Context and assumptions that only exist in developers' heads
 
 Current approaches fail because they're:
+
 - **Unpredictable**: Every project uses different conventions
 - **Invisible to AI**: Agents can't reliably pattern-match free-form comments
 - **Hard to search**: `grep TODO` returns hundreds of results with no structure
@@ -46,30 +48,33 @@ function processPayment(amount) {
 ```
 
 Search examples:
+
 ```bash
 rg ":A:"          # List all anchors
 rg ":A: sec"      # Jump to security concerns
 rg ":A: todo"     # Find all tasks
 ```
 
-### Custom Anchors
+### Why `:A:`?
 
-While `:A:` is the recommended default, teams can choose their own anchor pattern:
+The `:A:` anchor is the canonical prefix for Magic Anchors. Like how "TODO" became a universal convention, using a single standard prefix:
+
+- **Keeps tooling simple** - One pattern to search, parse, and lint
+- **Avoids edge cases** - No conflicts between different anchor styles
+- **Universal understanding** - Any developer or AI can recognize `:A:`
+- **Fast to type** - Hold Shift for `:`, then `A`, then `:` in one fluid motion
+
+**For monorepos:** Use markers to distinguish services instead of different anchors:
 
 ```javascript
-// :proj: for your project
-// :team: for your team  
-// :myco: for your company
+// :A: auth-service,todo implement OAuth
+// :A: web-app,bug fix responsive layout
 ```
-
-**Some suggestions:**
-- **One anchor per project** - Consider keeping the same anchor pattern throughout a codebase
-- **Monorepo?** You might use tags instead of different anchors: `:A: auth-service`, `:A: web-app`
-- **Document your choice** - If not using `:A:`, it helps to note it in your README
 
 ## 🚀 Quick Start
 
 ### 1. Start Simple
+
 - `:A: todo` - Mark work that needs doing
   ```python
   # :A: todo implement retry logic
@@ -79,6 +84,7 @@ While `:A:` is the recommended default, teams can choose their own anchor patter
   ```
 
 ### 2. Add AI Instructions
+
 - `:A: @agent` - Direct AI agents to specific tasks
   ```javascript
   // :A: @agent write unit tests for edge cases
@@ -88,6 +94,7 @@ While `:A:` is the recommended default, teams can choose their own anchor patter
   ```
 
 ### 3. Mark Important Context
+
 - `:A: ctx` - Document important assumptions
   ```go
   // :A: ctx user_ids are always UUIDs, never integers
@@ -98,6 +105,7 @@ While `:A:` is the recommended default, teams can choose their own anchor patter
   ```
 
 ### 4. Combine as Needed
+
 - Stack multiple tags for richer meaning
   ```typescript
   // :A: sec,todo fix rate limiting
@@ -119,6 +127,7 @@ While `:A:` is the recommended default, teams can choose their own anchor patter
 
 ### Level 1: Basic TODO Migration
 Start by enhancing your existing TODOs:
+
 ```javascript
 // TODO :A: implement caching
 // FIXME :A: sec sanitize user input
@@ -126,6 +135,7 @@ Start by enhancing your existing TODOs:
 
 ### Level 2: Structured Tasks
 Or use standalone markers:
+
 ```javascript
 // :A: todo implement caching
 // :A: todo(task:auth) add OAuth support
@@ -134,6 +144,7 @@ Or use standalone markers:
 
 ### Level 3: Rich Context
 Add metadata when needed:
+
 ```javascript
 // :A: todo(epic:user-onboarding) new user flow
 // :A: todo(deadline:2024-03-01) compliance update
@@ -143,6 +154,7 @@ Add metadata when needed:
 ## 🤖 Example AI Agent Workflow
 
 ### 1. Human marks the spot:
+
 ```python
 class UserService:
     # :A: ctx all users must have unique emails
@@ -154,12 +166,14 @@ class UserService:
 ```
 
 ### 2. AI agent finds the work:
+
 ```bash
 $ rg ":A: @agent"
 user_service.py:4: # :A: @agent implement with proper validation
 ```
 
 ### 3. AI reads the context:
+
 ```bash
 $ rg ":A: ctx|:A: sec" user_service.py
 user_service.py:2: # :A: ctx all users must have unique emails
@@ -167,6 +181,7 @@ user_service.py:5: # :A: sec prevent duplicate emails
 ```
 
 ### 4. AI implements with full understanding:
+
 ```python
 def create_user(self, email: str, name: str):
     # Validate email format
@@ -184,16 +199,19 @@ def create_user(self, email: str, name: str):
 ## ✨ Potential Benefits
 
 ### For AI Agents
+
 - **Reliable navigation**: Consistent pattern that's less likely to match prose
 - **Contextual understanding**: Find assumptions and constraints
 - **Clear task delegation**: Helps identify what needs doing
 
 ### For Developers
+
 - **One command**: `rg ":A:"` shows all important markers
 - **Flexible vocabulary**: Use patterns that make sense for your team
 - **Progressive adoption**: Start simple, add richness over time
 
 ### For Teams
+
 - **Shared language**: Consistent patterns across the codebase
 - **Tool-friendly**: Works with grep, ripgrep, ag, and any search tool
 - **Adaptable**: Can evolve with changing needs
@@ -201,24 +219,28 @@ def create_user(self, email: str, name: str):
 ## 🔧 Common Patterns
 
 ### Security & Quality
+
 - `:A: sec` - Security-critical code
 - `:A: audit` - Needs review
 - `:A: perf` - Performance concerns
 - `:A: bug` - Known issues
 
 ### Project Management
+
 - `:A: todo` - General tasks
 - `:A: todo(task:specific)` - Specific work items
 - `:A: todo(issue:123)` - Link to issue tracker
 - `:A: todo(epic:auth)` - Feature grouping
 
 ### Priority Examples (define your own!)
+
 - `:A: todo(priority:critical)` - Critical priority
 - `:A: urgent` - Needs immediate attention
 - `:A: todo(sprint:next)` - Upcoming work
 - `:A: someday` - Future considerations
 
 ### AI-Specific
+
 - `:A: @agent` - Any AI can help
 - `:A: @cursor` - Cursor-specific
 - `:A: prompt` - AI instructions
@@ -271,7 +293,7 @@ rg ":A: (\w+)" -o | sort | uniq -c
 ## 🎬 Getting Started
 
 1. **Try it now**: Add `// :A: todo` to something in your code
-2. **Search for it**: Run `rg ":A:"` 
+2. **Search for it**: Run `rg ":A:"`
 3. **Tell your AI**: "Look for :A: markers to understand the codebase"
 4. **Evolve naturally**: Add patterns as you need them
 
@@ -280,17 +302,20 @@ rg ":A: (\w+)" -o | sort | uniq -c
 ## 📖 Docs
 
 ### Core Documentation
+
 - [Quick Start Guide](docs/guides/quick-start.md) - Get started with Magic Anchors in 5 minutes
 - [Examples](docs/examples.md) - Real-world Magic Anchor usage patterns
 - [Progressive Enhancement](docs/guides/progressive-enhancement.md) - Three levels of adoption
 
 ### Magic Anchors Notation
+
 - [Magic Anchors Overview](docs/magic-anchors/README.md) - Technical format specification
 - [Format Specification](docs/magic-anchors/SPEC.md) - Detailed syntax rules
 - [Payload Rules](docs/magic-anchors/payloads.md) - How to structure tag payloads
 - [Examples](docs/magic-anchors/examples.md) - Notation examples across languages
 
 ### Conventions & Patterns
+
 - [Conventions Overview](docs/conventions/README.md) - Usage patterns and best practices
 - [Common Patterns](docs/conventions/common-patterns.md) - Essential tags like `tldr`, `sec`, `tmp`
 - [AI Patterns](docs/conventions/ai-patterns.md) - Working with AI agents using `@cursor` and `@claude`
@@ -299,11 +324,12 @@ rg ":A: (\w+)" -o | sort | uniq -c
 - [Combinations](docs/conventions/combinations.md) - Using multiple tags effectively
 
 ### Advanced Topics
-- [Custom Anchors](docs/guides/custom-anchors.md) - Creating your own sigils
+
 - [Advanced Patterns](docs/advanced-patterns.md) - Complex usage scenarios
 - [What Ifs](docs/what-ifs.md) - Vision for AI-native development
 
 ### Project Information
+
 - [Prior Art](docs/about/priors.md) - Related concepts and inspiration
 - [V0 Specification](docs/project/specs/v0.md) - Initial specification
 - [V1 Specification](docs/project/specs/v1.md) - Current specification
@@ -322,5 +348,5 @@ That mindset — pick a unique string, grep it everywhere, document the contract
 
 ### Sources
 
-* **Blog & transcript**: [latent.space/p/codex](https://www.latent.space/p/codex)
-* **Video**: [youtube.com/watch?v=LIHP4BqwSw0](https://www.youtube.com/watch?v=LIHP4BqwSw0)
+- **Blog & transcript**: [latent.space/p/codex](https://www.latent.space/p/codex)
+- **Video**: [youtube.com/watch?v=LIHP4BqwSw0](https://www.youtube.com/watch?v=LIHP4BqwSw0)
