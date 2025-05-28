@@ -8,7 +8,7 @@
 
 ## 1. Why capture priors?
 
-Open-source projects thrive on conventions that *already worked elsewhere*. Before standardising on `:A: ` it helps to recognise the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents so contributors can understand **why `:A: ` feels familiar** even if the exact sigil is new.
+Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:A:` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents so contributors can understand **why `:A:` feels familiar** even if the exact sigil is new.
 
 ---
 
@@ -23,7 +23,7 @@ Open-source projects thrive on conventions that *already worked elsewhere*. Befo
 | **Go (1.17+)**          | `//go:build <expr>`                            | Build-constraint scanned *before* parsing | Comment parsed by tooling; lives only in source           |
 | **Clang-Tidy**          | `// NOLINT(rule)`                              | Linter suppression                        | Machine-auditable anchors affecting CI                    |
 | **ESLint / Flake8**     | `// eslint-disable-next-line` / `# noqa: E501` | Scoped rule ignore                        | Release-blocker policies on lingering suppressions        |
-| **VS Code 2010s**       | `// region … endregion`                        | Code-folding & outline view               | Multi-line anchors recognised by editors                  |
+| **VS Code 2010s**       | `// region … endregion`                        | Code-folding & outline view               | Multi-line anchors recognized by editors                  |
 | **Shopify smart_todo**  | `TODO(sc-12345)`                               | Tracking issue IDs                        | Validation via custom linter — proof teams codify anchors |
 
 ---

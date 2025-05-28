@@ -1,32 +1,32 @@
-# Tag Combinations
-<!-- :ga:tldr How to effectively combine multiple grep-anchor tags -->
-<!-- :ga:convention Guidelines for combining tags and multi-tag patterns -->
+# Marker Combinations
+<!-- :A: tldr How to effectively combine multiple Magic Anchor markers -->
+<!-- :A: convention Guidelines for combining markers and multi-marker patterns -->
 
-How to combine multiple grep-anchor tags effectively.
+How to combine multiple Magic Anchor markers effectively.
 
 ## When to Combine vs Separate
 
-### Use Combined Tags When:
+### Use Combined Markers When:
 
-- Tags are closely related (e.g., `security,todo`)
+- Markers are closely related (e.g., `security, todo`)
 - No additional descriptions needed
 - The combined meaning is clear
 
 ### Use Separate Comments When:
 
-- Each tag needs its own description
+- Each marker needs its own description
 - Line length would exceed ~80 characters
 - Topics are distinct enough to warrant separation
 - Better grep results readability is needed
 
-## Combining Tags
+## Combining Markers
 
-Tags can be combined using commas or spaces when they form a cohesive concept:
+Markers can be combined using comma-space separation when they form a cohesive concept:
 
 ### Security + Performance
 
 ```rust
-// :ga:sec,perf Crypto operations need constant-time implementation
+// :A: sec, perf Crypto operations need constant-time implementation
 fn compare_hashes(a: &[u8], b: &[u8]) -> bool {
     // ...
 }
@@ -35,7 +35,7 @@ fn compare_hashes(a: &[u8], b: &[u8]) -> bool {
 ### Version + Deprecation
 
 ```typescript
-// :ga:v2.0,deprecated Will be removed in v3.0
+// :A: v2.0, deprecated Will be removed in v3.0
 function oldApiMethod(): void {
     // ...
 }
@@ -44,56 +44,56 @@ function oldApiMethod(): void {
 ### Priority + Issue
 
 ```python
-# :ga:p1,issue-456 Critical bug affecting production
+# :A: p1, issue(456) Critical bug affecting production
 def process_payment(amount):
     # ...
 ```
 
 ## Best Practices
 
-1. **Order matters**: Place the most important tag first
-2. **Limit chains**: Use 2-3 tags maximum for readability
-3. **Avoid redundancy**: Don't combine tags with similar meanings
+1. **Order matters**: Place the most important marker first
+2. **Limit chains**: Use 2-3 markers maximum for readability
+3. **Avoid redundancy**: Don't combine markers with similar meanings
 4. **Line length**: Keep lines under ~80 chars for better grep output
-5. **Separate descriptions**: Use multiple comments when each tag needs explanation
+5. **Separate descriptions**: Use multiple comments when each marker needs explanation
 
-### Good: Related tags, concise
+### Good: Related markers, concise
 
 ```javascript
-// :ga:sec,todo validate user input
-// :ga:perf,p0 optimize this query
+// :A: sec, todo validate user input
+// :A: perf, p0 optimize this query
 ```
 
 ### Better: Separate lines for clarity
 
 ```javascript
-// :ga:sec sanitize HTML to prevent XSS
-// :ga:todo add rate limiting to this endpoint
-// :ga:ctx max 100 requests per minute per user
+// :A: sec sanitize HTML to prevent XSS
+// :A: todo add rate limiting to this endpoint
+// :A: ctx max 100 requests per minute per user
 ```
 
-### Avoid: Multiple tags with descriptions
+### Avoid: Multiple markers with descriptions
 
 ```javascript
-// :ga:sec,todo,perf validate inputs, add caching, check permissions
+// :A: sec, todo, perf validate inputs, add caching, check permissions
 // ❌ Too long, hard to grep, mixed concerns
 ```
 
-## Finding Combined Tags with Ripgrep
+## Finding Combined Markers with Ripgrep
 
-When tags are split across lines, use context flags:
+When markers are split across lines, use context flags:
 
 ```bash
-# Find security tags with 2 lines context
-rg -C2 ":ga:sec"
+# Find security markers with 2 lines context
+rg -C2 ":A: sec"
 
-# Find files with both security and todo tags
-for f in $(rg -l ":ga:sec"); do 
-  rg -l ":ga:todo" "$f" && echo "$f has both"
+# Find files with both security and todo markers
+for f in $(rg -l ":A: sec"); do 
+  rg -l ":A: todo" "$f" && echo "$f has both"
 done
 
 # Find security/todo within 3 lines of each other
-rg -B3 -A3 ":ga:sec" | rg -B3 -A3 ":ga:todo"
+rg -B3 -A3 ":A: sec" | rg -B3 -A3 ":A: todo"
 ```
 
 ## TODO: Expand this documentation

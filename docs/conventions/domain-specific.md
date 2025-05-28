@@ -1,199 +1,199 @@
 # Domain-Specific Patterns
-<!-- :ga:tldr Specialized patterns for specific technical domains -->
-<!-- :ga:convention Domain-specific tags for security, performance, and more -->
+<!-- :A: tldr Specialized patterns for specific technical domains -->
+<!-- :A: convention Domain-specific markers for security, performance, and more -->
 
-Specialized tags for specific technical domains and concerns.
+Specialized markers for specific technical domains and concerns.
 
 ## Security
 
-### `:ga:sec`
+### `:A: sec`
 **Purpose**: Security-critical code requiring review
 ```javascript
-// :ga:sec validate all inputs before SQL query
-// :ga:sec,p0 authentication bypass vulnerability
+// :A: sec validate all inputs before SQL query
+// :A: sec, p0 authentication bypass vulnerability
 ```
 
-### `:ga:vuln`
+### `:A: vuln`
 **Purpose**: Known vulnerability
 ```python
-# :ga:vuln CVE-2024-1234 needs patch
+# :A: vuln CVE-2024-1234 needs patch
 ```
 
-### `:ga:crypto`
+### `:A: crypto`
 **Purpose**: Cryptographic operations
 ```go
-// :ga:crypto constant-time comparison required
+// :A: crypto constant-time comparison required
 ```
 
-### `:ga:auth`
+### `:A: auth`
 **Purpose**: Authentication/authorization
 ```java
-// :ga:auth check permissions before access
+// :A: auth check permissions before access
 ```
 
 ## Performance
 
-### `:ga:perf`
+### `:A: perf`
 **Purpose**: Performance-critical sections
 ```rust
-// :ga:perf hot path - optimize carefully
-// :ga:perf,p1 N+1 query problem
+// :A: perf hot path - optimize carefully
+// :A: perf, p1 N+1 query problem
 ```
 
-### `:ga:bench`
+### `:A: bench`
 **Purpose**: Needs benchmarking
 ```go
-// :ga:bench measure before optimizing
+// :A: bench measure before optimizing
 ```
 
-### `:ga:cache`
+### `:A: cache`
 **Purpose**: Caching considerations
 ```python
-# :ga:cache consider memoization
-# :ga:cache invalidation needed
+# :A: cache consider memoization
+# :A: cache invalidation needed
 ```
 
-### `:ga:async`
+### `:A: async`
 **Purpose**: Asynchronous operations
 ```javascript
-// :ga:async avoid blocking main thread
+// :A: async avoid blocking main thread
 ```
 
 ## Accessibility
 
-### `:ga:a11y`
+### `:A: a11y`
 **Purpose**: Accessibility requirements
 ```html
-<!-- :ga:a11y add ARIA labels -->
-<!-- :ga:a11y,wcag ensure AA compliance -->
+<!-- :A: a11y add ARIA labels -->
+<!-- :A: a11y, wcag ensure AA compliance -->
 ```
 
-### `:ga:i18n`
+### `:A: i18n`
 **Purpose**: Internationalization
 ```javascript
-// :ga:i18n extract hardcoded strings
+// :A: i18n extract hardcoded strings
 ```
 
-### `:ga:rtl`
+### `:A: rtl`
 **Purpose**: Right-to-left support
 ```css
-/* :ga:rtl needs directional styles */
+/* :A: rtl needs directional styles */
 ```
 
 ## Data & Storage
 
-### `:ga:migration`
+### `:A: migration`
 **Purpose**: Database migrations
 ```sql
--- :ga:migration breaking change in v2
--- :ga:migration,rollback plan needed
+-- :A: migration breaking change in v2
+-- :A: migration, rollback plan needed
 ```
 
-### `:ga:index`
+### `:A: index`
 **Purpose**: Database indexing
 ```sql
--- :ga:index add covering index for query
+-- :A: index add covering index for query
 ```
 
-### `:ga:schema`
+### `:A: schema`
 **Purpose**: Schema changes
 ```graphql
-# :ga:schema breaking change
-# :ga:schema,deprecated remove in v3
+# :A: schema breaking change
+# :A: schema, deprecated remove in v3
 ```
 
 ## Architecture
 
-### `:ga:pattern`
+### `:A: pattern`
 **Purpose**: Design pattern implementation
 ```java
-// :ga:pattern singleton - thread safety
-// :ga:pattern,factory consider dependency injection
+// :A: pattern singleton - thread safety
+// :A: pattern, factory consider dependency injection
 ```
 
-### `:ga:coupling`
+### `:A: coupling`
 **Purpose**: Coupling concerns
 ```python
-# :ga:coupling high - needs refactoring
-# :ga:coupling,tech database-specific
+# :A: coupling high - needs refactoring
+# :A: coupling, tech database-specific
 ```
 
-### `:ga:debt`
+### `:A: debt`
 **Purpose**: Technical debt
 ```javascript
-// :ga:debt,refactor extract to service
-// :ga:debt,p2 legacy code needs update
+// :A: debt, refactor extract to service
+// :A: debt, p2 legacy code needs update
 ```
 
 ## Platform Specific
 
-### `:ga:browser`
+### `:A: browser`
 **Purpose**: Browser compatibility
 ```javascript
-// :ga:browser,ie11 needs polyfill
-// :ga:browser,safari webkit prefix required
+// :A: browser, ie11 needs polyfill
+// :A: browser, safari webkit prefix required
 ```
 
-### `:ga:mobile`
+### `:A: mobile`
 **Purpose**: Mobile considerations
 ```swift
-// :ga:mobile,memory watch for leaks
-// :ga:mobile,battery optimize polling
+// :A: mobile, memory watch for leaks
+// :A: mobile, battery optimize polling
 ```
 
-### `:ga:platform`
+### `:A: platform`
 **Purpose**: Platform-specific code
 ```python
-# :ga:platform,windows path handling
-# :ga:platform,linux permissions check
+# :A: platform, windows path handling
+# :A: platform, linux permissions check
 ```
 
 ## Testing & Quality
 
-### `:ga:test`
+### `:A: test`
 **Purpose**: Testing requirements
 ```javascript
-// :ga:test,unit add edge cases
-// :ga:test,integration mock external service
+// :A: test, unit add edge cases
+// :A: test, integration mock external service
 ```
 
-### `:ga:coverage`
+### `:A: coverage`
 **Purpose**: Code coverage gaps
 ```python
-# :ga:coverage error path not tested
+# :A: coverage error path not tested
 ```
 
-### `:ga:flaky`
+### `:A: flaky`
 **Purpose**: Unreliable tests
 ```go
-// :ga:flaky timing-dependent test
+// :A: flaky timing-dependent test
 ```
 
 ## API & Contracts
 
-### `:ga:breaking`
+### `:A: breaking`
 **Purpose**: Breaking changes
 ```typescript
-// :ga:breaking,v3 parameter order changed
+// :A: breaking, v3 parameter order changed
 ```
 
-### `:ga:deprecated`
+### `:A: deprecated`
 **Purpose**: Deprecation notices
 ```java
-// :ga:deprecated use newMethod() instead
-// :ga:deprecated,remove@v4.0
+// :A: deprecated use newMethod() instead
+// :A: deprecated, remove:v4.0
 ```
 
-### `:ga:experimental`
+### `:A: experimental`
 **Purpose**: Unstable features
 ```rust
-// :ga:experimental API may change
+// :A: experimental API may change
 ```
 
 ## Best Practices
 
-1. **Combine with Priority**: `:ga:sec,p0` for critical security
-2. **Add Context**: Include specific concern after tag
-3. **Version Breaking Changes**: `:ga:breaking,v2` 
-4. **Link Standards**: `:ga:a11y,wcag-2.1`
-5. **Specify Platforms**: `:ga:browser,chrome,firefox`
+1. **Combine with Priority**: `:A: sec, p0` for critical security
+2. **Add Context**: Include specific concern after marker
+3. **Version Breaking Changes**: `:A: breaking, v2` 
+4. **Link Standards**: `:A: a11y, wcag-2.1`
+5. **Specify Platforms**: `:A: browser, chrome, firefox`
