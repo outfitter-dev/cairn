@@ -51,70 +51,96 @@ The anchor must follow language comment rules:
 
 ### Single-line Comments
 ```javascript
-// :ga:fix null check      (JavaScript)
-# :ga:todo refactor        (Python)
--- :ga:perf add index      (SQL)
+// :A: fix null check      (JavaScript)
+# :A: todo refactor        (Python)
+-- :A: perf add index      (SQL)
 ```
 
 ### Multi-line Comments
 ```javascript
-/* :ga:doc needs examples */
+/* :A: doc needs examples */
 /**
- * :ga:api public interface
+ * :A: api public interface
  */
 ```
 
 ### Documentation Comments
 ```python
 """
-:ga:module core authentication
-"""
+:A: module core authentication
+"""  
 ```
 
-## Payload Separators
+### HTML Comments (for Markdown)
+```markdown
+<!-- :A: tldr Quick summary of the document -->
+<!-- :A: guide Step-by-step instructions -->
+```
 
-Tokens can be separated by:
-- Comma: `:ga:fix,sec`
-- Space: `:ga:fix sec`
-- Pipe: `:ga:fix|sec` (rare)
+## Delimiter Semantics
 
-## Parameterised Markers
+Magic Anchors use three distinct delimiters:
 
-A marker can carry a single *parameter* wrapped in round-brackets to give a more precise reference (for example an issue number or RFC identifier).
-
+### Colon (`:`) - Classifications
 ```javascript
-// :ga:gh(issue#4)          // marker = gh, parameter = issue#4
-// :ga:rfc(7231)            // marker = rfc, parameter = 7231
-// :ga:feature(flag-login)  // marker = feature, parameter = flag-login
+// :A: priority:high         // priority classification
+// :A: status:blocked        // status classification  
+// :A: owner:@alice          // ownership (including mentions)
 ```
 
-Guidelines:
+### Parentheses (`()`) - Parameters
+```javascript
+// :A: blocked(issue:4)           // parameter with classification
+// :A: depends(auth-service)      // simple parameter
+// :A: config(timeout:30,retry:3) // multiple parameters
+```
 
-1. Prefer a hash (`#`) or hyphen (`-`) as an internal delimiter instead of `/` to avoid path-like ambiguity (`issue#4`, not `issue/4`).
-2. No whitespace or newlines inside the parameter payload.
-3. Tooling should treat the entire `marker(parameter)` sequence as **one token** for search / linting purposes.
+### Brackets (`[]`) - Arrays
+```javascript
+// :A: blocked:[4,7]              // multiple values
+// :A: owner:[@alice,@bob]        // multiple mentions
+// :A: blocked:4                  // single value (brackets optional)
+```
 
-This maps directly to the `parameter` production added in the formal grammar above.
+## Marker Organization
+
+Markers are organized into six semantic groups:
+
+| Group | Purpose | Example Markers |
+|-------|---------|----------------|
+| **todo** | Work items | `todo`, `bug`, `fix`, `task` |
+| **info** | Explanations | `context`, `ctx`, `docs`, `tldr` |
+| **notice** | Warnings | `warn`, `critical`, `deprecated` |
+| **trigger** | Automation | `action`, `notify`, `hook` |
+| **domain** | Focus areas | `security`, `sec`, `perf`, `api` |
+| **status** | Lifecycle | `temp`, `tmp`, `draft`, `complete` |
 
 ## Whitespace Rules
 
-- No space between sigil and payload: `:ga:todo` ✓
-- Space after payload recommended: `:ga:todo implement cache` ✓
-- Leading/trailing spaces trimmed: ` :ga:todo ` → `:ga:todo`
+- **Mandatory space after sigil**: `:A: todo` ✓ (NOT `:A:todo` ✗)
+- Space separates markers from prose: `:A: todo implement cache` ✓
+- Leading/trailing spaces in values are trimmed
 
 ## Line Length Considerations
 
 For better grep results and readability:
-- Keep total line length under ~80 characters
-- Use separate comments for distinct concerns
-- Combine only closely related tags
+- Keep total line length under ~120 characters
+- Use separate anchor lines for distinct concerns
+- Combine only closely related markers
 
 ```javascript
-// Good: Concise, related tags
-// :ga:sec,todo validate inputs
+// Good: Single-line anchor
+// :A: todo(priority:high) implement rate limiting
 
-// Better: Clear separation of concerns
-// :ga:sec check user permissions
-// :ga:todo implement rate limiting
-// :ga:ctx 100 requests/minute limit
+// Better: Multiple related anchors for complex context
+// :A: todo(priority:high) implement rate limiting
+// :A: context API allows 100 requests/minute  
+// :A: depends(redis) requires cache service
 ```
+
+## Key Decisions
+
+1. **No JSON/YAML** within anchors - use structured parameters instead
+2. **No regex patterns** - use string matching functions
+3. **No structural dots** - dots only for literals (versions, URLs, paths)
+4. **Colon for all mentions** - `owner:@alice` not `owner@alice`

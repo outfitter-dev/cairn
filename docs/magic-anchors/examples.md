@@ -1,176 +1,179 @@
-# Notation Examples
-<!-- :ga:tldr Pure notation examples showing format in various contexts -->
-<!-- :ga:notation Examples of grep-anchor notation across languages -->
+# Magic Anchors Examples
+<!-- :A: tldr Pure notation examples showing Magic Anchors format in various contexts -->
+<!-- :A: notation Examples of Magic Anchors notation across languages -->
 
-Pure notation examples showing the format in various contexts.
+Pure notation examples showing the Magic Anchors format in various contexts.
 
 ## Basic Notation
 
-### Simple Tokens
+### Simple Markers
 ```javascript
-// :ga:todo
-// :ga:fix
-// :ga:v1.0
-// :ga:@alice
+// :A: todo
+// :A: fix
+// :A: security
+// :A: @alice
 ```
 
-### Multiple Tokens
+### Multiple Markers
 ```python
-# :ga:fix,sec              # Good: closely related
-# :ga:p0,urgent            # Good: both priority indicators
-# :ga:todo,refactor,perf   # Consider splitting for clarity
+# :A: fix,sec                    # Good: closely related
+# :A: todo(priority:critical)    # Priority parameter
+# :A: todo,refactor,perf         # Consider splitting for clarity
 ```
 
-### JSON Payloads
+### Parameters with Colons
 ```go
-// :ga:{"type":"bug","id":"BUG-123"}
-// :ga:{"priority":"high","assignee":"@team"}
+// :A: priority:high
+// :A: status:blocked
+// :A: owner:@alice
 ```
 
-### Array Payloads
+### Arrays with Brackets
 ```ruby
-# :ga:[frontend,backend,api]
-# :ga:[@alice,@bob]
+# :A: tags:[frontend,backend,api]
+# :A: reviewers:[@alice,@bob]
+# :A: blocked:[4,7,12]
 ```
 
 ## Language Examples
 
 ### JavaScript/TypeScript
 ```javascript
-// :ga:todo implement error handling
-/* :ga:perf,p2 optimize render loop */
+// :A: todo implement error handling
+/* :A: perf(priority:medium) optimize render loop */
 /** 
- * :ga:api public interface
+ * :A: api public interface
  */
 ```
 
 ### Python
 ```python
-# :ga:fix handle None case
+# :A: fix handle None case
 """
-:ga:module authentication system
+:A: module authentication system
 """
-# :ga:test,@qa needs integration tests
+# :A: test,assign:@qa needs integration tests
 ```
 
 ### Go
 ```go
-// :ga:todo add context support
-/* :ga:breaking api change in v2 */
-// :ga:{"goroutine":true,"poolSize":10}
+// :A: todo add context support
+/* :A: breaking api change in v2 */
+// :A: config(goroutine:true,poolSize:10)
 ```
 
 ### Rust
 ```rust
-// :ga:unsafe review needed
-/* :ga:perf,mem optimize allocations */
-/// :ga:api public trait
+// :A: unsafe review needed
+/* :A: perf,todo optimize allocations */
+/// :A: api public trait
 ```
 
 ### Java
 ```java
-// :ga:deprecated use newMethod() instead
-/* :ga:synchronized thread safety */
-/** :ga:since@v1.5 */
+// :A: deprecated use newMethod() instead
+/* :A: todo(sync:required) thread safety */
+/** :A: since:v1.5 */
 ```
 
 ### HTML/XML
 ```html
-<!-- :ga:a11y add aria labels -->
-<!-- :ga:seo,p1 meta tags missing -->
-<!-- :ga:responsive breakpoint -->
+<!-- :A: todo(a11y:required) add aria labels -->
+<!-- :A: seo,priority:high meta tags missing -->
+<!-- :A: responsive breakpoint -->
 ```
 
 ### CSS
 ```css
-/* :ga:theme dark mode support */
-/* :ga:browser,ie11 fallback needed */
-/* :ga:refactor use CSS vars */
+/* :A: theme dark mode support */
+/* :A: todo(browser:ie11) fallback needed */
+/* :A: refactor use CSS vars */
 ```
 
 ### SQL
 ```sql
--- :ga:index add covering index
--- :ga:perf,query slow join
-/* :ga:migration required for v2 */
+-- :A: todo(index:covering) add covering index
+-- :A: perf,todo slow join optimization
+/* :A: migration required for v2 */
 ```
 
 ### Bash/Shell
 ```bash
-# :ga:posix ensure compatibility
-# :ga:error needs error handling
-# :ga:todo add getopts
+# :A: todo(posix:required) ensure compatibility
+# :A: error needs error handling
+# :A: todo add getopts parsing
 ```
 
 ### YAML
 ```yaml
-# :ga:config production values
-# :ga:secret needs encryption
-# :ga:validate schema check
+# :A: config production values
+# :A: security needs encryption
+# :A: todo validate schema check
 ```
 
 ### Markdown
 ```markdown
-<!-- :ga:draft needs review -->
-<!-- :ga:toc update sections -->
-<!-- :ga:example add code sample -->
+<!-- :A: draft needs review -->
+<!-- :A: todo update sections -->
+<!-- :A: example add code sample -->
 ```
 
 ## Mention Patterns
 
 ### Direct Mentions
 ```javascript
-// :ga:@alice
-// :ga:@backend-team
-// :ga:@cursor
+// :A: @alice
+// :A: @backend-team
+// :A: @cursor
 ```
 
-### Attributed Mentions
+### Ownership with Mentions
 ```javascript
-// :ga:owner@alice
-// :ga:reviewer@bob
-// :ga:attn@security
+// :A: owner:@alice
+// :A: reviewer:@bob
+// :A: assign:@security
 ```
 
 ### Multiple Mentions
 ```javascript
-// :ga:reviewers[@alice,@bob]
-// :ga:cc(@qa,@docs)
-// :ga:escalate[@lead,@manager]
+// :A: reviewers:[@alice,@bob]
+// :A: cc:[@qa,@docs]
+// :A: escalate:[@lead,@manager]
 ```
 
 ## Complex Examples
 
-### Multipart Metadata (avoid long lines)
+### Complex Context (use multiple lines)
 ```javascript
 // Instead of:
-// :ga:bug,p0,@alice,{"blocker":true,"sprint":"2025-Q1"}
+// :A: bug,priority:critical,owner:@alice,blocked:AUTH-123,sprint:2025-Q1
 
 // Better:
-// :ga:bug,p0 critical payment processing error
-// :ga:@alice assigned for immediate fix
-// :ga:{"blocker":true,"sprint":"2025-Q1"}
+// :A: bug(priority:critical) payment processing error
+// :A: owner:@alice assigned for immediate fix
+// :A: blocked(issue:AUTH-123) waiting on auth service
+// :A: todo(sprint:2025-Q1) scheduled for next sprint
 ```
 
 ### Version Tracking
 ```javascript
 // Instead of:
-// :ga:introduced@v2.0,deprecated@v3.0,removed@v4.0
+// :A: since:v2.0,deprecated:v3.0,until:v4.0
 
 // Better:
-// :ga:introduced@v2.0
-// :ga:deprecated@v3.0 use newMethod() instead  
-// :ga:removed@v4.0
+// :A: since:v2.0
+// :A: deprecated:v3.0 use newMethod() instead  
+// :A: until:v4.0
 ```
 
 ### Workflow Chain (separate for clarity)
 ```javascript
 // Instead of:
-// :ga:draft,needs-review,attn@senior,due@2025-01-30
+// :A: draft,review,assign:@senior,deadline:2025-01-30
 
 // Better:
-// :ga:draft API design document
-// :ga:needs-review architecture decisions
-// :ga:attn@senior security implications
-// :ga:due@2025-01-30
+// :A: draft API design document
+// :A: review architecture decisions needed
+// :A: assign:@senior security implications
+// :A: deadline:2025-01-30
 ```

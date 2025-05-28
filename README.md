@@ -1,12 +1,12 @@
 # 🍇 Grepa (grep-anchor) - Code Navigation for AI Agents and Humans
-<!-- :ga:tldr Universal pattern for making codebases AI-navigable and greppable -->
-<!-- :ga:core Main project documentation and overview -->
+<!-- :A: tldr Universal pattern for making codebases AI-navigable and greppable -->
+<!-- :A: core Main project documentation and overview -->
 
 > [!IMPORTANT]
 > **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/galligan/grepa/issues) or share your thoughts!
 
 > [!TIP]
-> **A simple pattern for code navigation.** Grepa (`:ga:`) suggests a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
+> **A simple pattern for code navigation.** Magic Anchors (`:A:`) provide a consistent way to mark important spots in code that both AI agents and humans can easily find with grep. Grepa is the tooling that understands and processes these anchors.
 
 ## 📚 Documentation
 
@@ -33,28 +33,28 @@ Current approaches fail because they're:
 
 > **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
 
-## 💡 Proposed Solution: grep-anchor (`:ga:`)
+## 💡 Proposed Solution: Magic Anchors (`:A:`)
 
-A **grep-anchor** is a small, consistent marker that helps make comments more discoverable:
+A **Magic Anchor** is a small, consistent marker that helps make comments more discoverable:
 
 ```javascript
-// :ga:todo add input validation
+// :A: todo add input validation
 function processPayment(amount) {
-    // :ga:sec verify amount is positive
+    // :A: sec verify amount is positive
     chargeCard(amount);
 }
 ```
 
 Search examples:
 ```bash
-rg ":ga:"          # List all anchors
-rg ":ga:sec"  # Jump to security concerns
-rg ":ga:todo"      # Find all tasks
+rg ":A:"          # List all anchors
+rg ":A: sec"      # Jump to security concerns
+rg ":A: todo"     # Find all tasks
 ```
 
 ### Custom Anchors
 
-While `:ga:` is the recommended default, teams can choose their own anchor pattern:
+While `:A:` is the recommended default, teams can choose their own anchor pattern:
 
 ```javascript
 // :proj: for your project
@@ -64,35 +64,35 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
 
 **Some suggestions:**
 - **One anchor per project** - Consider keeping the same anchor pattern throughout a codebase
-- **Monorepo?** You might use tags instead of different anchors: `:ga:auth-service`, `:ga:web-app`
-- **Document your choice** - If not using `:ga:`, it helps to note it in your README
+- **Monorepo?** You might use tags instead of different anchors: `:A: auth-service`, `:A: web-app`
+- **Document your choice** - If not using `:A:`, it helps to note it in your README
 
 ## 🚀 Quick Start
 
 ### 1. Start Simple
-- `:ga:todo` - Mark work that needs doing
+- `:A: todo` - Mark work that needs doing
   ```python
-  # :ga:todo implement retry logic
+  # :A: todo implement retry logic
   def api_call():
       response = requests.get(url)
       return response
   ```
 
 ### 2. Add AI Instructions
-- `:ga:@agent` - Direct AI agents to specific tasks
+- `:A: @agent` - Direct AI agents to specific tasks
   ```javascript
-  // :ga:@agent write unit tests for edge cases
+  // :A: @agent write unit tests for edge cases
   function divide(a, b) {
-      return a / b;  // :ga:todo handle division by zero
+      return a / b;  // :A: todo handle division by zero
   }
   ```
 
 ### 3. Mark Important Context
-- `:ga:ctx` - Document important assumptions
+- `:A: ctx` - Document important assumptions
   ```go
-  // :ga:ctx user_ids are always UUIDs, never integers
+  // :A: ctx user_ids are always UUIDs, never integers
   func GetUser(userID string) (*User, error) {
-      // :ga:sec validate UUID format to prevent injection
+      // :A: sec validate UUID format to prevent injection
       return db.FindUser(userID)
   }
   ```
@@ -100,44 +100,44 @@ While `:ga:` is the recommended default, teams can choose their own anchor patte
 ### 4. Combine as Needed
 - Stack multiple tags for richer meaning
   ```typescript
-  // :ga:sec,todo fix rate limiting
-  // :ga:tmp,ctx remove after Redis upgrade
+  // :A: sec,todo fix rate limiting
+  // :A: tmp,ctx remove after Redis upgrade
   ```
 
 ## 🎯 Core Patterns
 
 | Pattern | Purpose | Example |
 |---------|---------|---------|
-| `:ga:tldr` | Brief summary/overview | `// :ga:tldr handles user authentication` |
-| `:ga:todo` | Work to be done | `// :ga:todo add error handling` |
-| `:ga:ctx` | Important context | `// :ga:ctx expects UTC timestamps` |
-| `:ga:@agent` | AI agent tasks | `// :ga:@agent implement this function` |
-| `:ga:sec` | Security concerns | `// :ga:sec validate all inputs` |
-| `:ga:tmp` | Temporary code | `// :ga:tmp remove after v2.0` |
+| `:A: tldr` | Brief summary/overview | `// :A: tldr handles user authentication` |
+| `:A: todo` | Work to be done | `// :A: todo add error handling` |
+| `:A: ctx` | Important context | `// :A: ctx expects UTC timestamps` |
+| `:A: @agent` | AI agent tasks | `// :A: @agent implement this function` |
+| `:A: sec` | Security concerns | `// :A: sec validate all inputs` |
+| `:A: tmp` | Temporary code | `// :A: tmp remove after v2.0` |
 
 ## 📈 Progressive Enhancement
 
 ### Level 1: Basic TODO Migration
 Start by enhancing your existing TODOs:
 ```javascript
-// TODO :ga: implement caching
-// FIXME :ga:sec sanitize user input
+// TODO :A: implement caching
+// FIXME :A: sec sanitize user input
 ```
 
 ### Level 2: Structured Tasks
 Or use standalone markers:
 ```javascript
-// :ga:todo implement caching
-// :ga:task:auth add OAuth support
-// :ga:issue(42) fix memory leak
+// :A: todo implement caching
+// :A: todo(task:auth) add OAuth support
+// :A: todo(issue:42) fix memory leak
 ```
 
 ### Level 3: Rich Context
 Add metadata when needed:
 ```javascript
-// :ga:epic(user-onboarding) new user flow
-// :ga:deadline(2024-03-01) compliance update
-// :ga:owner(@alice) payment integration
+// :A: todo(epic:user-onboarding) new user flow
+// :A: todo(deadline:2024-03-01) compliance update
+// :A: todo(owner:@alice) payment integration
 ```
 
 ## 🤖 Example AI Agent Workflow
@@ -145,25 +145,25 @@ Add metadata when needed:
 ### 1. Human marks the spot:
 ```python
 class UserService:
-    # :ga:ctx all users must have unique emails
+    # :A: ctx all users must have unique emails
     def create_user(self, email: str, name: str):
-        # :ga:@agent implement with proper validation
-        # :ga:sec prevent duplicate emails
-        # :ga:todo add rate limiting
+        # :A: @agent implement with proper validation
+        # :A: sec prevent duplicate emails
+        # :A: todo add rate limiting
         pass
 ```
 
 ### 2. AI agent finds the work:
 ```bash
-$ rg ":ga:@agent"
-user_service.py:4: # :ga:@agent implement with proper validation
+$ rg ":A: @agent"
+user_service.py:4: # :A: @agent implement with proper validation
 ```
 
 ### 3. AI reads the context:
 ```bash
-$ rg ":ga:ctx|:ga:sec" user_service.py
-user_service.py:2: # :ga:ctx all users must have unique emails
-user_service.py:5: # :ga:sec prevent duplicate emails
+$ rg ":A: ctx|:A: sec" user_service.py
+user_service.py:2: # :A: ctx all users must have unique emails
+user_service.py:5: # :A: sec prevent duplicate emails
 ```
 
 ### 4. AI implements with full understanding:
@@ -173,7 +173,7 @@ def create_user(self, email: str, name: str):
     if not self._is_valid_email(email):
         raise ValueError("Invalid email format")
     
-    # :ga:ctx enforcing unique email constraint
+    # :A: ctx enforcing unique email constraint
     if self.user_repo.exists_by_email(email):
         raise DuplicateEmailError(f"Email {email} already exists")
     
@@ -189,7 +189,7 @@ def create_user(self, email: str, name: str):
 - **Clear task delegation**: Helps identify what needs doing
 
 ### For Developers
-- **One command**: `rg ":ga:"` shows all important markers
+- **One command**: `rg ":A:"` shows all important markers
 - **Flexible vocabulary**: Use patterns that make sense for your team
 - **Progressive adoption**: Start simple, add richness over time
 
@@ -201,78 +201,78 @@ def create_user(self, email: str, name: str):
 ## 🔧 Common Patterns
 
 ### Security & Quality
-- `:ga:sec` - Security-critical code
-- `:ga:audit` - Needs review
-- `:ga:perf` - Performance concerns
-- `:ga:bug` - Known issues
+- `:A: sec` - Security-critical code
+- `:A: audit` - Needs review
+- `:A: perf` - Performance concerns
+- `:A: bug` - Known issues
 
 ### Project Management
-- `:ga:todo` - General tasks
-- `:ga:task:` - Specific work items
-- `:ga:issue(123)` - Link to issue tracker
-- `:ga:epic(auth)` - Feature grouping
+- `:A: todo` - General tasks
+- `:A: todo(task:specific)` - Specific work items
+- `:A: todo(issue:123)` - Link to issue tracker
+- `:A: todo(epic:auth)` - Feature grouping
 
 ### Priority Examples (define your own!)
-- `:ga:p0` - Critical priority
-- `:ga:urgent` - Needs immediate attention
-- `:ga:next-sprint` - Upcoming work
-- `:ga:someday` - Future considerations
+- `:A: todo(priority:critical)` - Critical priority
+- `:A: urgent` - Needs immediate attention
+- `:A: todo(sprint:next)` - Upcoming work
+- `:A: someday` - Future considerations
 
 ### AI-Specific
-- `:ga:@agent` - Any AI can help
-- `:ga:@cursor` - Cursor-specific
-- `:ga:prompt` - AI instructions
-- `:ga:review` - AI should review
+- `:A: @agent` - Any AI can help
+- `:A: @cursor` - Cursor-specific
+- `:A: prompt` - AI instructions
+- `:A: review` - AI should review
 
 ## 🚪 Escape Hatch
 
-If you need to remove all grepa markers:
+If you need to remove all Magic Anchor markers:
 
 ```bash
-# Find all files with :ga: markers
-rg -l ":ga:" 
+# Find all files with :A: markers
+rg -l ":A:" 
 
 # Preview what would be removed
-rg ":ga:.*$" 
+rg ":A:.*$" 
 
-# Remove all :ga: markers (backup first!)
-find . -type f -exec sed -i.bak 's/:ga:[^*]*//g' {} +
+# Remove all :A: markers (backup first!)
+find . -type f -exec sed -i.bak 's/:A:[^*]*//g' {} +
 ```
 
 ## 📋 Quick Reference
 
 ```bash
 # Find everything
-rg ":ga:"
+rg ":A:"
 
 # Find by type
-rg ":ga:todo"
-rg ":ga:sec"
-rg ":ga:@agent"
+rg ":A: todo"
+rg ":A: sec"
+rg ":A: @agent"
 
 # Find with context (lines before/after)
-rg -B1 -A1 ":ga:sec"  # 1 line before and after
-rg -C2 ":ga:todo"          # 2 lines context
+rg -B1 -A1 ":A: sec"  # 1 line before and after
+rg -C2 ":A: todo"     # 2 lines context
 
 # Find related tags nearby
-rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
+rg -B2 -A2 ":A: sec" | rg ":A: (sec|todo)"
 
 # Find combinations
-rg ":ga:sec.*todo|:ga:todo.*sec"
+rg ":A: sec.*todo|:A: todo.*sec"
 
 # Find in specific files
-rg ":ga:" --type js
-rg ":ga:" src/
+rg ":A:" --type js
+rg ":A:" src/
 
 # Count by type
-rg ":ga:(\w+)" -o | sort | uniq -c
+rg ":A: (\w+)" -o | sort | uniq -c
 ```
 
 ## 🎬 Getting Started
 
-1. **Try it now**: Add `// :ga:todo` to something in your code
-2. **Search for it**: Run `rg ":ga:"` 
-3. **Tell your AI**: "Look for :ga: markers to understand the codebase"
+1. **Try it now**: Add `// :A: todo` to something in your code
+2. **Search for it**: Run `rg ":A:"` 
+3. **Tell your AI**: "Look for :A: markers to understand the codebase"
 4. **Evolve naturally**: Add patterns as you need them
 
 **The goal is discoverability.** Start simple and let your patterns evolve with your needs.
@@ -280,13 +280,13 @@ rg ":ga:(\w+)" -o | sort | uniq -c
 ## 📖 Docs
 
 ### Core Documentation
-- [Quick Start Guide](docs/guides/quick-start.md) - Get started with grep-anchors in 5 minutes
-- [Examples](docs/examples.md) - Real-world grep-anchor usage patterns
+- [Quick Start Guide](docs/guides/quick-start.md) - Get started with Magic Anchors in 5 minutes
+- [Examples](docs/examples.md) - Real-world Magic Anchor usage patterns
 - [Progressive Enhancement](docs/guides/progressive-enhancement.md) - Three levels of adoption
 
-### Notation & Conventions
-- [Magic-Anchor Overview](docs/magic-anchors/README.md) - Technical format specification
-- [Format Specification](docs/magic-anchors/format.md) - Detailed syntax rules
+### Magic Anchors Notation
+- [Magic Anchors Overview](docs/magic-anchors/README.md) - Technical format specification
+- [Format Specification](docs/magic-anchors/SPEC.md) - Detailed syntax rules
 - [Payload Rules](docs/magic-anchors/payloads.md) - How to structure tag payloads
 - [Examples](docs/magic-anchors/examples.md) - Notation examples across languages
 
@@ -312,13 +312,13 @@ rg ":ga:(\w+)" -o | sort | uniq -c
 
 ## 🌟 Inspiration: Lessons from OpenAI Codex
 
-The idea for grep-anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
+The idea for Magic Anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
 
 > *"Make your codebase discoverable — a well-named and organised tree lets Codex navigate the filesystem as quickly as a brand-new engineer might."*
 
-They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `grep-anchor.yml` dictionary.
+They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `grepa.yml` dictionary.
 
-That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:ga:` formalizes. Think of grepa as the portable follow-up to Codex's internal practice, distilled into a four-byte sigil any OSS project or LLM can rely on.
+That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:A:` formalizes. Think of Magic Anchors as the portable follow-up to Codex's internal practice, distilled into a three-character sigil any OSS project or LLM can rely on.
 
 ### Sources
 

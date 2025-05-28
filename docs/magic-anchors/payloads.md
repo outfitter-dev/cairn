@@ -42,94 +42,115 @@ Sometimes a token needs a specific *parameter* (e.g., an issue number or RFC).  
 - Feature toggles / AB-tests (`abtest(group-a)`) 
 ```
 
-## JSON Objects
+## Parentheses `()` - Parameters
 
-Structured metadata for complex information.
+Used for structured parameters and arguments associated with markers.
 
 ### Format
-- Valid JSON object syntax
-- Must be on single line (no pretty printing)
-- Keys should be camelCase
+- `marker(param:value)` - single parameter
+- `marker(p1:v1,p2:v2)` - multiple parameters
+- Parameters use colon syntax internally
 
 ### Examples
 ```javascript
-// :ga:{"type":"bug","priority":"p0"}
-// :ga:{"assignee":"@bob","due":"2025-02-01"}
-// :ga:{"deprecated":true,"since":"v2.0","until":"v3.0"}
+// :A: blocked(issue:4)           // blocked by issue
+// :A: depends(auth-service)      // simple dependency
+// :A: config(timeout:30,retry:3) // multiple params
+// :A: todo(assign:@alice,priority:high) // task params
 ```
 
-### Common Fields
+### Common Parameter Patterns
+```javascript
+// Work item parameters
+// :A: todo(bug:auth-timeout)      // bug specification
+// :A: todo(epic:user-onboarding)  // epic grouping
+// :A: todo(sprint:next)           // sprint planning
 
-| Field | Type | Purpose |
-|-------|------|---------|
-| `type` | string | Categorization |
-| `priority` | string | Urgency level |
-| `assignee` | string | Owner/responsible party |
-| `due` | string | Deadline (ISO 8601) |
-| `issue` | string | External reference |
-| `since` | string | Version introduced |
-| `until` | string | Version for removal |
+// Relationship parameters  
+// :A: blocked(issue:AUTH-123)     // external blocker
+// :A: depends(service:redis)      // service dependency
+// :A: emits(event:user-created)   // event publishing
+```
 
-## Arrays
+## Brackets `[]` - Arrays
 
-Lists of values, useful for multiple items.
+Used for multiple values. Optional for single values.
 
 ### Format
-- Square bracket notation
-- Comma-separated values
-- Can contain strings or numbers
+- `marker:[value1,value2]` - array of values
+- `marker:value` - single value (brackets optional)
+- Values can be identifiers, mentions, or quoted strings
 
 ### Examples
 ```javascript
-// :ga:["frontend","backend"]
-// :ga:[@alice,@bob,@charlie]
-// :ga:[v1.0,v1.1,v1.2]
-// :ga:["high","security","urgent"]
+// :A: blocked:[4,7,12]           // multiple blockers
+// :A: tags:[auth,api,security]   // multiple tags
+// :A: owner:[@alice,@bob]        // multiple owners
+// :A: files:['auth.js','api.js'] // quoted paths
 ```
 
-## Mention Tokens
+## Universal Parameter Groups
 
-Special tokens starting with `@` to indicate people or agents.
+Parameters are organized into six semantic families that work with any marker:
 
-### Standalone Mentions
+| Group | Purpose | Examples |
+|-------|---------|----------|
+| **mention** | People/entities | `owner:@alice`, `assign:@bob`, `team:@frontend` |
+| **relation** | Links/references | `parent:epic-123`, `depends:auth-svc`, `path:src/auth.js` |
+| **workflow** | Coordination | `blocked:[4,7]`, `blocking:12`, `reason:compliance` |
+| **priority** | Importance/risk | `priority:high`, `severity:critical`, `complexity:high` |
+| **lifecycle** | Time/state | `since:1.2.0`, `until:2.0.0`, `status:in-progress` |
+| **scope** | Environment | `env:prod`, `platform:ios`, `region:us-east` |
+
+### Mention Parameters
 ```javascript
-// :ga:@alice          // Direct mention
-// :ga:@security-team  // Team mention
-// :ga:@cursor         // AI agent
+// Direct mentions
+// :A: @alice                 // standalone mention
+// :A: owner:@alice           // ownership mention
+// :A: assign:@bob            // assignment
+// :A: team:@security         // team mention
+
+// Multiple mentions
+// :A: reviewers:[@alice,@bob]
+// :A: cc:[@alice,@security-team]
 ```
 
-### Composed Mentions
+## Quoting Rules
+
+Quotes are used for strings with special characters:
+
+### Simple Values (No Quotes)
 ```javascript
-// :ga:owner@alice     // Owner designation
-// :ga:reviewer@bob    // Reviewer designation
-// :ga:attn@charlie    // Attention needed
+// :A: priority:high
+// :A: version(2.0.1)
+// :A: owner:@alice
 ```
 
-### Multiple Mentions
+### Quoted Values (Required for Special Characters)  
 ```javascript
-// :ga:reviewers[@alice,@bob]
-// :ga:cc(@alice,@security-team)
-// :ga:owners[@frontend,@backend]
+// Single quotes for literals
+// :A: match('user-123')              // string match
+// :A: path('src/data migration.sql') // spaces
+// :A: message('Can\'t connect')      // escaped quote
+
+// Arrays with quoted elements
+// :A: files:['auth.js','lib/utils.js']
+// :A: matches:['user-123','admin-456']
 ```
 
-## Token Combination
+## Marker Combinations
 
-Multiple tokens can be combined:
+Multiple markers are separated by commas:
 
-### Comma Separation (Most Common)
 ```javascript
-// :ga:fix,sec,p0
-// :ga:todo,@alice,v2.1
+// Simple combination
+// :A: todo,security
+
+// With parameters
+// :A: todo(priority:high),security(severity:critical)
+
+// Mixed styles
+// :A: todo,owner:@alice,priority:high
 ```
 
-### Space Separation
-```javascript
-// :ga:fix sec p0
-// :ga:todo @alice v2.1
-```
-
-### Mixed Payloads
-```javascript
-// :ga:p0,{"type":"security","cve":"CVE-2025-1234"}
-// :ga:owners[@alice,@bob],p1
-```
+**Rule**: If `todo` appears, it must be the first marker.

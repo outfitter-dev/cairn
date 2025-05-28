@@ -1,220 +1,255 @@
-<!-- :ga:tldr canonical grepa notation specification -->
-# Grepa Notation Specification
+<!-- :A: tldr canonical Magic Anchors notation specification -->
+# Magic Anchors Notation Specification
 
-The canonical specification for the grepa notation system - a breadcrumb protocol for code navigation.
+The canonical specification for the Magic Anchors notation system - a breadcrumb protocol for code navigation.
 
 ## Overview
 
-Grepa is a breadcrumb protocol that enables developers and AI agents to leave structured, searchable markers throughout codebases. The notation accommodates diverse team preferences while recommending patterns that enable effective tooling and cross-project consistency.
+Magic Anchors provide a breadcrumb protocol that enables developers and AI agents to leave structured, searchable markers throughout codebases. The notation accommodates diverse team preferences while recommending patterns that enable effective tooling and cross-project consistency.
 
 ## Core Grammar
 
 ```ebnf
-anchor      ::= sigil marker-list prose?
-sigil       ::= ":" identifier ":"
+anchor      ::= comment-leader sigil space marker-list prose?
+sigil       ::= ":A:" | ":" identifier ":"
+space       ::= " "                    # exactly one ASCII space
 marker-list ::= marker ("," marker)*
-marker      ::= identifier scope? parameter?
-scope       ::= ":" identifier
-parameter   ::= "(" content ")"
-prose       ::= " " text
+marker      ::= key delimiter?
+key         ::= identifier | "@" identifier
+delimiter   ::= ":" value | "(" params ")" | "[" array "]"
+value       ::= identifier | quoted-string
+params      ::= param ("," param)*
+param       ::= key ":" value
+array       ::= value ("," value)*
+prose       ::= text                   # everything after markers
 ```
 
 ## Basic Structure
 
-### Sigil
-The notation recognizes `:ga:` as the standard sigil, though custom sigils are accommodated for team-specific needs.
+### The `:A:` Sigil
+The notation uses `:A:` as the canonical sigil, though custom sigils are accommodated for team-specific needs.
 
 ```javascript
-// Standard sigil
-// :ga:todo implement authentication
+// Standard sigil (mandatory single space after)
+// :A: todo implement authentication
 
 // Custom sigil (alternative)
-// :team:todo implement authentication
+// :team: todo implement authentication
 ```
+
+**Key Rules:**
+- `:A:` must be followed by exactly one ASCII space
+- Three glyphs for visual clarity and fast typing
+- Trivially matched with `':A:'` in ripgrep
 
 ### Markers
-Markers classify the anchor's purpose. The notation recommends established core markers while accommodating domain-specific extensions.
+Markers classify the anchor's purpose. Markers are organized into six semantic groups for discoverability.
 
 ```javascript
-// Core markers
-// :ga:todo implement rate limiting
-// :ga:bug memory leak in auth service
-// :ga:sec validate all user inputs
+// Core markers with mandatory space after sigil
+// :A: todo implement rate limiting
+// :A: bug memory leak in auth service
+// :A: sec validate all user inputs
 ```
 
-## Delimiter Patterns
+## Delimiter Semantics
 
-The notation accommodates two delimiter approaches, with recommendations based on semantic clarity.
+The notation uses three distinct delimiters with specific semantic purposes:
 
-### Scope Delimiters (`:`)
-Recommended for categorical relationships where the value represents a type or classification.
+### Colon (`:`) - Classifications
+Used for type:value relationships, classifications, and states.
 
 ```javascript
-// :ga:priority:high        // priority IS high
-// :ga:status:blocked       // status IS blocked  
-// :ga:env:production       // environment IS production
+// :A: priority:high         // priority classification
+// :A: status:blocked        // status classification
+// :A: env:production        // environment type
+// :A: owner:@alice          // ownership (including mentions)
 ```
 
-### Parameter Delimiters (`()`)
-Recommended for relational data, targets, and complex values.
+### Parentheses (`()`) - Parameters
+Used for structured parameters and arguments associated with markers.
 
 ```javascript
-// :ga:depends(auth-service)     // depends ON auth-service
-// :ga:see(auth.js:42)           // see file at location
-// :ga:pattern(singleton)        // implements pattern
+// :A: blocked(issue:4)           // parameter with classification
+// :A: depends(auth-service)      // simple parameter
+// :A: config(timeout:30,retry:3) // multiple parameters
 ```
 
-### Combined Usage
-The notation accommodates scope and parameter combinations for nuanced expression.
+### Brackets (`[]`) - Arrays
+Used for multiple values, optional for single values.
 
 ```javascript
-// :ga:config:env(production)    // config scope: env, value: production
-// :ga:impact:security(high)     // impact scope: security, severity: high
-// :ga:rel:depends(auth-service) // relationship scope: depends, target: auth-service
+// :A: blocked:[4,7]              // multiple blockers
+// :A: tags:[auth,api,security]   // multiple tags
+// :A: owner:[@alice,@bob]        // multiple owners
+// :A: blocked:4                  // single value (brackets optional)
 ```
 
-**Recommendation:** Use scope when the context type matters for disambiguation, parameters when providing specific values or targets.
+## Core Marker Groups
 
-## Core Markers
+Markers are organized into six semantic groups for discoverability:
 
-The notation recognizes these established markers while accommodating extensions.
+| Group | Purpose | Primary markers (synonyms in parentheses) |
+|-------|---------|-------------------------------------------|
+| **todo** | Work that needs to be done | `todo`, standalone work markers: `bug`, `fix`/`fixme`, `task`, `issue`/`ticket`, `pr`, `review` |
+| **info** | Explanations & guidance | `context` (`ctx`), `note`, `docs`, `explain`, `tldr`/`about`, `example`, `guide`, `rule`, `decision` |
+| **notice** | Warnings & alerts | `warn`, `flag`, `freeze`, `critical`, `unsafe`, `deprecated`, `unstable`, `experiment`, `changing` |
+| **trigger** | Automated behaviour hooks | `action`, `notify`, `alert`, `hook` |
+| **domain** | Domain-specific focus areas | `api`, `security`/`sec`, `perf`/`performance`, `deploy`, `test`, `data`, `config`, `lint` |
+| **status** | Lifecycle / completeness | `temp`/`tmp`/`placeholder`, `stub`, `mock`, `draft`, `prototype`, `complete`, `ready`, `broken` |
 
-### General Markers
-- `todo` - work that needs doing (synonyms: `fixme`, `bug`, `task`)
-- `context` - important background information (synonyms: `ctx`)  
-- `needs` - prerequisites or missing requirements (synonyms: `requires`, `missing`)
-- `temp` - temporary code for replacement (synonyms: `tmp`, `placeholder`)
-
-### Navigation Markers  
-- `entry` - entry points and main interfaces (synonyms: `start-here`)
-- `explains` - documentation and explanatory content (synonyms: `about`, `why`, `describes`, `clarifies`)
-
-### Quality Markers
-- `impact` - change impact assessment with typed severity
-- `pattern` - design pattern documentation  
-- `state` - state management and mutability markers
-- `sec` - security-sensitive code (synonyms: `security`)
-- `perf` - performance-related code (synonyms: `performance`)
-
-### Reference Markers
-- `see` - file or code references
-- `ref` - general references (synonyms: `reference`)
-- `rel` - relationships between entities
-
-### Versioning Markers  
-- `since` - version introduced
-- `until` - version for removal
-- `due` - due dates (synonyms: `deadline`)
+**Usage Rules:**
+1. Multiple markers can be combined with commas: `:A: todo,bug,priority:high`
+2. If `todo` appears, it must be the first marker
+3. Work markers can appear standalone OR as parameters to `todo`
 
 ## Relational Patterns
 
-The notation accommodates relationship expression through the universal `rel()` marker, enabling tools to build dependency graphs.
+Relationships are expressed directly through dedicated markers without redundant prepositions:
 
 ```javascript
-// :ga:rel(depends:auth-service)    // dependency relationship
-// :ga:rel(blocks:issue:4)          // blocking relationship  
-// :ga:rel(emits:user.created)      // event relationship
-// :ga:rel(consumes:api:v2/users)   // API relationship
-```
+// Dependency relationships
+// :A: depends(auth-service)       // requires auth service
+// :A: requires(api:v2-login)      // needs specific API
+// :A: needs(config:redis)         // requires configuration
 
-**Alternative approach:** Direct relational markers with parameter expansion (tool-dependent).
-```javascript
-// :ga:depends(auth-service)    // expands to rel(depends:auth-service)
-// :ga:blocks(issue:4)          // expands to rel(blocks:issue:4)
+// Blocking relationships
+// :A: blocked(issue:AUTH-123)     // blocked by issue
+// :A: blocking:[PAY-45,UI-77]     // blocks multiple tasks
+
+// Event relationships
+// :A: emits(event:user-created)   // publishes event
+// :A: listens(payment-completed)  // subscribes to event
+// :A: triggers(workflow:deploy)   // initiates process
 ```
 
 ## Multi-line Anchors
 
-The notation accommodates multi-line expression in compatible comment formats while recommending single-line for simplicity.
-
-```html
-<!-- :ga:
-  todo,
-  priority:critical,
-  blocked(by:issue:4),
-  owner@alice fix authentication bug
--->
-```
-
-**Recommendation:** Use multi-line only for complex marker combinations that significantly improve readability.
-
-## Prose Attribution
-
-The notation recognizes prose as belonging to the entire anchor, separated by the first space after structured content.
+The notation strongly recommends single-line anchors to maintain grep-ability:
 
 ```javascript
-// :ga:todo,priority:high implement rate limiting before launch
-//     ^^^^^^^^^^^^^^^^^^^ structured markers
-//                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ prose
+// Single-line anchors (preferred)
+// :A: todo(assign:@alice,priority:high) implement OAuth integration
+
+// Multiple related anchor lines for complex context
+// :A: todo(assign:@alice,priority:high) implement OAuth integration  
+// :A: context OAuth flow requires PKCE for security compliance
+// :A: depends(service:session-api) user sessions must exist first
+```
+
+**Benefits:**
+- `rg ":A: todo"` always finds todo items
+- Simple, consistent search patterns
+- No complex multi-line parsing required
+
+## Prose Formatting
+
+Prose follows markers, separated by space. Optional formatting for clarity:
+
+```javascript
+// Basic prose
+// :A: todo implement rate limiting
+
+// Colon prefix (recommended for clarity)
+// :A: todo: implement rate limiting before launch
+// :A: context: this function assumes Redis is available
+
+// Quoted prose (for complex text)
+// :A: todo(priority:high): "fix race condition in auth service"
+// :A: warn: "this function modifies global state"
 ```
 
 ## Quoting and Escaping
 
-The notation accommodates special characters through established quoting conventions.
+The notation uses quotes for strings with special characters:
 
 **Simple values** (no quotes needed):
 ```javascript
-// :ga:user(alice)
-// :ga:version(2.0.1)  
-// :ga:priority:high
+// :A: user(alice)
+// :A: version(2.0.1)  
+// :A: priority:high
 ```
 
-**Complex values** (quotes recommended):
+**Complex values** (quotes required):
 ```javascript
-// :ga:regex('user-\d+')
-// :ga:path('/path/with spaces')
-// :ga:message('Can\'t connect')
+// :A: match('user-123')              // literal string
+// :A: path('src/data migration.sql') // spaces in path
+// :A: message('Can\'t connect')      // escaped quote
+// :A: files:['auth.js','lib/utils.js'] // array of paths
 ```
+
+**No structural dots** - Use dots only for literals (versions, URLs, file paths)
 
 ## Configuration Integration
 
-The notation enables team customization through configuration while maintaining cross-project readability.
+Teams can configure their preferred notation patterns:
 
 ### Priority Schemes
 ```yaml
 priorities:
   scheme: "numeric"  # or "named"
   numeric:
-    p0: "critical"
-    p1: "high"
+    p0: "critical"   # :A: p0 → :A: priority:critical
+    p1: "high"       # :A: p1 → :A: priority:high
+    p2: "medium"     # :A: p2 → :A: priority:medium
 ```
 
 ### Version Styles
 ```yaml
 versioning:
-  style: "semver"  # accommodates semver, python, maven, etc.
+  style: "semver"  # or "python", "ruby", "maven"
+  semver:
+    compatible: "^1.2.0"
+    patch-level: "~1.2.0"
 ```
+
+## Universal Parameter Groups
+
+Parameters are organized into six semantic families that work with any marker:
+
+| Group | Purpose | Examples |
+|-------|---------|----------|
+| **mention** | People / entities | `owner:@alice`, `assign:@bob`, `team:@frontend` |
+| **relation** | Links & references | `parent:epic-123`, `depends:auth-svc`, `url:https://docs.example.com` |
+| **workflow** | Coordination | `blocked:[4,7]`, `blocking:12`, `reason:compliance` |
+| **priority** | Importance / risk | `priority:high`, `severity:critical`, `complexity:high` |
+| **lifecycle** | Time / state | `since:1.2.0`, `until:2.0.0`, `status:in-progress` |
+| **scope** | Environment / context | `env:prod`, `platform:ios`, `region:us-east` |
 
 ## Tool Integration Notes
 
-While the notation accommodates flexible usage, tools may implement stricter parsing rules:
+While the notation accommodates flexible usage, Grepa tools may implement stricter parsing:
 
 - **Linters** may enforce consistent delimiter styles
 - **Parsers** may require specific marker formats  
 - **CLIs** may validate parameter content
 - **IDEs** may provide completion based on established patterns
 
-See [toolset documentation](../toolset/) for tool-specific requirements and enforcement details.
+See [Grepa documentation](../grepa/) for tool-specific requirements.
 
-## Synonyms vs Aliases
+## Marker Philosophy
 
-**Synonyms:** Different words for identical concepts (no transformation)
-- `ctx` ↔ `context`
-- `start-here` ↔ `entry`
+**Core Principles:**
+- No JSON or YAML syntax within anchors
+- No regex/pattern matching as core feature
+- Focus on LLM context and navigation
+- Magic Anchor syntax must be expressive enough on its own
 
-**Aliases:** Shortcuts that expand to complex patterns (transformation required)  
-- `p0` → `priority:critical`
-- `blocked` → `rel(blocked-by:$1)`
+## Search Examples
 
-## Extension Patterns
+```bash
+# Find all anchors
+rg ":A:"
 
-The notation accommodates domain-specific markers while recommending consistency with established patterns:
+# Find by marker group
+rg ":A:.*todo"      # All work items
+rg ":A:.*notice"    # All warnings/alerts
+rg ":A:.*domain"    # All domain-specific markers
 
-```javascript
-// Domain extensions
-// :ga:deployment:stage(staging)
-// :ga:compliance:soc2(required)  
-// :ga:experiment:feature-flag(new-checkout)
+# Find with context
+rg -C2 ":A: security"  # 2 lines context
+rg -B3 -A3 ":A: todo"  # 3 lines before/after
+
+# Find in markdown (including HTML comments)
+rg "<!-- :A:" --type md
 ```
-
-**Recommendation:** Extend through scoped markers rather than entirely new marker vocabularies to maintain tool compatibility.
