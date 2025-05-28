@@ -9,7 +9,8 @@
       "Bash(git commit:*)",
       "Bash(npm run inventory:py:*)",
       "Bash(npm run inventory:*)",
-      "Bash(npm install)"
+      "Bash(npm install)",
+      "mcp__time__get_current_time"
     ],
     "deny": []
   }
