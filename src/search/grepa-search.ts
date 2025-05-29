@@ -4,7 +4,7 @@ import { join, extname } from 'path';
 import { MagicAnchorParser } from '../parser/magic-anchor-parser.js';
 import { MagicAnchor, SearchOptions, SearchResult } from '../types/index.js';
 import { Result, success, failure, tryAsync } from '../lib/result.js';
-import { makeError } from '../lib/error.js';
+import { AppError, makeError } from '../lib/error.js';
 import { searchOptionsSchema } from '../schemas/index.js';
 import { fromZod } from '../lib/zod-adapter.js';
 
