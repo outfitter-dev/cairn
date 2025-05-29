@@ -26,21 +26,19 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "main": "./dist/index.js",
-  "bin": {
-    "grepa": "./dist/cli/bin.js"
-  },
-  "files": [
-    "dist/**/*"
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "tools/*"
   ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
+    "build": "pnpm -r run build",
+    "dev": "pnpm -r --filter ./packages/* run dev",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "lint": "eslint src --ext .ts",
-    "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc -b --verify",
+    "clean": "rm -rf dist && pnpm -r exec rm -rf dist",
     "changeset": "changeset",
     "version": "changeset version",
     "release": "pnpm build && changeset publish",
