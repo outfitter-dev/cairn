@@ -1,4 +1,4 @@
-# 🔱 Grepa - Magic Anchors for Semantic Code Navigation by AI Agents
+# 🔱 Grepa - Magic Anchors for Semantic Code Navigation
 <!-- :A: tldr Universal pattern for making codebases AI-navigable and greppable -->
 <!-- :A: core Main project documentation and overview -->
 
@@ -69,6 +69,41 @@ The `:A:` anchor is the canonical prefix for Magic Anchors. Like how "TODO" beca
 ```javascript
 // :A: auth-service,todo implement OAuth
 // :A: web-app,bug fix responsive layout
+```
+
+## 📦 Installation
+
+### As a Global CLI Tool
+
+```bash
+npm install -g grepa
+# or
+pnpm add -g grepa
+```
+
+### As a Dev Dependency
+
+```bash
+npm install --save-dev grepa
+# or
+pnpm add -D grepa
+```
+
+### CLI Usage
+
+```bash
+# Parse files for Magic Anchors
+grepa parse src/**/*.ts
+
+# Search for specific markers
+grepa search todo src/
+grepa search security --context 2
+
+# List all anchors in files
+grepa list src/ --json
+
+# Show only unique markers
+grepa list src/ --markers
 ```
 
 ## 🚀 Quick Start
@@ -293,11 +328,25 @@ rg ":A: (\w+)" -o | sort | uniq -c
 ## 🎬 Getting Started
 
 1. **Try it now**: Add `// :A: todo` to something in your code
-2. **Search for it**: Run `rg ":A:"`
+2. **Search for it**: Run `rg ":A:"` or `grepa search todo`
 3. **Tell your AI**: "Look for :A: markers to understand the codebase"
 4. **Evolve naturally**: Add patterns as you need them
 
 **The goal is discoverability.** Start simple and let your patterns evolve with your needs.
+
+## 🛠️ Development
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
+
+### Quick Setup
+
+```bash
+git clone https://github.com/galligan/grepa.git
+cd grepa
+pnpm install
+pnpm build
+pnpm test
+```
 
 ## 📖 Docs
 

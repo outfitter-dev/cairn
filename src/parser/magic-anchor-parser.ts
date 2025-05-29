@@ -1,16 +1,26 @@
 // :A: tldr Core parser for Magic Anchor syntax (:A: marker prose)
 import { MagicAnchor, ParseResult, ParseError } from '../types/index.js';
 import { Result, success, failure } from '../lib/result.js';
-import { AppError, makeError } from '../lib/error.js';
-import { magicAnchorSchema, parseInputSchema } from '../schemas/index.js';
+import { makeError } from '../lib/error.js';
+import { parseInputSchema } from '../schemas/index.js';
 import { fromZod } from '../lib/zod-adapter.js';
 
+/**
+ * Parser for Magic Anchor syntax (`:A: marker prose`).
+ * Handles both sync and async parsing with Result pattern support.
+ */
 export class MagicAnchorParser {
   // :A: api regex pattern for matching anchor syntax
   private static readonly ANCHOR_PATTERN = /:A: ([^]*?)(?=\n|$)/g;
   private static readonly MAX_MARKERS_PER_LINE = 10;
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   
+  /**
+   * Parse content for Magic Anchors using Result pattern.
+   * @param content - The text content to parse
+   * @param filename - Optional filename for context
+   * @returns Result containing parsed anchors or error
+   */
   // :A: api main parsing method with Result pattern
   static parseWithResult(content: string, filename?: string): Result<ParseResult> {
     // :A: ctx validate input with Zod
@@ -39,6 +49,12 @@ export class MagicAnchorParser {
     }
   }
   
+  /**
+   * Parse content for Magic Anchors (legacy sync method).
+   * @param content - The text content to parse
+   * @param filename - Optional filename for context
+   * @returns ParseResult with anchors and errors arrays
+   */
   // :A: api legacy parsing method for backward compatibility
   static parse(content: string, filename?: string): ParseResult {
     const anchors: MagicAnchor[] = [];

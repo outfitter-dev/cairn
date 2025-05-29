@@ -4,17 +4,26 @@ import { join, extname } from 'path';
 import { MagicAnchorParser } from '../parser/magic-anchor-parser.js';
 import { MagicAnchor, SearchOptions, SearchResult } from '../types/index.js';
 import { Result, success, failure, tryAsync } from '../lib/result.js';
-import { AppError, makeError } from '../lib/error.js';
+import { makeError } from '../lib/error.js';
 import { searchOptionsSchema } from '../schemas/index.js';
 import { fromZod } from '../lib/zod-adapter.js';
-import { assert } from '../lib/type-guards.js';
 
+/**
+ * Search functionality for finding Magic Anchors across files.
+ * Supports both sync and async operations with Result pattern.
+ */
 export class GrepaSearch {
   // :A: api supported file extensions for searching
   private static readonly DEFAULT_EXTENSIONS = ['.ts', '.js', '.jsx', '.tsx', '.md', '.txt', '.py', '.java', '.c', '.cpp', '.h'];
   private static readonly MAX_RESULTS = 1000;
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+  /**
+   * Search files for Magic Anchors using Result pattern.
+   * @param patterns - File patterns to search (supports glob)
+   * @param options - Search options for filtering
+   * @returns Promise<Result> containing search results or error
+   */
   // :A: api search for anchors with Result pattern
   static async searchWithResult(
     patterns: string[],
@@ -72,6 +81,12 @@ export class GrepaSearch {
     return success(results);
   }
 
+  /**
+   * Search files for Magic Anchors (legacy sync method).
+   * @param patterns - File patterns to search
+   * @param options - Search options for filtering
+   * @returns Array of search results
+   */
   // :A: api legacy search method for backward compatibility
   static search(patterns: string[], options: SearchOptions = {}): SearchResult[] {
     const files = this.resolveFiles(patterns, options);
