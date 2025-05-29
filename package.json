@@ -37,7 +37,7 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "lint": "eslint . --ext .ts",
-    "typecheck": "tsc -b --verify",
+    "typecheck": "tsc -b",
     "clean": "rm -rf dist && pnpm -r exec rm -rf dist",
     "changeset": "changeset",
     "version": "changeset version",
