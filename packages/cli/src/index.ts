@@ -85,7 +85,7 @@ export class CLI {
   }
 
   // :A: api handle parse command with Result pattern
-  private parseCommand(
+  private async parseCommand(
     files: string[],
     options: unknown
   ): Promise<Result<void>> {
