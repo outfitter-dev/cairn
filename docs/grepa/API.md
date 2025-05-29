@@ -20,7 +20,7 @@ Parser for Magic Anchor syntax (`:A: marker prose`).
 import { MagicAnchorParser } from 'grepa';
 ```
 
-#### Methods
+#### Parser Methods
 
 ##### `parse(content: string, filename?: string): ParseResult`
 
@@ -61,7 +61,7 @@ Search functionality for finding Magic Anchors across files.
 import { GrepaSearch } from 'grepa';
 ```
 
-#### Methods
+#### Search Methods
 
 ##### `search(patterns: string[], options?: SearchOptions): SearchResult[]`
 
@@ -238,7 +238,7 @@ if (result.ok) {
 }
 ```
 
-### Error Handling
+### Error Handling Example
 
 ```typescript
 import { GrepaSearch, isAppError } from 'grepa';
