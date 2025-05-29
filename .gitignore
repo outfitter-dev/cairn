@@ -46,3 +46,6 @@ Thumbs.db
 
 # Test files
 test_detection.md
+
+# Claude
+**/.claude/*.local.*
