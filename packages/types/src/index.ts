@@ -31,6 +31,7 @@ export interface SearchOptions {
   exclude?: string[];
   context?: number;
   recursive?: boolean;
+  respectGitignore?: boolean;
 }
 
 export interface SearchResult {

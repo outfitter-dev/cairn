@@ -11,8 +11,8 @@ import { fromZod } from '../lib/zod-adapter.js';
  */
 export class MagicAnchorParser {
   // :A: api regex pattern for matching anchor syntax
-  private static readonly ANCHOR_PATTERN = /:A: ([^]*?)(?=\n|$)/g;
-  private static readonly MAX_MARKERS_PER_LINE = 10;
+  // private static readonly ANCHOR_PATTERN = /:A: ([^]*?)(?=\n|$)/g;
+  // private static readonly MAX_MARKERS_PER_LINE = 10;
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   
   /**

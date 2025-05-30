@@ -1,0 +1,16 @@
+# Grepa-specific ignore patterns
+# These are in addition to .gitignore
+
+# Ignore all TypeScript build output
+dist/
+*.d.ts
+*.js.map
+
+# Ignore test coverage
+coverage/
+.nyc_output/
+
+# Ignore temporary files
+*.tmp
+*.temp
+.cache/

@@ -52,6 +52,7 @@ export const searchOptionsSchema = z.object({
   exclude: z.array(z.string()).optional(),
   context: z.number().int().nonnegative().optional(),
   recursive: z.boolean().optional(),
+  respectGitignore: z.boolean().optional(),
 });
 
 export type SearchOptionsValidated = z.infer<typeof searchOptionsSchema>;
@@ -65,11 +66,13 @@ export const parseCommandOptionsSchema = z.object({
 export const searchCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
   context: z.string().regex(/^\d+$/, 'Context must be a number').optional(),
+  gitignore: z.boolean().optional(),
 });
 
 export const listCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
   markers: z.boolean().optional(),
+  gitignore: z.boolean().optional(),
 });
 
 // :A: api File path validation
