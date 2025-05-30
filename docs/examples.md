@@ -153,18 +153,18 @@ function calculatePricing(items: CartItem[]): number {
 ## 4. Code Quality & Maintenance
 
 ### Temporary Code
-- `:A: tmp` - Code that should be removed
+- `:A: temp` - Code that should be removed
   - Workarounds for bugs
   - Quick fixes
   - Migration shims
 
 ```javascript
-// :A: tmp remove after Chrome 120 fix ships
+// :A: temp remove after Chrome 120 fix ships
 // :A: ctx workaround for scrolling bug
 // :A: issue(CHR-4823) track browser fix
 function patchChromeScroll() {
   if (navigator.userAgent.includes('Chrome/120')) {
-    // :A: tmp force repaint hack
+    // :A: temp force repaint hack
     document.body.style.display = 'none';
     document.body.offsetHeight; // trigger reflow
     document.body.style.display = '';
@@ -405,7 +405,7 @@ rg ":A: sec"
 rg ":A: perf"
 
 # Temporary code to remove
-rg ":A: tmp"
+rg ":A: temp"
 ```
 
 ### Finding Context
@@ -429,7 +429,7 @@ rg ":A: sec.*todo|:A: todo.*security"
 rg -B2 -A2 ":A: @agent"
 
 # Temporary code with deadlines
-rg ":A: tmp.*2024"
+rg ":A: temp.*2024"
 ```
 
 ---

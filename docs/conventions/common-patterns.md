@@ -57,12 +57,12 @@ Shorter markers can be helpful when you're using them frequently.
 // :A: @cursor write unit tests for edge cases
 ```
 
-### `:A: tmp`
+### `:A: temp`
 **Purpose**: Temporary code that should be removed
 **Usage**: Workarounds, quick fixes, migration code
 ```ruby
-# :A: tmp remove after v2.0 ships
-# :A: tmp workaround for Redis bug
+# :A: temp remove after v2.0 ships
+# :A: temp workaround for Redis bug
 ```
 
 ## Quality & Maintenance
@@ -226,7 +226,7 @@ Combine markers judiciously for closely related concerns:
 // :A: debt extract into separate service
 
 // Good: issue tracking with description
-// :A: tmp, issue(#123) workaround until fixed upstream
+// :A: temp, issue(#123) workaround until fixed upstream
 
 // Avoid: too many markers, hard to grep
 // :A: api, docs, breaking, v2, urgent v2 changes signature

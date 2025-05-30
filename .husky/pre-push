@@ -34,7 +34,7 @@ files_to_check=$(git diff --name-only "$remote_branch"...HEAD -- '*.ts' '*.js' '
 if [ -n "$files_to_check" ]; then
     temp_markers=$(echo "$files_to_check" | xargs grep -l ":A: tmp\|:A: temp" 2>/dev/null || true)
     if [ -n "$temp_markers" ]; then
-        echo "❌ Found temporary code markers (:A: tmp or :A: temp) in:"
+        echo "❌ Found temporary code markers (:A: temp or :A: tmp) in:"
         echo "$temp_markers"
         echo "Remove or resolve these before pushing."
         exit 1

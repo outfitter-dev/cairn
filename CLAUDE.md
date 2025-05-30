@@ -32,7 +32,7 @@ The Magic Anchor pattern: `<comment-leader> :A: <space> <marker-list> <optional 
 - `:A: tldr` - Brief summary/overview (use at function/class/doc start)
 - `:A: todo` - Work that needs doing
 - `:A: security` or `:A: sec` - Security-critical code requiring review
-- `:A: temp` or `:A: tmp` - Temporary hacks to be removed
+- `:A: temp` - Temporary hacks to be removed (`:A: tmp` also recognized)
 - `:A: context` or `:A: ctx` - Important context, assumptions, and constraints
 - `:A: todo @agent` - AI agent tasks (using implicit assignment)
 - `:A: todo @cursor` - Cursor-specific tasks
@@ -183,7 +183,7 @@ When working on this project:
 1. **Run CI locally**: `pnpm ci:local` - This simulates the full CI pipeline
 2. **Comprehensive check**: `pnpm check:all` - Includes temporary marker detection
 3. **Quick validation**: `pnpm ci:validate` - Tests, types, and build only
-4. **Check for temp code**: `pnpm check:anchors` - Ensures no `:A: tmp` markers
+4. **Check for temp code**: `pnpm check:anchors` - Ensures no `:A: tmp` or `:A: temp` markers
 
 The pre-push hook will automatically run these checks, but running them manually first saves time.
 
