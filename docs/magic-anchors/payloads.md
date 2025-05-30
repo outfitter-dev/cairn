@@ -1,8 +1,8 @@
 # Payload Types
-<!-- :ga:tldr Three payload types: bare tokens, JSON objects, and arrays -->
-<!-- :ga:notation Detailed payload type specifications and examples -->
+<!-- :A: tldr Three payload types: bare tokens, JSON objects, and arrays -->
+<!-- :A: notation Detailed payload type specifications and examples -->
 
-Payloads define what comes after the `:ga:` sigil. Grepa supports three payload types.
+Payloads define what comes after the `:A:` sigil. Grepa supports three payload types.
 
 ## Bare Tokens
 
@@ -15,11 +15,11 @@ Simple string identifiers. Most common and readable.
 
 ### Examples
 ```javascript
-// :ga:todo
-// :ga:v1.2.3
-// :ga:high-priority
-// :ga:@alice
-// :ga:api_endpoint
+// :A: todo
+// :A: v1.2.3
+// :A: high-priority
+// :A: @alice
+// :A: api_endpoint
 
 ## Parameterised Tokens
 
@@ -31,9 +31,9 @@ Sometimes a token needs a specific *parameter* (e.g., an issue number or RFC).  
 
 ### Examples
 ```javascript
-// :ga:gh(issue#4)     // links to GitHub issue 4
-// :ga:rfc(9110)       // references RFC 9110
-// :ga:feature(flag-x) // feature flag
+// :A: gh(issue#4)     // links to GitHub issue 4
+// :A: rfc(9110)       // references RFC 9110
+// :A: feature(flag-x) // feature flag
 ```
 
 ### When to use

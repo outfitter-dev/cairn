@@ -1,26 +1,26 @@
 # Grepa Notation Format Specification
-<!-- :ga:tldr Formal specification for grep-anchor notation format -->
-<!-- :ga:notation Technical format specification and grammar rules -->
+<!-- :A: tldr Formal specification for Magic Anchor notation format -->
+<!-- :A: notation Technical format specification and grammar rules -->
 
 ## Core Format
 
 Every grep-anchor follows this pattern:
 
 ```text
-<comment-leader> :ga:payload
+<comment-leader> :A: payload
 ```
 
 ### Components
 
 1. **Comment Leader**: Language-appropriate comment syntax
-2. **Sigil**: The marker `:ga:` (or custom sigil)
+2. **Sigil**: The marker `:A:` (or custom sigil)
 3. **Payload**: One or more tokens
 
 ## Formal Grammar
 
 ```ebnf
 anchor      ::= comment-leader sigil payload
-sigil       ::= ":ga:" | ":" identifier ":"
+sigil       ::= ":A:" | ":" identifier ":"
 payload     ::= token ( separator token )*
 token       ::= bare-token | parameter | json-object | array
 bare-token  ::= ["@"] [a-zA-Z0-9_.-]+
@@ -34,7 +34,7 @@ separator   ::= "," | " " | "|"
 
 ### Standard Sigil
 ```javascript
-// :ga:todo  // Standard grep-anchor
+// :A: todo  // Standard Magic Anchor
 ```
 
 ### Custom Sigils

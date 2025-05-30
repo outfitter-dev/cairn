@@ -1,4 +1,4 @@
-<!-- :ga:tldr language guide for writing about grepa toolset -->
+<!-- :A: tldr language guide for writing about grepa toolset -->
 # Toolset Language Guide
 
 Guidelines for writing documentation about grepa tools, CLIs, parsers, and implementations.
@@ -28,7 +28,7 @@ Tools are opinionated implementations that make specific choices about syntax en
 ### Describing Tool Behavior
 
 **Enforcement:**
-> "The linter enforces the `:ga:priority(high)` syntax and rejects `:ga:priority:high` forms."
+> "The linter enforces the `:A: priority(high)` syntax and rejects `:A: priority:high` forms."
 
 **Configuration:**
 > "The CLI supports multiple notation styles through the `--delimiter-style` flag. Default behavior requires parenthetical parameters."
@@ -56,7 +56,7 @@ Tools are opinionated implementations that make specific choices about syntax en
 ### Error Messages
 
 **Be specific:**
-> "Error: Missing scope in config marker. Use `:ga:config:env(prod)` instead of `:ga:config(prod)`."
+> "Error: Missing scope in config marker. Use `:A: config:env(prod)` instead of `:A: config(prod)`."
 
 **Reference notation:**
 > "The notation accommodates both styles, but this tool enforces scoped parameters for config markers."
@@ -67,10 +67,10 @@ Tools are opinionated implementations that make specific choices about syntax en
 > The CLI requires explicit scope markers for ambiguous contexts:
 > ```bash
 > # Valid
-> grepa validate ":ga:config:env(prod)"
+> grepa validate ":A: config:env(prod)"
 > 
 > # Error: Missing scope
-> grepa validate ":ga:config(redis)"
+> grepa validate ":A: config(redis)"
 > ```
 > 
 > This enforcement ensures consistent parsing, though the underlying notation accommodates both forms. See [notation language guide](../magic-anchors/LANGUAGE.md) for pattern flexibility.
@@ -87,7 +87,7 @@ Tools are opinionated implementations that make specific choices about syntax en
 > "The tool accommodates different styles and recommends consistency."
 
 **Do write:**
-> "The tool enforces the `:ga:priority(high)` style and requires consistent delimiter usage throughout the project."
+> "The tool enforces the `:A: priority(high)` style and requires consistent delimiter usage throughout the project."
 
 **Don't write:**
 > "The notation requires scope markers for config types."

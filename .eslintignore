@@ -1,7 +1,8 @@
 dist/
 node_modules/
 coverage/
-*.config.ts
-*.config.js
-vitest.workspace.ts
+*.config.*
+*.workspace.*
 packages/*/dist/
+src/
+packages/utils/eslint-plugin/**/*.js
