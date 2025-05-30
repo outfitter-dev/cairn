@@ -1,20 +1,20 @@
-# Grep-Anchor Conventions
-<!-- :ga:tldr Standard patterns and practices for grep-anchors -->
-<!-- :ga:convention Central hub for all grep-anchor conventions -->
+# Magic Anchor Conventions
+<!-- :A: tldr Standard patterns and practices for Magic Anchors -->
+<!-- :A: convention Central hub for all Magic Anchor conventions -->
 
-Patterns and practices for making your codebase AI-navigable and human-friendly.
+Patterns and practices for making your codebase AI-navigable and human-friendly using Magic Anchors.
 
 ## Quick Start
 
 Begin with these five essential patterns:
 
-1. `:ga:todo` - Work that needs doing
-2. `:ga:ctx` - Important assumptions or constraints
-3. `:ga:sec` - Security-critical code
-4. `:ga:@agent` - AI agent instructions
-5. `:ga:tmp` - Temporary code to remove
+1. `:A: todo` - Work that needs doing
+2. `:A: ctx` - Important assumptions or constraints
+3. `:A: sec` - Security-critical code
+4. `:A: @agent` - AI agent instructions
+5. `:A: tmp` - Temporary code to remove
 
-That's it! You can search all of these with `rg ":ga:"`.
+That's it! You can search all of these with `rg ":A:"`.
 
 ## Convention Categories
 
@@ -25,10 +25,10 @@ Start here. Core patterns that work in any codebase.
 Patterns for delegating work to AI agents and providing them context.
 
 ### [Progressive Enhancement Guide](../guides/progressive-enhancement.md)
-How to adopt grep-anchors incrementally, from simple to advanced.
+How to adopt Magic Anchors incrementally, from simple to advanced.
 
 ### [Custom Anchors Guide](../guides/custom-anchors.md)
-How to define your own anchor pattern (if not using `:ga:`).
+How to define your own anchor pattern (if not using `:A:`).
 
 ### [Advanced Patterns](../advanced-patterns.md)
 JSON payloads, complex metadata, and sophisticated workflows.
@@ -50,19 +50,19 @@ Patterns for code review, deployment, and team processes.
 ## Adoption Path
 
 ```text
-Level 0: Try one pattern (:ga:todo)
+Level 0: Try one pattern (:A: todo)
    ↓
-Level 1: Enhance existing TODOs (TODO :ga:)
+Level 1: Enhance existing TODOs (TODO :A:)
    ↓
-Level 2: Add context (:ga:ctx)
+Level 2: Add context (:A: ctx)
    ↓
-Level 3: Delegate to AI (:ga:@agent)
+Level 3: Delegate to AI (:A: @agent)
    ↓
-Level 4: Link to issues (:ga:issue(123))
+Level 4: Link to issues (:A: issue(123))
    ↓
 Level 5: Team-specific patterns
 ```
 
 ## Remember
 
-The goal is **discoverability**, not perfection. Even one `:ga:` marker makes your codebase more navigable than none.
+The goal is **discoverability**, not perfection. Even one `:A:` marker makes your codebase more navigable than none.

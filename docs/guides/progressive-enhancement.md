@@ -1,15 +1,15 @@
 # Progressive Enhancement Guide
-<!-- :ga:tldr How to adopt grep-anchors incrementally from simple to advanced -->
-<!-- :ga:guide Step-by-step adoption guide for individuals and teams -->
+<!-- :A: tldr How to adopt Magic Anchors incrementally from simple to advanced -->
+<!-- :A: guide Step-by-step adoption guide for individuals and teams -->
 
-Start simple, grow as needed. This guide shows how to adopt grep-anchors incrementally.
+Start simple, grow as needed. This guide shows how to adopt Magic Anchors incrementally.
 
 ## Level 0: Your First Anchor
 
 Start with just one pattern to get comfortable:
 
 ```javascript
-// :ga:todo implement validation
+// :A: todo implement validation
 function saveUser(data) {
     // Save to database
 }
@@ -17,38 +17,36 @@ function saveUser(data) {
 
 **Find it:**
 ```bash
-rg ":ga:"
+rg ":A:"
 ```
 
-That's it! You've made your first grep-anchor.
+That's it! You've made your first Magic Anchor.
 
-## Custom Anchors (Optional)
+## The Canonical Anchor
 
-While this guide uses `:ga:` (the recommended default), teams can choose their own anchor pattern like `:proj:`, `:team:`, or `:myco:`. See the [Custom Anchors Guide](./custom-anchors.md) for details.
-
-**Important**: Pick one anchor and stick with it across your entire project.
+This guide uses `:A:` - the canonical Magic Anchor prefix. The single standard ensures consistency across all projects and makes patterns universally searchable.
 
 ## Level 1: TODO Migration
 
 If you already use TODO comments, enhance them gradually:
 
-### Phase 1: Add `:ga:` to existing TODOs
+### Phase 1: Add `:A:` to existing TODOs
 ```javascript
-// TODO :ga: add error handling
-// FIXME :ga: memory leak here
-// NOTE :ga: this assumes UTC timezone
+// TODO :A: add error handling
+// FIXME :A: memory leak here
+// NOTE :A: this assumes UTC timezone
 ```
 
 Your existing tools still work, but now you can also:
 ```bash
-rg ":ga:"  # Find all enhanced comments
+rg ":A:"  # Find all enhanced comments
 ```
 
-### Phase 2: Start using pure grep-anchors
+### Phase 2: Start using pure Magic Anchors
 ```javascript
-// :ga:todo add error handling
-// :ga:fixme memory leak here  
-// :ga:note assumes UTC timezone
+// :A: todo add error handling
+// :A: fixme memory leak here  
+// :A: note assumes UTC timezone
 ```
 
 ## Level 2: Add Context
@@ -56,15 +54,15 @@ rg ":ga:"  # Find all enhanced comments
 Once comfortable with basic anchors, add context for clarity:
 
 ```python
-# :ga:todo implement retry logic
+# :A: todo implement retry logic
 # becomes:
-# :ga:todo implement retry logic
-# :ga:ctx max 3 attempts with exponential backoff
+# :A: todo implement retry logic
+# :A: ctx max 3 attempts with exponential backoff
 
-# :ga:sec validate input
+# :A: sec validate input
 # becomes:
-# :ga:sec validate input
-# :ga:ctx prevent SQL injection and XSS
+# :A: sec validate input
+# :A: ctx prevent SQL injection and XSS
 ```
 
 ## Level 3: AI Agent Integration
@@ -73,16 +71,16 @@ Start delegating to AI agents:
 
 ```javascript
 // Basic delegation
-// :ga:@agent implement this function
+// :A: @agent implement this function
 
 // With guidance
-// :ga:@agent implement pagination
-// :ga:ctx use cursor-based approach
-// :ga:requirement support both forward and backward
+// :A: @agent implement pagination
+// :A: ctx use cursor-based approach
+// :A: requirement support both forward and backward
 
 // Specific agents
-// :ga:@cursor write unit tests
-// :ga:@claude optimize for performance
+// :A: @cursor write unit tests
+// :A: @claude optimize for performance
 ```
 
 ## Level 4: Structured Tasks
@@ -91,15 +89,15 @@ Link to your issue tracker:
 
 ```python
 # Simple issue reference
-# :ga:issue(123) fix user validation
+# :A: issue(123) fix user validation
 
 # With more context
-# :ga:issue(123) fix user validation
-# :ga:priority high
-# :ga:owner @alice
+# :A: issue(123) fix user validation
+# :A: priority high
+# :A: owner @alice
 
 # Or combined
-# :ga:issue(123),priority:high,@alice fix user validation
+# :A: issue(123),priority:high,@alice fix user validation
 ```
 
 ## Level 5: Team Patterns
@@ -108,20 +106,20 @@ Define patterns that make sense for your team:
 
 ```ruby
 # Your team's priority system
-# :ga:p0 - drop everything, fix now
-# :ga:p1 - fix this sprint  
-# :ga:p2 - fix next sprint
-# :ga:backlog - eventually
+# :A: p0 - drop everything, fix now
+# :A: p1 - fix this sprint  
+# :A: p2 - fix next sprint
+# :A: backlog - eventually
 
 # Your team's workflow
-# :ga:ready-for-review
-# :ga:needs-qa
-# :ga:ship-it
+# :A: ready-for-review
+# :A: needs-qa
+# :A: ship-it
 
 # Your team's domains
-# :ga:frontend
-# :ga:backend
-# :ga:infra
+# :A: frontend
+# :A: backend
+# :A: infra
 ```
 
 ## Migration Strategies
@@ -134,11 +132,11 @@ Pick one file at a time:
 grep "TODO" --exclude-dir=.git src/auth.js
 
 # Enhance them
-sed -i 's/TODO/TODO :ga:/g' src/auth.js
-sed -i 's/FIXME/FIXME :ga:/g' src/auth.js
+sed -i 's/TODO/TODO :A: /g' src/auth.js
+sed -i 's/FIXME/FIXME :A: /g' src/auth.js
 
 # Verify
-rg ":ga:" src/auth.js
+rg ":A: " src/auth.js
 ```
 
 ### By Feature Area
@@ -146,21 +144,21 @@ rg ":ga:" src/auth.js
 Adopt in one area first:
 ```bash
 # Start with security-critical code
-# Add :ga:sec markers
+# Add :A: sec markers
 
 # Then move to performance
-# Add :ga:perf markers
+# Add :A: perf markers
 
 # Then documentation
-# Add :ga:docs markers
+# Add :A: docs markers
 ```
 
 ### During Code Reviews
 
 Add anchors as you review:
-- See missing error handling? Add `:ga:error handle timeout`
-- Spot performance issue? Add `:ga:perf optimize query`
-- Notice assumption? Add `:ga:ctx assumes sorted input`
+- See missing error handling? Add `:A: error handle timeout`
+- Spot performance issue? Add `:A: perf optimize query`
+- Notice assumption? Add `:A: ctx assumes sorted input`
 
 ## Measuring Adoption
 
@@ -168,24 +166,24 @@ Track your progress:
 
 ```bash
 # Count enhanced vs regular TODOs
-echo "Regular TODOs: $(grep -r "TODO" --exclude-dir=.git | grep -v ":ga:" | wc -l)"
-echo "Enhanced TODOs: $(rg "TODO.*:ga:|:ga:todo" | wc -l)"
+echo "Regular TODOs: $(grep -r "TODO" --exclude-dir=.git | grep -v ":A: " | wc -l)"
+echo "Enhanced TODOs: $(rg "TODO.*:A: |:A: todo" | wc -l)"
 
 # See adoption by file type
-rg ":ga:" --type-list
-rg ":ga:" -t js --count-matches
+rg ":A: " --type-list
+rg ":A: " -t js --count-matches
 
 # Most common patterns
-rg -o ":ga:(\w+)" -r '$1' | sort | uniq -c | sort -nr
+rg -o ":A: (\w+)" -r '$1' | sort | uniq -c | sort -nr
 ```
 
 ## Common Progression Paths
 
 ### For Solo Developers
-1. Start with `:ga:todo`
-2. Add `:ga:fixme` for bugs
-3. Add `:ga:@agent` for AI help
-4. Add `:ga:ctx` for clarity
+1. Start with `:A: todo`
+2. Add `:A: fixme` for bugs
+3. Add `:A: @agent` for AI help
+4. Add `:A: ctx` for clarity
 
 ### For Teams
 1. Agree on 3-5 initial patterns
@@ -194,14 +192,14 @@ rg -o ":ga:(\w+)" -r '$1' | sort | uniq -c | sort -nr
 4. Gradually expand vocabulary
 
 ### For Open Source
-1. Start with `:ga:help-wanted`
-2. Add `:ga:good-first-issue`
-3. Add `:ga:breaking-change`
+1. Start with `:A: help-wanted`
+2. Add `:A: good-first-issue`
+3. Add `:A: breaking-change`
 4. Document in CONTRIBUTING.md
 
 ## Tips for Success
 
-1. **Don't force it**: If a comment doesn't need to be searchable, don't add `:ga:`
+1. **Don't force it**: If a comment doesn't need to be searchable, don't add `:A: `
 2. **Stay consistent**: Pick patterns and stick to them
 3. **Document your patterns**: Keep a list in your README
 4. **Start small**: 3-5 patterns are plenty to start
@@ -222,7 +220,7 @@ function processPayment(amount) {
 ### Week 2: Enhanced TODO
 ```javascript
 function processPayment(amount) {
-    // :ga:todo add validation
+    // :A: todo add validation
     chargeCard(amount);
 }
 ```
@@ -230,8 +228,8 @@ function processPayment(amount) {
 ### Week 3: Add context
 ```javascript
 function processPayment(amount) {
-    // :ga:todo add validation
-    // :ga:ctx amount must be positive, max 10000
+    // :A: todo add validation
+    // :A: ctx amount must be positive, max 10000
     chargeCard(amount);
 }
 ```
@@ -239,9 +237,9 @@ function processPayment(amount) {
 ### Week 4: Delegate to AI
 ```javascript
 function processPayment(amount) {
-    // :ga:@agent add validation
-    // :ga:ctx amount must be positive, max 10000
-    // :ga:sec prevent negative charges
+    // :A: @agent add validation
+    // :A: ctx amount must be positive, max 10000
+    // :A: sec prevent negative charges
     chargeCard(amount);
 }
 ```
@@ -249,13 +247,13 @@ function processPayment(amount) {
 ### Week 5: Link to issue
 ```javascript
 function processPayment(amount) {
-    // :ga:issue(PAY-456) add validation
-    // :ga:ctx amount must be positive, max 10000
-    // :ga:sec prevent negative charges
+    // :A: issue(PAY-456) add validation
+    // :A: ctx amount must be positive, max 10000
+    // :A: sec prevent negative charges
     chargeCard(amount);
 }
 ```
 
 ## Keep It Simple
 
-The goal is discoverability, not perfection. Even one `:ga:` marker can help make your codebase more navigable. Start where you are, use what works, and let your patterns grow naturally with your needs. 
+The goal is discoverability, not perfection. Even one `:A:` marker can help make your codebase more navigable. Start where you are, use what works, and let your patterns grow naturally with your needs. 

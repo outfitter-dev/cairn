@@ -1,13 +1,13 @@
 # What If... A Vision for AI-Native Development with Grepa
 
-<!-- :ga:tldr Explores future possibilities for grepa including AI-maintained consistency, IDE integration, and architectural intelligence -->
-<!-- :ga:vision Conceptual guide for what grepa could become as an AI-native development platform -->
+<!-- :A: tldr Explores future possibilities for grepa including AI-maintained consistency, IDE integration, and architectural intelligence -->
+<!-- :A: vision Conceptual guide for what grepa could become as an AI-native development platform -->
 
-*What if grep-anchors could transform from simple markers into a living knowledge graph that makes your codebase AI-native?*
+*What if Magic Anchors could transform from simple markers into a living knowledge graph that makes your codebase AI-native?*
 
 ## What If... AI Agents Were Code Citizens, Not Tourists?
 
-Today, AI agents rediscover your codebase with every conversation. But what if grep-anchors could create **AI citizens** who understand the neighborhood, know the history, and work at architectural scale?
+Today, AI agents rediscover your codebase with every conversation. But what if Magic Anchors could create **AI citizens** who understand the neighborhood, know the history, and work at architectural scale?
 
 ## What If... Your Development Workflow Was AI-Aware?
 
@@ -21,16 +21,16 @@ What if your pre-commit hooks could enforce semantic patterns?
   hooks:
     - id: grepa-security-gate
       name: Security markers required
-      entry: rg -l ":ga:sec" | xargs -I {} test -f {} || exit 1
+      entry: rg -l ":A: sec" | xargs -I {} test -f {} || exit 1
       language: system
       files: '(auth|payment|admin).*\.(js|py|go)'
 ```
 
 **Auto-enforced patterns:**
-- Security-sensitive files MUST have `:ga:sec` markers
-- TODO comments require `:ga:issue(123)` links
-- API changes need `:ga:breaking` or `:ga:compatible` markers
-- Performance-critical paths require `:ga:perf` documentation
+- Security-sensitive files MUST have `:A: sec` markers
+- TODO comments require `:A: issue(123)` links
+- API changes need `:A: breaking` or `:A: compatible` markers
+- Performance-critical paths require `:A: perf` documentation
 
 ### GitHub Actions That Think
 
@@ -46,12 +46,12 @@ jobs:
     steps:
       - name: Update closed issue markers
         run: |
-          # Find all :ga:issue(123) where issue is closed
+          # Find all :A: issue(123) where issue is closed
           # Auto-generate PR to remove completed markers
           
       - name: AI Security Audit
         run: |
-          # AI agent reviews new :ga:sec markers
+          # AI agent reviews new :A: sec markers
           # Validates they're in appropriate locations
           
       - name: Suggest Missing Markers
@@ -66,7 +66,7 @@ jobs:
 
 Imagine these features in your editor:
 
-- **Hover Intelligence:** Hover over `:ga:sec` to see security docs, threat models
+- **Hover Intelligence:** Hover over `:A: sec` to see security docs, threat models
 - **Quick Navigation:** `Cmd+Shift+G` opens fuzzy grep-anchor search
 - **Context Panels:** See all related markers when viewing a file
 - **Smart Completion:** AI suggests appropriate tags based on code context
@@ -88,7 +88,7 @@ What if AI could detect missing markers?
 ```python
 # AI agent scans for unmarked patterns
 def detect_missing_markers(codebase):
-    # Find security-sensitive functions without :ga:sec
+    # Find security-sensitive functions without :A: sec
     security_patterns = [
         r'def.*auth.*\(',
         r'password.*=',
@@ -96,7 +96,7 @@ def detect_missing_markers(codebase):
         r'@require_permission'
     ]
     
-    # Find performance bottlenecks without :ga:perf
+    # Find performance bottlenecks without :A: perf
     perf_patterns = [
         r'for.*in.*range\(.*\d{4,}',  # Large loops
         r'\.join\(',                   # String concatenation
@@ -110,10 +110,10 @@ def detect_missing_markers(codebase):
 
 What if every marker was automatically validated?
 
-- Verify `:ga:issue(123)` links point to real issues
-- Check `:ga:@alice` mentions against team roster
-- Validate `:ga:deadline(2024-03-01)` dates aren't past
-- Ensure `:ga:depends(auth-service)` references exist
+- Verify `:A: issue(123)` links point to real issues
+- Check `:A: @alice` mentions against team roster
+- Validate `:A: deadline(2024-03-01)` dates aren't past
+- Ensure `:A: depends(auth-service)` references exist
 
 ### Semantic Consistency
 
@@ -142,10 +142,10 @@ What if markers cleaned themselves up?
 ```bash
 # AI-driven marker maintenance
 grepa clean --strategy=smart
-# - Remove :ga:tmp markers for shipped features
-# - Archive :ga:issue(123) for closed issues  
-# - Update :ga:deadline dates from sprint planning
-# - Consolidate duplicate :ga:sec markers
+# - Remove :A: tmp markers for shipped features
+# - Archive :A: issue(123) for closed issues  
+# - Update :A: deadline dates from sprint planning
+# - Consolidate duplicate :A: sec markers
 ```
 
 ### Lifecycle Stages
@@ -178,9 +178,9 @@ def build_architecture_map():
 ### Impact Analysis
 
 What if you could instantly answer:
-- "What breaks if we change the auth service?" → Follow `:ga:depends(auth)` markers
-- "Which components are performance-critical?" → Map `:ga:perf` marker density
-- "What security assumptions exist?" → Aggregate `:ga:ctx,sec` content
+- "What breaks if we change the auth service?" → Follow `:A: depends(auth)` markers
+- "Which components are performance-critical?" → Map `:A: perf` marker density
+- "What security assumptions exist?" → Aggregate `:A: ctx,sec` content
 
 ## What If... AI Could Plan Your Migrations?
 
@@ -259,9 +259,9 @@ def review_pull_request(diff):
 **With Grepa Vision:**
 ```bash
 # Instant security landscape
-rg ":ga:sec" | rg "auth"
-rg ":ga:ctx.*sec"
-rg ":ga:assumes.*trust"
+rg ":A: sec" | rg "auth"
+rg ":A: ctx.*sec"
+rg ":A: assumes.*trust"
 
 # AI agent immediately understands:
 # - All authentication entry points
@@ -272,10 +272,10 @@ rg ":ga:assumes.*trust"
 ### Scenario 2: Performance Optimization Sprint
 
 **AI Agent Workflow:**
-1. `rg ":ga:perf"` → Find all performance issues
+1. `rg ":A: perf"` → Find all performance issues
 2. Read context markers to understand constraints
-3. Prioritize by `:ga:critical` and `:ga:p0` tags
-4. Check `:ga:depends()` to understand order
+3. Prioritize by `:A: critical` and `:A: p0` tags
+4. Check `:A: depends()` to understand order
 5. Generate optimization plan with full context
 
 ### Scenario 3: Onboarding New Developers
@@ -283,10 +283,10 @@ rg ":ga:assumes.*trust"
 **Self-Documenting Codebase:**
 ```bash
 # New developer day 1
-rg ":ga:ctx" | head -20       # Key assumptions
-rg ":ga:business"              # Business logic
-rg ":ga:api"                   # Public interfaces
-rg ":ga:@newbie"               # Beginner tasks
+rg ":A: ctx" | head -20       # Key assumptions
+rg ":A: business"              # Business logic
+rg ":A: api"                   # Public interfaces
+rg ":A: @newbie"               # Beginner tasks
 ```
 
 ## The Compound Effect
@@ -298,7 +298,7 @@ What if each marker became exponentially more valuable?
 - **1000 markers** = Architectural intelligence
 - **10000 markers** = AI-native development platform
 
-The magic happens when grep-anchors transform from individual annotations into a **living knowledge graph** that AI agents can traverse, understand, and maintain.
+The magic happens when Magic Anchors transform from individual annotations into a **living knowledge graph** that AI agents can traverse, understand, and maintain.
 
 ## Implementation Vision
 
@@ -336,4 +336,4 @@ This isn't just about finding code faster - it's about creating a development en
 
 ---
 
-*Remember: This is a vision document exploring possibilities. These features don't exist yet, but they show where grep-anchors could lead. Start simple with basic `:ga:` markers today, and let's build this future together.*
+*Remember: This is a vision document exploring possibilities. These features don't exist yet, but they show where Magic Anchors could lead. Start simple with basic `:A:` markers today, and let's build this future together.*

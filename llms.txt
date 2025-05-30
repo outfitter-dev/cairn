@@ -1,10 +1,10 @@
 # Grepa (grep-anchor)
 
-> Grepa provides a universal pattern (`:ga:`) that makes codebases AI-navigable and grep-friendly. Drop tiny, searchable markers in comments so AI agents and developers can instantly navigate to the right spot in any codebase.
+> Grepa provides a universal pattern (`:A:`) that makes codebases AI-navigable and grep-friendly. Drop tiny, searchable markers in comments so AI agents and developers can instantly navigate to the right spot in any codebase.
 
 ## Core Concept
 
-Grep-anchors are unique, searchable markers placed in code comments using the pattern `:ga:payload`. The default anchor is `:ga:` but teams can define custom anchors like `:proj:` or `:team:`. The payload consists of tags that classify the code location.
+Magic Anchors are unique, searchable markers placed in code comments using the pattern `:A: payload`. The canonical anchor is `:A:` (colon-A-colon followed by exactly one space). The payload consists of markers that classify the code location.
 
 Key principles:
 - **One anchor per project** - Maintain consistency across your codebase
@@ -17,42 +17,42 @@ Key principles:
 
 ### Basic Usage
 ```javascript
-// :ga:todo implement validation
-// :ga:sec check user permissions
-// :ga:ctx assumes UTC timestamps
-// :ga:@agent write unit tests
-// :ga:tmp remove after v2.0
+// :A: todo implement validation
+// :A: sec check user permissions
+// :A: ctx assumes UTC timestamps
+// :A: @agent write unit tests
+// :A: tmp remove after v2.0
 ```
 
-### Combined Tags (use judiciously)
+### Combined Markers (use judiciously)
 ```python
-# :ga:sec,todo validate inputs  # Good: related concerns, concise
-# :ga:perf,debt refactor this loop   # Good: both about code quality
+# :A: sec, todo validate inputs  # Good: related concerns, concise
+# :A: perf, debt refactor this loop   # Good: both about code quality
 ```
 
 ### Separate Comments (often better)
 ```python
-# :ga:sec check SQL injection vulnerabilities
-# :ga:todo add input validation for email format
-# :ga:ctx user emails must be unique in database
+# :A: sec check SQL injection vulnerabilities
+# :A: todo add input validation for email format
+# :A: ctx user emails must be unique in database
 # Better: each concern gets proper description
 ```
 
 ### Searching
 ```bash
-rg ":ga:"              # All anchors
-rg ":ga:sec"          # Security concerns
-rg ":ga:@agent"        # AI tasks
+rg ":A:"              # All anchors
+rg ":A: sec"          # Security concerns
+rg ":A:.*@agent"      # AI tasks
 
-# Context searching (find related tags)
-rg -B1 -A1 ":ga:sec"      # Show 1 line before/after
-rg -C2 ":ga:todo"          # Show 2 lines context
-rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
+# Context searching (find related markers)
+rg -B1 -A1 ":A: sec"      # Show 1 line before/after
+rg -C2 ":A: todo"          # Show 2 lines context
+rg -B2 -A2 ":A: sec"
 ```
 
-## Tag Reference
+## Marker Reference
 
-**Core Tags:**
+**Core Markers:**
 - `tldr` - Brief summary or overview ("Too Long; Didn't Read")
 - `todo` - Work that needs doing
 - `ctx` - Important context/assumptions
@@ -60,7 +60,7 @@ rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
 - `@agent` - AI agent instructions
 - `tmp` - Temporary code to remove
 
-**Quality Tags:**
+**Quality Markers:**
 - `perf` - Performance concerns
 - `bug` - Known issues
 - `debt` - Technical debt
@@ -95,37 +95,37 @@ rg -B2 -A2 ":ga:sec" | rg ":ga:(sec|todo)"
 - `priority` - Priority level (p0, p1, etc.)
 - `deadline(date)` - Time constraints
 
-## Custom Anchors
+## Why `:A:`?
 
-While `:ga:` is recommended, teams can use custom patterns:
-- Choose 2-4 character anchors: `:tc:`, `:proj:`
-- Document in README
-- One anchor per codebase
-- For monorepos, use tags not different anchors
+The canonical anchor `:A:` was chosen for:
+- **Brevity**: Just 3 characters
+- **Uniqueness**: Unlikely to conflict with existing code
+- **Mnemonic**: "Anchor" for navigation
+- **Consistency**: One standard across all projects
 
 ## AI Agent Workflows
 
 ### 1. Human marks location
 ```python
 class UserService:
-    # :ga:ctx all emails must be unique
+    # :A: ctx all emails must be unique
     def create_user(self, email: str):
-        # :ga:@agent implement with validation
-        # :ga:sec prevent duplicates
+        # :A: @agent implement with validation
+        # :A: sec prevent duplicates
         pass
 ```
 
 ### 2. AI finds work
 ```bash
-rg ":ga:@agent"
-# user_service.py:4: # :ga:@agent implement with validation
+rg ":A:.*@agent"
+# user_service.py:4: # :A: @agent implement with validation
 ```
 
 ### 3. AI reads context
 ```bash
-rg ":ga:ctx|:ga:sec" user_service.py
-# user_service.py:2: # :ga:ctx all emails must be unique
-# user_service.py:5: # :ga:sec prevent duplicates
+rg ":A: ctx|:A: sec" user_service.py
+# user_service.py:2: # :A: ctx all emails must be unique
+# user_service.py:5: # :A: sec prevent duplicates
 ```
 
 ### 4. AI implements with understanding
@@ -135,85 +135,85 @@ rg ":ga:ctx|:ga:sec" user_service.py
 ### From TODO comments
 ```bash
 # Phase 1: Enhance existing
-sed -i 's/TODO:/TODO :ga:/g' **/*.js
+sed -i 's/TODO:/TODO :A: /g' **/*.js
 
 # Phase 2: Pure anchors
-sed -i 's/TODO :ga:/:ga:todo/g' **/*.js
+sed -i 's/TODO :A: /:A: todo /g' **/*.js
 ```
 
 ### Progressive adoption
-1. Start with `:ga:todo`
-2. Add `:ga:ctx` for clarity
-3. Use `:ga:@agent` for AI
-4. Link with `:ga:issue(123)`
+1. Start with `:A: todo`
+2. Add `:A: ctx` for clarity
+3. Use `:A: @agent` for AI
+4. Link with `:A: issue(123)`
 
 ## Monorepo Patterns
 
-Use tags for service namespacing:
+Use markers for service namespacing:
 ```javascript
-// :ga:auth,todo implement OAuth
-// :ga:payment,sec validate amounts
-// :ga:shared,api maintain compatibility
+// :A: auth, todo implement OAuth
+// :A: payment, sec validate amounts
+// :A: shared, api maintain compatibility
 ```
 
 Search patterns:
 ```bash
-rg ":ga:auth"          # Auth service only
-rg ":ga:.*sec"        # All security issues
+rg ":A: auth"          # Auth service only
+rg ":A:.*sec"         # All security issues
 ```
 
 ## Advanced Patterns
 
-### JSON metadata (optional)
+### Parameter Syntax
 ```javascript
-// :ga:{"deadline":"2024-03-01","owner":"@alice"}
-// :ga:{"epic":"user-auth","depends":["session"]}
+// :A: issue(123) deadline(2024-03-01)
+// :A: owner(@alice) priority(high)
 ```
 
-### Arrays
+### Multiple Values
 ```javascript
-// :ga:["sec","performance","breaking"]
+// :A: blocked:[123,456] owners:[@alice,@bob]
 ```
 
-### Issue linking
+### Issue Linking
 ```python
-# :ga:issue(123,{"status":"in-progress"})
-# :ga:jira(PROJ-456)
-# :ga:github(#789)
+# :A: issue(123)
+# :A: jira(PROJ-456)
+# :A: github(#789)
 ```
 
 ### HTML Comments (for markdown)
 ```markdown
-<!-- :ga:tldr Quick summary of the document -->
-<!-- :ga:core Essential concept explanation -->
-<!-- :ga:guide Step-by-step instructions -->
+<!-- :A: tldr Quick summary of the document -->
+<!-- :A: core Essential concept explanation -->
+<!-- :A: guide Step-by-step instructions -->
 ```
 
 ## Best Practices
 
 1. **Separate concerns**: Use multiple comments for distinct topics
 2. **Line limits**: Keep under ~80 chars for readable grep output
-3. **Layer tags carefully**: `:ga:sec,todo` only when closely related
+3. **Layer markers carefully**: `:A: sec, todo` only when closely related
 4. **Add context liberally**: More context is better, use separate lines
 5. **Be specific**: "validate UUID" not just "validate"
-6. **Link resources**: `:ga:docs(RFC-7231)`
+6. **Link resources**: `:A: docs(RFC-7231)`
 7. **Stay consistent**: Document team patterns
-8. **Use HTML comments in markdown**: `<!-- :ga:tldr summary -->` for non-rendered anchors
+8. **Use HTML comments in markdown**: `<!-- :A: tldr summary -->` for non-rendered anchors
 
 ## Implementation
 
 ### VS Code
 ```json
 {
-  "todo-tree.regex.regex": ":ga:(\\w+)"
+  "todo-tree.regex.regex": ":A: (\\w+)"
 }
 ```
 
 ### Git hooks
 ```bash
 # Block commits with tmp code
-if git diff --cached | grep -q ":ga:tmp"; then
-  echo "Error: Remove :ga:tmp markers"
+if git diff --cached | grep -q ":A: tmp"; then
+  echo "Error: Remove :A: tmp markers"
   exit 1
 fi
 ```
@@ -225,35 +225,38 @@ Check for critical issues in pull requests.
 ## Grammar
 
 ```ebnf
-anchor  ::= ":" sigil ":" payload
-sigil   ::= "ga" | custom
-payload ::= token ("," token)*
-token   ::= bare | json | array | function
-bare    ::= "@"? [A-Za-z0-9_.-]+
+anchor  ::= ":A:" space payload
+space   ::= " "  # exactly one ASCII space
+payload ::= marker-list prose?
+marker-list ::= marker (", " marker)*
+marker  ::= bare | parameterized
+bare    ::= "@"? [A-Za-z0-9_-]+
+parameterized ::= bare "(" value ")"
+value   ::= [^)]+  # any chars except closing paren
 ```
 
 ## Resources
 
 - [README](https://github.com/galligan/grepa/blob/main/README.md): Full documentation
 - [Examples](https://github.com/galligan/grepa/blob/main/docs/examples.md): Real-world patterns
-- [Custom Anchors](https://github.com/galligan/grepa/blob/main/docs/guides/custom-anchors.md): Define your own
+- [Conventions](https://github.com/galligan/grepa/blob/main/docs/conventions/): Marker patterns
 - [Progressive Guide](https://github.com/galligan/grepa/blob/main/docs/guides/progressive-enhancement.md): Adoption path
 
 ## Quick Reference
 
 ```bash
 # Find all anchors
-rg ":ga:"
+rg ":A:"
 
 # Find with context
-rg -C2 ":ga:sec"         # 2 lines before/after
-rg -B3 -A3 ":ga:todo"     # 3 lines before, 3 after
+rg -C2 ":A: sec"         # 2 lines before/after
+rg -B3 -A3 ":A: todo"     # 3 lines before, 3 after
 
 # Find in markdown (including HTML comments)  
-rg "<!-- :ga:" --type md
+rg "<!-- :A:" --type md
 
 # Remove all anchors (backup first!)
-find . -type f -exec sed -i.bak 's/:ga:[^*]*//g' {} +
+find . -type f -exec sed -i.bak 's/:A: [^*]*//g' {} +
 ```
 
 Remember: The goal is discoverability. Start simple, grow naturally. 
