@@ -1,4 +1,6 @@
 # :A: tldr GitHub Action for automated releases with changesets
+# :A: ctx This workflow runs after CI passes and code is merged to main
+# :A: ctx The CI workflow validates all PRs before they can be merged
 name: Release
 
 on:
@@ -24,8 +26,6 @@ jobs:
 
       - name: Setup PNPM
         uses: pnpm/action-setup@v4
-        with:
-          version: 8
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
