@@ -93,5 +93,5 @@ function getStatusCode(code: ErrorCode): number {
     'network': 503,
     'unexpected': 500,
   };
-  return mapping[code] ?? 500;
+  return mapping[code as keyof typeof mapping] ?? 500;
 }

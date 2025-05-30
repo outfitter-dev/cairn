@@ -140,7 +140,7 @@ export class MagicAnchorParser {
     
     if (match && match[1]) {
       // :A: ctx found markers followed by prose
-      const markersStr = match[1];
+      const markersStr = match[1]!;
       const prose = match[2];
       const trimmedProse = prose?.trim();
       return {
