@@ -1,7 +1,6 @@
 // :A: tldr Tests for CLI functionality
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { CLI } from '../index.js';
-import { commander } from '../index.js';
 
 // :A: ctx mock console methods for testing
 const mockConsoleLog = vi.fn();
