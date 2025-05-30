@@ -1,2 +1,36 @@
-pnpm vitest run
-pnpm typecheck
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# :A: ctx Comprehensive pre-push validation to match CI pipeline
+echo "🔍 Running pre-push validation..."
+
+# Run tests
+echo "📋 Running tests..."
+pnpm vitest run || {
+    echo "❌ Tests failed! Fix failing tests before pushing."
+    exit 1
+}
+
+# Run typecheck
+echo "🔍 Type checking..."
+pnpm typecheck || {
+    echo "❌ Type checking failed! Fix type errors before pushing."
+    exit 1
+}
+
+# Run build to ensure it compiles
+echo "🔨 Building project..."
+pnpm build || {
+    echo "❌ Build failed! Fix build errors before pushing."
+    exit 1
+}
+
+# Check for temporary markers that shouldn't be pushed
+echo "🔍 Checking for temporary code markers..."
+if git diff --cached --name-only | xargs grep -l ":A: tmp\|:A: temp" 2>/dev/null; then
+    echo "❌ Found temporary code markers (:A: tmp or :A: temp)!"
+    echo "Remove or resolve these before pushing."
+    exit 1
+fi
+
+echo "✅ All pre-push checks passed!"

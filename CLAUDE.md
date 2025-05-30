@@ -176,6 +176,17 @@ When working on this project:
 5. Use ripgrep to verify anchor patterns before commits
 6. Follow the `:A:` syntax with mandatory single space
 
+### Pre-Push Quality Checks
+
+**CRITICAL**: Before pushing any code:
+
+1. **Run CI locally**: `pnpm ci:local` - This simulates the full CI pipeline
+2. **Comprehensive check**: `pnpm check:all` - Includes temporary marker detection
+3. **Quick validation**: `pnpm ci:validate` - Tests, types, and build only
+4. **Check for temp code**: `pnpm check:anchors` - Ensures no `:A: tmp` markers
+
+The pre-push hook will automatically run these checks, but running them manually first saves time.
+
 ### Documentation Standards
 
 - All markdown files should have `<!-- :A: tldr: <short description> -->` at the top

@@ -43,7 +43,11 @@
     "version": "changeset version",
     "release": "pnpm build && changeset publish",
     "prerelease": "pnpm test && pnpm typecheck",
-    "prepare": "husky"
+    "prepare": "husky",
+    "ci:local": "pnpm run ci:validate && echo '✅ All CI checks passed locally!'",
+    "ci:validate": "pnpm test && pnpm typecheck && pnpm build",
+    "check:all": "pnpm ci:validate && pnpm run check:anchors",
+    "check:anchors": "echo '🔍 Checking for temporary anchors...' && ! rg ':A: (tmp|temp)' --type ts --type js || (echo '❌ Found temporary anchors!' && exit 1)"
   },
   "dependencies": {
     "chalk": "^5.3.0",
