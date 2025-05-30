@@ -14,10 +14,9 @@ import { fromZod } from '../lib/zod-adapter.js';
  * Supports both sync and async operations with Result pattern.
  */
 export class GrepaSearch {
-  // :A: api supported file extensions for searching
+  // :A: api search configuration constants
   private static readonly DEFAULT_EXTENSIONS = ['.ts', '.js', '.jsx', '.tsx', '.md', '.txt', '.py', '.java', '.c', '.cpp', '.h'];
   private static readonly MAX_RESULTS = 1000;
-  // private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
   /**
    * Search files for Magic Anchors using Result pattern.
