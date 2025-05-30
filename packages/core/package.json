@@ -10,9 +10,12 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@grepa/types": "workspace:*",
+    "ignore": "^7.0.4",
     "zod": "^3.24.1"
   },
   "scripts": {

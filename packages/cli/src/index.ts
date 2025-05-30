@@ -41,6 +41,7 @@ export class CLI {
       .argument('[files...]', 'Files to search (default: all)')
       .option('-j, --json', 'Output as JSON')
       .option('-c, --context <lines>', 'Show context lines', '0')
+      .option('--no-gitignore', 'Do not respect .gitignore files')
       .action(async (marker: string, files: string[], options) => {
         const result = await this.searchCommand(marker, files, options);
         this.handleCommandResult(result);
@@ -53,6 +54,7 @@ export class CLI {
       .argument('[files...]', 'Files to analyze')
       .option('-j, --json', 'Output as JSON')
       .option('-m, --markers', 'Show only markers')
+      .option('--no-gitignore', 'Do not respect .gitignore files')
       .action(async (files: string[], options) => {
         const result = await this.listCommand(files, options);
         this.handleCommandResult(result);
@@ -154,7 +156,8 @@ export class CLI {
     const searchOptions = {
       markers: [marker],
       context: validOptions.context ? parseInt(validOptions.context) : 0,
-      recursive: true
+      recursive: true,
+      respectGitignore: validOptions.gitignore !== false
     };
 
     // :A: ctx use Result-based search
@@ -192,7 +195,8 @@ export class CLI {
 
     // :A: ctx search for all anchors
     const searchResult = await GrepaSearch.searchWithResult(targetFiles, {
-      recursive: true
+      recursive: true,
+      respectGitignore: validOptions.gitignore !== false
     });
 
     if (!searchResult.ok) {

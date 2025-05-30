@@ -68,7 +68,7 @@ export function humanise(err: AppError): string {
     'unexpected': 'An unexpected error occurred. Please try again',
   };
 
-  const message = messages[err.code];
+  const message = messages[err.code as keyof typeof messages];
   
   // :A: ctx log unmapped error codes for debugging
   if (!message && err.code) {

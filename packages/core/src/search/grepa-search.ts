@@ -2,6 +2,7 @@
 import { readFileSync, readdirSync, statSync } from 'fs';
 import { join, extname } from 'path';
 import { MagicAnchorParser } from '../parser/magic-anchor-parser.js';
+import { IgnoreManager } from '../lib/ignore-manager.js';
 import type { MagicAnchor, SearchOptions, SearchResult } from '@grepa/types';
 import { type Result, success, failure, tryAsync } from '../lib/result.js';
 import { type AppError, makeError } from '../lib/error.js';
@@ -13,10 +14,9 @@ import { fromZod } from '../lib/zod-adapter.js';
  * Supports both sync and async operations with Result pattern.
  */
 export class GrepaSearch {
-  // :A: api supported file extensions for searching
+  // :A: api search configuration constants
   private static readonly DEFAULT_EXTENSIONS = ['.ts', '.js', '.jsx', '.tsx', '.md', '.txt', '.py', '.java', '.c', '.cpp', '.h'];
   private static readonly MAX_RESULTS = 1000;
-  private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
   /**
    * Search files for Magic Anchors using Result pattern.
@@ -167,6 +167,16 @@ export class GrepaSearch {
 
   // :A: api check if file should be included based on options
   private static shouldIncludeFile(file: string, options: SearchOptions): boolean {
+    // :A: ctx check gitignore first if enabled
+    if (options.respectGitignore !== false) {
+      const ignoreResult = IgnoreManager.shouldIgnore(file);
+      // :A: ctx if we can't determine ignore status, include the file
+      // Only exclude if we successfully determined the file should be ignored
+      if (ignoreResult.ok && ignoreResult.data) {
+        return false;
+      }
+    }
+
     if (options.files && options.files.length > 0) {
       return options.files.some((pattern: string) => file.includes(pattern));
     }

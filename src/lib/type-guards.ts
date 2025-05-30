@@ -10,8 +10,25 @@ export function isNumber(value: unknown): value is number {
   return typeof value === 'number';
 }
 
+export function isBoolean(value: unknown): value is boolean {
+  return typeof value === 'boolean';
+}
+
 export function isNonNull<T>(value: T | null | undefined): value is T {
   return value != null;
+}
+
+// :A: api Array and object type guards
+export function isArray(value: unknown): value is unknown[] {
+  return Array.isArray(value);
+}
+
+export function isStringArray(value: unknown): value is string[] {
+  return isArray(value) && value.every(isString);
+}
+
+export function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 // :A: api Object property existence guard
