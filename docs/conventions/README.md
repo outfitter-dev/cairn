@@ -12,7 +12,7 @@ Begin with these five essential patterns:
 2. `:A: ctx` - Important assumptions or constraints
 3. `:A: sec` - Security-critical code
 4. `:A: @agent` - AI agent instructions
-5. `:A: tmp` - Temporary code to remove
+5. `:A: temp` - Temporary code to remove
 
 That's it! You can search all of these with `rg ":A:"`.
 

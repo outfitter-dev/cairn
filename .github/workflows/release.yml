@@ -39,7 +39,30 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Check for changes between main and changeset-release/main
+        id: check_changes
+        run: |
+          # :A: ctx Check if changeset-release/main branch exists and has differences
+          # Fetch the changeset-release/main branch if it exists
+          git fetch origin changeset-release/main:refs/remotes/origin/changeset-release/main || echo "changeset-release/main doesn't exist yet"
+          # Check if there are any differences
+          if git rev-parse --verify origin/changeset-release/main >/dev/null 2>&1; then
+            # Branch exists, check for differences
+            if git diff --quiet HEAD origin/changeset-release/main; then
+              echo "has_changes=false" >> $GITHUB_OUTPUT
+              echo "No changes detected between main and changeset-release/main"
+            else
+              echo "has_changes=true" >> $GITHUB_OUTPUT
+              echo "Changes detected between main and changeset-release/main"
+            fi
+          else
+            # If changeset-release/main doesn't exist, we have changes
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "changeset-release/main branch doesn't exist, proceeding with release"
+          fi
+
       - name: Create Release Pull Request or Publish
+        if: steps.check_changes.outputs.has_changes == 'true'
         id: changesets
         uses: changesets/action@v1
         with:
