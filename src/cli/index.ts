@@ -42,15 +42,29 @@ export class CLI {
         this.handleCommandResult(result);
       });
 
-    // :A: api search command to find specific anchors
+    // :A: api find command to search for specific anchors
     this.program
-      .command('search')
-      .description('Search for anchors by marker')
+      .command('find')
+      .description('Find anchors by marker')
       .argument('<marker>', 'Marker to search for')
       .argument('[files...]', 'Files to search (default: all)')
       .option('-j, --json', 'Output as JSON')
       .option('-c, --context <lines>', 'Show context lines', '0')
       .action(async (marker: string, files: string[], options) => {
+        const result = await this.searchCommand(marker, files, options);
+        this.handleCommandResult(result);
+      });
+
+    // :A: api search command (deprecated alias for find)
+    this.program
+      .command('search')
+      .description('Search for anchors by marker (deprecated: use "find")')
+      .argument('<marker>', 'Marker to search for')
+      .argument('[files...]', 'Files to search (default: all)')
+      .option('-j, --json', 'Output as JSON')
+      .option('-c, --context <lines>', 'Show context lines', '0')
+      .action(async (marker: string, files: string[], options) => {
+        console.log(chalk.yellow('Warning: "search" command is deprecated. Use "find" instead.'));
         const result = await this.searchCommand(marker, files, options);
         this.handleCommandResult(result);
       });
@@ -237,7 +251,7 @@ export class CLI {
     });
   }
 
-  // :A: api display search results (new version with context)
+  // :A: api display search results grouped by file with improved formatting
   private displaySearchResultsNew(results: SearchResult[], marker: string, contextLines: number): void {
     if (results.length === 0) {
       console.log(chalk.yellow(`No anchors found with marker: ${marker}`));
@@ -246,24 +260,34 @@ export class CLI {
 
     console.log(chalk.green(`Found ${results.length} anchor(s) with marker: ${marker}\n`));
     
-    results.forEach(result => {
-      this.displayAnchor(result.anchor);
+    // :A: ctx group results by file for better organization
+    const groupedResults = GrepaSearch.groupByFile(results);
+    
+    Object.keys(groupedResults).sort().forEach(file => {
+      const fileResults = groupedResults[file]!;
       
-      if (contextLines > 0 && result.context) {
-        // :A: ctx show context lines before
-        result.context.before.forEach((line, index) => {
-          const lineNum = result.anchor.line - contextLines + index;
-          console.log(chalk.dim(`    ${lineNum}: ${line}`));
-        });
+      // :A: ctx display file header
+      console.log(chalk.blue(file));
+      
+      fileResults.forEach(result => {
+        this.displayAnchorImproved(result.anchor);
         
-        // :A: ctx show context lines after  
-        result.context.after.forEach((line, index) => {
-          const lineNum = result.anchor.line + index + 1;
-          console.log(chalk.dim(`    ${lineNum}: ${line}`));
-        });
-        
-        console.log(); // :A: ctx blank line between results
-      }
+        if (contextLines > 0 && result.context) {
+          // :A: ctx show context lines before
+          result.context.before.forEach((line, index) => {
+            const lineNum = result.anchor.line - contextLines + index;
+            console.log(chalk.dim(`    ${lineNum}: ${line}`));
+          });
+          
+          // :A: ctx show context lines after  
+          result.context.after.forEach((line, index) => {
+            const lineNum = result.anchor.line + index + 1;
+            console.log(chalk.dim(`    ${lineNum}: ${line}`));
+          });
+        }
+      });
+      
+      console.log(); // :A: ctx blank line between files
     });
   }
 
@@ -287,12 +311,43 @@ export class CLI {
     }
   }
 
-  // :A: api display single anchor with formatting
+  // :A: api display single anchor with formatting (legacy version)
   private displayAnchor(anchor: MagicAnchor): void {
     const location = anchor.file ? `${anchor.file}:${anchor.line}` : `Line ${anchor.line}`;
     const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
     const prose = anchor.prose ? chalk.gray(` - ${anchor.prose}`) : '';
     
     console.log(`${chalk.dim(location)} ${markers}${prose}`);
+  }
+
+  // :A: api display single anchor with improved formatting and clean output
+  private displayAnchorImproved(anchor: MagicAnchor): void {
+    const cleanedContent = this.cleanAnchorContent(anchor);
+    const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
+    const prose = anchor.prose ? ` ${anchor.prose}` : '';
+    
+    console.log(`${chalk.yellow(anchor.line.toString())}: ${markers}${prose}`);
+  }
+
+  // :A: api clean comment syntax from anchor content
+  private cleanAnchorContent(anchor: MagicAnchor): string {
+    let content = anchor.raw;
+    
+    // :A: ctx strip common comment syntax patterns
+    content = content
+      // Remove HTML comment syntax
+      .replace(/<!--\s*/, '')
+      .replace(/\s*-->/, '')
+      // Remove JavaScript/TypeScript comment syntax
+      .replace(/\/\/\s*/, '')
+      .replace(/\/\*\s*/, '')
+      .replace(/\s*\*\//, '')
+      // Remove Python/Shell comment syntax
+      .replace(/#\s*/, '')
+      // Remove other comment patterns
+      .replace(/\*\s*/, '')
+      .trim();
+    
+    return content;
   }
 }
