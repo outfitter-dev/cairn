@@ -142,7 +142,7 @@ What if markers cleaned themselves up?
 ```bash
 # AI-driven marker maintenance
 grepa clean --strategy=smart
-# - Remove :A: tmp markers for shipped features
+# - Remove :A: temp markers for shipped features
 # - Archive :A: issue(123) for closed issues  
 # - Update :A: deadline dates from sprint planning
 # - Consolidate duplicate :A: sec markers

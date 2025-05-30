@@ -144,7 +144,7 @@ grepa list src/ --markers
 - Stack multiple tags for richer meaning
   ```typescript
   // :A: sec,todo fix rate limiting
-  // :A: tmp,ctx remove after Redis upgrade
+  // :A: temp,ctx remove after Redis upgrade
   ```
 
 ## 🎯 Core Patterns
@@ -156,7 +156,7 @@ grepa list src/ --markers
 | `:A: ctx` | Important context | `// :A: ctx expects UTC timestamps` |
 | `:A: @agent` | AI agent tasks | `// :A: @agent implement this function` |
 | `:A: sec` | Security concerns | `// :A: sec validate all inputs` |
-| `:A: tmp` | Temporary code | `// :A: tmp remove after v2.0` |
+| `:A: temp` | Temporary code | `// :A: temp remove after v2.0` |
 
 ## 📈 Progressive Enhancement
 

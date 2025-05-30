@@ -1,2 +1,44 @@
-pnpm vitest run
-pnpm typecheck
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# :A: ctx Comprehensive pre-push validation to match CI pipeline
+echo "🔍 Running pre-push validation..."
+
+# Run tests
+echo "📋 Running tests..."
+pnpm vitest run || {
+    echo "❌ Tests failed! Fix failing tests before pushing."
+    exit 1
+}
+
+# Run typecheck
+echo "🔍 Type checking..."
+pnpm typecheck || {
+    echo "❌ Type checking failed! Fix type errors before pushing."
+    exit 1
+}
+
+# Run build to ensure it compiles
+echo "🔨 Building project..."
+pnpm build || {
+    echo "❌ Build failed! Fix build errors before pushing."
+    exit 1
+}
+
+# Check for temporary markers that shouldn't be pushed
+echo "🔍 Checking for temporary code markers..."
+# Get the remote branch we're pushing to
+remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "origin/main")
+# Use three-dot diff to get only files changed in local commits
+files_to_check=$(git diff --name-only "$remote_branch"...HEAD -- '*.ts' '*.js' '*.tsx' '*.jsx')
+if [ -n "$files_to_check" ]; then
+    temp_markers=$(echo "$files_to_check" | xargs grep -l ":A: tmp\|:A: temp" 2>/dev/null || true)
+    if [ -n "$temp_markers" ]; then
+        echo "❌ Found temporary code markers (:A: temp or :A: tmp) in:"
+        echo "$temp_markers"
+        echo "Remove or resolve these before pushing."
+        exit 1
+    fi
+fi
+
+echo "✅ All pre-push checks passed!"

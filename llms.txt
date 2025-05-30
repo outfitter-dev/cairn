@@ -21,7 +21,7 @@ Key principles:
 // :A: sec check user permissions
 // :A: ctx assumes UTC timestamps
 // :A: @agent write unit tests
-// :A: tmp remove after v2.0
+// :A: temp remove after v2.0
 ```
 
 ### Combined Markers (use judiciously)
@@ -212,8 +212,8 @@ rg ":A:.*sec"         # All security issues
 ### Git hooks
 ```bash
 # Block commits with tmp code
-if git diff --cached | grep -q ":A: tmp"; then
-  echo "Error: Remove :A: tmp markers"
+if git diff --cached | grep -q ":A: temp"; then
+  echo "Error: Remove :A: temp markers"
   exit 1
 fi
 ```
