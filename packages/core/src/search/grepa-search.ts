@@ -171,7 +171,8 @@ export class GrepaSearch {
     if (options.respectGitignore !== false) {
       const ignoreResult = IgnoreManager.shouldIgnore(file);
       // :A: ctx if we can't determine ignore status, include the file
-      if (!ignoreResult.ok || ignoreResult.data) {
+      // Only exclude if we successfully determined the file should be ignored
+      if (ignoreResult.ok && ignoreResult.data) {
         return false;
       }
     }

@@ -66,13 +66,19 @@ export const parseCommandOptionsSchema = z.object({
 export const searchCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
   context: z.string().regex(/^\d+$/, 'Context must be a number').optional(),
-  gitignore: z.boolean().optional(),
+  // Controls whether to respect .gitignore files during search
+  // Default: true (respects .gitignore)
+  // CLI flag --no-gitignore sets this to false
+  gitignore: z.boolean().default(true),
 });
 
 export const listCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
   markers: z.boolean().optional(),
-  gitignore: z.boolean().optional(),
+  // Controls whether to respect .gitignore files during listing
+  // Default: true (respects .gitignore)
+  // CLI flag --no-gitignore sets this to false
+  gitignore: z.boolean().default(true),
 });
 
 // :A: api File path validation

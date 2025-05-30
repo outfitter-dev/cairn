@@ -22,8 +22,6 @@
     "allowUnusedLabels": false,
     "noFallthroughCasesInSwitch": true,
     "isolatedModules": true,
-    
-    // Additional strict checks from conventions
     "noImplicitAny": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
@@ -31,8 +29,6 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    
-    // Enhanced safety
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true

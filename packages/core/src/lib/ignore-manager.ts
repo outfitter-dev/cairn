@@ -54,7 +54,13 @@ export class IgnoreManager {
     }
 
     const projectRoot = this.findProjectRoot(dir);
-    const relativePath = relative(projectRoot, filePath);
+    let relativePath = relative(projectRoot, filePath);
+    
+    // :A: ctx normalize path separators to POSIX style for cross-platform compatibility
+    // The ignore library expects forward slashes even on Windows
+    if (process.platform === 'win32') {
+      relativePath = relativePath.replace(/\\/g, '/');
+    }
     
     return success(igResult.data.ignores(relativePath));
   }

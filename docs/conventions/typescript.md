@@ -927,7 +927,105 @@ export function UserRegistrationForm() {
 
 Keep this doc close to your project template so agents & humans share the same contract.
 
-## 8. Quick Reference Card
+## 8. TypeScript Everywhere
+
+### 8.1 Configuration and Build Files
+
+**Principle**: Use TypeScript for all project files, including configuration and build scripts.
+
+#### Why TypeScript for Everything?
+
+1. **Type Safety Throughout**: Config errors caught at compile time, not runtime
+2. **Consistency**: Single language across your entire codebase
+3. **Better Refactoring**: Find all references works across config files
+4. **IDE Support**: Full IntelliSense for your build scripts and configs
+
+#### Implementation Guidelines
+
+```typescript
+// eslint.config.ts (instead of .eslintrc.js)
+import type { Linter } from 'eslint';
+
+export default {
+  rules: {
+    // Type-safe rule configuration
+  }
+} satisfies Linter.Config;
+
+// vite.config.ts (instead of vite.config.js)
+import { defineConfig } from 'vite';
+import type { UserConfig } from 'vite';
+
+export default defineConfig(({ mode }): UserConfig => ({
+  // Type-safe Vite configuration
+}));
+
+// build-scripts/publish.ts (instead of shell scripts where possible)
+import { execSync } from 'child_process';
+import { readFileSync } from 'fs';
+import type { PackageJson } from 'type-fest';
+
+const pkg = JSON.parse(readFileSync('./package.json', 'utf-8')) as PackageJson;
+// Type-safe package.json access
+```
+
+#### File Conversion Strategy
+
+| File Type | Keep As-Is | Convert To TypeScript |
+|-----------|------------|----------------------|
+| `package.json` | ✓ (Required by npm) | - |
+| `tsconfig.json` | ✓ (Supports comments) | - |
+| `.eslintrc.js` | - | ✓ `.eslintrc.ts` or `eslint.config.ts` |
+| `*.config.js` | - | ✓ `*.config.ts` |
+| Build scripts | - | ✓ TypeScript with `tsx` or `ts-node` |
+| Test files | - | ✓ Always TypeScript |
+
+#### Execution Strategies
+
+```json
+// package.json scripts using tsx for direct TS execution
+{
+  "scripts": {
+    "build": "tsx scripts/build.ts",
+    "lint:custom": "tsx scripts/lint-custom-rules.ts"
+  }
+}
+```
+
+#### Benefits in Practice
+
+```typescript
+// shared/types.ts - Shared across app and config
+export const ERROR_CODES = {
+  AUTH_INVALID: 'auth.invalid',
+  USER_NOT_FOUND: 'user.notFound',
+} as const;
+
+export type ErrorCode = typeof ERROR_CODES[keyof typeof ERROR_CODES];
+
+// eslint-rules/no-direct-error.ts - Can import app types!
+import { ERROR_CODES } from '../shared/types';
+
+export default {
+  create(context) {
+    // Your rule can use the same types as your app
+  }
+};
+```
+
+### 8.2 Migration Checklist
+
+When converting JavaScript files to TypeScript:
+
+1. **Add `.ts` extension** (or `.mts` for explicit ESM)
+2. **Add type imports** for dependencies
+3. **Replace `module.exports` with `export`**
+4. **Replace `require()` with `import`**
+5. **Add explicit types** where inference fails
+6. **Use `satisfies` operator** for config objects
+7. **Enable `allowJs` temporarily** during migration
+
+## 9. Quick Reference Card
 
 Most-used patterns at a glance:
 
