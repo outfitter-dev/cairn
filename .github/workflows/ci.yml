@@ -14,8 +14,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
-    name: Test
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -42,8 +42,8 @@ jobs:
       - name: Run tests
         run: pnpm test run
 
-  build:
-    name: Build
+  typecheck:
+    name: Type Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
+      - name: Build packages
         run: pnpm build
 
       - name: Type check
