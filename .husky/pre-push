@@ -27,10 +27,16 @@ pnpm build || {
 
 # Check for temporary markers that shouldn't be pushed
 echo "🔍 Checking for temporary code markers..."
-if git diff --cached --name-only | xargs grep -l ":A: tmp\|:A: temp" 2>/dev/null; then
-    echo "❌ Found temporary code markers (:A: tmp or :A: temp)!"
-    echo "Remove or resolve these before pushing."
-    exit 1
+# Get the remote branch we're pushing to
+remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "origin/main")
+# Get list of source files that will be pushed
+files_to_check=$(git diff --name-only HEAD "$remote_branch" -- '*.ts' '*.js' '*.tsx' '*.jsx')
+if [ -n "$files_to_check" ]; then
+    if echo "$files_to_check" | xargs grep -l ":A: tmp\|:A: temp" 2>/dev/null; then
+        echo "❌ Found temporary code markers (:A: tmp or :A: temp)!"
+        echo "Remove or resolve these before pushing."
+        exit 1
+    fi
 fi
 
 echo "✅ All pre-push checks passed!"
