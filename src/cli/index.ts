@@ -322,32 +322,9 @@ export class CLI {
 
   // :A: api display single anchor with improved formatting and clean output
   private displayAnchorImproved(anchor: MagicAnchor): void {
-    const cleanedContent = this.cleanAnchorContent(anchor);
     const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
     const prose = anchor.prose ? ` ${anchor.prose}` : '';
     
     console.log(`${chalk.yellow(anchor.line.toString())}: ${markers}${prose}`);
-  }
-
-  // :A: api clean comment syntax from anchor content
-  private cleanAnchorContent(anchor: MagicAnchor): string {
-    let content = anchor.raw;
-    
-    // :A: ctx strip common comment syntax patterns
-    content = content
-      // Remove HTML comment syntax
-      .replace(/<!--\s*/, '')
-      .replace(/\s*-->/, '')
-      // Remove JavaScript/TypeScript comment syntax
-      .replace(/\/\/\s*/, '')
-      .replace(/\/\*\s*/, '')
-      .replace(/\s*\*\//, '')
-      // Remove Python/Shell comment syntax
-      .replace(/#\s*/, '')
-      // Remove other comment patterns
-      .replace(/\*\s*/, '')
-      .trim();
-    
-    return content;
   }
 }
