@@ -3,6 +3,7 @@
   "references": [
     { "path": "packages/types" },
     { "path": "packages/core" },
+    { "path": "packages/formatters" },
     { "path": "packages/cli" },
     { "path": "packages/magic-anchors" },
     { "path": "packages/mcp" },

@@ -57,11 +57,14 @@ importers:
       '@grepa/core':
         specifier: workspace:*
         version: link:../core
+      '@grepa/formatters':
+        specifier: workspace:*
+        version: link:../formatters
       '@grepa/types':
         specifier: workspace:*
         version: link:../types
       chalk:
-        specifier: ^5.3.0
+        specifier: ^5.4.1
         version: 5.4.1
       commander:
         specifier: ^12.0.0
@@ -78,6 +81,22 @@ importers:
       zod:
         specifier: ^3.24.1
         version: 3.25.42
+
+  packages/formatters:
+    dependencies:
+      '@grepa/types':
+        specifier: workspace:*
+        version: link:../types
+      chalk:
+        specifier: ^5.4.1
+        version: 5.4.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.16.0
+        version: 20.17.56
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.17.56)
 
   packages/magic-anchors:
     dependencies:

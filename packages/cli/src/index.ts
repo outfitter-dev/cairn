@@ -4,7 +4,8 @@ import chalk from 'chalk';
 import { readFileSync, existsSync } from 'fs';
 import { MagicAnchorParser, GrepaSearch, success, failure, makeError, humanise, parseCommandOptionsSchema, searchCommandOptionsSchema, listCommandOptionsSchema, fromZod } from '@grepa/core';
 import type { Result, AppError } from '@grepa/core';
-import type { MagicAnchor, SearchResult } from '@grepa/types';
+import type { MagicAnchor } from '@grepa/types';
+import { FormatterFactory } from '@grepa/formatters';
 
 export class CLI {
   private program: Command;
@@ -121,7 +122,10 @@ export class CLI {
       if (validOptions.json === true) {
         results.push({ file, ...parseResult.data });
       } else {
-        this.displayParseResult(file, parseResult.data, validOptions.verbose === true);
+        const formatType = 'terminal';
+        const formatter = FormatterFactory.createParseResultFormatter(formatType);
+        console.log(chalk.blue(`\n📁 ${file}`));
+        console.log(formatter.format(parseResult.data));
       }
     }
 
@@ -171,7 +175,16 @@ export class CLI {
     if (validOptions.json === true) {
       console.log(JSON.stringify(results, null, 2));
     } else {
-      this.displaySearchResultsNew(results, marker, searchOptions.context);
+      const formatType = 'terminal';
+      const formatter = FormatterFactory.createSearchResultFormatter(formatType, {
+        context: searchOptions.context
+      });
+      if (results.length === 0) {
+        console.log(chalk.yellow('No anchors found'));
+      } else {
+        console.log(chalk.green(`Found ${results.length} anchor(s) with marker: ${marker}\n`));
+        console.log(formatter.format(results));
+      }
     }
 
     return success(undefined);
@@ -209,85 +222,15 @@ export class CLI {
     if (validOptions.json === true) {
       console.log(JSON.stringify(anchors, null, 2));
     } else {
-      this.displayAnchors(anchors, validOptions.markers === true);
+      const formatType = 'terminal';
+      const formatter = FormatterFactory.createMagicAnchorListFormatter(
+        formatType,
+        validOptions.markers ? { markersOnly: true } : undefined
+      );
+      console.log(formatter.format(anchors));
     }
 
     return success(undefined);
   }
 
-  // :A: api display parse results in human-readable format
-  private displayParseResult(file: string, result: { anchors: MagicAnchor[]; errors: Array<{ line: number; message: string }> }, showErrors: boolean): void {
-    console.log(chalk.blue(`\n📁 ${file}`));
-    console.log(chalk.green(`✓ ${result.anchors.length} anchors found`));
-    
-    if (showErrors && result.errors.length > 0) {
-      console.log(chalk.red(`⚠ ${result.errors.length} errors:`));
-      result.errors.forEach((error) => {
-        console.log(chalk.red(`  Line ${error.line}: ${error.message}`));
-      });
-    }
-
-    result.anchors.forEach((anchor: MagicAnchor) => {
-      this.displayAnchor(anchor);
-    });
-  }
-
-  // :A: api display search results (new version with context)
-  private displaySearchResultsNew(results: SearchResult[], marker: string, contextLines: number): void {
-    if (results.length === 0) {
-      console.log(chalk.yellow(`No anchors found with marker: ${marker}`));
-      return;
-    }
-
-    console.log(chalk.green(`Found ${results.length} anchor(s) with marker: ${marker}\n`));
-    
-    results.forEach(result => {
-      this.displayAnchor(result.anchor);
-      
-      if (contextLines > 0 && result.context !== undefined) {
-        // :A: ctx show context lines before
-        result.context.before.forEach((line, index) => {
-          const lineNum = result.anchor.line - contextLines + index;
-          console.log(chalk.dim(`    ${lineNum}: ${line}`));
-        });
-        
-        // :A: ctx show context lines after  
-        result.context.after.forEach((line, index) => {
-          const lineNum = result.anchor.line + index + 1;
-          console.log(chalk.dim(`    ${lineNum}: ${line}`));
-        });
-        
-        console.log(); // :A: ctx blank line between results
-      }
-    });
-  }
-
-
-  // :A: api display list of anchors
-  private displayAnchors(anchors: MagicAnchor[], markersOnly: boolean): void {
-    if (anchors.length === 0) {
-      console.log(chalk.yellow('No anchors found'));
-      return;
-    }
-
-    console.log(chalk.green(`Found ${anchors.length} anchor(s):\n`));
-    
-    if (markersOnly) {
-      const uniqueMarkers = [...new Set(anchors.flatMap(a => a.markers))];
-      uniqueMarkers.sort().forEach(marker => {
-        console.log(chalk.cyan(`• ${marker}`));
-      });
-    } else {
-      anchors.forEach(anchor => this.displayAnchor(anchor));
-    }
-  }
-
-  // :A: api display single anchor with formatting
-  private displayAnchor(anchor: MagicAnchor): void {
-    const location = anchor.file !== undefined ? `${anchor.file}:${anchor.line}` : `Line ${anchor.line}`;
-    const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
-    const prose = anchor.prose !== undefined ? chalk.gray(` - ${anchor.prose}`) : '';
-    
-    console.log(`${chalk.dim(location)} ${markers}${prose}`);
-  }
 }
