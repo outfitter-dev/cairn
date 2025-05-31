@@ -25,7 +25,7 @@ export class TerminalSearchResultFormatter implements ISearchResultFormatter {
       if (this.options.context && this.options.context > 0 && result.context !== undefined) {
         // :A: ctx show context lines before
         result.context.before.forEach((line, index) => {
-          const lineNum = result.anchor.line - (this.options.context ?? 0) + index;
+          const lineNum = Math.max(1, result.anchor.line - (this.options.context ?? 0) + index);
           output.push(chalk.dim(`    ${lineNum}: ${line}`));
         });
         
@@ -62,6 +62,8 @@ export class TerminalMagicAnchorFormatter implements IMagicAnchorFormatter {
 }
 
 export class TerminalParseResultFormatter implements IParseResultFormatter {
+  constructor(private anchorFormatter: TerminalMagicAnchorFormatter = new TerminalMagicAnchorFormatter()) {}
+
   format(result: ParseResult): string {
     const output: string[] = [];
     
@@ -74,9 +76,8 @@ export class TerminalParseResultFormatter implements IParseResultFormatter {
       });
     }
 
-    const anchorFormatter = new TerminalMagicAnchorFormatter();
     result.anchors.forEach((anchor: MagicAnchor) => {
-      output.push(anchorFormatter.format(anchor));
+      output.push(this.anchorFormatter.format(anchor));
     });
 
     return output.join('\n');
@@ -84,7 +85,10 @@ export class TerminalParseResultFormatter implements IParseResultFormatter {
 }
 
 export class TerminalMagicAnchorListFormatter implements IMagicAnchorListFormatter {
-  constructor(private options: FormatterOptions = {}) {}
+  constructor(
+    private options: FormatterOptions = {},
+    private anchorFormatter: TerminalMagicAnchorFormatter = new TerminalMagicAnchorFormatter()
+  ) {}
 
   format(anchors: MagicAnchor[]): string {
     if (anchors.length === 0) {
@@ -101,9 +105,8 @@ export class TerminalMagicAnchorListFormatter implements IMagicAnchorListFormatt
         output.push(chalk.cyan(`• ${marker}`));
       });
     } else {
-      const anchorFormatter = new TerminalMagicAnchorFormatter();
       anchors.forEach(anchor => {
-        output.push(anchorFormatter.format(anchor));
+        output.push(this.anchorFormatter.format(anchor));
       });
     }
 

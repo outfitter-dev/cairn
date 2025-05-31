@@ -9,11 +9,9 @@ import { FormatterFactory } from '@grepa/formatters';
 
 export class CLI {
   private program: Command;
-  private formatterFactory: FormatterFactory;
 
   constructor() {
     this.program = new Command();
-    this.formatterFactory = new FormatterFactory();
     this.setupCommands();
   }
 
@@ -125,7 +123,7 @@ export class CLI {
         results.push({ file, ...parseResult.data });
       } else {
         const formatType = 'terminal';
-        const formatter = this.formatterFactory.createParseResultFormatter(formatType);
+        const formatter = FormatterFactory.createParseResultFormatter(formatType);
         console.log(chalk.blue(`\n📁 ${file}`));
         console.log(formatter.format(parseResult.data));
       }
@@ -178,11 +176,15 @@ export class CLI {
       console.log(JSON.stringify(results, null, 2));
     } else {
       const formatType = 'terminal';
-      const formatter = this.formatterFactory.createSearchResultFormatter(formatType, {
+      const formatter = FormatterFactory.createSearchResultFormatter(formatType, {
         context: searchOptions.context
       });
-      console.log(chalk.green(`Found ${results.length} anchor(s) with marker: ${marker}\n`));
-      console.log(formatter.format(results));
+      if (results.length === 0) {
+        console.log(chalk.yellow('No anchors found'));
+      } else {
+        console.log(chalk.green(`Found ${results.length} anchor(s) with marker: ${marker}\n`));
+        console.log(formatter.format(results));
+      }
     }
 
     return success(undefined);
@@ -221,9 +223,10 @@ export class CLI {
       console.log(JSON.stringify(anchors, null, 2));
     } else {
       const formatType = 'terminal';
-      const formatter = this.formatterFactory.createMagicAnchorListFormatter(formatType, {
-        markersOnly: validOptions.markers === true
-      });
+      const formatter = FormatterFactory.createMagicAnchorListFormatter(
+        formatType,
+        validOptions.markers ? { markersOnly: true } : undefined
+      );
       console.log(formatter.format(anchors));
     }
 

@@ -22,47 +22,58 @@ import {
 export type FormatType = 'json' | 'terminal';
 
 export class FormatterFactory {
-  createSearchResultFormatter(format: FormatType, options?: FormatterOptions): ISearchResultFormatter {
+  private static createFormatter<T>(
+    format: FormatType,
+    jsonCtor: new () => T,
+    terminalCtor: new (options?: FormatterOptions) => T,
+    options?: FormatterOptions
+  ): T {
     switch (format) {
       case 'json':
-        return new JsonSearchResultFormatter();
+        return new jsonCtor();
       case 'terminal':
-        return new TerminalSearchResultFormatter(options);
+        return new terminalCtor(options);
       default:
-        throw new Error(`Unknown format: ${format}`);
+        throw new Error(`Unknown format: ${format satisfies never}`);
     }
   }
 
-  createMagicAnchorFormatter(format: FormatType): IMagicAnchorFormatter {
-    switch (format) {
-      case 'json':
-        return new JsonMagicAnchorFormatter();
-      case 'terminal':
-        return new TerminalMagicAnchorFormatter();
-      default:
-        throw new Error(`Unknown format: ${format}`);
-    }
+  static createSearchResultFormatter(format: FormatType, options?: FormatterOptions): ISearchResultFormatter {
+    return this.createFormatter(
+      format,
+      JsonSearchResultFormatter,
+      TerminalSearchResultFormatter,
+      options
+    );
   }
 
-  createParseResultFormatter(format: FormatType, _options?: FormatterOptions): IParseResultFormatter {
+  static createMagicAnchorFormatter(format: FormatType): IMagicAnchorFormatter {
+    return this.createFormatter(
+      format,
+      JsonMagicAnchorFormatter,
+      TerminalMagicAnchorFormatter
+    );
+  }
+
+  static createParseResultFormatter(format: FormatType): IParseResultFormatter {
     switch (format) {
       case 'json':
         return new JsonParseResultFormatter();
       case 'terminal':
         return new TerminalParseResultFormatter();
       default:
-        throw new Error(`Unknown format: ${format}`);
+        throw new Error(`Unknown format: ${format satisfies never}`);
     }
   }
 
-  createMagicAnchorListFormatter(format: FormatType, options?: FormatterOptions): IMagicAnchorListFormatter {
+  static createMagicAnchorListFormatter(format: FormatType, options?: FormatterOptions): IMagicAnchorListFormatter {
     switch (format) {
       case 'json':
         return new JsonMagicAnchorListFormatter();
       case 'terminal':
         return new TerminalMagicAnchorListFormatter(options);
       default:
-        throw new Error(`Unknown format: ${format}`);
+        throw new Error(`Unknown format: ${format satisfies never}`);
     }
   }
 }

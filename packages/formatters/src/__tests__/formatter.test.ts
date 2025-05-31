@@ -16,6 +16,8 @@ import {
 
 const mockAnchor: MagicAnchor = {
   line: 42,
+  column: 1,
+  raw: '// :A: todo, api implement authentication',
   markers: ['todo', 'api'],
   prose: 'implement authentication',
   file: 'src/auth.ts',
@@ -123,5 +125,51 @@ describe('Terminal Formatters', () => {
     expect(output).toContain('• todo');
     expect(output).toContain('• api');
     expect(output).not.toContain('src/auth.ts');
+  });
+
+  it('should handle anchor at line 1 with context', () => {
+    const searchResultAtLine1: SearchResult = {
+      anchor: { ...mockAnchor, line: 1 },
+      context: {
+        before: [],
+        after: ['// line 2', '// line 3']
+      }
+    };
+    const formatter = new TerminalSearchResultFormatter({ context: 2 });
+    const output = formatter.format([searchResultAtLine1]);
+    
+    expect(output).toContain('src/auth.ts:1');
+    expect(output).toContain('2: // line 2');
+    expect(output).toContain('3: // line 3');
+  });
+
+  it('should clamp negative line numbers to 1', () => {
+    const searchResultAtLine2: SearchResult = {
+      anchor: { ...mockAnchor, line: 2 },
+      context: {
+        before: ['// line 1'],
+        after: ['// line 3']
+      }
+    };
+    const formatter = new TerminalSearchResultFormatter({ context: 3 });
+    const output = formatter.format([searchResultAtLine2]);
+    
+    expect(output).toContain('1: // line 1');
+    expect(output).not.toContain('-1:');
+    expect(output).not.toContain('0:');
+  });
+
+  it('should handle special characters in content', () => {
+    const specialAnchor: MagicAnchor = {
+      ...mockAnchor,
+      prose: 'Special chars: "quotes", <tags>, & symbols',
+      markers: ['bug-fix', 'ui/ux']
+    };
+    const formatter = new TerminalMagicAnchorFormatter();
+    const output = formatter.format(specialAnchor);
+    
+    expect(output).toContain('Special chars');
+    expect(output).toContain('bug-fix');
+    expect(output).toContain('ui/ux');
   });
 });
