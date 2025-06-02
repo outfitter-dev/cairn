@@ -12,7 +12,7 @@ This proposal outlines enhancements to grepa tooling to provide seamless support
 
 ## Current State
 
-Magic Anchors already work within documentation comments since they're just comment content. However, grepa tooling lacks specific support for:
+Magic Anchors already work within documentation comments, since they're just comment content. However, grepa tooling lacks specific support for:
 
 1. **Documentation-aware filtering** - Separating doc comments from regular comments
 2. **Combined searches** - Finding anchors with their documentation context
@@ -332,7 +332,7 @@ interface DocSearchOptions extends SearchOptions {
 }
 ```
 
-### CLI Interface Extensions
+### CLI Extensions
 
 ```bash
 # Documentation-specific commands

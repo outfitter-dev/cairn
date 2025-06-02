@@ -2,7 +2,44 @@
 <!-- :A: tldr Magic Anchors compatibility with JSDoc, docstrings, and other documentation systems -->
 <!-- :A: convention Cross-language documentation integration patterns -->
 
-Magic Anchors work seamlessly across all major documentation systems because they're just comment content. This enables universal code navigation while preserving existing documentation workflows.
+## Table of Contents
+
+- [Core Compatibility Principle](#core-compatibility-principle)
+- [JavaScript Ecosystem](#javascript-ecosystem)
+  - [JSDoc/TSDoc/ESDoc](#jsdoctscocdesdoc)
+  - [Inline Comments](#inline-comments)
+- [Python Ecosystem](#python-ecosystem)
+  - [Docstrings (All Formats)](#docstrings-all-formats)
+    - [Google Style](#google-style)
+    - [NumPy Style](#numpy-style)
+    - [Sphinx (reStructuredText)](#sphinx-restructuredtext)
+- [Systems Languages](#systems-languages)
+  - [Rust Documentation (Rustdoc)](#rust-documentation-rustdoc)
+  - [Go Documentation (Godoc)](#go-documentation-godoc)
+  - [C/C++ Documentation (Doxygen)](#cc-documentation-doxygen)
+- [Enterprise Languages](#enterprise-languages)
+  - [Java Documentation (Javadoc)](#java-documentation-javadoc)
+  - [C# Documentation (XML Documentation)](#c-documentation-xml-documentation)
+- [Dynamic Languages](#dynamic-languages)
+  - [Ruby Documentation (RDoc/YARD)](#ruby-documentation-rdocyard)
+  - [PHP Documentation (phpDocumentor)](#php-documentation-phpdocumentor)
+- [Mobile Development](#mobile-development)
+  - [Swift Documentation](#swift-documentation)
+  - [Kotlin Documentation (KDoc)](#kotlin-documentation-kdoc)
+- [Universal Search Patterns](#universal-search-patterns)
+  - [Language-Specific Searches](#language-specific-searches)
+  - [Cross-Language Searches](#cross-language-searches)
+  - [Context-Aware Searches](#context-aware-searches)
+- [Recommended Positioning](#recommended-positioning)
+- [Migration Strategies](#migration-strategies)
+  - [Adding to Existing Documentation](#adding-to-existing-documentation)
+  - [Example Migration Script](#example-migration-script)
+- [Best Practices](#best-practices)
+  - [Universal Guidelines](#universal-guidelines)
+  - [Language-Specific Tips](#language-specific-tips)
+- [Conclusion](#conclusion)
+
+Magic Anchors work seamlessly across all major documentation systems, because they're just comment content. This enables universal code navigation while preserving existing documentation workflows.
 
 ## Core Compatibility Principle
 
