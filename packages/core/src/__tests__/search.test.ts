@@ -1,6 +1,7 @@
 // :A: tldr Tests for GrepaSearch functionality
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeFileSync, unlinkSync, mkdirSync, rmdirSync } from 'fs';
+import { resolve } from 'path';
 import { GrepaSearch } from '../search/grepa-search.js';
 
 describe('GrepaSearch', () => {
@@ -39,7 +40,7 @@ Some content here.
   });
 
   it('should search for anchors by marker', async () => {
-    const result = await GrepaSearch.searchWithResult([testFile1], { markers: ['todo'] });
+    const result = await GrepaSearch.search([testFile1], { markers: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -52,17 +53,20 @@ Some content here.
   });
 
   it('should search multiple files', async () => {
-    const result = await GrepaSearch.searchWithResult([testFile1, testFile2], { markers: ['todo'] });
+    const result = await GrepaSearch.search([testFile1, testFile2], { markers: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data).toHaveLength(2);
-      expect(result.data.map(r => r.anchor.file)).toEqual([testFile1, testFile2]);
+      const files = result.data.map((r: any) => r.anchor.file);
+      // :A: ctx globby returns absolute paths
+      expect(files).toContain(resolve(testFile1));
+      expect(files).toContain(resolve(testFile2));
     }
   });
 
   it('should include context when requested', async () => {
-    const result = await GrepaSearch.searchWithResult([testFile1], { 
+    const result = await GrepaSearch.search([testFile1], { 
       markers: ['todo'],
       context: 2
     });
@@ -78,20 +82,20 @@ Some content here.
     }
   });
 
-  it('should search directory recursively', async () => {
-    const result = await GrepaSearch.searchWithResult([testDir], { markers: ['api'] });
+  it('should search with glob patterns', async () => {
+    const result = await GrepaSearch.search([`${testDir}/*.ts`], { markers: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data).toHaveLength(1);
       const firstResult = result.data[0];
       expect(firstResult).toBeDefined();
-      expect(firstResult!.anchor.markers).toContain('api');
+      expect(firstResult!.anchor.file).toContain('test1.ts');
     }
   });
 
   it('should get unique markers from results', async () => {
-    const result = await GrepaSearch.searchWithResult([testFile1, testFile2]);
+    const result = await GrepaSearch.search([testFile1, testFile2]);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -105,7 +109,7 @@ Some content here.
   });
 
   it('should group results by marker', async () => {
-    const result = await GrepaSearch.searchWithResult([testFile1, testFile2]);
+    const result = await GrepaSearch.search([testFile1, testFile2]);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -117,24 +121,38 @@ Some content here.
   });
 
   it('should group results by file', async () => {
-    const result = await GrepaSearch.searchWithResult([testFile1, testFile2]);
+    const result = await GrepaSearch.search([testFile1, testFile2]);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
       const grouped = GrepaSearch.groupByFile(result.data);
-      expect(grouped[testFile1]).toHaveLength(3); // tldr, todo, sec
-      expect(grouped[testFile2]).toHaveLength(3); // guide, todo, api
+      // :A: ctx use absolute paths for lookup
+      const absFile1 = resolve(testFile1);
+      const absFile2 = resolve(testFile2);
+      expect(grouped[absFile1]).toHaveLength(3); // tldr, todo, sec
+      expect(grouped[absFile2]).toHaveLength(3); // guide, todo, api
     }
   });
 
-  // :A: ctx legacy sync method tests for backward compatibility
-  it('should support legacy sync search method', () => {
-    const results = GrepaSearch.search([testFile1], { markers: ['todo'] });
+  it('should handle non-existent files gracefully', async () => {
+    const result = await GrepaSearch.search(['non-existent-file.ts']);
     
-    expect(results).toHaveLength(1);
-    const firstResult = results[0];
-    expect(firstResult).toBeDefined();
-    expect(firstResult!.anchor.markers).toContain('todo');
-    expect(firstResult!.anchor.prose).toBe('implement this function');
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.code).toBe('search.noResults');
+    }
+  });
+
+  it('should respect file extension filtering', async () => {
+    const result = await GrepaSearch.search([`${testDir}/*`]);
+    
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      // :A: ctx should find both .ts and .md files
+      expect(result.data.length).toBeGreaterThan(0);
+      const files = result.data.map((r: any) => r.anchor.file);
+      expect(files.some((f: string) => f.endsWith('.ts'))).toBe(true);
+      expect(files.some((f: string) => f.endsWith('.md'))).toBe(true);
+    }
   });
 });

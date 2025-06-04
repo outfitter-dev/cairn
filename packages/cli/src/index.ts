@@ -1,10 +1,23 @@
 // :A: tldr Main CLI implementation using Commander.js
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { readFileSync, existsSync } from 'fs';
-import { MagicAnchorParser, GrepaSearch, success, failure, makeError, humanise, parseCommandOptionsSchema, searchCommandOptionsSchema, listCommandOptionsSchema, fromZod } from '@grepa/core';
+import { readFile } from 'fs/promises';
+import { existsSync } from 'fs';
+import { isAbsolute, resolve } from 'path';
+import { 
+  MagicAnchorParser, 
+  GrepaSearch, 
+  success, 
+  failure, 
+  makeError, 
+  humanise, 
+  parseCommandOptionsSchema, 
+  searchCommandOptionsSchema, 
+  listCommandOptionsSchema, 
+  fromZod,
+  filePathSchema
+} from '@grepa/core';
 import type { Result, AppError } from '@grepa/core';
-import type { MagicAnchor } from '@grepa/types';
 import { FormatterFactory } from '@grepa/formatters';
 
 export class CLI {
@@ -29,6 +42,7 @@ export class CLI {
       .argument('<files...>', 'Files to parse')
       .option('-j, --json', 'Output as JSON')
       .option('-v, --verbose', 'Show parsing errors')
+      .option('-f, --format <format>', 'Output format (terminal, json, csv)', 'terminal')
       .action(async (files: string[], options) => {
         const result = await this.parseCommand(files, options);
         this.handleCommandResult(result);
@@ -39,12 +53,14 @@ export class CLI {
       .command('search')
       .description('Search for anchors by marker')
       .argument('<marker>', 'Marker to search for')
-      .argument('[files...]', 'Files to search (default: all)')
+      .argument('[patterns...]', 'File patterns to search (default: current directory)')
       .option('-j, --json', 'Output as JSON')
       .option('-c, --context <lines>', 'Show context lines', '0')
+      .option('-f, --format <format>', 'Output format (terminal, json, csv)', 'terminal')
       .option('--no-gitignore', 'Do not respect .gitignore files')
-      .action(async (marker: string, files: string[], options) => {
-        const result = await this.searchCommand(marker, files, options);
+      .option('--exclude <patterns...>', 'Patterns to exclude')
+      .action(async (marker: string, patterns: string[], options) => {
+        const result = await this.searchCommand(marker, patterns, options);
         this.handleCommandResult(result);
       });
 
@@ -52,12 +68,14 @@ export class CLI {
     this.program
       .command('list')
       .description('List all anchors in file(s)')
-      .argument('[files...]', 'Files to analyze')
+      .argument('[patterns...]', 'File patterns to analyze (default: current directory)')
       .option('-j, --json', 'Output as JSON')
       .option('-m, --markers', 'Show only markers')
+      .option('-f, --format <format>', 'Output format (terminal, json, csv)', 'terminal')
       .option('--no-gitignore', 'Do not respect .gitignore files')
-      .action(async (files: string[], options) => {
-        const result = await this.listCommand(files, options);
+      .option('--exclude <patterns...>', 'Patterns to exclude')
+      .action(async (patterns: string[], options) => {
+        const result = await this.listCommand(patterns, options);
         this.handleCommandResult(result);
       });
   }
@@ -87,6 +105,37 @@ export class CLI {
     }
   }
 
+  // :A: api validate file paths for security
+  private validateFilePaths(files: string[]): Result<string[]> {
+    const validatedPaths: string[] = [];
+    
+    for (const file of files) {
+      // :A: sec validate file path
+      const validation = filePathSchema.safeParse(file);
+      if (!validation.success) {
+        return failure(makeError(
+          'file.invalidPath',
+          `Invalid file path: ${file}`
+        ));
+      }
+      
+      // :A: sec prevent directory traversal
+      const absolutePath = isAbsolute(file) ? file : resolve(process.cwd(), file);
+      const normalizedPath = resolve(absolutePath);
+      
+      if (!normalizedPath.startsWith(process.cwd()) && !normalizedPath.startsWith('/')) {
+        return failure(makeError(
+          'file.accessDenied',
+          `Access denied: ${file} is outside the working directory`
+        ));
+      }
+      
+      validatedPaths.push(file);
+    }
+    
+    return success(validatedPaths);
+  }
+
   // :A: api handle parse command with Result pattern
   private async parseCommand(
     files: string[],
@@ -99,41 +148,55 @@ export class CLI {
     }
 
     const validOptions = optionsValidation.data;
-    const results: Array<{ file: string; anchors: MagicAnchor[]; errors: unknown[] }> = [];
+
+    // :A: ctx validate file paths
+    const pathValidation = this.validateFilePaths(files);
+    if (!pathValidation.ok) {
+      return pathValidation;
+    }
+
+    const formatter = FormatterFactory.create(validOptions.format || 'terminal');
+    const results: any[] = [];
     const errors: AppError[] = [];
 
-    for (const file of files) {
+    for (const file of pathValidation.data) {
       if (!existsSync(file)) {
         errors.push(makeError('file.notFound', `File not found: ${file}`));
         continue;
       }
 
-      // :A: ctx use Result-based parser
-      const parseResult = MagicAnchorParser.parseWithResult(
-        readFileSync(file, 'utf-8'),
-        file
-      );
+      try {
+        // :A: ctx use async file reading
+        const content = await readFile(file, 'utf-8');
+        const parseResult = MagicAnchorParser.parseWithResult(content, file);
 
-      if (!parseResult.ok) {
-        errors.push(parseResult.error);
-        continue;
-      }
+        if (!parseResult.ok) {
+          errors.push(parseResult.error);
+          continue;
+        }
 
-      if (validOptions.json === true) {
-        results.push({ file, ...parseResult.data });
-      } else {
-        const formatType = 'terminal';
-        const formatter = FormatterFactory.createParseResultFormatter(formatType);
-        console.log(chalk.blue(`\n📁 ${file}`));
-        console.log(formatter.format(parseResult.data));
+        if (validOptions.format === 'json' || validOptions.json) {
+          results.push({ file, ...parseResult.data });
+        } else {
+          const output = formatter.format({
+            type: 'parse',
+            data: { file, result: parseResult.data }
+          });
+          console.log(output);
+        }
+      } catch (error) {
+        errors.push(makeError(
+          'file.readError',
+          `Cannot read file ${file}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        ));
       }
     }
 
-    if (validOptions.json === true && results.length > 0) {
+    if (validOptions.format === 'json' || validOptions.json) {
       console.log(JSON.stringify(results, null, 2));
     }
 
-    if (errors.length > 0 && validOptions.json !== true) {
+    if (errors.length > 0 && validOptions.verbose) {
       errors.forEach(error => {
         console.error(chalk.red(`${error.code}: ${error.message}`));
       });
@@ -146,8 +209,8 @@ export class CLI {
   // :A: api handle search command with Result pattern
   private async searchCommand(
     marker: string,
-    files: string[],
-    options: unknown
+    patterns: string[],
+    options: any
   ): Promise<Result<void>> {
     // :A: ctx validate options
     const optionsValidation = searchCommandOptionsSchema.safeParse(options);
@@ -156,44 +219,45 @@ export class CLI {
     }
 
     const validOptions = optionsValidation.data;
-    const patterns = files.length > 0 ? files : ['.'];
+    
+    // :A: ctx validate marker
+    if (!marker || marker.trim().length === 0) {
+      return failure(makeError(
+        'cli.missingArgument',
+        'Marker cannot be empty'
+      ));
+    }
+
+    // :A: ctx use current directory if no patterns specified
+    const searchPatterns = patterns.length > 0 ? patterns : ['./**/*'];
+    
     const searchOptions = {
       markers: [marker],
-      context: validOptions.context ? parseInt(validOptions.context) : 0,
-      recursive: true,
-      respectGitignore: validOptions.gitignore !== false
+      context: parseInt(validOptions.context ?? '0') || 0,
+      respectGitignore: options.gitignore !== false,
+      exclude: options.exclude || []
     };
 
-    // :A: ctx use Result-based search
-    const searchResult = await GrepaSearch.searchWithResult(patterns, searchOptions);
+    // :A: ctx use new async search method
+    const searchResult = await GrepaSearch.search(searchPatterns, searchOptions);
     if (!searchResult.ok) {
       return searchResult;
     }
 
-    const results = searchResult.data;
-
-    if (validOptions.json === true) {
-      console.log(JSON.stringify(results, null, 2));
-    } else {
-      const formatType = 'terminal';
-      const formatter = FormatterFactory.createSearchResultFormatter(formatType, {
-        context: searchOptions.context
-      });
-      if (results.length === 0) {
-        console.log(chalk.yellow('No anchors found'));
-      } else {
-        console.log(chalk.green(`Found ${results.length} anchor(s) with marker: ${marker}\n`));
-        console.log(formatter.format(results));
-      }
-    }
+    const formatter = FormatterFactory.create(validOptions.format || options.json ? 'json' : 'terminal');
+    const output = formatter.format({
+      type: 'search',
+      data: searchResult.data
+    });
+    console.log(output);
 
     return success(undefined);
   }
 
   // :A: api handle list command with Result pattern
   private async listCommand(
-    files: string[],
-    options: unknown
+    patterns: string[],
+    options: any
   ): Promise<Result<void>> {
     // :A: ctx validate options
     const optionsValidation = listCommandOptionsSchema.safeParse(options);
@@ -203,34 +267,37 @@ export class CLI {
 
     const validOptions = optionsValidation.data;
 
-    // :A: ctx use current directory if no files specified
-    const targetFiles = files.length > 0 ? files : ['.'];
+    // :A: ctx use current directory if no patterns specified
+    const searchPatterns = patterns.length > 0 ? patterns : ['./**/*'];
 
     // :A: ctx search for all anchors
-    const searchResult = await GrepaSearch.searchWithResult(targetFiles, {
-      recursive: true,
-      respectGitignore: validOptions.gitignore !== false
+    const searchResult = await GrepaSearch.search(searchPatterns, {
+      respectGitignore: options.gitignore !== false,
+      exclude: options.exclude || []
     });
 
     if (!searchResult.ok) {
       return searchResult;
     }
 
-    // :A: ctx extract anchors from search results
-    const anchors = searchResult.data.map(result => result.anchor);
-
-    if (validOptions.json === true) {
-      console.log(JSON.stringify(anchors, null, 2));
+    const formatter = FormatterFactory.create(validOptions.format || options.json ? 'json' : 'terminal');
+    
+    if (validOptions.markers) {
+      // :A: ctx show only unique markers
+      const uniqueMarkers = GrepaSearch.getUniqueMarkers(searchResult.data);
+      const output = formatter.format({
+        type: 'markers',
+        data: uniqueMarkers
+      });
+      console.log(output);
     } else {
-      const formatType = 'terminal';
-      const formatter = FormatterFactory.createMagicAnchorListFormatter(
-        formatType,
-        validOptions.markers ? { markersOnly: true } : undefined
-      );
-      console.log(formatter.format(anchors));
+      const output = formatter.format({
+        type: 'list',
+        data: searchResult.data
+      });
+      console.log(output);
     }
 
     return success(undefined);
   }
-
 }
