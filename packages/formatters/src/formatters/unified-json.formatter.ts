@@ -2,8 +2,14 @@
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
 
 export class JsonFormatter implements IFormatter {
+  // :A: sec track visited objects to detect circular references without mutation
+  private visited = new WeakSet<any>();
+
   // :A: api format any input as JSON with improved security and type safety
   format(input: FormatterInput): string {
+    // Reset visited set for each format call
+    this.visited = new WeakSet<any>();
+    
     try {
       // :A: sec handle all known types consistently and securely
       if (input.type === 'search' || input.type === 'list' || 
@@ -26,21 +32,22 @@ export class JsonFormatter implements IFormatter {
     }
   }
 
-  // :A: sec JSON replacer to sanitize sensitive data
-  private jsonReplacer(key: string, value: any): any {
-    // :A: sec remove potentially sensitive fields
-    if (key === 'password' || key === 'token' || key === 'secret' || key === 'key') {
+  // :A: sec JSON replacer to sanitize sensitive data - arrow function to maintain 'this' context
+  private jsonReplacer = (key: string, value: any): any => {
+    // :A: sec enhanced sensitive field detection with case-insensitive substring matching
+    const sensitiveFields = ['password', 'token', 'secret', 'key', 'auth', 'credential', 'apikey', 'accesstoken'];
+    if (sensitiveFields.some(field => key.toLowerCase().includes(field))) {
       return '[REDACTED]';
     }
     
-    // :A: sec handle circular references
+    // :A: sec handle circular references without mutating original objects
     if (typeof value === 'object' && value !== null) {
-      if (value.__seen) {
+      if (this.visited.has(value)) {
         return '[Circular]';
       }
-      value.__seen = true;
+      this.visited.add(value);
     }
     
     return value;
-  }
+  };
 }

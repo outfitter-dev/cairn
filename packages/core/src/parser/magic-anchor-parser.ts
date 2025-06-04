@@ -27,11 +27,12 @@ export class MagicAnchorParser {
       return failure(fromZod(inputValidation.error));
     }
 
-    // :A: ctx check file size limit
-    if (content.length > this.MAX_FILE_SIZE) {
+    // :A: ctx check file size limit using byte length to prevent multi-byte character bypass
+    const contentByteLength = Buffer.byteLength(content, 'utf8');
+    if (contentByteLength > MagicAnchorParser.MAX_FILE_SIZE) {
       return failure(makeError(
         'file.tooLarge',
-        `File exceeds maximum size of ${this.MAX_FILE_SIZE} bytes`
+        `File exceeds maximum size of ${Math.round(contentByteLength / 1024 / 1024)}MB (limit: ${Math.round(MagicAnchorParser.MAX_FILE_SIZE / 1024 / 1024)}MB)`
       ));
     }
 
@@ -76,7 +77,7 @@ export class MagicAnchorParser {
       return {
         error: {
           line: lineNumber,
-          column: anchorIndex + 4,
+          column: anchorIndex + 3, // Point to where the space should be
           message: 'Missing required space after :A:',
           raw: line
         }
@@ -122,7 +123,7 @@ export class MagicAnchorParser {
       if (char === '(') {
         parenDepth++;
       } else if (char === ')') {
-        parenDepth--;
+        if (parenDepth > 0) parenDepth--; // Prevent negative depth on unmatched parentheses
       } else if (char === ' ' && parenDepth === 0) {
         // :A: ctx check if this space is after a comma (still in marker list)
         let j = i - 1;

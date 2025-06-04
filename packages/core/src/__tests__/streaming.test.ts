@@ -77,24 +77,30 @@ describe('Large File Streaming', () => {
 
   it('should parse simple payloads correctly in streaming', () => {
     // :A: ctx test the simple payload parser used in streaming
-    const testPayloads = [
-      'todo implement feature',
-      'security, todo validate inputs',
-      'issue(123) fix authentication',
-      'owner(@alice), priority(high) urgent task'
+    const testCases = [
+      { payload: 'todo implement feature', expected: { markers: ['todo'], prose: 'implement feature' } },
+      { payload: 'security, todo validate inputs', expected: { markers: ['security', 'todo'], prose: 'validate inputs' } },
+      { payload: 'issue(123) fix authentication', expected: { markers: ['issue(123)'], prose: 'fix authentication' } },
+      { payload: 'owner(@alice), priority(high) urgent task', expected: { markers: ['owner(@alice)', 'priority(high)'], prose: 'urgent task' } }
     ];
 
-    // Note: This tests the concept - actual implementation would use GrepaSearch.parsePayloadSimple
-    testPayloads.forEach(payload => {
-      expect(typeof payload).toBe('string');
-      expect(payload.length).toBeGreaterThan(0);
-      // Test that payloads can contain commas and parentheses
-      expect(payload.includes(',') || payload.includes('(')).toBeDefined();
+    // Test the parsePayloadSimple method directly
+    const parseMethod = (GrepaSearch as any).parsePayloadSimple;
+    
+    testCases.forEach(({ payload, expected }) => {
+      const result = parseMethod(payload);
+      expect(result.markers).toEqual(expected.markers);
+      expect(result.prose).toEqual(expected.prose);
     });
   });
 
   it('should maintain memory efficiency with large files', async () => {
     // :A: perf test memory usage doesn't explode with large files
+    // Force garbage collection if available for more reliable baseline
+    if (global.gc) {
+      global.gc();
+    }
+    
     const initialMemory = process.memoryUsage().heapUsed;
     
     const searchOptions = {
@@ -104,12 +110,18 @@ describe('Large File Streaming', () => {
 
     const result = await GrepaSearch.search([largeTestFile], searchOptions);
     
+    // Force GC again to get more accurate final measurement
+    if (global.gc) {
+      global.gc();
+    }
+    
     const finalMemory = process.memoryUsage().heapUsed;
     const memoryIncrease = finalMemory - initialMemory;
     
     // The test file should be processed regardless of whether anchors are found
     expect(result.ok || (!result.ok && result.error.code === 'search.noResults')).toBe(true);
     // Memory increase should be reasonable (less than 100MB for processing)
+    // Use generous threshold due to V8 memory management behavior
     expect(memoryIncrease).toBeLessThan(100 * 1024 * 1024);
   });
 

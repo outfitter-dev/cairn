@@ -95,8 +95,13 @@ export class CSVFormatter implements IFormatter {
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :A: api escape CSV field values
+  // :A: api escape CSV field values and prevent formula injection
   private escapeCsvField(field: string): string {
+    // :A: sec neutralize potential formula-injection payloads (CVE-2014-3524)
+    if (/^[=+\-@]/.test(field)) {
+      field = `'${field}`;
+    }
+    
     // :A: ctx if field contains comma, quotes, or newline, wrap in quotes
     if (field.includes(',') || field.includes('"') || field.includes('\n')) {
       // :A: ctx escape quotes by doubling them

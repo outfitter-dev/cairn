@@ -210,7 +210,12 @@ export class CLI {
       
       // :A: critical remove the vulnerability that allowed any absolute path starting with '/'
       // Only allow paths within the current working directory
-      if (!normalizedPath.startsWith(cwd)) {
+      // :A: sec handle Windows case-insensitive drive letters
+      const withinCwd = process.platform === 'win32'
+        ? normalizedPath.toLowerCase().startsWith(cwd.toLowerCase())
+        : normalizedPath.startsWith(cwd);
+        
+      if (!withinCwd) {
         return failure(makeError(
           'file.accessDenied',
           `Access denied: ${file} is outside the working directory`
@@ -225,7 +230,11 @@ export class CLI {
           const realPath = await realpath(normalizedPath);
           
           // Verify the real path is also within bounds
-          if (!realPath.startsWith(cwd)) {
+          const realPathWithinCwd = process.platform === 'win32'
+            ? realPath.toLowerCase().startsWith(cwd.toLowerCase())
+            : realPath.startsWith(cwd);
+            
+          if (!realPathWithinCwd) {
             return failure(makeError(
               'file.accessDenied',
               `Access denied: ${file} resolves to a path outside the working directory`
@@ -262,15 +271,15 @@ export class CLI {
       ));
     }
 
-    // :A: sec check for suspicious patterns
+    // :A: sec check for suspicious patterns (no global flag to avoid state issues)
     const suspiciousPatterns = [
-      /eval\s*\(/gi,                    // eval() calls
-      /Function\s*\(/gi,                // Function constructor
-      /<script[\s>]/gi,                 // Script tags
-      /javascript:/gi,                  // JavaScript protocol
-      /on\w+\s*=/gi,                   // Event handlers
-      /\bexec\s*\(/gi,                 // exec() calls
-      /require\s*\(\s*['"`][^'"]+['"`]\s*\)\s*\(/gi  // Dynamic require
+      /eval\s*\(/i,                    // eval() calls
+      /Function\s*\(/i,                // Function constructor
+      /<script[\s>]/i,                 // Script tags
+      /javascript:/i,                  // JavaScript protocol
+      /on\w+\s*=/i,                   // Event handlers
+      /\bexec\s*\(/i,                 // exec() calls
+      /require\s*\(\s*['"`][^'"]+['"`]\s*\)\s*\(/i  // Dynamic require
     ];
 
     for (const pattern of suspiciousPatterns) {
@@ -417,7 +426,13 @@ export class CLI {
       return searchResult;
     }
 
-    const formatter = FormatterFactory.create(validOptions.format || options['json'] ? 'json' : 'terminal');
+    const formatter = FormatterFactory.create(
+      validOptions.format
+        ? validOptions.format
+        : options['json']
+          ? 'json'
+          : 'terminal'
+    );
     const output = formatter.format({
       type: 'search',
       data: searchResult.data
@@ -459,7 +474,13 @@ export class CLI {
       return searchResult;
     }
 
-    const formatter = FormatterFactory.create(validOptions.format || options['json'] ? 'json' : 'terminal');
+    const formatter = FormatterFactory.create(
+      validOptions.format
+        ? validOptions.format
+        : options['json']
+          ? 'json'
+          : 'terminal'
+    );
     
     if (validOptions.markers) {
       // :A: ctx show only unique markers

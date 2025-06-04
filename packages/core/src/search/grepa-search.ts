@@ -121,9 +121,9 @@ export class GrepaSearch {
 
       const files = await globby(patterns, globOptions);
 
-      // :A: ctx filter by extensions
+      // :A: ctx filter by extensions (case-insensitive to handle .TS, .Js, etc.)
       const filteredFiles = files.filter(file => {
-        const ext = extname(file);
+        const ext = extname(file).toLowerCase();
         return GrepaSearch.DEFAULT_EXTENSIONS.includes(ext);
       });
 
