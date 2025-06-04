@@ -169,14 +169,14 @@ export class MagicAnchorParser {
       const prose = payload.substring(spaceIndex + 1).trim();
       
       return {
-        markers: this.parseMarkers(markersStr),
+        markers: MagicAnchorParser.parseMarkers(markersStr),
         ...(prose ? { prose } : {})
       };
     }
     
     // :A: ctx no prose found, entire payload is markers
     return {
-      markers: this.parseMarkers(payload)
+      markers: MagicAnchorParser.parseMarkers(payload)
     };
   }
   

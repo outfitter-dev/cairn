@@ -1,5 +1,6 @@
 // :A: tldr Search functionality for Magic Anchors across files
 import { readFile, stat } from 'fs/promises';
+import { createReadStream } from 'fs';
 import { extname } from 'path';
 import { MagicAnchorParser } from '../parser/magic-anchor-parser.js';
 import type { MagicAnchor, SearchOptions, SearchResult } from '@grepa/types';
@@ -8,6 +9,7 @@ import { type AppError, makeError } from '../lib/error.js';
 import { searchOptionsSchema } from '../schemas/index.js';
 import { fromZod } from '../lib/zod-adapter.js';
 import { globby } from 'globby';
+import * as readline from 'readline';
 
 /**
  * Search functionality for finding Magic Anchors across files.
@@ -49,7 +51,7 @@ export class GrepaSearch {
     }
 
     // :A: ctx resolve files with error handling
-    const filesResult = await this.resolveFiles(patterns, options);
+    const filesResult = await GrepaSearch.resolveFiles(patterns, options);
     if (!filesResult.ok) {
       return filesResult;
     }
@@ -59,7 +61,7 @@ export class GrepaSearch {
 
     // :A: ctx process each file concurrently for better performance
     const filePromises = filesResult.data.map(file => 
-      this.processFile(file, options)
+      GrepaSearch.processFile(file, options)
     );
 
     const fileResults = await Promise.allSettled(filePromises);
@@ -88,10 +90,10 @@ export class GrepaSearch {
     }
 
     // :A: ctx check for too many results
-    if (results.length > this.MAX_RESULTS) {
+    if (results.length > GrepaSearch.MAX_RESULTS) {
       return failure(makeError(
         'search.tooManyResults',
-        `Found ${results.length} results, exceeding limit of ${this.MAX_RESULTS}`
+        `Found ${results.length} results, exceeding limit of ${GrepaSearch.MAX_RESULTS}`
       ));
     }
 
@@ -122,7 +124,7 @@ export class GrepaSearch {
       // :A: ctx filter by extensions
       const filteredFiles = files.filter(file => {
         const ext = extname(file);
-        return this.DEFAULT_EXTENSIONS.includes(ext);
+        return GrepaSearch.DEFAULT_EXTENSIONS.includes(ext);
       });
 
       if (filteredFiles.length === 0) {
@@ -157,12 +159,9 @@ export class GrepaSearch {
       return statResult;
     }
 
-    if (statResult.data.size > this.MAX_FILE_SIZE) {
-      // :A: todo implement streaming for large files
-      return failure(makeError(
-        'file.tooLarge',
-        `File ${file} exceeds maximum size of ${this.MAX_FILE_SIZE} bytes`
-      ));
+    // :A: perf handle large files with streaming
+    if (statResult.data.size > GrepaSearch.MAX_FILE_SIZE) {
+      return GrepaSearch.processLargeFile(file, options);
     }
 
     // :A: ctx read file content
@@ -192,11 +191,11 @@ export class GrepaSearch {
     // :A: ctx filter anchors based on search criteria
     const results: SearchResult[] = [];
     for (const anchor of parseResult.data.anchors) {
-      if (this.matchesSearch(anchor, options)) {
+      if (GrepaSearch.matchesSearch(anchor, options)) {
         const result: SearchResult = {
           anchor,
           ...(options.context && options.context > 0
-            ? { context: this.getContext(contentResult.data, anchor.line, options.context) }
+            ? { context: GrepaSearch.getContext(contentResult.data, anchor.line, options.context) }
             : {})
         };
         results.push(result);
@@ -279,5 +278,132 @@ export class GrepaSearch {
     });
 
     return grouped;
+  }
+
+  // :A: api process large files using streaming to avoid memory issues
+  private static async processLargeFile(
+    file: string,
+    options: SearchOptions
+  ): Promise<Result<SearchResult[]>> {
+    return new Promise((resolve) => {
+      const results: SearchResult[] = [];
+      const stream = createReadStream(file, { encoding: 'utf-8' });
+      const rl = readline.createInterface({
+        input: stream,
+        crlfDelay: Infinity
+      });
+
+      let lineNumber = 0;
+      let contextBuffer: string[] = [];
+      const contextSize = options.context || 0;
+
+      rl.on('line', (line) => {
+        lineNumber++;
+        
+        // :A: ctx maintain context buffer for surrounding lines
+        if (contextSize > 0) {
+          contextBuffer.push(line);
+          if (contextBuffer.length > contextSize * 2 + 1) {
+            contextBuffer.shift();
+          }
+        }
+
+        // :A: ctx check for anchor in current line
+        const anchorMatch = line.indexOf(':A:');
+        if (anchorMatch !== -1) {
+          // :A: ctx parse the line for a valid anchor
+          const afterAnchor = line.substring(anchorMatch + 3);
+          
+          if (afterAnchor.startsWith(' ')) {
+            const payload = afterAnchor.substring(1).trim();
+            if (payload) {
+              const { markers, prose } = GrepaSearch.parsePayloadSimple(payload);
+              
+              const anchor: MagicAnchor = {
+                line: lineNumber,
+                column: anchorMatch + 1,
+                raw: line,
+                markers,
+                file,
+                ...(prose ? { prose } : {})
+              };
+
+              if (GrepaSearch.matchesSearch(anchor, options)) {
+                const result: SearchResult = {
+                  anchor,
+                  ...(contextSize > 0
+                    ? { context: GrepaSearch.getContextFromBuffer(contextBuffer, lineNumber, contextSize) }
+                    : {})
+                };
+                results.push(result);
+              }
+            }
+          }
+        }
+      });
+
+      rl.on('close', () => {
+        if (results.length === 0) {
+          resolve(success([]));
+        } else {
+          resolve(success(results));
+        }
+      });
+
+      rl.on('error', (error) => {
+        resolve(failure(makeError(
+          'file.readError',
+          `Error reading large file ${file}: ${error.message}`,
+          error
+        )));
+      });
+    });
+  }
+
+  // :A: api simple payload parser for streaming (avoids full parser overhead)
+  private static parsePayloadSimple(payload: string): { markers: string[]; prose?: string } {
+    // :A: ctx find first space not in parentheses for marker/prose split
+    let parenDepth = 0;
+    let spaceIndex = -1;
+    
+    for (let i = 0; i < payload.length; i++) {
+      const char = payload[i];
+      if (char === '(') parenDepth++;
+      else if (char === ')') parenDepth--;
+      else if (char === ' ' && parenDepth === 0) {
+        // Check if this might be prose separator
+        const beforeSpace = payload.substring(0, i);
+        if (!beforeSpace.endsWith(',')) {
+          spaceIndex = i;
+          break;
+        }
+      }
+    }
+    
+    if (spaceIndex > 0) {
+      const markersStr = payload.substring(0, spaceIndex);
+      const prose = payload.substring(spaceIndex + 1).trim();
+      return {
+        markers: markersStr.split(',').map(m => m.trim()).filter(m => m),
+        ...(prose ? { prose } : {})
+      };
+    }
+    
+    return {
+      markers: payload.split(',').map(m => m.trim()).filter(m => m)
+    };
+  }
+
+  // :A: api get context from buffer for streaming
+  private static getContextFromBuffer(
+    buffer: string[],
+    _currentLine: number,
+    contextSize: number
+  ): { before: string[]; after: string[] } {
+    const bufferMiddle = Math.floor(buffer.length / 2);
+    const before = buffer.slice(Math.max(0, bufferMiddle - contextSize), bufferMiddle);
+    const after = buffer.slice(bufferMiddle + 1, Math.min(buffer.length, bufferMiddle + contextSize + 1));
+    
+    return { before, after };
   }
 }
