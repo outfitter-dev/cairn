@@ -1,31 +1,38 @@
 // :A: tldr Search functionality for Magic Anchors across files
-import { readFileSync, readdirSync, statSync } from 'fs';
-import { join, extname } from 'path';
+import { readFile, stat } from 'fs/promises';
+import { createReadStream } from 'fs';
+import { extname } from 'path';
 import { MagicAnchorParser } from '../parser/magic-anchor-parser.js';
-import { IgnoreManager } from '../lib/ignore-manager.js';
 import type { MagicAnchor, SearchOptions, SearchResult } from '@grepa/types';
 import { type Result, success, failure, tryAsync } from '../lib/result.js';
 import { type AppError, makeError } from '../lib/error.js';
 import { searchOptionsSchema } from '../schemas/index.js';
 import { fromZod } from '../lib/zod-adapter.js';
+import { globby } from 'globby';
+import * as readline from 'readline';
 
 /**
  * Search functionality for finding Magic Anchors across files.
- * Supports both sync and async operations with Result pattern.
+ * All operations are async for better performance and scalability.
  */
 export class GrepaSearch {
   // :A: api search configuration constants
-  private static readonly DEFAULT_EXTENSIONS = ['.ts', '.js', '.jsx', '.tsx', '.md', '.txt', '.py', '.java', '.c', '.cpp', '.h'];
-  private static readonly MAX_RESULTS = 1000;
+  private static readonly DEFAULT_EXTENSIONS = [
+    '.ts', '.js', '.jsx', '.tsx', '.md', '.txt',
+    '.py', '.java', '.c', '.cpp', '.h', '.go',
+    '.rs', '.rb', '.php', '.swift', '.kt', '.scala'
+  ];
+  private static readonly MAX_RESULTS = 10000;
+  private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
   /**
-   * Search files for Magic Anchors using Result pattern.
+   * Search files for Magic Anchors.
    * @param patterns - File patterns to search (supports glob)
    * @param options - Search options for filtering
    * @returns Promise<Result> containing search results or error
    */
-  // :A: api search for anchors with Result pattern
-  static async searchWithResult(
+  // :A: api main search method
+  static async search(
     patterns: string[],
     options: SearchOptions = {}
   ): Promise<Result<SearchResult[]>> {
@@ -44,7 +51,7 @@ export class GrepaSearch {
     }
 
     // :A: ctx resolve files with error handling
-    const filesResult = await this.resolveFilesWithResult(patterns, options);
+    const filesResult = await GrepaSearch.resolveFiles(patterns, options);
     if (!filesResult.ok) {
       return filesResult;
     }
@@ -52,13 +59,25 @@ export class GrepaSearch {
     const results: SearchResult[] = [];
     const errors: AppError[] = [];
 
-    // :A: ctx process each file
-    for (const file of filesResult.data) {
-      const fileResult = await this.processFileWithResult(file, options);
-      if (fileResult.ok) {
-        results.push(...fileResult.data);
+    // :A: ctx process each file concurrently for better performance
+    const filePromises = filesResult.data.map(file => 
+      GrepaSearch.processFile(file, options)
+    );
+
+    const fileResults = await Promise.allSettled(filePromises);
+
+    for (const result of fileResults) {
+      if (result.status === 'fulfilled') {
+        if (result.value.ok) {
+          results.push(...result.value.data);
+        } else {
+          errors.push(result.value.error);
+        }
       } else {
-        errors.push(fileResult.error);
+        errors.push(makeError(
+          'file.readError',
+          `Failed to process file: ${result.reason}`
+        ));
       }
     }
 
@@ -71,121 +90,119 @@ export class GrepaSearch {
     }
 
     // :A: ctx check for too many results
-    if (results.length > this.MAX_RESULTS) {
+    if (results.length > GrepaSearch.MAX_RESULTS) {
       return failure(makeError(
         'search.tooManyResults',
-        `Found ${results.length} results, exceeding limit of ${this.MAX_RESULTS}`
+        `Found ${results.length} results, exceeding limit of ${GrepaSearch.MAX_RESULTS}`
       ));
     }
 
     return success(results);
   }
 
-  /**
-   * Search files for Magic Anchors (legacy sync method).
-   * @param patterns - File patterns to search
-   * @param options - Search options for filtering
-   * @returns Array of search results
-   */
-  // :A: api legacy search method for backward compatibility
-  static search(patterns: string[], options: SearchOptions = {}): SearchResult[] {
-    const files = this.resolveFiles(patterns, options);
-    const results: SearchResult[] = [];
-
-    for (const file of files) {
-      try {
-        const content = readFileSync(file, 'utf-8');
-        const parseResult = MagicAnchorParser.parse(content, file);
-        
-        for (const anchor of parseResult.anchors) {
-          if (this.matchesSearch(anchor, options)) {
-            const result: SearchResult = {
-              anchor,
-              ...(options.context ? { context: this.getContext(content, anchor.line, options.context) } : {})
-            };
-            results.push(result);
-          }
-        }
-      } catch (error) {
-        // :A: ctx silently skip unreadable files
-        continue;
-      }
-    }
-
-    return results;
-  }
-
-  // :A: api resolve file patterns to actual file paths
-  private static resolveFiles(patterns: string[], options: SearchOptions): string[] {
-    const files = new Set<string>();
-
-    for (const pattern of patterns) {
-      if (pattern.includes('*')) {
-        // :A: todo implement proper glob matching
-        // :A: ctx for now, just treat as directory
-        const baseDir = pattern.replace(/\/\*\*?.*$/, '') || '.';
-        this.findFiles(baseDir, files, options.recursive !== false);
-      } else {
-        // :A: ctx direct file path
-        try {
-          const stat = statSync(pattern);
-          if (stat.isFile()) {
-            files.add(pattern);
-          } else if (stat.isDirectory()) {
-            this.findFiles(pattern, files, options.recursive !== false);
-          }
-        } catch {
-          // :A: ctx file doesn't exist, skip
-        }
-      }
-    }
-
-    return Array.from(files).filter(file => this.shouldIncludeFile(file, options));
-  }
-
-  // :A: api recursively find files in directory
-  private static findFiles(dir: string, files: Set<string>, recursive: boolean): void {
+  // :A: api resolve file patterns to actual file paths using glob
+  private static async resolveFiles(
+    patterns: string[],
+    options: SearchOptions
+  ): Promise<Result<string[]>> {
     try {
-      const entries = readdirSync(dir);
-      
-      for (const entry of entries) {
-        const fullPath = join(dir, entry);
-        const stat = statSync(fullPath);
-        
-        if (stat.isFile()) {
-          if (this.DEFAULT_EXTENSIONS.includes(extname(entry))) {
-            files.add(fullPath);
-          }
-        } else if (stat.isDirectory() && recursive && !entry.startsWith('.') && entry !== 'node_modules') {
-          this.findFiles(fullPath, files, recursive);
-        }
+      // :A: ctx use globby for proper glob pattern support
+      const globOptions = {
+        absolute: true,
+        onlyFiles: true,
+        dot: false,
+        gitignore: options.respectGitignore !== false,
+        ignore: [
+          '**/node_modules/**',
+          '**/.git/**',
+          ...(options.exclude || [])
+        ]
+      };
+
+      const files = await globby(patterns, globOptions);
+
+      // :A: ctx filter by extensions (case-insensitive to handle .TS, .Js, etc.)
+      const filteredFiles = files.filter(file => {
+        const ext = extname(file).toLowerCase();
+        return GrepaSearch.DEFAULT_EXTENSIONS.includes(ext);
+      });
+
+      if (filteredFiles.length === 0) {
+        return failure(makeError(
+          'search.noResults',
+          'No files found matching the specified patterns'
+        ));
       }
-    } catch {
-      // :A: ctx can't read directory, skip
+
+      return success(filteredFiles);
+    } catch (error) {
+      return failure(makeError(
+        'search.invalidPattern',
+        `Invalid file pattern: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        error
+      ));
     }
   }
 
-  // :A: api check if file should be included based on options
-  private static shouldIncludeFile(file: string, options: SearchOptions): boolean {
-    // :A: ctx check gitignore first if enabled
-    if (options.respectGitignore !== false) {
-      const ignoreResult = IgnoreManager.shouldIgnore(file);
-      // :A: ctx if we can't determine ignore status, include the file
-      // Only exclude if we successfully determined the file should be ignored
-      if (ignoreResult.ok && ignoreResult.data) {
-        return false;
+  // :A: api process single file with error handling
+  private static async processFile(
+    file: string,
+    options: SearchOptions
+  ): Promise<Result<SearchResult[]>> {
+    // :A: ctx check file size first
+    const statResult = await tryAsync(
+      () => stat(file),
+      'file.readError'
+    );
+
+    if (!statResult.ok) {
+      return statResult;
+    }
+
+    // :A: perf handle large files with streaming
+    if (statResult.data.size > GrepaSearch.MAX_FILE_SIZE) {
+      return GrepaSearch.processLargeFile(file, options);
+    }
+
+    // :A: ctx read file content
+    const contentResult = await tryAsync(
+      () => readFile(file, 'utf-8'),
+      'file.readError'
+    );
+
+    if (!contentResult.ok) {
+      return failure(makeError(
+        'file.readError',
+        `Cannot read file: ${file}`,
+        contentResult.error
+      ));
+    }
+
+    // :A: ctx parse file content
+    const parseResult = MagicAnchorParser.parseWithResult(
+      contentResult.data,
+      file
+    );
+
+    if (!parseResult.ok) {
+      return parseResult;
+    }
+
+    // :A: ctx filter anchors based on search criteria
+    const results: SearchResult[] = [];
+    for (const anchor of parseResult.data.anchors) {
+      if (GrepaSearch.matchesSearch(anchor, options)) {
+        const result: SearchResult = {
+          anchor,
+          ...(options.context && options.context > 0
+            ? { context: GrepaSearch.getContext(contentResult.data, anchor.line, options.context) }
+            : {})
+        };
+        results.push(result);
       }
     }
 
-    if (options.files && options.files.length > 0) {
-      return options.files.some((pattern: string) => file.includes(pattern));
-    }
-
-    if (options.exclude && options.exclude.length > 0) {
-      return !options.exclude.some((pattern: string) => file.includes(pattern));
-    }
-
-    return true;
+    return success(results);
   }
 
   // :A: api check if anchor matches search criteria
@@ -223,173 +240,11 @@ export class GrepaSearch {
     return { before, after };
   }
 
-  // :A: api resolve file patterns with error handling
-  private static async resolveFilesWithResult(
-    patterns: string[],
-    options: SearchOptions
-  ): Promise<Result<string[]>> {
-    const files = new Set<string>();
-
-    for (const pattern of patterns) {
-      if (pattern.includes('*')) {
-        const baseDir = pattern.replace(/\/\*\*?.*$/, '') || '.';
-        const dirResult = await this.findFilesWithResult(
-          baseDir,
-          files,
-          options.recursive !== false
-        );
-        if (!dirResult.ok) {
-          return dirResult;
-        }
-      } else {
-        // :A: ctx validate file path
-        const statResult = await tryAsync(
-          () => Promise.resolve(statSync(pattern)),
-          'file.notFound'
-        );
-        
-        if (!statResult.ok) {
-          return failure(makeError(
-            'file.notFound',
-            `File or directory not found: ${pattern}`
-          ));
-        }
-
-        const stat = statResult.data;
-        if (stat.isFile()) {
-          files.add(pattern);
-        } else if (stat.isDirectory()) {
-          const dirResult = await this.findFilesWithResult(
-            pattern,
-            files,
-            options.recursive !== false
-          );
-          if (!dirResult.ok) {
-            return dirResult;
-          }
-        }
-      }
-    }
-
-    const fileArray = Array.from(files).filter(file => 
-      this.shouldIncludeFile(file, options)
-    );
-
-    if (fileArray.length === 0) {
-      return failure(makeError(
-        'search.noResults',  
-        'No files found matching the specified patterns'
-      ));
-    }
-
-    return success(fileArray);
-  }
-
-  // :A: api find files in directory with error handling
-  private static async findFilesWithResult(
-    dir: string,
-    files: Set<string>,
-    recursive: boolean
-  ): Promise<Result<void>> {
-    const readResult = await tryAsync(
-      () => Promise.resolve(readdirSync(dir)),
-      'file.readError'
-    );
-
-    if (!readResult.ok) {
-      return failure(makeError(
-        'file.accessDenied',
-        `Cannot read directory: ${dir}`,
-        readResult.error
-      ));
-    }
-
-    for (const entry of readResult.data) {
-      const fullPath = join(dir, entry);
-      const statResult = await tryAsync(
-        () => Promise.resolve(statSync(fullPath)),
-        'file.readError'
-      );
-
-      if (statResult.ok) {
-        const stat = statResult.data;
-        if (stat.isFile() && this.isSupportedFile(entry)) {
-          files.add(fullPath);
-        } else if (
-          stat.isDirectory() &&
-          recursive &&
-          !entry.startsWith('.') &&
-          entry !== 'node_modules'
-        ) {
-          await this.findFilesWithResult(fullPath, files, recursive);
-        }
-      }
-    }
-
-    return success(undefined);
-  }
-
-  // :A: api check if file type is supported
-  private static isSupportedFile(filename: string): boolean {
-    const supportedExtensions = [
-      '.ts', '.js', '.jsx', '.tsx', '.md', '.txt',
-      '.py', '.java', '.c', '.cpp', '.h', '.go',
-      '.rs', '.rb', '.php', '.swift', '.kt', '.scala'
-    ];
-    return supportedExtensions.includes(extname(filename));
-  }
-
-  // :A: api process single file with error handling
-  private static async processFileWithResult(
-    file: string,
-    options: SearchOptions
-  ): Promise<Result<SearchResult[]>> {
-    // :A: ctx read file content
-    const contentResult = await tryAsync(
-      () => Promise.resolve(readFileSync(file, 'utf-8')),
-      'file.readError'
-    );
-
-    if (!contentResult.ok) {
-      return failure(makeError(
-        'file.readError',
-        `Cannot read file: ${file}`,
-        contentResult.error
-      ));
-    }
-
-    // :A: ctx parse file content
-    const parseResult = MagicAnchorParser.parseWithResult(
-      contentResult.data,
-      file
-    );
-
-    if (!parseResult.ok) {
-      return parseResult;
-    }
-
-    // :A: ctx filter anchors based on search criteria
-    const results: SearchResult[] = [];
-    for (const anchor of parseResult.data.anchors) {
-      if (this.matchesSearch(anchor, options)) {
-        const result: SearchResult = {
-          anchor,
-          ...(options.context && options.context > 0
-            ? { context: this.getContext(contentResult.data, anchor.line, options.context) }
-            : {})
-        };
-        results.push(result);
-      }
-    }
-
-    return success(results);
-  }
-
   // :A: api get all unique markers from search results
   static getUniqueMarkers(results: SearchResult[]): string[] {
     const markers = new Set<string>();
     results.forEach(result => {
-      result.anchor.markers.forEach((marker: string) => markers.add(marker));
+      result.anchor.markers.forEach(marker => markers.add(marker));
     });
     return Array.from(markers).sort();
   }
@@ -399,7 +254,7 @@ export class GrepaSearch {
     const grouped: Record<string, SearchResult[]> = {};
     
     results.forEach(result => {
-      result.anchor.markers.forEach((marker: string) => {
+      result.anchor.markers.forEach(marker => {
         if (!grouped[marker]) {
           grouped[marker] = [];
         }
@@ -423,5 +278,132 @@ export class GrepaSearch {
     });
 
     return grouped;
+  }
+
+  // :A: api process large files using streaming to avoid memory issues
+  private static async processLargeFile(
+    file: string,
+    options: SearchOptions
+  ): Promise<Result<SearchResult[]>> {
+    return new Promise((resolve) => {
+      const results: SearchResult[] = [];
+      const stream = createReadStream(file, { encoding: 'utf-8' });
+      const rl = readline.createInterface({
+        input: stream,
+        crlfDelay: Infinity
+      });
+
+      let lineNumber = 0;
+      let contextBuffer: string[] = [];
+      const contextSize = options.context || 0;
+
+      rl.on('line', (line) => {
+        lineNumber++;
+        
+        // :A: ctx maintain context buffer for surrounding lines
+        if (contextSize > 0) {
+          contextBuffer.push(line);
+          if (contextBuffer.length > contextSize * 2 + 1) {
+            contextBuffer.shift();
+          }
+        }
+
+        // :A: ctx check for anchor in current line
+        const anchorMatch = line.indexOf(':A:');
+        if (anchorMatch !== -1) {
+          // :A: ctx parse the line for a valid anchor
+          const afterAnchor = line.substring(anchorMatch + 3);
+          
+          if (afterAnchor.startsWith(' ')) {
+            const payload = afterAnchor.substring(1).trim();
+            if (payload) {
+              const { markers, prose } = GrepaSearch.parsePayloadSimple(payload);
+              
+              const anchor: MagicAnchor = {
+                line: lineNumber,
+                column: anchorMatch + 1,
+                raw: line,
+                markers,
+                file,
+                ...(prose ? { prose } : {})
+              };
+
+              if (GrepaSearch.matchesSearch(anchor, options)) {
+                const result: SearchResult = {
+                  anchor,
+                  ...(contextSize > 0
+                    ? { context: GrepaSearch.getContextFromBuffer(contextBuffer, lineNumber, contextSize) }
+                    : {})
+                };
+                results.push(result);
+              }
+            }
+          }
+        }
+      });
+
+      rl.on('close', () => {
+        if (results.length === 0) {
+          resolve(success([]));
+        } else {
+          resolve(success(results));
+        }
+      });
+
+      rl.on('error', (error) => {
+        resolve(failure(makeError(
+          'file.readError',
+          `Error reading large file ${file}: ${error.message}`,
+          error
+        )));
+      });
+    });
+  }
+
+  // :A: api simple payload parser for streaming (avoids full parser overhead)
+  private static parsePayloadSimple(payload: string): { markers: string[]; prose?: string } {
+    // :A: ctx find first space not in parentheses for marker/prose split
+    let parenDepth = 0;
+    let spaceIndex = -1;
+    
+    for (let i = 0; i < payload.length; i++) {
+      const char = payload[i];
+      if (char === '(') parenDepth++;
+      else if (char === ')') parenDepth--;
+      else if (char === ' ' && parenDepth === 0) {
+        // Check if this might be prose separator
+        const beforeSpace = payload.substring(0, i);
+        if (!beforeSpace.endsWith(',')) {
+          spaceIndex = i;
+          break;
+        }
+      }
+    }
+    
+    if (spaceIndex > 0) {
+      const markersStr = payload.substring(0, spaceIndex);
+      const prose = payload.substring(spaceIndex + 1).trim();
+      return {
+        markers: markersStr.split(',').map(m => m.trim()).filter(m => m),
+        ...(prose ? { prose } : {})
+      };
+    }
+    
+    return {
+      markers: payload.split(',').map(m => m.trim()).filter(m => m)
+    };
+  }
+
+  // :A: api get context from buffer for streaming
+  private static getContextFromBuffer(
+    buffer: string[],
+    _currentLine: number,
+    contextSize: number
+  ): { before: string[]; after: string[] } {
+    const bufferMiddle = Math.floor(buffer.length / 2);
+    const before = buffer.slice(Math.max(0, bufferMiddle - contextSize), bufferMiddle);
+    const after = buffer.slice(bufferMiddle + 1, Math.min(buffer.length, bufferMiddle + contextSize + 1));
+    
+    return { before, after };
   }
 }

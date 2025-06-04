@@ -57,15 +57,20 @@ export const searchOptionsSchema = z.object({
 
 export type SearchOptionsValidated = z.infer<typeof searchOptionsSchema>;
 
+// :A: api output format options
+export const outputFormatSchema = z.enum(['terminal', 'json', 'csv']);
+
 // :A: api CLI command schemas
 export const parseCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
   verbose: z.boolean().optional(),
+  format: outputFormatSchema.optional(),
 });
 
 export const searchCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
   context: z.string().regex(/^\d+$/, 'Context must be a number').optional(),
+  format: outputFormatSchema.optional(),
   // Controls whether to respect .gitignore files during search
   // Default: true (respects .gitignore)
   // CLI flag --no-gitignore sets this to false
@@ -75,6 +80,7 @@ export const searchCommandOptionsSchema = z.object({
 export const listCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
   markers: z.boolean().optional(),
+  format: outputFormatSchema.optional(),
   // Controls whether to respect .gitignore files during listing
   // Default: true (respects .gitignore)
   // CLI flag --no-gitignore sets this to false

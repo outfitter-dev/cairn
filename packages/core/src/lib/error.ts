@@ -25,6 +25,11 @@ export type ErrorCode =
   | 'cli.missingArgument'     // Missing required argument
   | 'cli.invalidOption'       // Invalid command option
   
+  // Security errors
+  | 'security.rateLimitExceeded'  // Rate limit exceeded
+  | 'security.maliciousContent'   // Malicious content detected
+  | 'security.contentTooLarge'    // Content too large for security
+  
   // Validation errors
   | 'validation'              // Generic validation error
   | 'validation.schema'       // Schema validation failed
@@ -81,6 +86,11 @@ function getStatusCode(code: ErrorCode): number {
     'cli.invalidCommand': 400,
     'cli.missingArgument': 400,
     'cli.invalidOption': 400,
+    
+    // Security errors  
+    'security.rateLimitExceeded': 429,
+    'security.maliciousContent': 400,
+    'security.contentTooLarge': 413,
     
     // Validation errors
     'validation': 400,
