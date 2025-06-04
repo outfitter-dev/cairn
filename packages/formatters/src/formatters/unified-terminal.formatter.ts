@@ -93,11 +93,11 @@ export class TerminalFormatter implements IFormatter {
     return output.join('\n');
   }
 
-  // :A: api format single anchor
+  // :A: api format single anchor with line and column number
   private formatAnchor(anchor: MagicAnchor): string {
     const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
     const prose = anchor.prose ? ` ${anchor.prose}` : '';
-    return `${chalk.yellow(anchor.line.toString())}: ${markers}${prose}`;
+    return `${chalk.yellow(`${anchor.line}:${anchor.column}`)}: ${markers}${prose}`;
   }
 
   // :A: api format context lines
@@ -106,7 +106,7 @@ export class TerminalFormatter implements IFormatter {
     
     if (result.context?.before) {
       result.context.before.forEach((line, idx) => {
-        const lineNum = result.anchor.line - result.context!.before.length + idx;
+        const lineNum = Math.max(1, result.anchor.line - result.context!.before.length + idx);
         output.push(chalk.dim(`    ${lineNum}: ${line}`));
       });
     }

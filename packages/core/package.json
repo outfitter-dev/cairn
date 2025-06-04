@@ -15,7 +15,7 @@
   ],
   "dependencies": {
     "@grepa/types": "workspace:*",
-    "globby": "^14.0.0",
+    "globby": "^14.1.0",
     "ignore": "^7.0.4",
     "zod": "^3.24.1"
   },
