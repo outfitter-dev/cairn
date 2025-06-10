@@ -99,7 +99,7 @@ Some content here.
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      const markers = CairnSearch.getUniqueMarkers(result.data);
+      const markers = CairnSearch.getUniqueContexts(result.data);
       expect(markers).toContain('tldr');
       expect(markers).toContain('todo');
       expect(markers).toContain('sec');
@@ -113,7 +113,7 @@ Some content here.
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      const grouped = CairnSearch.groupByMarker(result.data);
+      const grouped = CairnSearch.groupByContext(result.data);
       expect(grouped['todo']).toHaveLength(2);
       expect(grouped['tldr']).toHaveLength(1);
       expect(grouped['api']).toHaveLength(1);

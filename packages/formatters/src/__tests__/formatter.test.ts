@@ -18,7 +18,7 @@ const mockAnchor: MagicAnchor = {
   line: 42,
   column: 1,
   raw: '// :M: todo, api implement authentication',
-  markers: ['todo', 'api'],
+  contexts: ['todo', 'api'],
   prose: 'implement authentication',
   file: 'src/auth.ts',
 };
@@ -44,7 +44,7 @@ describe('JSON Formatters', () => {
     
     expect(parsed).toHaveLength(1);
     expect(parsed[0].anchor.line).toBe(42);
-    expect(parsed[0].anchor.markers).toEqual(['todo', 'api']);
+    expect(parsed[0].anchor.contexts).toEqual(['todo', 'api']);
   });
 
   it('should format single anchor as JSON', () => {
@@ -53,7 +53,7 @@ describe('JSON Formatters', () => {
     const parsed = JSON.parse(output);
     
     expect(parsed.line).toBe(42);
-    expect(parsed.markers).toEqual(['todo', 'api']);
+    expect(parsed.contexts).toEqual(['todo', 'api']);
   });
 
   it('should format parse result as JSON', () => {
@@ -163,7 +163,7 @@ describe('Terminal Formatters', () => {
     const specialAnchor: MagicAnchor = {
       ...mockAnchor,
       prose: 'Special chars: "quotes", <tags>, & symbols',
-      markers: ['bug-fix', 'ui/ux']
+      contexts: ['bug-fix', 'ui/ux']
     };
     const formatter = new TerminalMagicAnchorFormatter();
     const output = formatter.format(specialAnchor);

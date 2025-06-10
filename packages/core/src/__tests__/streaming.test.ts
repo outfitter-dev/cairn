@@ -40,7 +40,7 @@ describe('Large File Streaming', () => {
 
   it('should process large files using streaming', async () => {
     const searchOptions = {
-      markers: ['milestone'],
+      contexts: ['milestone'],
       context: 2
     };
 
@@ -52,15 +52,15 @@ describe('Large File Streaming', () => {
       
       // :M: ctx verify we found the milestone anchors
       const milestones = result.data.filter(r => 
-        r.anchor.markers.includes('milestone')
+        r.anchor.contexts.includes('milestone')
       );
-      expect(milestones.length).toBeGreaterThan(90); // Should find most milestone markers
+      expect(milestones.length).toBeGreaterThan(90); // Should find most milestone contexts
     }
   });
 
   it('should handle context correctly in streaming mode', async () => {
     const searchOptions = {
-      markers: ['performance'],
+      contexts: ['performance'],
       context: 3
     };
 
@@ -78,10 +78,10 @@ describe('Large File Streaming', () => {
   it('should parse simple payloads correctly in streaming', () => {
     // :M: ctx test the simple payload parser used in streaming
     const testCases = [
-      { payload: 'todo implement feature', expected: { markers: ['todo'], prose: 'implement feature' } },
-      { payload: 'security, todo validate inputs', expected: { markers: ['security', 'todo'], prose: 'validate inputs' } },
-      { payload: 'issue(123) fix authentication', expected: { markers: ['issue(123)'], prose: 'fix authentication' } },
-      { payload: 'owner(@alice), priority(high) urgent task', expected: { markers: ['owner(@alice)', 'priority(high)'], prose: 'urgent task' } }
+      { payload: 'todo implement feature', expected: { contexts: ['todo'], prose: 'implement feature' } },
+      { payload: 'security, todo validate inputs', expected: { contexts: ['security', 'todo'], prose: 'validate inputs' } },
+      { payload: 'issue(123) fix authentication', expected: { contexts: ['issue(123)'], prose: 'fix authentication' } },
+      { payload: 'owner(@alice), priority(high) urgent task', expected: { contexts: ['owner(@alice)', 'priority(high)'], prose: 'urgent task' } }
     ];
 
     // Test the parsePayloadSimple method directly
@@ -89,7 +89,7 @@ describe('Large File Streaming', () => {
     
     testCases.forEach(({ payload, expected }) => {
       const result = parseMethod(payload);
-      expect(result.markers).toEqual(expected.markers);
+      expect(result.contexts).toEqual(expected.contexts);
       expect(result.prose).toEqual(expected.prose);
     });
   });
@@ -104,7 +104,7 @@ describe('Large File Streaming', () => {
     const initialMemory = process.memoryUsage().heapUsed;
     
     const searchOptions = {
-      markers: ['security'],
+      contexts: ['security'],
       context: 1
     };
 
@@ -129,7 +129,7 @@ describe('Large File Streaming', () => {
     const nonExistentFile = './non-existent-large-file.ts';
     
     const searchOptions = {
-      markers: ['test']
+      contexts: ['test']
     };
 
     const result = await CairnSearch.search([nonExistentFile], searchOptions);
@@ -158,7 +158,7 @@ describe('Large File Streaming', () => {
     
     try {
       const searchOptions = {
-        markers: ['concurrent']
+        contexts: ['concurrent']
       };
 
       const result = await CairnSearch.search([largeTestFile, largeTestFile2], searchOptions);
@@ -197,7 +197,7 @@ describe('Large File Streaming', () => {
       '// :M: valid anchor',
       '// :M:invalid no space',
       '// :M: ',
-      '// :M: multiple, markers test',
+      '// :M: multiple, contexts test',
       'no anchor here'
     ];
 
