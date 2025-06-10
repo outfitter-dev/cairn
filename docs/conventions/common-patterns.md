@@ -1,8 +1,8 @@
 # Common Patterns
-<!-- :A: tldr Essential Magic Anchor patterns for any project -->
-<!-- :A: convention Core patterns that work universally across codebases -->
+<!-- :M: tldr Essential Cairn patterns for any project -->
+<!-- :M: convention Core patterns that work universally across codebases -->
 
-Core Magic Anchor patterns that work across all projects.
+Core Cairn patterns that work across all projects.
 
 ## Marker Philosophy: Keep It Terse
 
@@ -16,198 +16,198 @@ Shorter markers can be helpful when you're using them frequently.
 
 ## Essential Patterns
 
-### `:A: tldr`
+### `:M: tldr`
 **Purpose**: Brief summary or overview ("Too Long; Didn't Read")
 **Usage**: Document key takeaways, function purposes, or section summaries
 ```javascript
-// :A: tldr validates user input and returns sanitized data
-// :A: tldr handles all authentication flows for the app
+// :M: tldr validates user input and returns sanitized data
+// :M: tldr handles all authentication flows for the app
 ```
 
-### `:A: todo`
+### `:M: todo`
 **Purpose**: Work that needs to be done
 **Replaces**: Traditional TODO comments
 ```javascript
-// :A: todo implement error handling
-// :A: todo add unit tests
+// :M: todo implement error handling
+// :M: todo add unit tests
 ```
 
-### `:A: ctx`
+### `:M: ctx`
 **Purpose**: Important context that isn't obvious from the code
 **Usage**: Document assumptions, constraints, and critical knowledge
 ```python
-# :A: ctx all timestamps are UTC
-# :A: ctx user_ids are UUIDs, not integers
-# :A: ctx this runs in a Lambda with 256MB RAM limit
+# :M: ctx all timestamps are UTC
+# :M: ctx user_ids are UUIDs, not integers
+# :M: ctx this runs in a Lambda with 256MB RAM limit
 ```
 
-### `:A: sec`
+### `:M: sec`
 **Purpose**: Security-critical code that needs careful attention
 **Usage**: Mark authentication, authorization, input validation, crypto
 ```go
-// :A: sec validate all inputs before SQL query
-// :A: sec ensure constant-time comparison
+// :M: sec validate all inputs before SQL query
+// :M: sec ensure constant-time comparison
 ```
 
-### `:A: @agent`
+### `:M: @agent`
 **Purpose**: Direct AI agents to help with implementation
 **Usage**: Can use generic @agent or specific ones like @cursor, @claude
 ```typescript
-// :A: @agent implement pagination logic
-// :A: @cursor write unit tests for edge cases
+// :M: @agent implement pagination logic
+// :M: @cursor write unit tests for edge cases
 ```
 
-### `:A: temp`
+### `:M: temp`
 **Purpose**: Temporary code that should be removed
 **Usage**: Workarounds, quick fixes, migration code
 ```ruby
-# :A: temp remove after v2.0 ships
-# :A: temp workaround for Redis bug
+# :M: temp remove after v2.0 ships
+# :M: temp workaround for Redis bug
 ```
 
 ## Quality & Maintenance
 
-### `:A: perf`
+### `:M: perf`
 **Purpose**: Performance-sensitive code
 **Usage**: Mark bottlenecks, optimization opportunities
 ```javascript
-// :A: perf N+1 query issue
-// :A: perf consider caching this result
+// :M: perf N+1 query issue
+// :M: perf consider caching this result
 ```
 
-### `:A: bug`
+### `:M: bug`
 **Purpose**: Known bugs or issues
 **Usage**: Document problems that need fixing
 ```python
-# :A: bug race condition when concurrent requests
-# :A: bug doesn't handle Unicode properly
+# :M: bug race condition when concurrent requests
+# :M: bug doesn't handle Unicode properly
 ```
 
-### `:A: debt`
+### `:M: debt`
 **Purpose**: Technical debt that needs addressing
 **Usage**: Shortcuts taken, refactoring needed
 ```java
-// :A: debt tightly coupled to database
-// :A: debt needs proper error handling
+// :M: debt tightly coupled to database
+// :M: debt needs proper error handling
 ```
 
-### `:A: fix` / `:A: fixme`
+### `:M: fix` / `:M: fixme`
 **Purpose**: Broken code needing immediate attention
 **Usage**: More urgent than bug or todo - this is actively broken
 ```python
-# :A: fix null pointer exception here
-# :A: fixme race condition in auth flow
+# :M: fix null pointer exception here
+# :M: fixme race condition in auth flow
 ```
 
-### `:A: breaking`
+### `:M: breaking`
 **Purpose**: Breaking changes to APIs or interfaces
 **Usage**: Mark changes that will break compatibility
 ```typescript
-// :A: breaking removed legacy auth method in v3.0
-// :A: breaking changed return type from string to object
+// :M: breaking removed legacy auth method in v3.0
+// :M: breaking changed return type from string to object
 ```
 
-### `:A: freeze`
+### `:M: freeze`
 **Purpose**: Code that must not be modified
 **Usage**: Critical code, external dependencies, legal requirements
 ```go
-// :A: freeze regulatory compliance - do not modify
-// :A: freeze external API contract - must match exactly
+// :M: freeze regulatory compliance - do not modify
+// :M: freeze external API contract - must match exactly
 ```
 
-### `:A: review`
+### `:M: review`
 **Purpose**: Code needing human review before shipping
 **Usage**: Complex logic, security-sensitive, architectural decisions
 ```rust
-// :A: review ensure this handles all edge cases
-// :A: review security team must approve this approach
+// :M: review ensure this handles all edge cases
+// :M: review security team must approve this approach
 ```
 
-### `:A: config`
+### `:M: config`
 **Purpose**: Configuration values or settings
 **Usage**: Values that might need environment-specific changes
 ```javascript
-// :A: config default timeout is 30s
-// :A: config production uses different endpoint
+// :M: config default timeout is 30s
+// :M: config production uses different endpoint
 ```
 
 ## Risk & Severity Indicators
 
-### `:A: warn` / `:A: warning`
+### `:M: warn` / `:M: warning`
 **Purpose**: Potential issues or risky code
 **Usage**: Code that works but has risks or gotchas
 ```python
-# :A: warn this assumes sorted input
-# :A: warning rate limit not enforced here
+# :M: warn this assumes sorted input
+# :M: warning rate limit not enforced here
 ```
 
-### `:A: crit` / `:A: critical`
+### `:M: crit` / `:M: critical`
 **Purpose**: Critical code requiring extreme care
 **Usage**: System-critical paths, data integrity, financial calculations
 ```go
-// :A: crit payment processing - must be idempotent
-// :A: critical failover logic - test thoroughly
+// :M: crit payment processing - must be idempotent
+// :M: critical failover logic - test thoroughly
 ```
 
-### `:A: unsafe`
+### `:M: unsafe`
 **Purpose**: Potentially dangerous operations
 **Usage**: Memory operations, concurrency, security boundaries
 ```rust
-// :A: unsafe raw pointer manipulation
-// :A: unsafe bypasses permission checks for admin
+// :M: unsafe raw pointer manipulation
+// :M: unsafe bypasses permission checks for admin
 ```
 
-### `:A: danger`
+### `:M: danger`
 **Purpose**: Extremely risky code that could cause major issues
 **Usage**: Data deletion, irreversible operations, system-wide effects
 ```javascript
-// :A: danger deletes all user data - no recovery
-// :A: danger modifies production database directly
+// :M: danger deletes all user data - no recovery
+// :M: danger modifies production database directly
 ```
 
 ## Documentation & API
 
-### `:A: api`
+### `:M: api`
 **Purpose**: Public API surface
 **Usage**: Mark public interfaces, REST endpoints, exported functions
 ```rust
-// :A: api public interface - maintain compatibility
-// :A: api REST endpoint: POST /users
+// :M: api public interface - maintain compatibility
+// :M: api REST endpoint: POST /users
 ```
 
-### `:A: docs`
+### `:M: docs`
 **Purpose**: Documentation needed or important notes
 **Usage**: Complex algorithms, public APIs, business logic
 ```go
-// :A: docs explain rate limiting algorithm
-// :A: docs add usage examples
+// :M: docs explain rate limiting algorithm
+// :M: docs add usage examples
 ```
 
-### `:A: meta`
+### `:M: meta`
 **Purpose**: Metadata about files, scripts, or generated content
 **Usage**: Configuration files, generated code, script purposes
 ```javascript
-// :A: meta Generated file - DO NOT EDIT MANUALLY
-// :A: meta Configuration for production environment
-/* :A: meta Script to generate security audit reports */
+// :M: meta Generated file - DO NOT EDIT MANUALLY
+// :M: meta Configuration for production environment
+/* :M: meta Script to generate security audit reports */
 ```
 
 ## Project Management
 
-### `:A: issue(ID)`
+### `:M: issue(ID)`
 **Purpose**: Link to issue tracker
 **Usage**: Connect code to tickets, PRs, or issues
 ```javascript
-// :A: issue(PROJ-123) implement user story
-// :A: issue(#456) fix reported bug
+// :M: issue(PROJ-123) implement user story
+// :M: issue(#456) fix reported bug
 ```
 
-### `:A: owner:@person`
+### `:M: owner:@person`
 **Purpose**: Assign responsibility
 **Usage**: Mark who should handle something
 ```python
-# :A: todo, owner:@alice implement authentication
-# :A: owner:@backend-team optimize query
+# :M: todo, owner:@alice implement authentication
+# :M: owner:@backend-team optimize query
 ```
 
 ## Combining Patterns
@@ -216,25 +216,25 @@ Combine markers judiciously for closely related concerns:
 
 ```typescript
 // Good: closely related markers
-// :A: sec, todo validate inputs
-// :A: perf, debt refactor this loop
+// :M: sec, todo validate inputs
+// :M: perf, debt refactor this loop
 
 // Better: separate lines for clarity
-// :A: sec check for SQL injection
-// :A: todo add input validation for email format
-// :A: perf this loop processes 10k items inefficiently
-// :A: debt extract into separate service
+// :M: sec check for SQL injection
+// :M: todo add input validation for email format
+// :M: perf this loop processes 10k items inefficiently
+// :M: debt extract into separate service
 
 // Good: issue tracking with description
-// :A: temp, issue(#123) workaround until fixed upstream
+// :M: temp, issue(#123) workaround until fixed upstream
 
 // Avoid: too many markers, hard to grep
-// :A: api, docs, breaking, v2, urgent v2 changes signature
+// :M: api, docs, breaking, v2, urgent v2 changes signature
 ```
 
 ## Suggestions
 
-- **Start with tldr** - `:A: tldr` for summaries can be widely useful
+- **Start with tldr** - `:M: tldr` for summaries can be widely useful
 - **Add todo and context** - These three patterns cover many use cases
 - **Be consistent** - Picking a style and sticking to it helps
 - **Keep it searchable** - Grep-ability is a key benefit

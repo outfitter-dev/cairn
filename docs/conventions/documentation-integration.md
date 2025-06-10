@@ -1,6 +1,6 @@
 # Documentation System Integration
-<!-- :A: tldr Magic Anchors compatibility with JSDoc, docstrings, and other documentation systems -->
-<!-- :A: convention Cross-language documentation integration patterns -->
+<!-- :M: tldr Cairns compatibility with JSDoc, docstrings, and other documentation systems -->
+<!-- :M: convention Cross-language documentation integration patterns -->
 
 ## Table of Contents
 
@@ -39,12 +39,12 @@
   - [Language-Specific Tips](#language-specific-tips)
 - [Conclusion](#conclusion)
 
-Magic Anchors work seamlessly across all major documentation systems, because they're just comment content. This enables universal code navigation while preserving existing documentation workflows.
+Cairns work seamlessly across all major documentation systems, because they're just comment content. This enables universal code navigation while preserving existing documentation workflows.
 
 ## Core Compatibility Principle
 
-**Magic Anchors are documentation-system agnostic** - they work within any comment format:
-- Documentation generators ignore Magic Anchor lines
+**Cairns are documentation-system agnostic** - they work within any comment format:
+- Documentation generators ignore Cairn lines
 - Search tools find anchors easily across all languages  
 - Existing tooling continues working unchanged
 - Progressive enhancement of current codebases
@@ -57,9 +57,9 @@ Perfect compatibility in block comments:
 
 ```javascript
 /**
- * :A: tldr Core authentication utilities
- * :A: api Public interface for auth operations
- * :A: sec validate JWT signature and expiry
+ * :M: tldr Core authentication utilities
+ * :M: api Public interface for auth operations
+ * :M: sec validate JWT signature and expiry
  * 
  * @description Handles user authentication with JWT tokens
  * @param {string} token - JWT token to validate  
@@ -73,27 +73,27 @@ Perfect compatibility in block comments:
  * }
  */
 async function authenticateUser(token, options = {}) {
-  // :A: ctx assumes tokens are always Base64 encoded
-  // :A: perf consider caching decoded tokens
+  // :M: ctx assumes tokens are always Base64 encoded
+  // :M: perf consider caching decoded tokens
   return validateJWT(token, options);
 }
 ```
 
 **Benefits:**
-- JSDoc generators ignore Magic Anchor lines
+- JSDoc generators ignore Cairn lines
 - TypeScript tools work unchanged
 - ESDoc processes normally
 - VS Code intellisense preserved
-- Search tools find anchors: `rg ":A: api" --type js`
+- Search tools find anchors: `rg ":M: api" --type js`
 
 ### Inline Comments
 
-Magic Anchors work in single-line comments too:
+Cairns work in single-line comments too:
 
 ```typescript
-// :A: todo @agent implement retry logic
+// :M: todo @agent implement retry logic
 const fetchUserData = async (id: string) => {
-  // :A: ctx rate limit: 100 requests/minute
+  // :M: ctx rate limit: 100 requests/minute
   return api.get(`/users/${id}`);
 };
 ```
@@ -102,15 +102,15 @@ const fetchUserData = async (id: string) => {
 
 ### Docstrings (All Formats)
 
-Magic Anchors work with any docstring format:
+Cairns work with any docstring format:
 
 #### Google Style
 ```python
 def authenticate_user(token: str, strict: bool = False) -> Result[User, AuthError]:
     """
-    :A: tldr Core user authentication function
-    :A: sec validate JWT signature and expiry  
-    :A: todo @agent add rate limiting
+    :M: tldr Core user authentication function
+    :M: sec validate JWT signature and expiry  
+    :M: todo @agent add rate limiting
     
     Authenticates a user based on JWT token.
     
@@ -136,9 +136,9 @@ def authenticate_user(token: str, strict: bool = False) -> Result[User, AuthErro
 ```python
 def calculate_metrics(data: np.ndarray) -> Dict[str, float]:
     """
-    :A: tldr Statistical analysis functions
-    :A: perf O(n) algorithm, efficient for large datasets
-    :A: ctx assumes input data is normalized
+    :M: tldr Statistical analysis functions
+    :M: perf O(n) algorithm, efficient for large datasets
+    :M: ctx assumes input data is normalized
     
     Calculate statistical metrics for input data.
     
@@ -163,9 +163,9 @@ def calculate_metrics(data: np.ndarray) -> Dict[str, float]:
 ```python
 def process_documents(docs: List[str]) -> ProcessedDocs:
     """
-    :A: tldr Document processing pipeline
-    :A: api Main entry point for document processing
-    :A: perf uses multiprocessing for large batches
+    :M: tldr Document processing pipeline
+    :M: api Main entry point for document processing
+    :M: perf uses multiprocessing for large batches
     
     Process a collection of documents.
     
@@ -183,7 +183,7 @@ def process_documents(docs: List[str]) -> ProcessedDocs:
 - Sphinx documentation builds normally
 - IDEs provide full intellisense
 - All docstring tools work unchanged
-- Search: `rg ":A: api" --type py`
+- Search: `rg ":M: api" --type py`
 
 ## Systems Languages
 
@@ -192,9 +192,9 @@ def process_documents(docs: List[str]) -> ProcessedDocs:
 Seamless integration with Rust doc comments:
 
 ```rust
-/// :A: tldr User authentication trait definition
-/// :A: api Public trait for auth providers  
-/// :A: sec ensure constant-time comparison for tokens
+/// :M: tldr User authentication trait definition
+/// :M: api Public trait for auth providers  
+/// :M: sec ensure constant-time comparison for tokens
 /// 
 /// Provides authentication services for the application.
 /// Supports multiple authentication backends including JWT,
@@ -218,36 +218,36 @@ Seamless integration with Rust doc comments:
 /// This trait assumes that implementations use secure
 /// random number generation for token creation.
 pub trait AuthProvider {
-    /// :A: api Core validation method
+    /// :M: api Core validation method
     async fn validate_token(&self, token: &str) -> Result<User, AuthError>;
     
-    /// :A: api Token generation with expiry
+    /// :M: api Token generation with expiry
     async fn create_token(&self, user: &User) -> Result<String, AuthError>;
 }
 
 impl AuthProvider for JwtAuth {
     async fn validate_token(&self, token: &str) -> Result<User, AuthError> {
-        // :A: sec timing attack protection - constant time comparison
-        // :A: perf cache decoded tokens for repeated validation
+        // :M: sec timing attack protection - constant time comparison
+        // :M: perf cache decoded tokens for repeated validation
         self.decode_and_validate(token).await
     }
 }
 ```
 
 **Benefits:**
-- `cargo doc` renders normally, ignores Magic Anchors
+- `cargo doc` renders normally, ignores Cairns
 - IDE integration preserved (rust-analyzer)
 - Documentation tests continue working
-- Search: `rg ":A: sec" --type rust`
+- Search: `rg ":M: sec" --type rust`
 
 ### Go Documentation (Godoc)
 
 Perfect compatibility with Go doc comments:
 
 ```go
-// :A: tldr HTTP authentication middleware package
-// :A: api Public middleware for web services
-// :A: perf consider connection pooling for auth backends
+// :M: tldr HTTP authentication middleware package
+// :M: api Public middleware for web services
+// :M: perf consider connection pooling for auth backends
 //
 // Package auth provides HTTP authentication middleware for web services.
 // It supports JWT tokens, session-based auth, and OAuth2 flows.
@@ -261,9 +261,9 @@ Perfect compatibility with Go doc comments:
 // and populates request context with user information.
 package auth
 
-// :A: tldr Main authentication middleware function
-// :A: api Primary entry point for HTTP auth
-// :A: sec validate all auth headers before processing
+// :M: tldr Main authentication middleware function
+// :M: api Primary entry point for HTTP auth
+// :M: sec validate all auth headers before processing
 //
 // Middleware provides HTTP authentication for web services.
 // It checks Authorization headers and validates tokens against
@@ -278,9 +278,9 @@ package auth
 //   http.Handle("/api/", handler)
 func Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// :A: ctx assumes Authorization header format: "Bearer <token>"
-		// :A: perf cache token validation results
-		// :A: sec prevent timing attacks during validation
+		// :M: ctx assumes Authorization header format: "Bearer <token>"
+		// :M: perf cache token validation results
+		// :M: sec prevent timing attacks during validation
 		
 		token := extractToken(r)
 		if token == "" {
@@ -297,7 +297,7 @@ func Middleware(next http.Handler) http.Handler {
 - `godoc` displays documentation normally
 - Go tools work unchanged
 - IDE support preserved (gopls)
-- Search: `rg ":A: api" --type go`
+- Search: `rg ":M: api" --type go`
 
 ### C/C++ Documentation (Doxygen)
 
@@ -305,9 +305,9 @@ Works perfectly in Doxygen comments:
 
 ```cpp
 /**
- * :A: tldr Memory pool allocation utilities  
- * :A: perf critical path - optimized for speed
- * :A: unsafe manual memory management - review carefully
+ * :M: tldr Memory pool allocation utilities  
+ * :M: perf critical path - optimized for speed
+ * :M: unsafe manual memory management - review carefully
  * 
  * @brief Allocates memory from a pre-allocated pool
  * 
@@ -333,9 +333,9 @@ Works perfectly in Doxygen comments:
  * @endcode
  */
 void* pool_alloc(size_t size, size_t alignment) {
-    // :A: ctx pool must be initialized before first call
-    // :A: perf O(1) allocation using bitmap tracking
-    // :A: unsafe no bounds checking - caller responsibility
+    // :M: ctx pool must be initialized before first call
+    // :M: perf O(1) allocation using bitmap tracking
+    // :M: unsafe no bounds checking - caller responsibility
     
     if (!is_power_of_two(alignment)) {
         return nullptr;
@@ -353,9 +353,9 @@ Perfect compatibility:
 
 ```java
 /**
- * :A: tldr User service business logic layer
- * :A: api REST controller endpoints for user management
- * :A: sec validate all inputs and check authorization
+ * :M: tldr User service business logic layer
+ * :M: api REST controller endpoints for user management
+ * :M: sec validate all inputs and check authorization
  * 
  * Provides comprehensive user management operations for the application.
  * Handles CRUD operations, validation, and business rule enforcement.
@@ -375,9 +375,9 @@ Perfect compatibility:
 public class UserService {
     
     /**
-     * :A: api Public endpoint for user retrieval
-     * :A: perf consider caching for frequently accessed users
-     * :A: ctx user IDs are UUIDs, not sequential integers
+     * :M: api Public endpoint for user retrieval
+     * :M: perf consider caching for frequently accessed users
+     * :M: ctx user IDs are UUIDs, not sequential integers
      * 
      * Retrieves a user by their unique identifier.
      * 
@@ -398,9 +398,9 @@ public class UserService {
      */
     public User getUserById(@NonNull UUID userId) 
             throws UserNotFoundException, SecurityException {
-        // :A: sec verify caller has READ_USER permission
-        // :A: ctx database queries use prepared statements
-        // :A: perf single query with JOIN to avoid N+1
+        // :M: sec verify caller has READ_USER permission
+        // :M: ctx database queries use prepared statements
+        // :M: perf single query with JOIN to avoid N+1
         
         validatePermissions(READ_USER);
         return userRepository.findByIdWithProfile(userId)
@@ -413,9 +413,9 @@ public class UserService {
 
 ```csharp
 /// <summary>
-/// :A: tldr Email notification service for user communications
-/// :A: api Public interface for sending notifications
-/// :A: config requires SMTP server configuration
+/// :M: tldr Email notification service for user communications
+/// :M: api Public interface for sending notifications
+/// :M: config requires SMTP server configuration
 /// 
 /// Provides email notification functionality for the application.
 /// Supports templated emails, attachments, and delivery tracking.
@@ -438,9 +438,9 @@ public class UserService {
 public class EmailService : IEmailService
 {
     /// <summary>
-    /// :A: api Core email sending method
-    /// :A: sec validate recipient addresses to prevent injection
-    /// :A: perf use async operations for SMTP communication
+    /// :M: api Core email sending method
+    /// :M: sec validate recipient addresses to prevent injection
+    /// :M: perf use async operations for SMTP communication
     /// 
     /// Sends an email notification to the specified recipient.
     /// </summary>
@@ -467,9 +467,9 @@ public class EmailService : IEmailService
         string body, 
         bool isHtml = false)
     {
-        // :A: sec validate email format using RFC 5322 compliance
-        // :A: ctx SMTP client is disposed after each send operation
-        // :A: perf connection pooling handled by SmtpClient internally
+        // :M: sec validate email format using RFC 5322 compliance
+        // :M: ctx SMTP client is disposed after each send operation
+        // :M: perf connection pooling handled by SmtpClient internally
         
         ValidateEmailAddress(recipient);
         
@@ -483,7 +483,7 @@ public class EmailService : IEmailService
         }
         catch (SmtpException ex)
         {
-            // :A: todo @agent add retry logic with exponential backoff
+            // :M: todo @agent add retry logic with exponential backoff
             logger.LogError(ex, "Failed to send email to {Recipient}", recipient);
             return false;
         }
@@ -497,9 +497,9 @@ public class EmailService : IEmailService
 
 ```ruby
 ##
-# :A: tldr Email notification service for user communications
-# :A: config requires ActionMailer configuration
-# :A: api Primary interface for sending emails
+# :M: tldr Email notification service for user communications
+# :M: config requires ActionMailer configuration
+# :M: api Primary interface for sending emails
 #
 # Handles email notifications for the application including
 # welcome emails, password resets, and promotional content.
@@ -516,9 +516,9 @@ public class EmailService : IEmailService
 # @version 2.0.0
 class EmailService
   ##
-  # :A: api Core email sending method
-  # :A: sec validate recipient email format
-  # :A: todo @agent add template support
+  # :M: api Core email sending method
+  # :M: sec validate recipient email format
+  # :M: todo @agent add template support
   #
   # Sends an email notification to the specified recipient.
   # Validates email format and handles delivery errors gracefully.
@@ -545,9 +545,9 @@ class EmailService
   #     attachments: ['/path/to/report.pdf']
   #   )
   def send_notification(recipient, subject, body, options = {})
-    # :A: sec validate email using RFC 5322 regex
-    # :A: ctx ActionMailer handles SMTP connection pooling
-    # :A: perf consider background job for large attachment emails
+    # :M: sec validate email using RFC 5322 regex
+    # :M: ctx ActionMailer handles SMTP connection pooling
+    # :M: perf consider background job for large attachment emails
     
     validate_email_format!(recipient)
     
@@ -561,7 +561,7 @@ class EmailService
       NotificationMailer.send_email(mail_options).deliver_now
       true
     rescue StandardError => e
-      # :A: todo @agent implement retry logic with exponential backoff
+      # :M: todo @agent implement retry logic with exponential backoff
       Rails.logger.error "Failed to send email to #{recipient}: #{e.message}"
       false
     end
@@ -569,9 +569,9 @@ class EmailService
   
   private
   
-  # :A: sec email validation using comprehensive regex
+  # :M: sec email validation using comprehensive regex
   def validate_email_format!(email)
-    # :A: ctx uses RFC 5322 compliant regex pattern
+    # :M: ctx uses RFC 5322 compliant regex pattern
     pattern = /\A[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/
     raise ArgumentError, "Invalid email format: #{email}" unless email.match?(pattern)
   end
@@ -583,9 +583,9 @@ end
 ```php
 <?php
 /**
- * :A: tldr Database connection management utilities
- * :A: api Primary interface for database operations
- * :A: config requires PDO extension and database credentials
+ * :M: tldr Database connection management utilities
+ * :M: api Primary interface for database operations
+ * :M: config requires PDO extension and database credentials
  * 
  * Database Connection Manager
  * 
@@ -601,9 +601,9 @@ end
 class DatabaseManager
 {
     /**
-     * :A: api Core connection creation method
-     * :A: sec ensure connection string doesn't leak in logs
-     * :A: perf implement connection pooling for production
+     * :M: api Core connection creation method
+     * :M: sec ensure connection string doesn't leak in logs
+     * :M: perf implement connection pooling for production
      * 
      * Creates a new database connection with the specified configuration.
      * 
@@ -644,9 +644,9 @@ class DatabaseManager
         string $password, 
         array $options = []
     ): PDO {
-        // :A: sec sanitize DSN for logging (remove passwords)
-        // :A: ctx default timeout is 30 seconds
-        // :A: perf reuse connections when possible
+        // :M: sec sanitize DSN for logging (remove passwords)
+        // :M: ctx default timeout is 30 seconds
+        // :M: perf reuse connections when possible
         
         $this->validateDsn($dsn);
         
@@ -663,7 +663,7 @@ class DatabaseManager
         
         while ($attempts < $maxAttempts) {
             try {
-                // :A: sec ensure password is not logged
+                // :M: sec ensure password is not logged
                 $this->logger->info('Attempting database connection', [
                     'dsn' => $this->sanitizeDsn($dsn),
                     'attempt' => $attempts + 1
@@ -671,7 +671,7 @@ class DatabaseManager
                 
                 $pdo = new PDO($dsn, $username, $password, $options);
                 
-                // :A: ctx verify connection with simple query
+                // :M: ctx verify connection with simple query
                 $pdo->query('SELECT 1');
                 
                 return $pdo;
@@ -680,7 +680,7 @@ class DatabaseManager
                 $attempts++;
                 
                 if ($attempts >= $maxAttempts) {
-                    // :A: todo @agent implement exponential backoff
+                    // :M: todo @agent implement exponential backoff
                     throw new ConnectionException(
                         "Failed to connect after {$maxAttempts} attempts: " . $e->getMessage(),
                         0,
@@ -688,7 +688,7 @@ class DatabaseManager
                     );
                 }
                 
-                // :A: perf exponential backoff: 1s, 2s, 4s...
+                // :M: perf exponential backoff: 1s, 2s, 4s...
                 sleep(pow(2, $attempts - 1));
             }
         }
@@ -703,9 +703,9 @@ class DatabaseManager
 ```swift
 import Foundation
 
-/// :A: tldr Core networking utilities for iOS/macOS applications
-/// :A: api Public interface for HTTP requests and responses
-/// :A: perf uses URLSession with connection pooling
+/// :M: tldr Core networking utilities for iOS/macOS applications
+/// :M: api Public interface for HTTP requests and responses
+/// :M: perf uses URLSession with connection pooling
 /// 
 /// Provides comprehensive HTTP networking functionality for the app.
 /// Handles authentication, request/response processing, error handling,
@@ -742,9 +742,9 @@ import Foundation
 /// - Version: 2.1.0
 public class NetworkClient {
     
-    /// :A: api Primary GET request method
-    /// :A: sec validate URL and sanitize headers
-    /// :A: perf cache responses when appropriate
+    /// :M: api Primary GET request method
+    /// :M: sec validate URL and sanitize headers
+    /// :M: perf cache responses when appropriate
     /// 
     /// Performs an HTTP GET request to the specified URL.
     /// 
@@ -777,9 +777,9 @@ public class NetworkClient {
         headers: [String: String] = [:],
         timeout: TimeInterval = 30
     ) async -> Result<Data, NetworkError> {
-        // :A: ctx URLSession handles connection pooling automatically
-        // :A: sec validate URL scheme is HTTP/HTTPS
-        // :A: perf reuse URLSession instance across requests
+        // :M: ctx URLSession handles connection pooling automatically
+        // :M: sec validate URL scheme is HTTP/HTTPS
+        // :M: perf reuse URLSession instance across requests
         
         guard url.scheme == "http" || url.scheme == "https" else {
             return .failure(.invalidURL("URL must use HTTP or HTTPS scheme"))
@@ -788,7 +788,7 @@ public class NetworkClient {
         var request = URLRequest(url: url, timeoutInterval: timeout)
         request.httpMethod = "GET"
         
-        // :A: sec sanitize headers to prevent injection
+        // :M: sec sanitize headers to prevent injection
         for (key, value) in headers {
             let sanitizedKey = sanitizeHeaderKey(key)
             let sanitizedValue = sanitizeHeaderValue(value)
@@ -798,12 +798,12 @@ public class NetworkClient {
         do {
             let (data, response) = try await urlSession.data(for: request)
             
-            // :A: ctx verify response is HTTPURLResponse
+            // :M: ctx verify response is HTTPURLResponse
             guard let httpResponse = response as? HTTPURLResponse else {
                 return .failure(.invalidResponse("Response is not HTTP"))
             }
             
-            // :A: api success range is 200-299
+            // :M: api success range is 200-299
             guard 200...299 ~= httpResponse.statusCode else {
                 return .failure(.httpError(httpResponse.statusCode, data))
             }
@@ -811,14 +811,14 @@ public class NetworkClient {
             return .success(data)
             
         } catch {
-            // :A: todo @agent add retry logic for transient failures
+            // :M: todo @agent add retry logic for transient failures
             return .failure(.networkError(error))
         }
     }
     
-    /// :A: api POST request with JSON body support
-    /// :A: sec validate and sanitize request body
-    /// :A: perf stream large request bodies
+    /// :M: api POST request with JSON body support
+    /// :M: sec validate and sanitize request body
+    /// :M: perf stream large request bodies
     /// 
     /// Performs an HTTP POST request with optional JSON body.
     /// 
@@ -833,9 +833,9 @@ public class NetworkClient {
         headers: [String: String] = [:],
         timeout: TimeInterval = 30
     ) async -> Result<Data, NetworkError> {
-        // :A: ctx automatically sets Content-Type for JSON bodies
-        // :A: sec ensure request body size limits
-        // :A: perf consider compression for large payloads
+        // :M: ctx automatically sets Content-Type for JSON bodies
+        // :M: sec ensure request body size limits
+        // :M: perf consider compression for large payloads
         
         var request = URLRequest(url: url, timeoutInterval: timeout)
         request.httpMethod = "POST"
@@ -844,7 +844,7 @@ public class NetworkClient {
         
         if let body = body {
             do {
-                // :A: sec validate body can be safely serialized
+                // :M: sec validate body can be safely serialized
                 request.httpBody = try JSONEncoder().encode(body)
                 requestHeaders["Content-Type"] = "application/json"
             } catch {
@@ -860,8 +860,8 @@ public class NetworkClient {
     }
 }
 
-/// :A: api Network error types for comprehensive error handling
-/// :A: tldr All possible network operation failures
+/// :M: api Network error types for comprehensive error handling
+/// :M: tldr All possible network operation failures
 public enum NetworkError: Error, LocalizedError {
     case invalidURL(String)
     case invalidResponse(String)
@@ -870,7 +870,7 @@ public enum NetworkError: Error, LocalizedError {
     case encodingError(String)
     case decodingError(String)
     
-    /// :A: api User-friendly error descriptions
+    /// :M: api User-friendly error descriptions
     public var errorDescription: String? {
         switch self {
         case .invalidURL(let message):
@@ -894,9 +894,9 @@ public enum NetworkError: Error, LocalizedError {
 
 ```kotlin
 /**
- * :A: tldr Android HTTP client with coroutines support
- * :A: api Primary networking interface for Android apps
- * :A: perf uses OkHttp with connection pooling and caching
+ * :M: tldr Android HTTP client with coroutines support
+ * :M: api Primary networking interface for Android apps
+ * :M: perf uses OkHttp with connection pooling and caching
  * 
  * Comprehensive HTTP client designed for Android applications.
  * Provides coroutine-based async operations, automatic retry logic,
@@ -941,9 +941,9 @@ class HttpClient(
 ) {
     
     /**
-     * :A: api Generic GET request with automatic JSON deserialization
-     * :A: sec validate URL and sanitize headers
-     * :A: perf use response caching when appropriate
+     * :M: api Generic GET request with automatic JSON deserialization
+     * :M: sec validate URL and sanitize headers
+     * :M: perf use response caching when appropriate
      * 
      * Performs an HTTP GET request and deserializes the response to the specified type.
      * 
@@ -967,9 +967,9 @@ class HttpClient(
         headers: Map<String, String> = emptyMap(),
         cachePolicy: CachePolicy = CachePolicy.Default
     ): Result<T> {
-        // :A: ctx combines baseUrl with relative URLs automatically
-        // :A: sec prevent URL injection attacks
-        // :A: perf check cache before making network request
+        // :M: ctx combines baseUrl with relative URLs automatically
+        // :M: sec prevent URL injection attacks
+        // :M: perf check cache before making network request
         
         val fullUrl = resolveUrl(url)
         validateUrl(fullUrl)
@@ -977,12 +977,12 @@ class HttpClient(
         val request = Request.Builder()
             .url(fullUrl)
             .apply {
-                // :A: sec sanitize all header values
+                // :M: sec sanitize all header values
                 headers.forEach { (key, value) ->
                     addHeader(sanitizeHeaderKey(key), sanitizeHeaderValue(value))
                 }
                 
-                // :A: ctx cache policy affects request headers
+                // :M: ctx cache policy affects request headers
                 when (cachePolicy) {
                     CachePolicy.NetworkOnly -> addHeader("Cache-Control", "no-cache")
                     CachePolicy.CacheOnly -> addHeader("Cache-Control", "only-if-cached")
@@ -992,28 +992,28 @@ class HttpClient(
             .build()
         
         return executeWithRetry(request) { response ->
-            // :A: perf stream large responses instead of loading to memory
+            // :M: perf stream large responses instead of loading to memory
             val responseBody = response.body?.string() 
                 ?: return@executeWithRetry Result.failure(HttpException("Empty response body"))
             
             try {
-                // :A: ctx uses Moshi for JSON serialization
+                // :M: ctx uses Moshi for JSON serialization
                 val adapter = moshi.adapter(T::class.java)
                 val result = adapter.fromJson(responseBody)
                     ?: return@executeWithRetry Result.failure(HttpException("Failed to parse JSON"))
                 
                 Result.success(result)
             } catch (e: Exception) {
-                // :A: todo @agent add more specific error types
+                // :M: todo @agent add more specific error types
                 Result.failure(HttpException("Deserialization failed: ${e.message}", e))
             }
         }
     }
     
     /**
-     * :A: api POST request with automatic JSON serialization
-     * :A: sec validate request body size and content
-     * :A: perf compress large request bodies
+     * :M: api POST request with automatic JSON serialization
+     * :M: sec validate request body size and content
+     * :M: perf compress large request bodies
      * 
      * Performs an HTTP POST request with automatic JSON serialization of the request body.
      * 
@@ -1029,22 +1029,22 @@ class HttpClient(
         body: T,
         headers: Map<String, String> = emptyMap()
     ): Result<R> {
-        // :A: ctx automatically sets Content-Type header for JSON
-        // :A: sec limit request body size to prevent DoS
-        // :A: perf consider request compression for large bodies
+        // :M: ctx automatically sets Content-Type header for JSON
+        // :M: sec limit request body size to prevent DoS
+        // :M: perf consider request compression for large bodies
         
         val fullUrl = resolveUrl(url)
         validateUrl(fullUrl)
         
         val jsonBody = try {
-            // :A: sec ensure request body doesn't contain sensitive data in logs
+            // :M: sec ensure request body doesn't contain sensitive data in logs
             val adapter = moshi.adapter(T::class.java)
             adapter.toJson(body)
         } catch (e: Exception) {
             return Result.failure(HttpException("Failed to serialize request body: ${e.message}", e))
         }
         
-        // :A: ctx check body size limits before creating request
+        // :M: ctx check body size limits before creating request
         if (jsonBody.length > MAX_REQUEST_BODY_SIZE) {
             return Result.failure(HttpException("Request body too large: ${jsonBody.length} bytes"))
         }
@@ -1078,15 +1078,15 @@ class HttpClient(
     }
     
     /**
-     * :A: perf retry logic with exponential backoff
-     * :A: ctx internal method for request execution
+     * :M: perf retry logic with exponential backoff
+     * :M: ctx internal method for request execution
      */
     private suspend fun <T> executeWithRetry(
         request: Request,
         transform: (Response) -> Result<T>
     ): Result<T> {
-        // :A: perf exponential backoff: 1s, 2s, 4s, 8s...
-        // :A: ctx only retry on transient failures (5xx, timeouts)
+        // :M: perf exponential backoff: 1s, 2s, 4s, 8s...
+        // :M: ctx only retry on transient failures (5xx, timeouts)
         
         repeat(retryCount) { attempt ->
             try {
@@ -1098,7 +1098,7 @@ class HttpClient(
                     return Result.failure(HttpException("HTTP ${response.code}: ${response.message}"))
                 }
                 
-                // :A: todo @agent make backoff configurable
+                // :M: todo @agent make backoff configurable
                 if (attempt < retryCount - 1) {
                     delay(1000L * (1 shl attempt)) // Exponential backoff
                 }
@@ -1117,21 +1117,21 @@ class HttpClient(
 }
 
 /**
- * :A: api Cache policy options for HTTP requests
- * :A: tldr Controls caching behavior for network requests
+ * :M: api Cache policy options for HTTP requests
+ * :M: tldr Controls caching behavior for network requests
  */
 enum class CachePolicy {
-    /** :A: ctx Use default HTTP caching headers */
+    /** :M: ctx Use default HTTP caching headers */
     Default,
-    /** :A: ctx Always fetch from network, ignore cache */
+    /** :M: ctx Always fetch from network, ignore cache */
     NetworkOnly,
-    /** :A: ctx Only return cached responses, no network */
+    /** :M: ctx Only return cached responses, no network */
     CacheOnly
 }
 
 /**
- * :A: api Custom exception for HTTP-related errors
- * :A: tldr Represents all HTTP operation failures
+ * :M: api Custom exception for HTTP-related errors
+ * :M: tldr Represents all HTTP operation failures
  */
 class HttpException(
     message: String,
@@ -1139,12 +1139,12 @@ class HttpException(
 ) : Exception(message, cause)
 
 /**
- * :A: ctx Sample usage for documentation
+ * :M: ctx Sample usage for documentation
  */
 private suspend fun sampleGetRequest() {
     val client = HttpClient(baseUrl = "https://api.example.com")
     
-    // :A: ctx demonstrates typical API call pattern
+    // :M: ctx demonstrates typical API call pattern
     val result = client.get<User>("/user/123")
     result.fold(
         onSuccess = { user -> 
@@ -1159,95 +1159,95 @@ private suspend fun sampleGetRequest() {
 
 ## Universal Search Patterns
 
-Magic Anchors work consistently across all documentation systems with these search strategies:
+Cairns work consistently across all documentation systems with these search strategies:
 
 ### Language-Specific Searches
 
 ```bash
 # JavaScript/TypeScript (JSDoc, TSDoc)
-rg "\/\*\*[\s\S]*?:A:" --type js          # JSDoc blocks only
-rg ":A:" --type js                        # All anchors in JS/TS
+rg "\/\*\*[\s\S]*?:M:" --type js          # JSDoc blocks only
+rg ":M:" --type js                        # All anchors in JS/TS
 
 # Python (all docstring formats)
-rg '"""[\s\S]*?:A:' --type py             # Triple quote docstrings  
-rg "'''[\s\S]*?:A:" --type py             # Single quote docstrings
-rg ":A:" --type py                        # All anchors in Python
+rg '"""[\s\S]*?:M:' --type py             # Triple quote docstrings  
+rg "'''[\s\S]*?:M:" --type py             # Single quote docstrings
+rg ":M:" --type py                        # All anchors in Python
 
 # Rust (rustdoc)
-rg "\/\/\/ :A:" --type rust               # Doc comments only
-rg ":A:" --type rust                      # All anchors in Rust
+rg "\/\/\/ :M:" --type rust               # Doc comments only
+rg ":M:" --type rust                      # All anchors in Rust
 
 # Go (godoc)
-rg "\/\/ :A:" --type go                   # Doc comments only
-rg ":A:" --type go                        # All anchors in Go
+rg "\/\/ :M:" --type go                   # Doc comments only
+rg ":M:" --type go                        # All anchors in Go
 
 # C/C++ (Doxygen)
-rg "\/\*\*[\s\S]*?:A:" --type cpp         # Doxygen blocks
-rg ":A:" --type cpp                       # All anchors in C/C++
+rg "\/\*\*[\s\S]*?:M:" --type cpp         # Doxygen blocks
+rg ":M:" --type cpp                       # All anchors in C/C++
 
 # Java (Javadoc)
-rg "\/\*\*[\s\S]*?:A:" --type java        # Javadoc blocks
-rg ":A:" --type java                      # All anchors in Java
+rg "\/\*\*[\s\S]*?:M:" --type java        # Javadoc blocks
+rg ":M:" --type java                      # All anchors in Java
 
 # C# (XML documentation)
-rg "\/\/\/ <summary>[\s\S]*?:A:" --type cs # XML doc comments
-rg ":A:" --type cs                        # All anchors in C#
+rg "\/\/\/ <summary>[\s\S]*?:M:" --type cs # XML doc comments
+rg ":M:" --type cs                        # All anchors in C#
 
 # Ruby (RDoc/YARD)
-rg "##[\s\S]*?:A:" --type ruby            # Block comments
-rg ":A:" --type ruby                      # All anchors in Ruby
+rg "##[\s\S]*?:M:" --type ruby            # Block comments
+rg ":M:" --type ruby                      # All anchors in Ruby
 
 # PHP (phpDocumentor)
-rg "\/\*\*[\s\S]*?:A:" --type php         # PHPDoc blocks
-rg ":A:" --type php                       # All anchors in PHP
+rg "\/\*\*[\s\S]*?:M:" --type php         # PHPDoc blocks
+rg ":M:" --type php                       # All anchors in PHP
 
 # Swift
-rg "\/\/\/ :A:" --type swift              # Swift doc comments
-rg ":A:" --type swift                     # All anchors in Swift
+rg "\/\/\/ :M:" --type swift              # Swift doc comments
+rg ":M:" --type swift                     # All anchors in Swift
 
 # Kotlin (KDoc)
-rg "\/\*\*[\s\S]*?:A:" --type kotlin      # KDoc blocks
-rg ":A:" --type kotlin                    # All anchors in Kotlin
+rg "\/\*\*[\s\S]*?:M:" --type kotlin      # KDoc blocks
+rg ":M:" --type kotlin                    # All anchors in Kotlin
 ```
 
 ### Cross-Language Searches
 
 ```bash
 # All documentation comments with anchors
-rg -U "(?:\/\*\*|\/\/\/|##|#|<!--|\"\"\")\s*[\s\S]*?:A:" --type-add 'docs:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h,hpp}' -t docs
+rg -U "(?:\/\*\*|\/\/\/|##|#|<!--|\"\"\")\s*[\s\S]*?:M:" --type-add 'docs:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h,hpp}' -t docs
 
 # All API-related anchors across languages
-rg ":A:.*api" --type-add 'code:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h}' -t code
+rg ":M:.*api" --type-add 'code:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h}' -t code
 
 # Security-related anchors in documentation
-rg -U "(?:\/\*\*|\/\/\/|##|#|<!--|\"\"\")\s*[\s\S]*?:A:.*sec" --type-add 'docs:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h}' -t docs
+rg -U "(?:\/\*\*|\/\/\/|##|#|<!--|\"\"\")\s*[\s\S]*?:M:.*sec" --type-add 'docs:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h}' -t docs
 
 # Performance-related documentation anchors
-rg -B2 -A5 ":A:.*perf" --type-add 'all:*'
+rg -B2 -A5 ":M:.*perf" --type-add 'all:*'
 ```
 
 ### Context-Aware Searches
 
 ```bash
 # Find anchors with surrounding documentation context
-rg -B5 -A10 ":A: api" --type-add 'code:*'    # 5 lines before, 10 after
-rg -C3 ":A: sec" --type js                    # 3 lines context for JS security
+rg -B5 -A10 ":M: api" --type-add 'code:*'    # 5 lines before, 10 after
+rg -C3 ":M: sec" --type js                    # 3 lines context for JS security
 
 # Documentation blocks containing specific anchor types
-rg -U "\/\*\*[\s\S]*?:A: todo[\s\S]*?\*\/" --type js    # JSDoc blocks with todos
-rg -U '"""[\s\S]*?:A: api[\s\S]*?"""' --type py         # Python docstrings with API markers
+rg -U "\/\*\*[\s\S]*?:M: todo[\s\S]*?\*\/" --type js    # JSDoc blocks with todos
+rg -U '"""[\s\S]*?:M: api[\s\S]*?"""' --type py         # Python docstrings with API markers
 ```
 
 ## Recommended Positioning
 
-**Universal pattern - Magic Anchors first in documentation:**
+**Universal pattern - Cairns first in documentation:**
 
 ```
 /* Any documentation format
- * :A: tldr Brief overview
- * :A: api Public interface marker  
- * :A: sec Security considerations
- * :A: todo @agent Tasks for AI
+ * :M: tldr Brief overview
+ * :M: api Public interface marker  
+ * :M: sec Security considerations
+ * :M: todo @agent Tasks for AI
  * 
  * Standard documentation content follows...
  * @param/@arg/@parameter documentation
@@ -1278,16 +1278,16 @@ This ensures:
 #!/bin/bash
 # Add API anchors to existing JSDoc functions
 
-# :A: temp migration script - remove after completion
-# :A: todo @agent make this more robust for edge cases
+# :M: temp migration script - remove after completion
+# :M: todo @agent make this more robust for edge cases
 
 find . -name "*.js" -type f | xargs sed -i '
   /\/\*\*/{
     # Look for function/class documentation
     /\* @description\|* @param\|* @returns/ {
       # Add API anchor if not already present
-      /\* :A:/ !{
-        s/\/\*\*/\/\*\*\n * :A: api/
+      /\* :M:/ !{
+        s/\/\*\*/\/\*\*\n * :M: api/
       }
     }
   }
@@ -1298,8 +1298,8 @@ find . -name "*.js" -type f | xargs sed -i '
 
 ### Universal Guidelines
 
-1. **Magic Anchors first** - Always place at beginning of documentation
-2. **One space after `:A:`** - Consistent formatting across languages
+1. **Cairns first** - Always place at beginning of documentation
+2. **One space after `:M:`** - Consistent formatting across languages
 3. **Language-appropriate comments** - Use `///` for Rust, `##` for Ruby, etc.
 4. **Separate concerns** - Use multiple lines for distinct topics
 5. **Test doc generation** - Ensure existing tools continue working
@@ -1334,11 +1334,11 @@ find . -name "*.js" -type f | xargs sed -i '
 
 ## Conclusion
 
-Magic Anchors provide **universal code navigation** that works seamlessly with all major documentation systems. The `:A:` pattern adds zero overhead to existing documentation workflows while enabling powerful search-based code discovery.
+Cairns provide **universal code navigation** that works seamlessly with all major documentation systems. The `:M:` pattern adds zero overhead to existing documentation workflows while enabling powerful search-based code discovery.
 
 **Key benefits:**
 - **Zero breaking changes** - Existing tools continue working
-- **Universal search** - `rg ":A:"` works across all languages
+- **Universal search** - `rg ":M:"` works across all languages
 - **Progressive adoption** - Add anchors incrementally
 - **AI-friendly** - Enables intelligent code navigation
 - **Documentation-aware** - Respects existing doc conventions

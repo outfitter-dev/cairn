@@ -1,47 +1,47 @@
 # Workflow Patterns
-<!-- :A: tldr Markers for managing work, collaboration, and process flow -->
-<!-- :A: convention Patterns for team workflows and collaboration -->
+<!-- :M: tldr Cairns for managing work, collaboration, and process flow -->
+<!-- :M: convention Patterns for team workflows and collaboration -->
 
-Markers for managing work, collaboration, and process flow.
+Cairns for managing work, collaboration, and process flow.
 
 ## Work Tracking
 
-### `:A: todo`
+### `:M: todo`
 **Purpose**: Mark future work items
 ```javascript
-// :A: todo implement caching layer
+// :M: todo implement caching layer
 ```
 
-### `:A: fixme`
+### `:M: fixme`
 **Purpose**: Broken code needing immediate attention
 ```python
-# :A: fixme race condition in auth flow
+# :M: fixme race condition in auth flow
 ```
 
-### `:A: hack`
+### `:M: hack`
 **Purpose**: Temporary workarounds
 ```go
-// :A: hack workaround for upstream bug #123
+// :M: hack workaround for upstream bug #123
 ```
 
 ## Review & Collaboration
 
-### `:A: review`
+### `:M: review`
 **Purpose**: Code needing review
 ```javascript
-// :A: review security implications unclear
+// :M: review security implications unclear
 ```
 
-### `:A: question`
+### `:M: question`
 **Purpose**: Clarification needed
 ```python
-# :A: question is this the right approach?
+# :M: question is this the right approach?
 ```
 
-### `:A: discuss`
+### `:M: discuss`
 **Purpose**: Needs team discussion
 ```java
-// :A: discuss architecture decision needed
+// :M: discuss architecture decision needed
 ```
 
 ## Mention Patterns
@@ -49,108 +49,108 @@ Markers for managing work, collaboration, and process flow.
 ### Direct Mentions
 **Purpose**: Tag specific people or teams
 ```javascript
-// :A: @alice please review
-// :A: @backend-team optimization needed
-// :A: @security audit required
+// :M: @alice please review
+// :M: @backend-team optimization needed
+// :M: @security audit required
 ```
 
 ### Attention Mentions
 **Purpose**: Request someone's attention
 ```javascript
-// :A: attn, @alice broken in production
-// :A: attn, @devops deployment issue
-// :A: attn, owner:[@alice,@bob] coordination needed
+// :M: attn, @alice broken in production
+// :M: attn, @devops deployment issue
+// :M: attn, owner:[@alice,@bob] coordination needed
 ```
 
 ### Owner Mentions
 **Purpose**: Designate ownership/responsibility
 ```javascript
-// :A: owner:@alice payment module
-// :A: owner:@frontend-team UI components
-// :A: owner:[@alice,@bob] shared ownership
+// :M: owner:@alice payment module
+// :M: owner:@frontend-team UI components
+// :M: owner:[@alice,@bob] shared ownership
 ```
 
 ### Reviewer Mentions
 **Purpose**: Assign reviewers
 ```javascript
-// :A: reviewer:@senior needs approval
-// :A: reviewers:[@alice,@bob]
-// :A: reviewer:[@security,@performance]
+// :M: reviewer:@senior needs approval
+// :M: reviewers:[@alice,@bob]
+// :M: reviewer:[@security,@performance]
 ```
 
 ## Status Tracking
 
-### `:A: wip`
+### `:M: wip`
 **Purpose**: Work in progress
 ```python
-# :A: wip do not merge
+# :M: wip do not merge
 ```
 
-### `:A: blocked`
+### `:M: blocked`
 **Purpose**: Blocked by dependency
 ```go
-// :A: blocked waiting on API update
-// :A: blocked, @alice need input
+// :M: blocked waiting on API update
+// :M: blocked, @alice need input
 ```
 
-### `:A: ready`
+### `:M: ready`
 **Purpose**: Ready for next step
 ```javascript
-// :A: ready for review
-// :A: ready, @qa for testing
+// :M: ready for review
+// :M: ready, @qa for testing
 ```
 
 ## Priority Patterns
 
 ### Priority Levels
 ```javascript
-// :A: p0 system down
-// :A: p1 major feature broken
-// :A: p2 important bug
-// :A: p3 nice to have
+// :M: p0 system down
+// :M: p1 major feature broken
+// :M: p2 important bug
+// :M: p3 nice to have
 ```
 
 ### Urgency Indicators
 ```javascript
-// :A: urgent, @ops production issue
-// :A: asap, owner:@alice customer blocker
-// :A: whenever low priority cleanup
+// :M: urgent, @ops production issue
+// :M: asap, owner:@alice customer blocker
+// :M: whenever low priority cleanup
 ```
 
 ## Lifecycle Management
 
-### `:A: draft`
+### `:M: draft`
 **Purpose**: Not finalized
 ```python
-# :A: draft api design subject to change
+# :M: draft api design subject to change
 ```
 
-### `:A: approved`
+### `:M: approved`
 **Purpose**: Formally approved
 ```java
-// :A: approved, @architect design reviewed
+// :M: approved, @architect design reviewed
 ```
 
-### `:A: shipped`
+### `:M: shipped`
 **Purpose**: Deployed to production
 ```javascript
-// :A: shipped:v2.1 feature released
+// :M: shipped:v2.1 feature released
 ```
 
 ## Integration Patterns
 
 ### Issue Tracking
 ```javascript
-// :A: issue(1234) related ticket
-// :A: fixes(#456) closes issue
-// :A: see:[#123,#456] related issues
+// :M: issue(1234) related ticket
+// :M: fixes(#456) closes issue
+// :M: see:[#123,#456] related issues
 ```
 
 ### External References
 ```javascript
-// :A: rfc(7231) follows HTTP spec
-// :A: spec:section-4.2
-// :A: doc:wiki/AuthFlow
+// :M: rfc(7231) follows HTTP spec
+// :M: spec:section-4.2
+// :M: doc:wiki/AuthFlow
 ```
 
 ## Best Practices
@@ -158,5 +158,5 @@ Markers for managing work, collaboration, and process flow.
 1. **Mention Format**: Use `@` for people/teams consistently
 2. **Attribute Actions**: `action@person` shows who should act
 3. **Group Mentions**: Use arrays or parens for multiple people
-4. **Add Context**: Always include description after markers
+4. **Add Context**: Always include description after cairns
 5. **Update Status**: Change tags as work progresses

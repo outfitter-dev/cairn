@@ -1,17 +1,17 @@
-<!-- :A: tldr canonical Magic Anchors notation specification -->
-# Magic Anchors Notation Specification
+<!-- :M: tldr canonical Cairns notation specification -->
+# Cairns Notation Specification
 
-The canonical specification for the Magic Anchors notation system - a breadcrumb protocol for code navigation.
+The canonical specification for the Cairns notation system - a breadcrumb protocol for code navigation.
 
 ## Overview
 
-Magic Anchors provide a breadcrumb protocol that enables developers and AI agents to leave structured, searchable markers throughout codebases. The notation accommodates diverse team preferences while recommending patterns that enable effective tooling and cross-project consistency.
+Cairns provide a breadcrumb protocol that enables developers and AI agents to leave structured, searchable markers throughout codebases. The notation accommodates diverse team preferences while recommending patterns that enable effective tooling and cross-project consistency.
 
 ## Core Grammar
 
 ```ebnf
-anchor      ::= comment-leader identifier space marker-list prose?
-identifier       ::= ":A:" | ":" identifier ":"
+cairn       ::= comment-leader identifier space marker-list prose?
+identifier  ::= ":M:" | ":" identifier ":"
 space       ::= " "                    # exactly one ASCII space
 marker-list ::= marker ("," marker)*
 marker      ::= key delimiter?
@@ -26,30 +26,30 @@ prose       ::= text                   # everything after markers
 
 ## Basic Structure
 
-### The `:A:` Sigil
-The notation uses `:A:` as the canonical identifier, though custom identifiers are accommodated for team-specific needs.
+### The `:M:` Identifier
+The notation uses `:M:` as the canonical identifier, though custom identifiers are accommodated for team-specific needs.
 
 ```javascript
 // Standard identifier (mandatory single space after)
-// :A: todo implement authentication
+// :M: todo implement authentication
 
 // Custom identifier (alternative)
 // :team: todo implement authentication
 ```
 
 **Key Rules:**
-- `:A:` must be followed by exactly one ASCII space
+- `:M:` must be followed by exactly one ASCII space
 - Three glyphs for visual clarity and fast typing
-- Trivially matched with `':A:'` in ripgrep
+- Trivially matched with `':M:'` in ripgrep
 
 ### Markers
 Markers classify the anchor's purpose. Markers are organized into six semantic groups for discoverability.
 
 ```javascript
 // Core markers with mandatory space after identifier
-// :A: todo implement rate limiting
-// :A: bug memory leak in auth service
-// :A: sec validate all user inputs
+// :M: todo implement rate limiting
+// :M: bug memory leak in auth service
+// :M: sec validate all user inputs
 ```
 
 ## Delimiter Semantics
@@ -60,29 +60,29 @@ The notation uses three distinct delimiters with specific semantic purposes:
 Used for type:value relationships, classifications, and states.
 
 ```javascript
-// :A: priority:high         // priority classification
-// :A: status:blocked        // status classification
-// :A: env:production        // environment type
-// :A: owner:@alice          // ownership (including mentions)
+// :M: priority:high         // priority classification
+// :M: status:blocked        // status classification
+// :M: env:production        // environment type
+// :M: owner:@alice          // ownership (including mentions)
 ```
 
 ### Parentheses (`()`) - Parameters
 Used for structured parameters and arguments associated with markers.
 
 ```javascript
-// :A: blocked(issue:4)           // parameter with classification
-// :A: depends(auth-service)      // simple parameter
-// :A: config(timeout:30,retry:3) // multiple parameters
+// :M: blocked(issue:4)           // parameter with classification
+// :M: depends(auth-service)      // simple parameter
+// :M: config(timeout:30,retry:3) // multiple parameters
 ```
 
 ### Brackets (`[]`) - Arrays
 Used for multiple values, optional for single values.
 
 ```javascript
-// :A: blocked:[4,7]              // multiple blockers
-// :A: tags:[auth,api,security]   // multiple tags
-// :A: owner:[@alice,@bob]        // multiple owners
-// :A: blocked:4                  // single value (brackets optional)
+// :M: blocked:[4,7]              // multiple blockers
+// :M: tags:[auth,api,security]   // multiple tags
+// :M: owner:[@alice,@bob]        // multiple owners
+// :M: blocked:4                  // single value (brackets optional)
 ```
 
 ## Core Marker Groups
@@ -99,7 +99,7 @@ Markers are organized into six semantic groups for discoverability:
 | **status** | Lifecycle / completeness | `temp`/`tmp`/`placeholder`, `stub`, `mock`, `draft`, `prototype`, `complete`, `ready`, `broken` |
 
 **Usage Rules:**
-1. Multiple markers can be combined with commas: `:A: todo,bug,priority:high`
+1. Multiple markers can be combined with commas: `:M: todo,bug,priority:high`
 2. If `todo` appears, it must be the first marker
 3. Work markers can appear standalone OR as parameters to `todo`
 
@@ -109,18 +109,18 @@ Relationships are expressed directly through dedicated markers without redundant
 
 ```javascript
 // Dependency relationships
-// :A: depends(auth-service)       // requires auth service
-// :A: requires(api:v2-login)      // needs specific API
-// :A: needs(config:redis)         // requires configuration
+// :M: depends(auth-service)       // requires auth service
+// :M: requires(api:v2-login)      // needs specific API
+// :M: needs(config:redis)         // requires configuration
 
 // Blocking relationships
-// :A: blocked(issue:AUTH-123)     // blocked by issue
-// :A: blocking:[PAY-45,UI-77]     // blocks multiple tasks
+// :M: blocked(issue:AUTH-123)     // blocked by issue
+// :M: blocking:[PAY-45,UI-77]     // blocks multiple tasks
 
 // Event relationships
-// :A: emits(event:user-created)   // publishes event
-// :A: listens(payment-completed)  // subscribes to event
-// :A: triggers(workflow:deploy)   // initiates process
+// :M: emits(event:user-created)   // publishes event
+// :M: listens(payment-completed)  // subscribes to event
+// :M: triggers(workflow:deploy)   // initiates process
 ```
 
 ## Multi-line Anchors
@@ -128,17 +128,17 @@ Relationships are expressed directly through dedicated markers without redundant
 The notation strongly recommends single-line anchors to maintain grep-ability:
 
 ```javascript
-// Single-line anchors (preferred)
-// :A: todo(assign:@alice,priority:high) implement OAuth integration
+// Single-line cairns (preferred)
+// :M: todo(assign:@alice,priority:high) implement OAuth integration
 
-// Multiple related anchor lines for complex context
-// :A: todo(assign:@alice,priority:high) implement OAuth integration  
-// :A: context OAuth flow requires PKCE for security compliance
-// :A: depends(service:session-api) user sessions must exist first
+// Multiple related cairn lines for complex context
+// :M: todo(assign:@alice,priority:high) implement OAuth integration  
+// :M: context OAuth flow requires PKCE for security compliance
+// :M: depends(service:session-api) user sessions must exist first
 ```
 
 **Benefits:**
-- `rg ":A: todo"` always finds todo items
+- `rg ":M: todo"` always finds todo items
 - Simple, consistent search patterns
 - No complex multi-line parsing required
 
@@ -148,15 +148,15 @@ Prose follows markers, separated by space. Optional formatting for clarity:
 
 ```javascript
 // Basic prose
-// :A: todo implement rate limiting
+// :M: todo implement rate limiting
 
 // Colon prefix (recommended for clarity)
-// :A: todo: implement rate limiting before launch
-// :A: context: this function assumes Redis is available
+// :M: todo: implement rate limiting before launch
+// :M: context: this function assumes Redis is available
 
 // Quoted prose (for complex text)
-// :A: todo(priority:high): "fix race condition in auth service"
-// :A: warn: "this function modifies global state"
+// :M: todo(priority:high): "fix race condition in auth service"
+// :M: warn: "this function modifies global state"
 ```
 
 ## Quoting and Escaping
@@ -165,17 +165,17 @@ The notation uses quotes for strings with special characters:
 
 **Simple values** (no quotes needed):
 ```javascript
-// :A: user(alice)
-// :A: version(2.0.1)  
-// :A: priority:high
+// :M: user(alice)
+// :M: version(2.0.1)  
+// :M: priority:high
 ```
 
 **Complex values** (quotes required):
 ```javascript
-// :A: match('user-123')              // literal string
-// :A: path('src/data migration.sql') // spaces in path
-// :A: message('Can\'t connect')      // escaped quote
-// :A: files:['auth.js','lib/utils.js'] // array of paths
+// :M: match('user-123')              // literal string
+// :M: path('src/data migration.sql') // spaces in path
+// :M: message('Can\'t connect')      // escaped quote
+// :M: files:['auth.js','lib/utils.js'] // array of paths
 ```
 
 **No structural dots** - Use dots only for literals (versions, URLs, file paths)
@@ -189,9 +189,9 @@ Teams can configure their preferred notation patterns:
 priorities:
   scheme: "numeric"  # or "named"
   numeric:
-    p0: "critical"   # :A: p0 → :A: priority:critical
-    p1: "high"       # :A: p1 → :A: priority:high
-    p2: "medium"     # :A: p2 → :A: priority:medium
+    p0: "critical"   # :M: p0 → :M: priority:critical
+    p1: "high"       # :M: p1 → :M: priority:high
+    p2: "medium"     # :M: p2 → :M: priority:medium
 ```
 
 ### Version Styles
@@ -218,38 +218,38 @@ Parameters are organized into six semantic families that work with any marker:
 
 ## Tool Integration Notes
 
-While the notation accommodates flexible usage, Grepa tools may implement stricter parsing:
+While the notation accommodates flexible usage, Cairn tools may implement stricter parsing:
 
 - **Linters** may enforce consistent delimiter styles
 - **Parsers** may require specific marker formats  
 - **CLIs** may validate parameter content
 - **IDEs** may provide completion based on established patterns
 
-See [Grepa documentation](../grepa/) for tool-specific requirements.
+See [Cairn documentation](../cairn/) for tool-specific requirements.
 
 ## Marker Philosophy
 
 **Core Principles:**
-- No JSON or YAML syntax within anchors
+- No JSON or YAML syntax within cairns
 - No regex/pattern matching as core feature
 - Focus on LLM context and navigation
-- Magic Anchor syntax must be expressive enough on its own
+- Cairn syntax must be expressive enough on its own
 
 ## Search Examples
 
 ```bash
-# Find all anchors
-rg ":A:"
+# Find all cairns
+rg ":M:"
 
 # Find by marker group
-rg ":A:.*todo"      # All work items
-rg ":A:.*notice"    # All warnings/alerts
-rg ":A:.*domain"    # All domain-specific markers
+rg ":M:.*todo"      # All work items
+rg ":M:.*notice"    # All warnings/alerts
+rg ":M:.*domain"    # All domain-specific markers
 
 # Find with context
-rg -C2 ":A: security"  # 2 lines context
-rg -B3 -A3 ":A: todo"  # 3 lines before/after
+rg -C2 ":M: security"  # 2 lines context
+rg -B3 -A3 ":M: todo"  # 3 lines before/after
 
 # Find in markdown (including HTML comments)
-rg "<!-- :A:" --type md
+rg "<!-- :M:" --type md
 ```

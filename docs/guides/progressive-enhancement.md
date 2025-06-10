@@ -1,15 +1,15 @@
 # Progressive Enhancement Guide
-<!-- :A: tldr How to adopt Magic Anchors incrementally from simple to advanced -->
-<!-- :A: guide Step-by-step adoption guide for individuals and teams -->
+<!-- :M: tldr How to adopt Cairns incrementally from simple to advanced -->
+<!-- :M: guide Step-by-step adoption guide for individuals and teams -->
 
-Start simple, grow as needed. This guide shows how to adopt Magic Anchors incrementally.
+Start simple, grow as needed. This guide shows how to adopt Cairns incrementally.
 
-## Level 0: Your First Anchor
+## Level 0: Your First Cairn
 
 Start with just one pattern to get comfortable:
 
 ```javascript
-// :A: todo implement validation
+// :M: todo implement validation
 function saveUser(data) {
     // Save to database
 }
@@ -17,36 +17,36 @@ function saveUser(data) {
 
 **Find it:**
 ```bash
-rg ":A:"
+rg ":M:"
 ```
 
-That's it! You've made your first Magic Anchor.
+That's it! You've made your first Cairn.
 
-## The Canonical Anchor
+## The Canonical Cairn
 
-This guide uses `:A:` - the canonical Magic Anchor prefix. The single standard ensures consistency across all projects and makes patterns universally searchable.
+This guide uses `:M:` - the canonical Cairn prefix. The single standard ensures consistency across all projects and makes patterns universally searchable.
 
 ## Level 1: TODO Migration
 
 If you already use TODO comments, enhance them gradually:
 
-### Phase 1: Add `:A:` to existing TODOs
+### Phase 1: Add `:M:` to existing TODOs
 ```javascript
-// TODO :A: add error handling
-// FIXME :A: memory leak here
-// NOTE :A: this assumes UTC timezone
+// TODO :M: add error handling
+// FIXME :M: memory leak here
+// NOTE :M: this assumes UTC timezone
 ```
 
 Your existing tools still work, but now you can also:
 ```bash
-rg ":A:"  # Find all enhanced comments
+rg ":M:"  # Find all enhanced comments
 ```
 
-### Phase 2: Start using pure Magic Anchors
+### Phase 2: Start using pure Cairns
 ```javascript
-// :A: todo add error handling
-// :A: fixme memory leak here  
-// :A: note assumes UTC timezone
+// :M: todo add error handling
+// :M: fixme memory leak here  
+// :M: note assumes UTC timezone
 ```
 
 ## Level 2: Add Context

@@ -1,13 +1,13 @@
-# What If... A Vision for AI-Native Development with Grepa
+# What If... A Vision for AI-Native Development with Cairn
 
-<!-- :A: tldr Explores future possibilities for grepa including AI-maintained consistency, IDE integration, and architectural intelligence -->
-<!-- :A: vision Conceptual guide for what grepa could become as an AI-native development platform -->
+<!-- :M: tldr Explores future possibilities for cairn including AI-maintained consistency, IDE integration, and architectural intelligence -->
+<!-- :M: vision Conceptual guide for what cairn could become as an AI-native development platform -->
 
-*What if Magic Anchors could transform from simple markers into a living knowledge graph that makes your codebase AI-native?*
+*What if Cairns could transform from simple markers into a living knowledge graph that makes your codebase AI-native?*
 
 ## What If... AI Agents Were Code Citizens, Not Tourists?
 
-Today, AI agents rediscover your codebase with every conversation. But what if Magic Anchors could create **AI citizens** who understand the neighborhood, know the history, and work at architectural scale?
+Today, AI agents rediscover your codebase with every conversation. But what if Cairns could create **AI citizens** who understand the neighborhood, know the history, and work at architectural scale?
 
 ## What If... Your Development Workflow Was AI-Aware?
 
@@ -19,25 +19,25 @@ What if your pre-commit hooks could enforce semantic patterns?
 # .pre-commit-config.yaml
 - repo: local
   hooks:
-    - id: grepa-security-gate
+    - id: cairn-security-gate
       name: Security markers required
-      entry: rg -l ":A: sec" | xargs -I {} test -f {} || exit 1
+      entry: rg -l ":M: sec" | xargs -I {} test -f {} || exit 1
       language: system
       files: '(auth|payment|admin).*\.(js|py|go)'
 ```
 
 **Auto-enforced patterns:**
-- Security-sensitive files MUST have `:A: sec` markers
-- TODO comments require `:A: issue(123)` links
-- API changes need `:A: breaking` or `:A: compatible` markers
-- Performance-critical paths require `:A: perf` documentation
+- Security-sensitive files MUST have `:M: sec` markers
+- TODO comments require `:M: issue(123)` links
+- API changes need `:M: breaking` or `:M: compatible` markers
+- Performance-critical paths require `:M: perf` documentation
 
 ### GitHub Actions That Think
 
 What if your CI/CD pipeline could maintain your markers automatically?
 
 ```yaml
-name: Grepa Maintenance
+name: Cairn Maintenance
 on: [pull_request, issues]
 
 jobs:
@@ -46,12 +46,12 @@ jobs:
     steps:
       - name: Update closed issue markers
         run: |
-          # Find all :A: issue(123) where issue is closed
+          # Find all :M: issue(123) where issue is closed
           # Auto-generate PR to remove completed markers
           
       - name: AI Security Audit
         run: |
-          # AI agent reviews new :A: sec markers
+          # AI agent reviews new :M: sec markers
           # Validates they're in appropriate locations
           
       - name: Suggest Missing Markers
@@ -66,8 +66,8 @@ jobs:
 
 Imagine these features in your editor:
 
-- **Hover Intelligence:** Hover over `:A: sec` to see security docs, threat models
-- **Quick Navigation:** `Cmd+Shift+G` opens fuzzy grep-anchor search
+- **Hover Intelligence:** Hover over `:M: sec` to see security docs, threat models
+- **Quick Navigation:** `Cmd+Shift+G` opens fuzzy cairn search
 - **Context Panels:** See all related markers when viewing a file
 - **Smart Completion:** AI suggests appropriate tags based on code context
 - **Marker Health:** Visual indicators for stale or inconsistent markers
@@ -88,7 +88,7 @@ What if AI could detect missing markers?
 ```python
 # AI agent scans for unmarked patterns
 def detect_missing_markers(codebase):
-    # Find security-sensitive functions without :A: sec
+    # Find security-sensitive functions without :M: sec
     security_patterns = [
         r'def.*auth.*\(',
         r'password.*=',
@@ -96,7 +96,7 @@ def detect_missing_markers(codebase):
         r'@require_permission'
     ]
     
-    # Find performance bottlenecks without :A: perf
+    # Find performance bottlenecks without :M: perf
     perf_patterns = [
         r'for.*in.*range\(.*\d{4,}',  # Large loops
         r'\.join\(',                   # String concatenation
@@ -110,10 +110,10 @@ def detect_missing_markers(codebase):
 
 What if every marker was automatically validated?
 
-- Verify `:A: issue(123)` links point to real issues
-- Check `:A: @alice` mentions against team roster
-- Validate `:A: deadline(2024-03-01)` dates aren't past
-- Ensure `:A: depends(auth-service)` references exist
+- Verify `:M: issue(123)` links point to real issues
+- Check `:M: @alice` mentions against team roster
+- Validate `:M: deadline(2024-03-01)` dates aren't past
+- Ensure `:M: depends(auth-service)` references exist
 
 ### Semantic Consistency
 
@@ -141,11 +141,11 @@ What if markers cleaned themselves up?
 
 ```bash
 # AI-driven marker maintenance
-grepa clean --strategy=smart
-# - Remove :A: temp markers for shipped features
-# - Archive :A: issue(123) for closed issues  
-# - Update :A: deadline dates from sprint planning
-# - Consolidate duplicate :A: sec markers
+cairn clean --strategy=smart
+# - Remove :M: temp markers for shipped features
+# - Archive :M: issue(123) for closed issues  
+# - Update :M: deadline dates from sprint planning
+# - Consolidate duplicate :M: sec markers
 ```
 
 ### Lifecycle Stages
@@ -178,9 +178,9 @@ def build_architecture_map():
 ### Impact Analysis
 
 What if you could instantly answer:
-- "What breaks if we change the auth service?" → Follow `:A: depends(auth)` markers
-- "Which components are performance-critical?" → Map `:A: perf` marker density
-- "What security assumptions exist?" → Aggregate `:A: ctx,sec` content
+- "What breaks if we change the auth service?" → Follow `:M: depends(auth)` markers
+- "Which components are performance-critical?" → Map `:M: perf` marker density
+- "What security assumptions exist?" → Aggregate `:M: ctx,sec` content
 
 ## What If... AI Could Plan Your Migrations?
 
@@ -251,17 +251,17 @@ def review_pull_request(diff):
 
 ### Scenario 1: Security Incident Response
 
-**Without Grepa:**
+**Without Cairn:**
 - "Find all authentication code" → 30 tool calls, 2 hours of searching
 - Miss critical security context scattered across files
 - Incomplete understanding of trust boundaries
 
-**With Grepa Vision:**
+**With Cairn Vision:**
 ```bash
 # Instant security landscape
-rg ":A: sec" | rg "auth"
-rg ":A: ctx.*sec"
-rg ":A: assumes.*trust"
+rg ":M: sec" | rg "auth"
+rg ":M: ctx.*sec"
+rg ":M: assumes.*trust"
 
 # AI agent immediately understands:
 # - All authentication entry points
@@ -272,10 +272,10 @@ rg ":A: assumes.*trust"
 ### Scenario 2: Performance Optimization Sprint
 
 **AI Agent Workflow:**
-1. `rg ":A: perf"` → Find all performance issues
+1. `rg ":M: perf"` → Find all performance issues
 2. Read context markers to understand constraints
-3. Prioritize by `:A: critical` and `:A: p0` tags
-4. Check `:A: depends()` to understand order
+3. Prioritize by `:M: critical` and `:M: p0` tags
+4. Check `:M: depends()` to understand order
 5. Generate optimization plan with full context
 
 ### Scenario 3: Onboarding New Developers
@@ -283,10 +283,10 @@ rg ":A: assumes.*trust"
 **Self-Documenting Codebase:**
 ```bash
 # New developer day 1
-rg ":A: ctx" | head -20       # Key assumptions
-rg ":A: business"              # Business logic
-rg ":A: api"                   # Public interfaces
-rg ":A: @newbie"               # Beginner tasks
+rg ":M: ctx" | head -20       # Key assumptions
+rg ":M: business"              # Business logic
+rg ":M: api"                   # Public interfaces
+rg ":M: @newbie"               # Beginner tasks
 ```
 
 ## The Compound Effect
@@ -298,7 +298,7 @@ What if each marker became exponentially more valuable?
 - **1000 markers** = Architectural intelligence
 - **10000 markers** = AI-native development platform
 
-The magic happens when Magic Anchors transform from individual annotations into a **living knowledge graph** that AI agents can traverse, understand, and maintain.
+The magic happens when Cairns transform from individual annotations into a **living knowledge graph** that AI agents can traverse, understand, and maintain.
 
 ## Implementation Vision
 
@@ -336,4 +336,4 @@ This isn't just about finding code faster - it's about creating a development en
 
 ---
 
-*Remember: This is a vision document exploring possibilities. These features don't exist yet, but they show where Magic Anchors could lead. Start simple with basic `:A:` markers today, and let's build this future together.*
+*Remember: This is a vision document exploring possibilities. These features don't exist yet, but they show where Cairns could lead. Start simple with basic `:M:` markers today, and let's build this future together.*

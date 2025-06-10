@@ -1,20 +1,20 @@
-# Magic Anchor Conventions
-<!-- :A: tldr Standard patterns and practices for Magic Anchors -->
-<!-- :A: convention Central hub for all Magic Anchor conventions -->
+# Cairn Conventions
+<!-- :M: tldr Standard patterns and practices for Cairns -->
+<!-- :M: convention Central hub for all Cairn conventions -->
 
-Patterns and practices for making your codebase AI-navigable and human-friendly using Magic Anchors.
+Patterns and practices for making your codebase AI-navigable and human-friendly using Cairns.
 
 ## Quick Start
 
 Begin with these five essential patterns:
 
-1. `:A: todo` - Work that needs doing
-2. `:A: ctx` - Important assumptions or constraints
-3. `:A: sec` - Security-critical code
-4. `:A: @agent` - AI agent instructions
-5. `:A: temp` - Temporary code to remove
+1. `:M: todo` - Work that needs doing
+2. `:M: ctx` - Important assumptions or constraints
+3. `:M: sec` - Security-critical code
+4. `:M: @agent` - AI agent instructions
+5. `:M: temp` - Temporary code to remove
 
-That's it! You can search all of these with `rg ":A:"`.
+That's it! You can search all of these with `rg ":M:"`.
 
 ## Convention Categories
 
@@ -25,10 +25,10 @@ Start here. Core patterns that work in any codebase.
 Patterns for delegating work to AI agents and providing them context.
 
 ### [Progressive Enhancement Guide](../guides/progressive-enhancement.md)
-How to adopt Magic Anchors incrementally, from simple to advanced.
+How to adopt Cairns incrementally, from simple to advanced.
 
-### [Custom Anchors Guide](../guides/custom-anchors.md)
-How to define your own anchor pattern (if not using `:A:`).
+### [Custom Cairns Guide](../guides/custom-cairns.md)
+How to define your own cairn pattern (if not using `:M:`).
 
 ### [Advanced Patterns](../advanced-patterns.md)
 JSON payloads, complex metadata, and sophisticated workflows.
@@ -50,19 +50,19 @@ Patterns for code review, deployment, and team processes.
 ## Adoption Path
 
 ```text
-Level 0: Try one pattern (:A: todo)
+Level 0: Try one pattern (:M: todo)
    ↓
-Level 1: Enhance existing TODOs (TODO :A:)
+Level 1: Enhance existing TODOs (TODO :M:)
    ↓
-Level 2: Add context (:A: ctx)
+Level 2: Add context (:M: ctx)
    ↓
-Level 3: Delegate to AI (:A: @agent)
+Level 3: Delegate to AI (:M: @agent)
    ↓
-Level 4: Link to issues (:A: issue(123))
+Level 4: Link to issues (:M: issue(123))
    ↓
 Level 5: Team-specific patterns
 ```
 
 ## Remember
 
-The goal is **discoverability**, not perfection. Even one `:A:` marker makes your codebase more navigable than none.
+The goal is **discoverability**, not perfection. Even one `:M:` cairn makes your codebase more navigable than none.

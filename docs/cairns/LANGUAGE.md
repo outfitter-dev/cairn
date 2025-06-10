@@ -1,11 +1,11 @@
-<!-- :A: tldr language guide for writing about Magic Anchors notation -->
-# Magic Anchors Language Guide
+<!-- :M: tldr language guide for writing about Cairns notation -->
+# Cairns Language Guide
 
-Guidelines for writing documentation about the Magic Anchors notation system.
+Guidelines for writing documentation about the Cairns notation system.
 
 ## Core Principles
 
-Magic Anchors are a set of patterns and conventions, not an active system. Language should reflect this passive nature while remaining opinionated about best practices.
+Cairns are a set of patterns and conventions, not an active system. Language should reflect this passive nature while remaining opinionated about best practices.
 
 ## Recommended Language
 
@@ -14,7 +14,7 @@ Magic Anchors are a set of patterns and conventions, not an active system. Langu
 **Use:**
 
 - "accommodates" - The notation accommodates different delimiter styles
-- "allows" - The notation allows both `:A: priority:high` and `:A: priority(high)`
+- "allows" - The notation allows both `:M: priority:high` and `:M: priority(high)`
 - "recognizes" - The notation recognizes parameterized markers
 - "accepts" - Both forms are accepted in the notation
 - "permits" - The notation permits flexible delimiter usage
@@ -34,7 +34,7 @@ Magic Anchors are a set of patterns and conventions, not an active system. Langu
 > "The notation accommodates team preferences while recommending consistency within projects."
 
 **Opinion with alternatives:**
-> "The notation recommends `:A: config:env(prod)` for clarity, though `:A: config(redis)` is also valid when context is unambiguous."
+> "The notation recommends `:M: config:env(prod)` for clarity, though `:M: config(redis)` is also valid when context is unambiguous."
 
 **Tool relationship:**
 > "While the notation allows both styles, specific tools may enforce one approach - see toolset documentation for implementation details."
@@ -59,37 +59,37 @@ Magic Anchors are a set of patterns and conventions, not an active system. Langu
 **Good notation example:**
 > The notation recommends scope markers for ambiguous contexts:
 >
-> - `:A: config:env(prod)` - clear environmental configuration
-> - `:A: config:database(postgres)` - clear database configuration
+> - `:M: config:env(prod)` - clear environmental configuration
+> - `:M: config:database(postgres)` - clear database configuration
 > 
-> This pattern enables tools to provide better validation and teams to maintain consistency, though simpler forms like `:A: config(redis)` remain valid when context is clear.
+> This pattern enables tools to provide better validation and teams to maintain consistency, though simpler forms like `:M: config(redis)` remain valid when context is clear.
 
 **Tool reference:**
-> Tools may implement stricter parsing rules based on these patterns. See [grepa language guide](../grepa/LANGUAGE.md) for enforcement-focused documentation.
+> Tools may implement stricter parsing rules based on these patterns. See [cairn language guide](../cairn/LANGUAGE.md) for enforcement-focused documentation.
 
 ## Cross-References
 
-- Reference grepa tooling documentation for enforcement and validation
+- Reference cairn tooling documentation for enforcement and validation
 - Link to specification for canonical patterns
-- Distinguish between Magic Anchors notation flexibility and grepa tool implementations
+- Distinguish between Cairns notation flexibility and cairn tool implementations
 
 ## Anti-Patterns
 
 **Don't write:**
 > "The notation supports multiple delimiter styles and enforces consistency."
-> "Magic Anchors require regex patterns."
+> "Cairns require regex patterns."
 
 **Do write:**
 > "The notation accommodates multiple delimiter styles and recommends consistency within projects."
-> "Magic Anchors enable simple string matching while avoiding complex patterns."
+> "Cairns enable simple string matching while avoiding complex patterns."
 
 ## Key Syntax Guidelines
 
-**The `:A:` Anchor:**
+**The `:M:` Identifier:**
 
 - Always followed by exactly one ASCII space
 - Three glyphs for visual clarity and fast typing
-- Trivially matched with `':A:'` in ripgrep
+- Trivially matched with `':M:'` in ripgrep
 
 **Delimiter Semantics:**
 
@@ -99,6 +99,6 @@ Magic Anchors are a set of patterns and conventions, not an active system. Langu
 
 **No Core Support For:**
 
-- JSON or YAML syntax within anchors
+- JSON or YAML syntax within cairns
 - Regex/pattern matching as core feature
 - Structural dots (only literal dots in versions, URLs, paths)

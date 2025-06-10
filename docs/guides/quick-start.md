@@ -1,38 +1,38 @@
 # Quick Start Guide
-<!-- :A: tldr Get started with Magic Anchors in 5 minutes -->
-<!-- :A: guide Essential quick start guide for new users -->
+<!-- :M: tldr Get started with Cairns in 5 minutes -->
+<!-- :M: guide Essential quick start guide for new users -->
 
-Get started with Magic Anchors in 5 minutes.
+Get started with Cairns in 5 minutes.
 
-## What is Grepa?
+## What is Cairn?
 
-Grepa uses **Magic Anchors** - special comments with the `:A:` marker that make your code searchable and discoverable.
+Cairn uses **Cairns** - special comments with the `:M:` marker that make your code searchable and discoverable.
 
 ## Basic Usage
 
-### 1. Add Your First Anchor
+### 1. Add Your First Cairn
 
-Add a Magic Anchor comment to mark important code:
+Add a Cairn comment to mark important code:
 
 ```javascript
-// :A: todo implement error handling
+// :M: todo implement error handling
 function processUser(data) {
-  // :A: sec validate input
+  // :M: sec validate input
   return data;
 }
 ```
 
 ### 2. Search with Ripgrep
 
-Find all anchors in your codebase:
+Find all cairns in your codebase:
 
 ```bash
-# Find all Magic Anchors
-rg -n ":A:"
+# Find all Cairns
+rg -n ":M:"
 
 # Find specific types
-rg -n ":A: todo"
-rg -n ":A: sec"
+rg -n ":M: todo"
+rg -n ":M: sec"
 ```
 
 ### 3. Common Patterns
@@ -41,12 +41,12 @@ Start with these essential markers:
 
 | Marker | Purpose | Example |
 |--------|---------|---------|
-| `tldr` | Brief summary | `// :A: tldr handles user auth` |
-| `todo` | Future work | `// :A: todo add tests` |
-| `ctx` | Key assumptions | `// :A: ctx UTC only` |
-| `fixme` | Broken code | `// :A: fixme null pointer` |
-| `sec` | Security critical | `// :A: sec validate input` |
-| `@person` | Assign to someone | `// :A: @alice review this` |
+| `tldr` | Brief summary | `// :M: tldr handles user auth` |
+| `todo` | Future work | `// :M: todo add tests` |
+| `ctx` | Key assumptions | `// :M: ctx UTC only` |
+| `fixme` | Broken code | `// :M: fixme null pointer` |
+| `sec` | Security critical | `// :M: sec validate input` |
+| `@person` | Assign to someone | `// :M: @alice review this` |
 
 ## Combining Markers
 
@@ -89,13 +89,13 @@ rg -n ":A: todo"
 rg -n ":A: sec"
 
 # Find work assigned to Alice
-rg -n ":A:.*@alice"
+rg -n ":M:.*@alice"
 
 # Find high priority items
-rg -n ":A:.*p0"
+rg -n ":M:.*p0"
 
-# Count all anchors
-rg -c ":A:" | awk -F: '{sum+=$2} END {print sum}'
+# Count all cairns
+rg -c ":M:" | awk -F: '{sum+=$2} END {print sum}'
 ```
 
 ## Tips
@@ -104,4 +104,4 @@ rg -c ":A:" | awk -F: '{sum+=$2} END {print sum}'
 - Always add a description after markers
 - Use standard markers when possible
 - Document team-specific conventions
-- Review and clean up old anchors regularly
+- Review and clean up old cairns regularly

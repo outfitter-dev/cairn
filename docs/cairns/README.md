@@ -1,13 +1,13 @@
-# Magic Anchors Notation
-<!-- :A: tldr Technical specification for Magic Anchors notation format -->
-<!-- :A: notation Core notation documentation and format rules -->
+# Cairns Notation
+<!-- :M: tldr Technical specification for Cairns notation format -->
+<!-- :M: notation Core notation documentation and format rules -->
 
-The technical specification for Magic Anchors notation - a lightweight marking system for code navigation.
+The technical specification for Cairns notation - a lightweight marking system for code navigation.
 
-## What is Magic Anchors Notation?
+## What is Cairns Notation?
 
-Magic Anchors notation is the **format** for writing searchable code markers. It defines:
-- How to write the `:A:` marker with mandatory single space
+Cairns notation is the **format** for writing searchable code markers. It defines:
+- How to write the `:M:` marker with mandatory single space
 - Delimiter semantics (`:` for classifications, `()` for parameters, `[]` for arrays)
 - Marker organization into six semantic groups
 
@@ -16,11 +16,11 @@ Think of it like learning to write musical notes - the notation is simple and co
 ## Core Format
 
 ```
-<comment-leader> :A: <space> <marker-list> <optional prose>
+<comment-leader> :M: <space> <marker-list> <optional prose>
 ```
 
 The notation consists of:
-1. **Sigil**: `:A:` (or custom like `:proj:`)
+1. **Identifier**: `:M:` (or custom like `:proj:`)
 2. **Space**: Exactly one ASCII space (mandatory)
 3. **Markers**: One or more markers with optional parameters
 4. **Prose**: Optional human-readable description
@@ -28,12 +28,12 @@ The notation consists of:
 ## Quick Examples
 
 ```javascript
-// :A: todo                      // Simple marker
-// :A: sec,perf                  // Multiple markers
-// :A: todo(priority:high)       // Marker with parameter
-// :A: owner:@alice              // Classification with mention
-// :A: blocked:[4,7]             // Array of values
-// :A: todo: implement caching   // With prose description
+// :M: todo                      // Simple marker
+// :M: sec,perf                  // Multiple markers
+// :M: todo(priority:high)       // Marker with parameter
+// :M: owner:@alice              // Classification with mention
+// :M: blocked:[4,7]             // Array of values
+// :M: todo: implement caching   // With prose description
 ```
 
 ## Learn More
@@ -41,12 +41,12 @@ The notation consists of:
 - [Specification](./SPEC.md) - Complete notation specification
 - [Payload Types](./payloads.md) - Parameter and value structures
 - [Examples](./examples.md) - Notation in practice
-- [Language Guide](./LANGUAGE.md) - How to write about Magic Anchors
+- [Language Guide](./LANGUAGE.md) - How to write about Cairns
 
 ## Key Principles
 
-> **Magic Anchors** = The notation system (`:A:` with specific syntax)
-> **Grepa** = The tooling that understands and processes Magic Anchors
+> **Cairns** = The notation system (`:M:` with specific syntax)
+> **Cairn** = The tooling that understands and processes Cairns
 > 
-> Notation defines **how** to write anchors.
+> Notation defines **how** to write cairns.
 > Conventions define **what** to write and **when**.

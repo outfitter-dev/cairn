@@ -78,7 +78,7 @@ interface MagicAnchor {
 }
 
 // New interface  
-interface MagicAnchor {
+interface Cairn {
   contexts: string[];
   // ...
 }
@@ -106,7 +106,7 @@ import { JsonFormatter } from '@grepa/formatters';
 
 // After
 import { CairnSearch } from '@cairn/core';
-import type { SearchOptions, MagicAnchor } from '@cairn/types';
+import type { SearchOptions, Cairn } from '@cairn/types';
 import { JsonFormatter } from '@cairn/formatters';
 ```
 
