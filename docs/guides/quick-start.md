@@ -54,13 +54,13 @@ Combine related markers with comma-space separation, or use separate lines for c
 
 ```javascript
 // Good: related markers, concise
-// :A: fix, sec critical security bug
-// :A: todo, @bob implement for next release
+// :M: fix, sec critical security bug
+// :M: todo, @bob implement for next release
 
 // Better: separate lines for different concerns
-// :A: sec validate user permissions
-// :A: todo implement rate limiting
-// :A: @bob assigned for code review
+// :M: sec validate user permissions
+// :M: todo implement rate limiting
+// :M: @bob assigned for code review
 ```
 
 ## Mention Patterns
@@ -68,9 +68,9 @@ Combine related markers with comma-space separation, or use separate lines for c
 Assign work and request attention:
 
 ```javascript
-// :A: @alice please review
-// :A: owner:@bob payment module
-// :A: attn, @sec needs audit
+// :M: @alice please review
+// :M: owner:@bob payment module
+// :M: attn, @sec needs audit
 ```
 
 ## Next Steps
@@ -83,10 +83,10 @@ Assign work and request attention:
 
 ```bash
 # Find all TODOs
-rg -n ":A: todo"
+rg -n ":M: todo"
 
 # Find security issues
-rg -n ":A: sec"
+rg -n ":M: sec"
 
 # Find work assigned to Alice
 rg -n ":M:.*@alice"

@@ -51,18 +51,18 @@ rg ":M:"  # Find all enhanced comments
 
 ## Level 2: Add Context
 
-Once comfortable with basic anchors, add context for clarity:
+Once comfortable with basic cairns, add context for clarity:
 
 ```python
-# :A: todo implement retry logic
+# :M: todo implement retry logic
 # becomes:
-# :A: todo implement retry logic
-# :A: ctx max 3 attempts with exponential backoff
+# :M: todo implement retry logic
+# :M: ctx max 3 attempts with exponential backoff
 
-# :A: sec validate input
+# :M: sec validate input
 # becomes:
-# :A: sec validate input
-# :A: ctx prevent SQL injection and XSS
+# :M: sec validate input
+# :M: ctx prevent SQL injection and XSS
 ```
 
 ## Level 3: AI Agent Integration
@@ -71,16 +71,16 @@ Start delegating to AI agents:
 
 ```javascript
 // Basic delegation
-// :A: @agent implement this function
+// :M: @agent implement this function
 
 // With guidance
-// :A: @agent implement pagination
-// :A: ctx use cursor-based approach
-// :A: requirement support both forward and backward
+// :M: @agent implement pagination
+// :M: ctx use cursor-based approach
+// :M: requirement support both forward and backward
 
 // Specific agents
-// :A: @cursor write unit tests
-// :A: @claude optimize for performance
+// :M: @cursor write unit tests
+// :M: @claude optimize for performance
 ```
 
 ## Level 4: Structured Tasks
@@ -89,15 +89,15 @@ Link to your issue tracker:
 
 ```python
 # Simple issue reference
-# :A: issue(123) fix user validation
+# :M: issue(123) fix user validation
 
 # With more context
-# :A: issue(123) fix user validation
-# :A: priority high
-# :A: owner @alice
+# :M: issue(123) fix user validation
+# :M: priority high
+# :M: owner @alice
 
 # Or combined
-# :A: issue(123),priority:high,@alice fix user validation
+# :M: issue(123),priority:high,@alice fix user validation
 ```
 
 ## Level 5: Team Patterns
@@ -106,20 +106,20 @@ Define patterns that make sense for your team:
 
 ```ruby
 # Your team's priority system
-# :A: p0 - drop everything, fix now
-# :A: p1 - fix this sprint  
-# :A: p2 - fix next sprint
-# :A: backlog - eventually
+# :M: p0 - drop everything, fix now
+# :M: p1 - fix this sprint  
+# :M: p2 - fix next sprint
+# :M: backlog - eventually
 
 # Your team's workflow
-# :A: ready-for-review
-# :A: needs-qa
-# :A: ship-it
+# :M: ready-for-review
+# :M: needs-qa
+# :M: ship-it
 
 # Your team's domains
-# :A: frontend
-# :A: backend
-# :A: infra
+# :M: frontend
+# :M: backend
+# :M: infra
 ```
 
 ## Migration Strategies
@@ -132,11 +132,11 @@ Pick one file at a time:
 grep "TODO" --exclude-dir=.git src/auth.js
 
 # Enhance them
-sed -i 's/TODO/TODO :A: /g' src/auth.js
-sed -i 's/FIXME/FIXME :A: /g' src/auth.js
+sed -i 's/TODO/TODO :M: /g' src/auth.js
+sed -i 's/FIXME/FIXME :M: /g' src/auth.js
 
 # Verify
-rg ":A: " src/auth.js
+rg ":M: " src/auth.js
 ```
 
 ### By Feature Area
@@ -144,21 +144,21 @@ rg ":A: " src/auth.js
 Adopt in one area first:
 ```bash
 # Start with security-critical code
-# Add :A: sec markers
+# Add :M: sec markers
 
 # Then move to performance
-# Add :A: perf markers
+# Add :M: perf markers
 
 # Then documentation
-# Add :A: docs markers
+# Add :M: docs markers
 ```
 
 ### During Code Reviews
 
-Add anchors as you review:
-- See missing error handling? Add `:A: error handle timeout`
-- Spot performance issue? Add `:A: perf optimize query`
-- Notice assumption? Add `:A: ctx assumes sorted input`
+Add cairns as you review:
+- See missing error handling? Add `:M: error handle timeout`
+- Spot performance issue? Add `:M: perf optimize query`
+- Notice assumption? Add `:M: ctx assumes sorted input`
 
 ## Measuring Adoption
 
@@ -166,24 +166,24 @@ Track your progress:
 
 ```bash
 # Count enhanced vs regular TODOs
-echo "Regular TODOs: $(grep -r "TODO" --exclude-dir=.git | grep -v ":A: " | wc -l)"
-echo "Enhanced TODOs: $(rg "TODO.*:A: |:A: todo" | wc -l)"
+echo "Regular TODOs: $(grep -r "TODO" --exclude-dir=.git | grep -v ":M: " | wc -l)"
+echo "Enhanced TODOs: $(rg "TODO.*:M: |:M: todo" | wc -l)"
 
 # See adoption by file type
-rg ":A: " --type-list
-rg ":A: " -t js --count-matches
+rg ":M: " --type-list
+rg ":M: " -t js --count-matches
 
 # Most common patterns
-rg -o ":A: (\w+)" -r '$1' | sort | uniq -c | sort -nr
+rg -o ":M: (\w+)" -r '$1' | sort | uniq -c | sort -nr
 ```
 
 ## Common Progression Paths
 
 ### For Solo Developers
-1. Start with `:A: todo`
-2. Add `:A: fixme` for bugs
-3. Add `:A: @agent` for AI help
-4. Add `:A: ctx` for clarity
+1. Start with `:M: todo`
+2. Add `:M: fixme` for bugs
+3. Add `:M: @agent` for AI help
+4. Add `:M: ctx` for clarity
 
 ### For Teams
 1. Agree on 3-5 initial patterns
@@ -192,14 +192,14 @@ rg -o ":A: (\w+)" -r '$1' | sort | uniq -c | sort -nr
 4. Gradually expand vocabulary
 
 ### For Open Source
-1. Start with `:A: help-wanted`
-2. Add `:A: good-first-issue`
-3. Add `:A: breaking-change`
+1. Start with `:M: help-wanted`
+2. Add `:M: good-first-issue`
+3. Add `:M: breaking-change`
 4. Document in CONTRIBUTING.md
 
 ## Tips for Success
 
-1. **Don't force it**: If a comment doesn't need to be searchable, don't add `:A: `
+1. **Don't force it**: If a comment doesn't need to be searchable, don't add `:M: `
 2. **Stay consistent**: Pick patterns and stick to them
 3. **Document your patterns**: Keep a list in your README
 4. **Start small**: 3-5 patterns are plenty to start
@@ -220,7 +220,7 @@ function processPayment(amount) {
 ### Week 2: Enhanced TODO
 ```javascript
 function processPayment(amount) {
-    // :A: todo add validation
+    // :M: todo add validation
     chargeCard(amount);
 }
 ```
@@ -228,8 +228,8 @@ function processPayment(amount) {
 ### Week 3: Add context
 ```javascript
 function processPayment(amount) {
-    // :A: todo add validation
-    // :A: ctx amount must be positive, max 10000
+    // :M: todo add validation
+    // :M: ctx amount must be positive, max 10000
     chargeCard(amount);
 }
 ```
@@ -237,9 +237,9 @@ function processPayment(amount) {
 ### Week 4: Delegate to AI
 ```javascript
 function processPayment(amount) {
-    // :A: @agent add validation
-    // :A: ctx amount must be positive, max 10000
-    // :A: sec prevent negative charges
+    // :M: @agent add validation
+    // :M: ctx amount must be positive, max 10000
+    // :M: sec prevent negative charges
     chargeCard(amount);
 }
 ```
@@ -247,13 +247,13 @@ function processPayment(amount) {
 ### Week 5: Link to issue
 ```javascript
 function processPayment(amount) {
-    // :A: issue(PAY-456) add validation
-    // :A: ctx amount must be positive, max 10000
-    // :A: sec prevent negative charges
+    // :M: issue(PAY-456) add validation
+    // :M: ctx amount must be positive, max 10000
+    // :M: sec prevent negative charges
     chargeCard(amount);
 }
 ```
 
 ## Keep It Simple
 
-The goal is discoverability, not perfection. Even one `:A:` marker can help make your codebase more navigable. Start where you are, use what works, and let your patterns grow naturally with your needs. 
+The goal is discoverability, not perfection. Even one `:M:` marker can help make your codebase more navigable. Start where you are, use what works, and let your patterns grow naturally with your needs. 
