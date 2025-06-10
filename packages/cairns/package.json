@@ -1,6 +1,7 @@
 {
   "name": "@cairn/cairns",
   "version": "0.1.0",
+  "description": "Cairns notation specification and validation library",
   "type": "module",
   "exports": {
     ".": {

@@ -9,7 +9,7 @@ All notable changes to the Magic-Anchor language specification will be documente
 
 ### Added
 
-- Initial migration from `docs/notation/` to `docs/magic-anchors/` directory
+- Initial migration from `docs/notation/` to `docs/cairns/` directory
 - Comprehensive delimiter semantics framework (`:` for classifications, `()` for parameters, `[]` for arrays)
 - Universal parameter groups organized into 6 semantic families
 - Canonical marker groups organized into 6 semantic categories

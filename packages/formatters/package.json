@@ -1,6 +1,7 @@
 {
   "name": "@cairn/formatters",
   "version": "0.2.0",
+  "description": "Output formatters for Cairns search results (terminal, JSON, CSV)",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

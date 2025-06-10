@@ -1,4 +1,4 @@
-# @grepa/magic-anchors
+# @cairn/cairns
 
 ## 0.1.0
 

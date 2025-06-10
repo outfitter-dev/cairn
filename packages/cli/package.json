@@ -1,6 +1,7 @@
 {
   "name": "@cairn/cli",
   "version": "0.1.0",
+  "description": "Command-line interface for searching and managing Cairns in codebases",
   "type": "module",
   "bin": {
     "cairn": "./dist/bin.js"

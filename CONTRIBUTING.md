@@ -79,7 +79,7 @@ We follow strict TypeScript conventions:
 - Use Result<T, E> pattern for error handling
 - Runtime validation with Zod schemas
 - No direct throwing of errors
-- See `docs/grepa/conventions/typescript.md` for details
+- See `docs/cairn/conventions/typescript.md` for details
 
 ### Magic Anchors
 

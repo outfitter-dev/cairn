@@ -2,6 +2,9 @@
 <!-- :M: tldr Universal pattern for making codebases AI-navigable and greppable -->
 <!-- :M: core Main project documentation and overview -->
 
+> [!WARNING]
+> **📦 Migrating from Grepa?** This project was formerly known as "Grepa" with the package namespace `@grepa/*`. We've rebranded to **Cairn** with breaking changes. See the **[Migration Guide](MIGRATION.md)** for complete upgrade instructions.
+
 > [!IMPORTANT]
 > **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/galligan/cairn/issues) or share your thoughts!
 
@@ -11,6 +14,7 @@
 ## 📚 Documentation
 
 - **[Quick Start](docs/guides/quick-start.md)** - Get started in 5 minutes
+- **[Migration Guide](MIGRATION.md)** - Upgrading from Grepa to Cairn
 - **[Examples](docs/examples.md)** - Real-world patterns and workflows  
 - **[Conventions](docs/conventions/)** - Common tags and best practices
 - **[Progressive Guide](docs/guides/progressive-enhancement.md)** - Adopt at your own pace
@@ -358,10 +362,10 @@ pnpm test
 
 ### Cairns Notation
 
-- [Cairns Overview](docs/magic-anchors/README.md) - Technical format specification
-- [Format Specification](docs/magic-anchors/SPEC.md) - Detailed syntax rules
-- [Payload Rules](docs/magic-anchors/payloads.md) - How to structure tag payloads
-- [Examples](docs/magic-anchors/examples.md) - Notation examples across languages
+- [Cairns Overview](docs/cairns/README.md) - Technical format specification
+- [Format Specification](docs/cairns/SPEC.md) - Detailed syntax rules
+- [Payload Rules](docs/cairns/payloads.md) - How to structure tag payloads
+- [Examples](docs/cairns/examples.md) - Notation examples across languages
 
 ### Conventions & Patterns
 
