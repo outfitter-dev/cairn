@@ -39,21 +39,21 @@ Some content here.
     rmdirSync(testDir);
   });
 
-  it('should search for anchors by marker', async () => {
-    const result = await CairnSearch.search([testFile1], { markers: ['todo'] });
+  it('should search for anchors by context', async () => {
+    const result = await CairnSearch.search([testFile1], { contexts: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data).toHaveLength(1);
       const firstResult = result.data[0];
       expect(firstResult).toBeDefined();
-      expect(firstResult!.anchor.markers).toContain('todo');
+      expect(firstResult!.anchor.contexts).toContain('todo');
       expect(firstResult!.anchor.prose).toBe('implement this function');
     }
   });
 
   it('should search multiple files', async () => {
-    const result = await CairnSearch.search([testFile1, testFile2], { markers: ['todo'] });
+    const result = await CairnSearch.search([testFile1, testFile2], { contexts: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -67,7 +67,7 @@ Some content here.
 
   it('should include context when requested', async () => {
     const result = await CairnSearch.search([testFile1], { 
-      markers: ['todo'],
+      contexts: ['todo'],
       context: 2
     });
     
@@ -83,7 +83,7 @@ Some content here.
   });
 
   it('should search with glob patterns', async () => {
-    const result = await CairnSearch.search([`${testDir}/*.ts`], { markers: ['todo'] });
+    const result = await CairnSearch.search([`${testDir}/*.ts`], { contexts: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -94,21 +94,21 @@ Some content here.
     }
   });
 
-  it('should get unique markers from results', async () => {
+  it('should get unique contexts from results', async () => {
     const result = await CairnSearch.search([testFile1, testFile2]);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      const markers = CairnSearch.getUniqueContexts(result.data);
-      expect(markers).toContain('tldr');
-      expect(markers).toContain('todo');
-      expect(markers).toContain('sec');
-      expect(markers).toContain('guide');
-      expect(markers).toContain('api');
+      const contexts = CairnSearch.getUniqueContexts(result.data);
+      expect(contexts).toContain('tldr');
+      expect(contexts).toContain('todo');
+      expect(contexts).toContain('sec');
+      expect(contexts).toContain('guide');
+      expect(contexts).toContain('api');
     }
   });
 
-  it('should group results by marker', async () => {
+  it('should group results by context', async () => {
     const result = await CairnSearch.search([testFile1, testFile2]);
     
     expect(result.ok).toBe(true);

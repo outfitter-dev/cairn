@@ -118,8 +118,8 @@ describe('Terminal Formatters', () => {
     expect(output).toContain('src/auth.ts:42');
   });
 
-  it('should show markers only when requested', () => {
-    const formatter = new TerminalMagicAnchorListFormatter({ markersOnly: true });
+  it('should show contexts only when requested', () => {
+    const formatter = new TerminalMagicAnchorListFormatter({ contextsOnly: true });
     const output = formatter.format([mockAnchor]);
     
     expect(output).toContain('• todo');
