@@ -30,12 +30,13 @@ type ToastOptions = {
 
 // :M: api Human-readable error messages
 export function humanise(err: AppError): string {
-  // Parse errors
+  const messages: Record<ErrorCode, string> = {
+    // Parse errors
     'parse.invalidSyntax': 'Invalid Cairn syntax found',
     'parse.missingSpace': 'Missing required space after :M: context',
     'parse.emptyPayload': 'Cairn payload cannot be empty',
-    'parse.invalidMarker': 'Invalid context format',
-    'parse.tooManyMarkers': 'Too many contexts on a single line',
+    'parse.invalidContext': 'Invalid context format',
+    'parse.tooManyContexts': 'Too many contexts on a single line',
     'file.notFound': 'The requested file could not be found',
     'file.readError': 'Unable to read the file',
     'file.accessDenied': "You don't have permission to access this file",
@@ -52,6 +53,11 @@ export function humanise(err: AppError): string {
     'cli.invalidCommand': 'Invalid command. Run with --help for usage',
     'cli.missingArgument': 'Required argument is missing',
     'cli.invalidOption': 'Invalid option provided',
+    
+    // Security errors
+    'security.rateLimitExceeded': 'Rate limit exceeded. Please try again later',
+    'security.maliciousContent': 'Malicious content detected',
+    'security.contentTooLarge': 'Content too large for security processing',
     
     // Validation errors
     'validation': `Invalid input: ${err.message}`,

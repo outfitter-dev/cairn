@@ -34,7 +34,7 @@
   "scripts": {
     "build": "pnpm -r run build",
     "dev": "pnpm -r --filter ./packages/* run dev",
-    "test": "vitest",
+    "test": "vitest run",
     "test:watch": "vitest --watch",
     "lint": "echo 'Lint temporarily disabled - see PR #26 feedback'",
     "typecheck": "tsc -b",
