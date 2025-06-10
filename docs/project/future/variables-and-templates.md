@@ -1,29 +1,29 @@
 # Variables, Templates, and Alias System
 
-<!-- :A: tldr future variables, templates, and alias system for advanced magic anchor features -->
-<!-- :A: meta speculative feature design covering interpolation, aliases, and variable systems -->
+<!-- :M: tldr future variables, templates, and alias system for advanced cairn features -->
+<!-- :M: meta speculative feature design covering interpolation, aliases, and variable systems -->
 
-> **Future Feature**: This document outlines speculative variable, template, and alias systems that may be implemented in future versions of grepa. These features are not part of the current specification and represent advanced capabilities for complex workflows.
+> **Future Feature**: This document outlines speculative variable, template, and alias systems that may be implemented in future versions of Cairn. These features are not part of the current specification and represent advanced capabilities for complex workflows.
 
 ## Overview
 
-<!-- :A: concept comprehensive system for dynamic anchor generation and reuse -->
+<!-- :M: concept comprehensive system for dynamic cairn generation and reuse -->
 ### Variables, Templates, and Aliases
 
 A comprehensive system providing three complementary features:
 
-1. **Variable System** - Define reusable values and references across anchors
-2. **Template System** - Create parameterized anchor patterns for common workflows  
+1. **Variable System** - Define reusable values and references across cairns
+2. **Template System** - Create parameterized cairn patterns for common workflows  
 3. **Alias System** - Define shorthand notation for frequently used marker combinations
 
-These systems work together to reduce repetition, ensure consistency, and support complex organizational workflows while maintaining the core grep-ability of Magic Anchors.
+These systems work together to reduce repetition, ensure consistency, and support complex organizational workflows while maintaining the core grep-ability of Cairns.
 
 ## Variable System
 
-<!-- :A: spec variable definition and resolution for consistent values -->
+<!-- :M: spec variable definition and resolution for consistent values -->
 ### Variable Definition and Usage
 
-**Purpose**: Define reusable values that can be referenced across multiple anchors for consistency and maintainability.
+**Purpose**: Define reusable values that can be referenced across multiple cairns for consistency and maintainability.
 
 **Configuration in grepaconfig.yaml:**
 
@@ -53,20 +53,20 @@ variables:
   review-process: "review,owner:@security-lead,type:security"
 ```
 
-**Usage in Anchors:**
+**Usage in Cairns:**
 
 ```javascript
 // Variable references with ${var} syntax
-// :A: todo(assign:${frontend-team}) implement user dashboard
-// :A: depends(service:${auth-service},db:${user-db}) user authentication
-// :A: ${review-process} validate input sanitization
-// :A: todo(milestone:${next-release},epic:${auth-epic}) OAuth integration
+// :M: todo(assign:${frontend-team}) implement user dashboard
+// :M: depends(service:${auth-service},db:${user-db}) user authentication
+// :M: ${review-process} validate input sanitization
+// :M: todo(milestone:${next-release},epic:${auth-epic}) OAuth integration
 
 // Variable expansion at parse time:
-// :A: todo(assign:@alice,@bob,@charlie) implement user dashboard
-// :A: depends(service:auth.api.company.com,db:postgres.users.prod) user authentication
-// :A: review,owner:@mallory,type:security validate input sanitization
-// :A: todo(milestone:v2.1.0,epic:epic-auth-redesign) OAuth integration
+// :M: todo(assign:@alice,@bob,@charlie) implement user dashboard
+// :M: depends(service:auth.api.company.com,db:postgres.users.prod) user authentication
+// :M: review,owner:@mallory,type:security validate input sanitization
+// :M: todo(milestone:v2.1.0,epic:epic-auth-redesign) OAuth integration
 ```
 
 **Array Variable Support:**
@@ -81,14 +81,14 @@ variables:
 ```
 
 ```javascript
-// :A: todo(platform:${mobile-platforms}) implement push notifications
-// :A: test(env:${test-environments}) validate payment flow
-// :A: review(assign:${full-stack-team}) architecture changes
+// :M: todo(platform:${mobile-platforms}) implement push notifications
+// :M: test(env:${test-environments}) validate payment flow
+// :M: review(assign:${full-stack-team}) architecture changes
 
 // Expands to:
-// :A: todo(platform:[ios,android,react-native]) implement push notifications
-// :A: test(env:[staging,integration,e2e]) validate payment flow
-// :A: review(assign:@alice,@bob,@charlie,@david,@eve,@frank) architecture changes
+// :M: todo(platform:[ios,android,react-native]) implement push notifications
+// :M: test(env:[staging,integration,e2e]) validate payment flow
+// :M: review(assign:@alice,@bob,@charlie,@david,@eve,@frank) architecture changes
 ```
 
 ### Variable Scope and Context
@@ -111,16 +111,16 @@ context-variables:
 
 ```javascript
 // Context variable usage
-// :A: todo(file:${current-file},owner:${file-owner}) add input validation
-// :A: context(branch:${current-branch}) temporary OAuth implementation
+// :M: todo(file:${current-file},owner:${file-owner}) add input validation
+// :M: context(branch:${current-branch}) temporary OAuth implementation
 ```
 
 ## Template System
 
-<!-- :A: spec parameterized anchor patterns for workflow standardization -->
+<!-- :M: spec parameterized cairn patterns for workflow standardization -->
 ### Template Definition and Usage
 
-**Purpose**: Create reusable anchor patterns with parameters for common organizational workflows.
+**Purpose**: Create reusable cairn patterns with parameters for common organizational workflows.
 
 **Template Configuration:**
 
@@ -154,23 +154,23 @@ templates:
 
 ```javascript
 // Simple positional parameters
-// :A: @jira(PROJ-123) → :A: issue(jira:PROJ-123)
-// :A: @github(456,frontend) → :A: issue(github:456,repo:frontend)
+// :M: @jira(PROJ-123) → :M: issue(jira:PROJ-123)
+// :M: @github(456,frontend) → :M: issue(github:456,repo:frontend)
 
 // Named parameters with defaults
-// :A: @assigned-task(owner:@alice,epic:auth-redesign)
-// → :A: todo(assign:@alice,priority:medium,epic:auth-redesign)
+// :M: @assigned-task(owner:@alice,epic:auth-redesign)
+// → :M: todo(assign:@alice,priority:medium,epic:auth-redesign)
 
-// :A: @assigned-task(owner:@bob,priority:critical,epic:user-profiles)
-// → :A: todo(assign:@bob,priority:critical,epic:user-profiles)
+// :M: @assigned-task(owner:@bob,priority:critical,epic:user-profiles)
+// → :M: todo(assign:@bob,priority:critical,epic:user-profiles)
 
 // Complex template expansion
-// :A: @feature-epic(epic:oauth,milestone:v2.1,services:[auth,user])
-// → :A: todo(epic:oauth,milestone:v2.1),context(complexity:medium),depends(services:[auth,user])
+// :M: @feature-epic(epic:oauth,milestone:v2.1,services:[auth,user])
+// → :M: todo(epic:oauth,milestone:v2.1),context(complexity:medium),depends(services:[auth,user])
 
 // Conditional template
-// :A: @production-deploy(hotfix:true,services:[auth,payment])
-// → :A: deploy(env:prod,approve:@david,@eve,@frank),critical,warn,depends(services:[auth,payment])
+// :M: @production-deploy(hotfix:true,services:[auth,payment])
+// → :M: deploy(env:prod,approve:@david,@eve,@frank),critical,warn,depends(services:[auth,payment])
 ```
 
 ### Advanced Template Features
@@ -210,7 +210,7 @@ templates:
 
 ## Alias System
 
-<!-- :A: spec shorthand notation for frequently used marker combinations -->
+<!-- :M: spec shorthand notation for frequently used marker combinations -->
 ### Alias Definition and Usage
 
 **Purpose**: Define shorthand notation for frequently used marker combinations, reducing typing and ensuring consistency.
@@ -249,24 +249,24 @@ aliases:
 
 ```javascript
 // Simple aliases
-// :A: todo,p1 implement user authentication
-// → :A: todo,priority:high implement user authentication
+// :M: todo,p1 implement user authentication
+// → :M: todo,priority:high implement user authentication
 
 // Team assignment aliases
-// :A: todo,fe update component styles
-// → :A: todo,assign:@alice,@bob,@charlie update component styles
+// :M: todo,fe update component styles
+// → :M: todo,assign:@alice,@bob,@charlie update component styles
 
 // Complex combination aliases
-// :A: todo,security-critical validate all user inputs
-// → :A: todo,security,priority:critical,severity:high validate all user inputs
+// :M: todo,security-critical validate all user inputs
+// → :M: todo,security,priority:critical,severity:high validate all user inputs
 
 // Workflow state aliases
-// :A: todo,wip,fe implement OAuth flow
-// → :A: todo,status:in-progress,type:development,assign:@alice,@bob,@charlie implement OAuth flow
+// :M: todo,wip,fe implement OAuth flow
+// → :M: todo,status:in-progress,type:development,assign:@alice,@bob,@charlie implement OAuth flow
 
 // Multiple aliases in one anchor
-// :A: todo,hotfix,sec fix authentication bypass
-// → :A: todo,priority:critical,type:hotfix,env:production,alert:on,assign:@mallory fix authentication bypass
+// :M: todo,hotfix,sec fix authentication bypass
+// → :M: todo,priority:critical,type:hotfix,env:production,alert:on,assign:@mallory fix authentication bypass
 ```
 
 ### Alias Precedence and Conflicts
@@ -285,8 +285,8 @@ aliases:
 // Alias: urgent: "priority:critical,severity:high"
 // Direct: priority:medium
 
-// :A: todo,urgent,priority:medium fix bug
-// → :A: todo,priority:medium,severity:high fix bug
+// :M: todo,urgent,priority:medium fix bug
+// → :M: todo,priority:medium,severity:high fix bug
 // (direct priority:medium overrides alias priority:critical)
 ```
 
@@ -301,14 +301,14 @@ aliases:
 
 ## Configuration Integration
 
-<!-- :A: spec unified configuration system supporting all three features -->
+<!-- :M: spec unified configuration system supporting all three features -->
 ### Complete grepaconfig.yaml Example
 
 ```yaml
 # Variables, Templates, and Aliases Configuration
-grepa:
+cairn:
   version: "2.0"
-  anchor: ":A:"
+  anchor: ":M:"
 
 # Variable definitions
 variables:
@@ -391,22 +391,22 @@ priorities:
 ```javascript
 // Variable + Template + Alias combinations
 
-// :A: @jira-task(ticket:PROJ-123,epic:${auth-epic}),fe
-// → :A: todo(issue:https://company.atlassian.net/browse/PROJ-123,epic:epic-auth-redesign),assign:@alice,@bob,@charlie
+// :M: @jira-task(ticket:PROJ-123,epic:${auth-epic}),fe
+// → :M: todo(issue:https://company.atlassian.net/browse/PROJ-123,epic:epic-auth-redesign),assign:@alice,@bob,@charlie
 
-// :A: @security-review(urgent:true),ops
-// → :A: security,review(assign:@mallory,severity:high),critical,priority:critical,assign:@oscar,@peggy
+// :M: @security-review(urgent:true),ops
+// → :M: security,review(assign:@mallory,severity:high),critical,priority:critical,assign:@oscar,@peggy
 
-// :A: @deploy-check(env:production,services:[auth,user],dependencies:[${auth-service}]),hotfix
-// → :A: deploy(env:production,services:[auth,user]),critical,approve:@oscar,@peggy,depends(services:[auth.api.company.com]),type:hotfix,priority:critical,env:production
+// :M: @deploy-check(env:production,services:[auth,user],dependencies:[${auth-service}]),hotfix
+// → :M: deploy(env:production,services:[auth,user]),critical,approve:@oscar,@peggy,depends(services:[auth.api.company.com]),type:hotfix,priority:critical,env:production
 
-// :A: todo,p1,fe implement OAuth for ${mobile-epic}
-// → :A: todo,priority:high,assign:@alice,@bob,@charlie implement OAuth for epic-mobile-app
+// :M: todo,p1,fe implement OAuth for ${mobile-epic}
+// → :M: todo,priority:high,assign:@alice,@bob,@charlie implement OAuth for epic-mobile-app
 ```
 
 ## Implementation Considerations
 
-<!-- :A: todo future implementation requirements and technical challenges -->
+<!-- :M: todo future implementation requirements and technical challenges -->
 ### Technical Requirements
 
 **Variable System:**
@@ -438,7 +438,7 @@ priorities:
 - Performance impact of complex expansion operations
 - Error reporting with clear source attribution
 - IDE integration for auto-completion and validation
-- Backwards compatibility with simple Magic Anchor syntax
+- Backwards compatibility with simple Cairn syntax
 - Tool integration for search patterns across expanded anchors
 
 **Search and Discovery:**
@@ -456,7 +456,7 @@ priorities:
 
 ### Compatibility Considerations
 
-- All three systems are **opt-in** - basic Magic Anchor syntax continues to work
+- All three systems are **opt-in** - basic Cairn syntax continues to work
 - Tools must support both expanded and unexpanded anchor forms
 - Configuration validation prevents conflicts between systems
 - Clear error messages guide users through complex feature interactions

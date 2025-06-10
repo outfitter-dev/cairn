@@ -1,6 +1,6 @@
-# Grepa Documentation Comment Support
-<!-- :A: tldr Proposal for enhanced grepa tooling to handle documentation comments -->
-<!-- :A: spec Grepa tooling enhancements for JSDoc, docstrings, and other doc systems -->
+# Cairn Documentation Comment Support
+<!-- :M: tldr Proposal for enhanced cairn tooling to handle documentation comments -->
+<!-- :M: spec Cairn tooling enhancements for JSDoc, docstrings, and other doc systems -->
 
 **Status**: Proposal  
 **Version**: 1.0  
@@ -8,11 +8,11 @@
 
 ## Overview
 
-This proposal outlines enhancements to grepa tooling to provide seamless support for Magic Anchors within documentation comments (JSDoc, Python docstrings, Rustdoc, etc.). These enhancements will enable filtering, combining, and advanced search capabilities specifically tailored to documentation-embedded anchors.
+This proposal outlines enhancements to cairn tooling to provide seamless support for Cairns within documentation comments (JSDoc, Python docstrings, Rustdoc, etc.). These enhancements will enable filtering, combining, and advanced search capabilities specifically tailored to documentation-embedded anchors.
 
 ## Current State
 
-Magic Anchors already work within documentation comments, since they're just comment content. However, grepa tooling lacks specific support for:
+Cairns already work within documentation comments, since they're just comment content. However, cairn tooling lacks specific support for:
 
 1. **Documentation-aware filtering** - Separating doc comments from regular comments
 2. **Combined searches** - Finding anchors with their documentation context
@@ -27,10 +27,10 @@ Magic Anchors already work within documentation comments, since they're just com
 
 ```bash
 # Find anchors only in documentation comments
-grepa ":A: api" --doc-comments
+cairn ":M: api" --doc-comments
 
 # Exclude documentation comments (regular comments only)
-grepa ":A: todo" --no-doc-comments
+cairn ":M: todo" --no-doc-comments
 ```
 
 **Implementation**: Pattern matching for documentation comment formats:
@@ -50,13 +50,13 @@ grepa ":A: todo" --no-doc-comments
 
 ```bash
 # Show anchors with their complete documentation blocks
-grepa ":A: api" --with-docs
+cairn ":M: api" --with-docs
 
 # Output example:
 # src/auth.js:23-35
 # /**
-#  * :A: api Primary authentication endpoint
-#  * :A: sec validate all inputs before processing
+#  * :M: api Primary authentication endpoint
+#  * :M: sec validate all inputs before processing
 #  * 
 #  * @description Authenticates users with JWT tokens
 #  * @param {string} token - JWT token to validate
@@ -70,13 +70,13 @@ grepa ":A: api" --with-docs
 
 ```bash
 # Find anchors only in JSDoc comments
-grepa ":A:" --doc-format=jsdoc
+cairn ":M:" --doc-format=jsdoc
 
 # Find anchors in Python docstrings
-grepa ":A:" --doc-format=docstring
+cairn ":M:" --doc-format=docstring
 
 # Find anchors in Rust documentation
-grepa ":A:" --doc-format=rustdoc
+cairn ":M:" --doc-format=rustdoc
 ```
 
 **Supported formats**:
@@ -95,12 +95,12 @@ grepa ":A:" --doc-format=rustdoc
 
 ```bash
 # Automatically detect language and use appropriate doc comment patterns
-grepa ":A: api" --auto-doc-detect
+cairn ":M: api" --auto-doc-detect
 
 # Language-specific shortcuts
-grepa ":A:" --js-docs    # JavaScript JSDoc only
-grepa ":A:" --py-docs    # Python docstrings only  
-grepa ":A:" --rust-docs  # Rust doc comments only
+cairn ":M:" --js-docs    # JavaScript JSDoc only
+cairn ":M:" --py-docs    # Python docstrings only  
+cairn ":M:" --rust-docs  # Rust doc comments only
 ```
 
 ### 5. Documentation Quality Analysis
@@ -109,26 +109,26 @@ grepa ":A:" --rust-docs  # Rust doc comments only
 
 ```bash
 # Analyze documentation anchor coverage
-grepa --doc-analysis
+cairn --doc-analysis
 
 # Output example:
 # Documentation Analysis Report
 # ============================
 # 
 # Files with doc comments: 45/67 (67%)
-# Functions with :A: tldr: 23/89 (26%)
-# API functions with :A: api: 67/67 (100%)
+# Functions with :M: tldr: 23/89 (26%)
+# API functions with :M: api: 67/67 (100%)
 # Security anchors in docs: 12
 # 
 # Missing documentation anchors:
-# - src/utils.js:15 - function validateEmail (missing :A: tldr)
-# - src/auth.js:45 - function hashPassword (missing :A: sec)
+# - src/utils.js:15 - function validateEmail (missing :M: tldr)
+# - src/auth.js:45 - function hashPassword (missing :M: sec)
 
 # Quality checks
-grepa --doc-quality
-# - Verify :A: tldr exists for all public functions
-# - Check :A: api for exported functions/classes
-# - Ensure :A: sec for security-critical functions
+cairn --doc-quality
+# - Verify :M: tldr exists for all public functions
+# - Check :M: api for exported functions/classes
+# - Ensure :M: sec for security-critical functions
 ```
 
 ### 6. Enhanced Output Formats
@@ -137,13 +137,13 @@ grepa --doc-quality
 
 ```bash
 # Markdown output for documentation
-grepa ":A: api" --output=markdown
+cairn ":M: api" --output=markdown
 
 # JSON output for tool integration  
-grepa ":A:" --output=json --doc-comments
+cairn ":M:" --output=json --doc-comments
 
 # HTML output with syntax highlighting
-grepa ":A:" --output=html --with-docs
+cairn ":M:" --output=html --with-docs
 ```
 
 **Markdown output example**:
@@ -155,8 +155,8 @@ grepa ":A:" --output=html --with-docs
 #### authenticateUser (line 23)
 ```javascript
 /**
- * :A: api Primary authentication endpoint
- * :A: sec validate all inputs before processing
+ * :M: api Primary authentication endpoint
+ * :M: sec validate all inputs before processing
  * 
  * @description Authenticates users with JWT tokens
  * @param {string} token - JWT token to validate
@@ -170,17 +170,17 @@ grepa ":A:" --output=html --with-docs
 
 ### 7. Documentation Template Generation
 
-**Feature**: Generate documentation templates with Magic Anchors
+**Feature**: Generate documentation templates with Cairns
 
 ```bash
 # Generate JSDoc template with anchors
-grepa --generate-template=jsdoc --function=authenticateUser
+cairn --generate-template=jsdoc --function=authenticateUser
 
 # Output:
 # /**
-#  * :A: tldr [Brief description]
-#  * :A: api [Public interface description]  
-#  * :A: sec [Security considerations]
+#  * :M: tldr [Brief description]
+#  * :M: api [Public interface description]  
+#  * :M: sec [Security considerations]
 #  * 
 #  * @description [Detailed description]
 #  * @param {type} param - [Parameter description]
@@ -188,31 +188,31 @@ grepa --generate-template=jsdoc --function=authenticateUser
 #  */
 
 # Generate Python docstring template
-grepa --generate-template=docstring --function=process_data
+cairn --generate-template=docstring --function=process_data
 
 # Generate templates for multiple functions
-grepa --generate-templates --missing-docs
+cairn --generate-templates --missing-docs
 ```
 
 ### 8. Documentation Anchor Validation
 
-**Feature**: Validate that documentation follows Magic Anchor conventions
+**Feature**: Validate that documentation follows Cairn conventions
 
 ```bash
 # Validate documentation anchor usage
-grepa --validate-docs
+cairn --validate-docs
 
 # Check for common issues:
-# - Missing space after :A:
+# - Missing space after :M:
 # - Inconsistent anchor placement
 # - Missing essential anchors (tldr, api for public functions)
 # - Orphaned anchors (not in documentation context)
 
 # Validation rules configuration
-grepa --validate-docs --rules=strict
-# - All public functions must have :A: tldr
-# - All API endpoints must have :A: api
-# - All security functions must have :A: sec
+cairn --validate-docs --rules=strict
+# - All public functions must have :M: tldr
+# - All API endpoints must have :M: api
+# - All security functions must have :M: sec
 ```
 
 ### 9. Documentation Search Combinations
@@ -221,35 +221,35 @@ grepa --validate-docs --rules=strict
 
 ```bash
 # Find functions missing API documentation
-grepa --missing-anchor="api" --doc-comments --functions
+cairn --missing-anchor="api" --doc-comments --functions
 
 # Find security functions without security anchors
-grepa --missing-anchor="sec" --pattern="auth|password|token|security"
+cairn --missing-anchor="sec" --pattern="auth|password|token|security"
 
 # Find deprecated functions still in documentation
-grepa ":A: deprecated" --with-docs --show-usage
+cairn ":M: deprecated" --with-docs --show-usage
 
 # Find TODO items in documentation that need AI attention
-grepa ":A: todo.*@agent" --doc-comments --priority-high
+cairn ":M: todo.*@agent" --doc-comments --priority-high
 ```
 
 ### 10. Integration with Documentation Generators
 
-**Feature**: Export Magic Anchor metadata for documentation tools
+**Feature**: Export Cairn metadata for documentation tools
 
 ```bash
 # Export anchor metadata for JSDoc
-grepa --export-jsdoc-metadata > anchors.json
+cairn --export-jsdoc-metadata > anchors.json
 
 # Generate additional JSDoc tags from anchors
-grepa --convert-to-jsdoc-tags
-# Converts ":A: api" to "@api" tags
-# Converts ":A: deprecated" to "@deprecated" tags
+cairn --convert-to-jsdoc-tags
+# Converts ":M: api" to "@api" tags
+# Converts ":M: deprecated" to "@deprecated" tags
 
 # Integration with other doc tools
-grepa --export-sphinx-metadata    # For Python Sphinx
-grepa --export-rustdoc-metadata   # For Rust documentation
-grepa --export-godoc-metadata     # For Go documentation
+cairn --export-sphinx-metadata    # For Python Sphinx
+cairn --export-rustdoc-metadata   # For Rust documentation
+cairn --export-godoc-metadata     # For Go documentation
 ```
 
 ## Implementation Architecture
@@ -336,21 +336,21 @@ interface DocSearchOptions extends SearchOptions {
 
 ```bash
 # Documentation-specific commands
-grepa docs                          # Alias for --doc-comments
-grepa docs:api                      # Find API documentation anchors
-grepa docs:missing                  # Find missing documentation
-grepa docs:validate                 # Validate documentation quality
-grepa docs:generate                 # Generate documentation templates
+cairn docs                          # Alias for --doc-comments
+cairn docs:api                      # Find API documentation anchors
+cairn docs:missing                  # Find missing documentation
+cairn docs:validate                 # Validate documentation quality
+cairn docs:generate                 # Generate documentation templates
 
 # Analysis commands  
-grepa analyze:docs                  # Documentation coverage analysis
-grepa analyze:quality               # Documentation quality report
-grepa analyze:missing-anchors       # Find missing essential anchors
+cairn analyze:docs                  # Documentation coverage analysis
+cairn analyze:quality               # Documentation quality report
+cairn analyze:missing-anchors       # Find missing essential anchors
 
 # Export commands
-grepa export:jsdoc                  # Export JSDoc metadata
-grepa export:sphinx                 # Export Sphinx metadata
-grepa export:markdown               # Export as Markdown report
+cairn export:jsdoc                  # Export JSDoc metadata
+cairn export:sphinx                 # Export Sphinx metadata
+cairn export:markdown               # Export as Markdown report
 ```
 
 ## Configuration
@@ -358,7 +358,7 @@ grepa export:markdown               # Export as Markdown report
 ### Documentation Rules Configuration
 
 ```yaml
-# .grepa/docs-config.yml
+# .cairn/docs-config.yml
 documentation:
   rules:
     required_anchors:
@@ -381,8 +381,8 @@ documentation:
     templates:
       jsdoc: |
         /**
-         * :A: tldr [Brief description]
-         * :A: api [Interface description]
+         * :M: tldr [Brief description]
+         * :M: api [Interface description]
          * 
          * @description [Detailed description]
          * @param {type} param - [Description]
@@ -391,8 +391,8 @@ documentation:
       
       docstring: |
         """
-        :A: tldr [Brief description]
-        :A: api [Interface description]
+        :M: tldr [Brief description]
+        :M: api [Interface description]
         
         [Detailed description]
         
@@ -410,49 +410,49 @@ documentation:
 
 ```bash
 # Find all API anchors in documentation comments
-grepa ":A: api" --docs
+cairn ":M: api" --docs
 
 # Find security anchors with their documentation context
-grepa ":A: sec" --docs --with-context
+cairn ":M: sec" --docs --with-context
 
 # Search for specific documentation format
-grepa ":A:" --doc-format=jsdoc --language=javascript
+cairn ":M:" --doc-format=jsdoc --language=javascript
 ```
 
 ### Quality Analysis
 
 ```bash
 # Comprehensive documentation analysis
-grepa analyze:docs --report=detailed
+cairn analyze:docs --report=detailed
 
 # Find functions missing essential documentation
-grepa docs:missing --type=api --severity=high
+cairn docs:missing --type=api --severity=high
 
 # Validate documentation follows conventions
-grepa docs:validate --rules=strict --fix-suggestions
+cairn docs:validate --rules=strict --fix-suggestions
 ```
 
 ### Template Generation
 
 ```bash
 # Generate templates for undocumented functions
-grepa docs:generate --target=functions --missing-only
+cairn docs:generate --target=functions --missing-only
 
 # Create documentation for new API endpoints
-grepa docs:generate --pattern="route.*api" --template=jsdoc
+cairn docs:generate --pattern="route.*api" --template=jsdoc
 ```
 
 ### Integration Workflows
 
 ```bash
 # Pre-commit hook: validate documentation
-grepa docs:validate --fail-on-missing --required="tldr,api"
+cairn docs:validate --fail-on-missing --required="tldr,api"
 
 # CI/CD: Generate documentation report
-grepa analyze:docs --output=json | upload-to-docs-site
+cairn analyze:docs --output=json | upload-to-docs-site
 
 # IDE integration: Show documentation context for anchor
-grepa ":A: api" --line=45 --file=src/auth.js --with-docs --format=tooltip
+cairn ":M: api" --line=45 --file=src/auth.js --with-docs --format=tooltip
 ```
 
 ## Benefits
@@ -462,7 +462,7 @@ grepa ":A: api" --line=45 --file=src/auth.js --with-docs --format=tooltip
 1. **Enhanced Navigation** - Find anchors within their documentation context
 2. **Quality Assurance** - Ensure consistent documentation practices
 3. **Template Generation** - Quickly create properly structured documentation
-4. **IDE Integration** - Rich tooltips and context for Magic Anchors
+4. **IDE Integration** - Rich tooltips and context for Cairns
 
 ### For Teams
 
@@ -540,4 +540,4 @@ grepa ":A: api" --line=45 --file=src/auth.js --with-docs --format=tooltip
 3. Specialized format support
 4. Complex workflow automation
 
-This proposal provides a roadmap for making grepa the definitive tool for working with Magic Anchors in documentation contexts, enabling rich search, analysis, and generation capabilities while maintaining the simplicity and universality of the Magic Anchor pattern.
+This proposal provides a roadmap for making cairn the definitive tool for working with Cairns in documentation contexts, enabling rich search, analysis, and generation capabilities while maintaining the simplicity and universality of the Cairn pattern.
