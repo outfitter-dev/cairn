@@ -1,4 +1,4 @@
-// :A: tldr Terminal formatters with color support for human-readable output
+// :M: tldr Terminal formatters with color support for human-readable output
 import chalk from 'chalk';
 import type { SearchResult, MagicAnchor, ParseResult } from '@cairn/types';
 import type {
@@ -23,19 +23,19 @@ export class TerminalSearchResultFormatter implements ISearchResultFormatter {
       output.push(this.formatAnchor(result.anchor));
       
       if (this.options.context && this.options.context > 0 && result.context !== undefined) {
-        // :A: ctx show context lines before
+        // :M: ctx show context lines before
         result.context.before.forEach((line, index) => {
           const lineNum = Math.max(1, result.anchor.line - (this.options.context ?? 0) + index);
           output.push(chalk.dim(`    ${lineNum}: ${line}`));
         });
         
-        // :A: ctx show context lines after  
+        // :M: ctx show context lines after  
         result.context.after.forEach((line, index) => {
           const lineNum = result.anchor.line + index + 1;
           output.push(chalk.dim(`    ${lineNum}: ${line}`));
         });
         
-        output.push(''); // :A: ctx blank line between results
+        output.push(''); // :M: ctx blank line between results
       }
     });
 

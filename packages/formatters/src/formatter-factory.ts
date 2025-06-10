@@ -1,4 +1,4 @@
-// :A: tldr Factory for creating appropriate formatters based on format type
+// :M: tldr Factory for creating appropriate formatters based on format type
 import type {
   ISearchResultFormatter,
   IMagicAnchorFormatter,

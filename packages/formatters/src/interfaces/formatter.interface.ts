@@ -1,4 +1,4 @@
-// :A: tldr Base formatter interface for all output formatters
+// :M: tldr Base formatter interface for all output formatters
 import type { SearchResult, MagicAnchor, ParseResult } from '@cairn/types';
 
 export interface IFormatter<T> {

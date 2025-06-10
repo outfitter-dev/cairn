@@ -58,7 +58,7 @@ Added missing markers to core groups:
 ## Architectural Decisions Finalized
 
 ### Core Syntax Framework
-- **`:A:` anchor prefix** - canonical, no custom sigils
+- **`:A:` anchor prefix** - canonical, no custom identifiers
 - **Delimiter semantics**: `:` for classification, `()` for attachment, `.` for literals only
 - **6 marker groups**: `todo`, `info`, `notice`, `trigger`, `domain`, `status` (~40 markers)
 - **6 parameter groups**: `mention`, `relation`, `workflow`, `priority`, `lifecycle`, `scope`

@@ -33,8 +33,8 @@ This session implemented the comprehensive documentation updates for Magic Ancho
 - Complete rewrite with delimiter semantics framework
 - Added formal grammar with mandatory space requirement:
   ```ebnf
-  anchor ::= comment-leader sigil space marker-list prose?
-  sigil  ::= ":A:" | ":" identifier ":"
+  anchor ::= comment-leader identifier space marker-list prose?
+  identifier  ::= ":A:" | ":" identifier ":"
   space  ::= " "  # exactly one ASCII space
   ```
 - Added 6 marker groups table (todo, info, notice, trigger, domain, status)

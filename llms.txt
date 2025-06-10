@@ -1,13 +1,13 @@
-# Grepa (grep-anchor)
+# Cairn (grep-cairn)
 
-> Grepa provides a universal pattern (`:A:`) that makes codebases AI-navigable and grep-friendly. Drop tiny, searchable markers in comments so AI agents and developers can instantly navigate to the right spot in any codebase.
+> Cairn provides a universal pattern (`:M:`) that makes codebases AI-navigable and grep-friendly. Drop tiny, searchable cairns in comments so AI agents and developers can instantly navigate to the right spot in any codebase.
 
 ## Core Concept
 
-Magic Anchors are unique, searchable markers placed in code comments using the pattern `:A: payload`. The canonical anchor is `:A:` (colon-A-colon followed by exactly one space). The payload consists of markers that classify the code location.
+Cairns are unique, searchable contexts placed in code comments using the pattern `:M: payload`. The canonical cairn is `:M:` (colon-M-colon followed by exactly one space). The payload consists of contexts that classify the code location.
 
 Key principles:
-- **One anchor per project** - Maintain consistency across your codebase
+- **One cairn per project** - Maintain consistency across your codebase
 - **Tags, not prose** - Use structured tags for reliable pattern matching
 - **Keep tags terse** - Prefer `sec` over `security`, `ctx` over `context`
 - **Progressive adoption** - Start with one tag, expand as needed
@@ -17,42 +17,42 @@ Key principles:
 
 ### Basic Usage
 ```javascript
-// :A: todo implement validation
-// :A: sec check user permissions
-// :A: ctx assumes UTC timestamps
-// :A: @agent write unit tests
-// :A: temp remove after v2.0
+// :M: todo implement validation
+// :M: sec check user permissions
+// :M: ctx assumes UTC timestamps
+// :M: @agent write unit tests
+// :M: temp remove after v2.0
 ```
 
-### Combined Markers (use judiciously)
+### Combined Contexts (use judiciously)
 ```python
-# :A: sec, todo validate inputs  # Good: related concerns, concise
-# :A: perf, debt refactor this loop   # Good: both about code quality
+# :M: sec, todo validate inputs  # Good: related concerns, concise
+# :M: perf, debt refactor this loop   # Good: both about code quality
 ```
 
 ### Separate Comments (often better)
 ```python
-# :A: sec check SQL injection vulnerabilities
-# :A: todo add input validation for email format
-# :A: ctx user emails must be unique in database
+# :M: sec check SQL injection vulnerabilities
+# :M: todo add input validation for email format
+# :M: ctx user emails must be unique in database
 # Better: each concern gets proper description
 ```
 
 ### Searching
 ```bash
-rg ":A:"              # All anchors
-rg ":A: sec"          # Security concerns
-rg ":A:.*@agent"      # AI tasks
+rg ":M:"              # All cairns
+rg ":M: sec"          # Security concerns
+rg ":M:.*@agent"      # AI tasks
 
-# Context searching (find related markers)
-rg -B1 -A1 ":A: sec"      # Show 1 line before/after
-rg -C2 ":A: todo"          # Show 2 lines context
-rg -B2 -A2 ":A: sec"
+# Context searching (find related contexts)
+rg -B1 -A1 ":M: sec"      # Show 1 line before/after
+rg -C2 ":M: todo"          # Show 2 lines context
+rg -B2 -A2 ":M: sec"
 ```
 
-## Marker Reference
+## Context Reference
 
-**Core Markers:**
+**Core Contexts:**
 - `tldr` - Brief summary or overview ("Too Long; Didn't Read")
 - `todo` - Work that needs doing
 - `ctx` - Important context/assumptions
@@ -60,7 +60,7 @@ rg -B2 -A2 ":A: sec"
 - `@agent` - AI agent instructions
 - `tmp` - Temporary code to remove
 
-**Quality Markers:**
+**Quality Contexts:**
 - `perf` - Performance concerns
 - `bug` - Known issues
 - `debt` - Technical debt
@@ -95,12 +95,12 @@ rg -B2 -A2 ":A: sec"
 - `priority` - Priority level (p0, p1, etc.)
 - `deadline(date)` - Time constraints
 
-## Why `:A:`?
+## Why `:M:`?
 
-The canonical anchor `:A:` was chosen for:
+The canonical cairn `:M:` was chosen for:
 - **Brevity**: Just 3 characters
 - **Uniqueness**: Unlikely to conflict with existing code
-- **Mnemonic**: "Anchor" for navigation
+- **Mnemonic**: "Cairn" for navigation
 - **Consistency**: One standard across all projects
 
 ## AI Agent Workflows
@@ -108,24 +108,24 @@ The canonical anchor `:A:` was chosen for:
 ### 1. Human marks location
 ```python
 class UserService:
-    # :A: ctx all emails must be unique
+    # :M: ctx all emails must be unique
     def create_user(self, email: str):
-        # :A: @agent implement with validation
-        # :A: sec prevent duplicates
+        # :M: @agent implement with validation
+        # :M: sec prevent duplicates
         pass
 ```
 
 ### 2. AI finds work
 ```bash
-rg ":A:.*@agent"
-# user_service.py:4: # :A: @agent implement with validation
+rg ":M:.*@agent"
+# user_service.py:4: # :M: @agent implement with validation
 ```
 
 ### 3. AI reads context
 ```bash
-rg ":A: ctx|:A: sec" user_service.py
-# user_service.py:2: # :A: ctx all emails must be unique
-# user_service.py:5: # :A: sec prevent duplicates
+rg ":M: ctx|:M: sec" user_service.py
+# user_service.py:2: # :M: ctx all emails must be unique
+# user_service.py:5: # :M: sec prevent duplicates
 ```
 
 ### 4. AI implements with understanding
@@ -135,85 +135,85 @@ rg ":A: ctx|:A: sec" user_service.py
 ### From TODO comments
 ```bash
 # Phase 1: Enhance existing
-sed -i 's/TODO:/TODO :A: /g' **/*.js
+sed -i 's/TODO:/TODO :M: /g' **/*.js
 
-# Phase 2: Pure anchors
-sed -i 's/TODO :A: /:A: todo /g' **/*.js
+# Phase 2: Pure cairns
+sed -i 's/TODO :M: /:M: todo /g' **/*.js
 ```
 
 ### Progressive adoption
-1. Start with `:A: todo`
-2. Add `:A: ctx` for clarity
-3. Use `:A: @agent` for AI
-4. Link with `:A: issue(123)`
+1. Start with `:M: todo`
+2. Add `:M: ctx` for clarity
+3. Use `:M: @agent` for AI
+4. Link with `:M: issue(123)`
 
 ## Monorepo Patterns
 
-Use markers for service namespacing:
+Use contexts for service namespacing:
 ```javascript
-// :A: auth, todo implement OAuth
-// :A: payment, sec validate amounts
-// :A: shared, api maintain compatibility
+// :M: auth, todo implement OAuth
+// :M: payment, sec validate amounts
+// :M: shared, api maintain compatibility
 ```
 
 Search patterns:
 ```bash
-rg ":A: auth"          # Auth service only
-rg ":A:.*sec"         # All security issues
+rg ":M: auth"          # Auth service only
+rg ":M:.*sec"         # All security issues
 ```
 
 ## Advanced Patterns
 
 ### Parameter Syntax
 ```javascript
-// :A: issue(123) deadline(2024-03-01)
-// :A: owner(@alice) priority(high)
+// :M: issue(123) deadline(2024-03-01)
+// :M: owner(@alice) priority(high)
 ```
 
 ### Multiple Values
 ```javascript
-// :A: blocked:[123,456] owners:[@alice,@bob]
+// :M: blocked:[123,456] owners:[@alice,@bob]
 ```
 
 ### Issue Linking
 ```python
-# :A: issue(123)
-# :A: jira(PROJ-456)
-# :A: github(#789)
+# :M: issue(123)
+# :M: jira(PROJ-456)
+# :M: github(#789)
 ```
 
 ### HTML Comments (for markdown)
 ```markdown
-<!-- :A: tldr Quick summary of the document -->
-<!-- :A: core Essential concept explanation -->
-<!-- :A: guide Step-by-step instructions -->
+<!-- :M: tldr Quick summary of the document -->
+<!-- :M: core Essential concept explanation -->
+<!-- :M: guide Step-by-step instructions -->
 ```
 
 ## Best Practices
 
 1. **Separate concerns**: Use multiple comments for distinct topics
 2. **Line limits**: Keep under ~80 chars for readable grep output
-3. **Layer markers carefully**: `:A: sec, todo` only when closely related
+3. **Layer contexts carefully**: `:M: sec, todo` only when closely related
 4. **Add context liberally**: More context is better, use separate lines
 5. **Be specific**: "validate UUID" not just "validate"
-6. **Link resources**: `:A: docs(RFC-7231)`
+6. **Link resources**: `:M: docs(RFC-7231)`
 7. **Stay consistent**: Document team patterns
-8. **Use HTML comments in markdown**: `<!-- :A: tldr summary -->` for non-rendered anchors
+8. **Use HTML comments in markdown**: `<!-- :M: tldr summary -->` for non-rendered cairns
 
 ## Implementation
 
 ### VS Code
 ```json
 {
-  "todo-tree.regex.regex": ":A: (\\w+)"
+  "todo-tree.regex.regex": ":M: (\\w+)"
 }
 ```
 
 ### Git hooks
 ```bash
 # Block commits with tmp code
-if git diff --cached | grep -q ":A: temp"; then
-  echo "Error: Remove :A: temp markers"
+if git diff --cached | grep -q ":M: temp"; then
+  echo "Error: Remove :M: temp contexts"
   exit 1
 fi
 ```
@@ -225,11 +225,11 @@ Check for critical issues in pull requests.
 ## Grammar
 
 ```ebnf
-anchor  ::= ":A:" space payload
+cairn  ::= ":M:" space payload
 space   ::= " "  # exactly one ASCII space
-payload ::= marker-list prose?
-marker-list ::= marker (", " marker)*
-marker  ::= bare | parameterized
+payload ::= context-list prose?
+context-list ::= context (", " context)*
+context  ::= bare | parameterized
 bare    ::= "@"? [A-Za-z0-9_-]+
 parameterized ::= bare "(" value ")"
 value   ::= [^)]+  # any chars except closing paren
@@ -237,26 +237,26 @@ value   ::= [^)]+  # any chars except closing paren
 
 ## Resources
 
-- [README](https://github.com/galligan/grepa/blob/main/README.md): Full documentation
-- [Examples](https://github.com/galligan/grepa/blob/main/docs/examples.md): Real-world patterns
-- [Conventions](https://github.com/galligan/grepa/blob/main/docs/conventions/): Marker patterns
-- [Progressive Guide](https://github.com/galligan/grepa/blob/main/docs/guides/progressive-enhancement.md): Adoption path
+- [README](https://github.com/galligan/cairn/blob/main/README.md): Full documentation
+- [Examples](https://github.com/galligan/cairn/blob/main/docs/examples.md): Real-world patterns
+- [Conventions](https://github.com/galligan/cairn/blob/main/docs/conventions/): Context patterns
+- [Progressive Guide](https://github.com/galligan/cairn/blob/main/docs/guides/progressive-enhancement.md): Adoption path
 
 ## Quick Reference
 
 ```bash
-# Find all anchors
-rg ":A:"
+# Find all cairns
+rg ":M:"
 
 # Find with context
-rg -C2 ":A: sec"         # 2 lines before/after
-rg -B3 -A3 ":A: todo"     # 3 lines before, 3 after
+rg -C2 ":M: sec"         # 2 lines before/after
+rg -B3 -A3 ":M: todo"     # 3 lines before, 3 after
 
 # Find in markdown (including HTML comments)  
-rg "<!-- :A:" --type md
+rg "<!-- :M:" --type md
 
-# Remove all anchors (backup first!)
-find . -type f -exec sed -i.bak 's/:A: [^*]*//g' {} +
+# Remove all cairns (backup first!)
+find . -type f -exec sed -i.bak 's/:M: [^*]*//g' {} +
 ```
 
 Remember: The goal is discoverability. Start simple, grow naturally. 

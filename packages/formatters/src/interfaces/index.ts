@@ -1,2 +1,2 @@
-// :A: tldr Export all formatter interfaces
+// :M: tldr Export all formatter interfaces
 export * from './formatter.interface';

@@ -1,4 +1,4 @@
-// :A: tldr Core parser for Cairn syntax (:M: context prose)
+// :M: tldr Core parser for Cairn syntax (:M: context prose)
 import type { MagicAnchor, ParseResult, ParseError } from '@cairn/types';
 import { type Result, success, failure } from '../lib/result.js';
 import { makeError } from '../lib/error.js';
@@ -10,7 +10,7 @@ import { fromZod } from '../lib/zod-adapter.js';
  * Handles both sync and async parsing with Result pattern support.
  */
 export class MagicAnchorParser {
-  // :A: api parser configuration constants
+  // :M: api parser configuration constants
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   
   /**
@@ -19,15 +19,15 @@ export class MagicAnchorParser {
    * @param filename - Optional filename for context
    * @returns Result containing parsed anchors or error
    */
-  // :A: api main parsing method with Result pattern
+  // :M: api main parsing method with Result pattern
   static parseWithResult(content: string, filename?: string): Result<ParseResult> {
-    // :A: ctx validate input with Zod
+    // :M: ctx validate input with Zod
     const inputValidation = parseInputSchema.safeParse({ content, filename });
     if (!inputValidation.success) {
       return failure(fromZod(inputValidation.error));
     }
 
-    // :A: ctx check file size limit using byte length to prevent multi-byte character bypass
+    // :M: ctx check file size limit using byte length to prevent multi-byte character bypass
     const contentByteLength = Buffer.byteLength(content, 'utf8');
     if (contentByteLength > MagicAnchorParser.MAX_FILE_SIZE) {
       return failure(makeError(
@@ -58,21 +58,21 @@ export class MagicAnchorParser {
   }
   
   
-  // :A: api parse single line for anchor content
+  // :M: api parse single line for anchor content
   private static findAnchorInLine(line: string, lineNumber: number): {
     anchor?: MagicAnchor;
     error?: ParseError;
   } | null {
-    // :A: ctx look for :M: pattern anywhere in the line
+    // :M: ctx look for :M: pattern anywhere in the line
     const anchorIndex = line.indexOf(':M:');
     if (anchorIndex === -1) {
       return null;
     }
     
-    // :A: ctx extract everything after :M: (including the space)
+    // :M: ctx extract everything after :M: (including the space)
     const afterAnchor = line.substring(anchorIndex + 3);
     
-    // :A: sec validate required space after :M:
+    // :M: sec validate required space after :M:
     if (!afterAnchor.startsWith(' ')) {
       return {
         error: {
@@ -84,7 +84,7 @@ export class MagicAnchorParser {
       };
     }
     
-    // :A: ctx extract payload (everything after the space)
+    // :M: ctx extract payload (everything after the space)
     const payload = afterAnchor.substring(1).trim();
     if (!payload) {
       return {
@@ -97,7 +97,7 @@ export class MagicAnchorParser {
       };
     }
     
-    // :A: ctx parse contexts and prose from payload
+    // :M: ctx parse contexts and prose from payload
     const { contexts, prose } = this.parsePayload(payload);
     
     return {
@@ -111,10 +111,10 @@ export class MagicAnchorParser {
     };
   }
   
-  // :A: api extract contexts and prose from payload string
+  // :M: api extract contexts and prose from payload string
   private static parsePayload(payload: string): { contexts: string[]; prose?: string } {
-    // :A: ctx safer string-based parsing to avoid ReDoS vulnerability
-    // :A: ctx find first space that isn't inside parentheses or after a comma
+    // :M: ctx safer string-based parsing to avoid ReDoS vulnerability
+    // :M: ctx find first space that isn't inside parentheses or after a comma
     let parenDepth = 0;
     let spaceIndex = -1;
     
@@ -125,30 +125,30 @@ export class MagicAnchorParser {
       } else if (char === ')') {
         if (parenDepth > 0) parenDepth--; // Prevent negative depth on unmatched parentheses
       } else if (char === ' ' && parenDepth === 0) {
-        // :A: ctx check if this space is after a comma (still in marker list)
+        // :M: ctx check if this space is after a comma (still in marker list)
         let j = i - 1;
         while (j >= 0 && payload[j] === ' ') {
           j--;
         }
         
         if (j >= 0 && payload[j] === ',') {
-          // :A: ctx space after comma, still in marker list
+          // :M: ctx space after comma, still in marker list
           continue;
         }
         
-        // :A: ctx check if the next non-space character could be a marker
+        // :M: ctx check if the next non-space character could be a marker
         let k = i + 1;
         while (k < payload.length && payload[k] === ' ') {
           k++;
         }
         
         if (k < payload.length) {
-          // :A: ctx simple heuristic: if next word contains only marker-like characters, skip
+          // :M: ctx simple heuristic: if next word contains only marker-like characters, skip
           const nextChar = payload[k];
           if (nextChar && /^[a-zA-Z0-9_@-]$/.test(nextChar)) {
-            // :A: ctx might still be in markers, look for a better separator
+            // :M: ctx might still be in markers, look for a better separator
             const restOfLine = payload.substring(k);
-            // :A: ctx if we find a comma soon, we're still in markers
+            // :M: ctx if we find a comma soon, we're still in markers
             const commaIndex = restOfLine.indexOf(',');
             const nextSpaceIndex = restOfLine.indexOf(' ');
             
@@ -158,14 +158,14 @@ export class MagicAnchorParser {
           }
         }
         
-        // :A: ctx this looks like a real separator between markers and prose
+        // :M: ctx this looks like a real separator between markers and prose
         spaceIndex = i;
         break;
       }
     }
     
     if (spaceIndex > 0) {
-      // :A: ctx split at the separator
+      // :M: ctx split at the separator
       const markersStr = payload.substring(0, spaceIndex);
       const prose = payload.substring(spaceIndex + 1).trim();
       
@@ -175,13 +175,13 @@ export class MagicAnchorParser {
       };
     }
     
-    // :A: ctx no prose found, entire payload is contexts
+    // :M: ctx no prose found, entire payload is contexts
     return {
       contexts: MagicAnchorParser.parseContexts(payload)
     };
   }
   
-  // :A: api split comma-separated contexts
+  // :M: api split comma-separated contexts
   private static parseContexts(contextsStr: string): string[] {
     return contextsStr
       .split(',')
@@ -189,14 +189,14 @@ export class MagicAnchorParser {
       .filter(context => context.length > 0);
   }
   
-  // :A: api convenience method to find anchors by context
+  // :M: api convenience method to find anchors by context
   static findByContext(anchors: MagicAnchor[], context: string): MagicAnchor[] {
     return anchors.filter(anchor => 
       anchor.contexts.some((c: string) => c === context || c.startsWith(`${context}(`))
     );
   }
   
-  // :A: api convenience method to find anchors by pattern
+  // :M: api convenience method to find anchors by pattern
   static findByPattern(anchors: MagicAnchor[], pattern: RegExp): MagicAnchor[] {
     return anchors.filter(anchor =>
       anchor.contexts.some((context: string) => pattern.test(context)) ||

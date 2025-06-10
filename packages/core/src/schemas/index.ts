@@ -1,7 +1,7 @@
-// :A: tldr Zod schemas for runtime validation
+// :M: tldr Zod schemas for runtime validation
 import { z } from 'zod';
 
-// :A: api Base schemas for reusability
+// :M: api Base schemas for reusability
 const contextSchema = z.string()
   .min(1, 'Context cannot be empty')
   .max(50, 'Context too long')
@@ -15,7 +15,7 @@ const columnNumberSchema = z.number()
   .int('Column number must be an integer')
   .positive('Column number must be positive');
 
-// :A: api Magic Anchor schema
+// :M: api Cairn schema
 export const magicAnchorSchema = z.object({
   line: lineNumberSchema,
   column: columnNumberSchema,
@@ -27,7 +27,7 @@ export const magicAnchorSchema = z.object({
 
 export type MagicAnchorValidated = z.infer<typeof magicAnchorSchema>;
 
-// :A: api Parse Error schema
+// :M: api Parse Error schema
 export const parseErrorSchema = z.object({
   line: lineNumberSchema,
   column: columnNumberSchema,
@@ -37,7 +37,7 @@ export const parseErrorSchema = z.object({
 
 export type ParseErrorValidated = z.infer<typeof parseErrorSchema>;
 
-// :A: api Parse Result schema
+// :M: api Parse Result schema
 export const parseResultSchema = z.object({
   anchors: z.array(magicAnchorSchema),
   errors: z.array(parseErrorSchema),
@@ -45,7 +45,7 @@ export const parseResultSchema = z.object({
 
 export type ParseResultValidated = z.infer<typeof parseResultSchema>;
 
-// :A: api Search Options schema
+// :M: api Search Options schema
 export const searchOptionsSchema = z.object({
   contexts: z.array(contextSchema).optional(),
   files: z.array(z.string()).optional(),
@@ -57,10 +57,10 @@ export const searchOptionsSchema = z.object({
 
 export type SearchOptionsValidated = z.infer<typeof searchOptionsSchema>;
 
-// :A: api output format options
+// :M: api output format options
 export const outputFormatSchema = z.enum(['terminal', 'json', 'csv']);
 
-// :A: api CLI command schemas
+// :M: api CLI command schemas
 export const parseCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
   verbose: z.boolean().optional(),
@@ -87,12 +87,12 @@ export const listCommandOptionsSchema = z.object({
   gitignore: z.boolean().default(true),
 });
 
-// :A: api File path validation
+// :M: api File path validation
 export const filePathSchema = z.string()
   .min(1, 'File path cannot be empty')
   .refine((path) => !path.includes('\0'), 'File path cannot contain null bytes');
 
-// :A: api Anchor payload validation
+// :M: api Anchor payload validation
 export const anchorPayloadSchema = z.string()
   .min(1, 'Anchor payload cannot be empty')
   .refine((payload) => {
@@ -100,7 +100,7 @@ export const anchorPayloadSchema = z.string()
     return payload.trim().length > 0;
   }, 'Anchor payload must contain non-whitespace characters');
 
-// :A: api Create validated parse input
+// :M: api Create validated parse input
 export const parseInputSchema = z.object({
   content: z.string(),
   filename: filePathSchema.optional(),

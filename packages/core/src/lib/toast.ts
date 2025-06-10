@@ -1,15 +1,15 @@
-// :A: tldr Toast wrapper utilities for future UI integration
+// :M: tldr Toast wrapper utilities for future UI integration
 import type { Result } from './result.js';
 import type { AppError, ErrorCode } from './error.js';
 
-// :A: api Mock toast interface (replace with actual library when UI is added)
+// :M: api Mock toast interface (replace with actual library when UI is added)
 interface Toast {
   success(title: string, options?: { description?: string; duration?: number; id?: string }): void;
   error(title: string, options?: { description?: string; duration?: number; id?: string }): void;
   loading(message: string): string;
 }
 
-// :A: ctx Mock implementation for development
+// :M: ctx Mock implementation for development
 const mockToast: Toast = {
   success: (title, options) => console.log(`✅ ${title}`, options?.description || ''),
   error: (title, options) => console.error(`❌ ${title}`, options?.description || ''),
@@ -19,7 +19,7 @@ const mockToast: Toast = {
   },
 };
 
-// :A: api Use this when adding a real toast library
+// :M: api Use this when adding a real toast library
 // import { toast } from 'sonner';
 const toast = mockToast;
 
@@ -28,12 +28,12 @@ type ToastOptions = {
   duration?: number;
 };
 
-// :A: api Human-readable error messages
+// :M: api Human-readable error messages
 export function humanise(err: AppError): string {
   const messages: Partial<Record<ErrorCode, string>> = {
     // Parse errors
     'parse.invalidSyntax': 'Invalid Magic Anchor syntax found',
-    'parse.missingSpace': 'Missing required space after :A: marker',
+    'parse.missingSpace': 'Missing required space after :M: marker',
     'parse.emptyPayload': 'Anchor payload cannot be empty',
     'parse.invalidMarker': 'Invalid marker format',
     'parse.tooManyMarkers': 'Too many markers on a single line',
@@ -70,7 +70,7 @@ export function humanise(err: AppError): string {
 
   const message = messages[err.code];
   
-  // :A: ctx log unmapped error codes for debugging
+  // :M: ctx log unmapped error codes for debugging
   if (!message && err.code) {
     console.warn(`Unmapped error code: ${err.code}`, { error: err });
   }
@@ -78,7 +78,7 @@ export function humanise(err: AppError): string {
   return message ?? err.message ?? 'An unknown error occurred';
 }
 
-// :A: api Display toast based on Result status
+// :M: api Display toast based on Result status
 export function showResultToast<T>(
   title: string,
   res: Result<T, AppError>,
@@ -100,7 +100,7 @@ export function showResultToast<T>(
   return res.ok;
 }
 
-// :A: api Wrap async operation with loading/success/error toasts
+// :M: api Wrap async operation with loading/success/error toasts
 export async function withToast<T>(
   promise: Promise<Result<T, AppError>>,
   messages: {

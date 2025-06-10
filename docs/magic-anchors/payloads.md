@@ -2,7 +2,7 @@
 <!-- :A: tldr Three payload types: bare tokens, JSON objects, and arrays -->
 <!-- :A: notation Detailed payload type specifications and examples -->
 
-Payloads define what comes after the `:A:` sigil. Grepa supports three payload types.
+Payloads define what comes after the `:A:` identifier. Grepa supports three payload types.
 
 ## Bare Tokens
 

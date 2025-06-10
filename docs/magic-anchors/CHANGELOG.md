@@ -16,11 +16,11 @@ All notable changes to the Magic-Anchor language specification will be documente
 - Prose formatting guidelines with optional colon prefix and quotes
 - Key decisions section in format specification
 - Quoting rules for complex values and special characters
-- Formal grammar with mandatory single space after sigil
+- Formal grammar with mandatory single space after identifier
 
 ### Changed
 
-- Replaced all `:ga:` sigils with the canonical `:A:` anchor
+- Replaced all `:ga:` identifiers with the canonical `:A:` anchor
 - Complete documentation update to new `:A:` syntax with mandatory single space
 - Revised SPEC.md with comprehensive delimiter semantics and examples
 - Updated all documentation examples to use new delimiter patterns
@@ -34,5 +34,5 @@ All notable changes to the Magic-Anchor language specification will be documente
 - JSON/YAML syntax within anchors (key architectural decision)
 - Regex/pattern matching as core feature
 - Support for custom anchors in documentation
-- References to optional space after sigil (now mandatory)
+- References to optional space after identifier (now mandatory)
 

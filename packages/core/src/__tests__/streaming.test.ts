@@ -1,39 +1,39 @@
-// :A: tldr Tests for large file streaming functionality
+// :M: tldr Tests for large file streaming functionality
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeFileSync, unlinkSync, existsSync, mkdirSync, rmSync } from 'fs';
-import { GrepaSearch } from '../search/grepa-search.js';
+import { CairnSearch } from '../search/cairn-search.js';
 
 describe('Large File Streaming', () => {
   const testDir = './test-streaming';
   const largeTestFile = `${testDir}/large-test-file.ts`;
   
   beforeAll(() => {
-    // :A: ctx create test directory
+    // :M: ctx create test directory
     if (!existsSync(testDir)) {
       mkdirSync(testDir, { recursive: true });
     }
     
-    // :A: ctx create a large test file with anchors
-    let content = '// :A: tldr Large test file for streaming\n';
+    // :M: ctx create a large test file with anchors
+    let content = '// :M: tldr Large test file for streaming\n';
     
     // Add 100,000 lines to make it large enough to trigger streaming
     for (let i = 0; i < 100000; i++) {
       if (i % 1000 === 0) {
-        content += `// :A: milestone line ${i}\n`;
+        content += `// :M: milestone line ${i}\n`;
       } else if (i % 5000 === 0) {
-        content += `// :A: security check security validation at line ${i}\n`;
+        content += `// :M: security check security validation at line ${i}\n`;
       } else {
         content += `const line${i} = "content for line ${i}";\n`;
       }
     }
     
-    content += '// :A: performance end of large file\n';
+    content += '// :M: performance end of large file\n';
     
     writeFileSync(largeTestFile, content);
   });
 
   afterAll(() => {
-    // :A: ctx cleanup test files
+    // :M: ctx cleanup test files
     if (existsSync(largeTestFile)) unlinkSync(largeTestFile);
     if (existsSync(testDir)) rmSync(testDir, { recursive: true, force: true });
   });
@@ -44,13 +44,13 @@ describe('Large File Streaming', () => {
       context: 2
     };
 
-    const result = await GrepaSearch.search([largeTestFile], searchOptions);
+    const result = await CairnSearch.search([largeTestFile], searchOptions);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data.length).toBeGreaterThan(0);
       
-      // :A: ctx verify we found the milestone anchors
+      // :M: ctx verify we found the milestone anchors
       const milestones = result.data.filter(r => 
         r.anchor.markers.includes('milestone')
       );
@@ -64,7 +64,7 @@ describe('Large File Streaming', () => {
       context: 3
     };
 
-    const result = await GrepaSearch.search([largeTestFile], searchOptions);
+    const result = await CairnSearch.search([largeTestFile], searchOptions);
     
     expect(result.ok).toBe(true);
     if (result.ok && result.data.length > 0) {
@@ -76,7 +76,7 @@ describe('Large File Streaming', () => {
   });
 
   it('should parse simple payloads correctly in streaming', () => {
-    // :A: ctx test the simple payload parser used in streaming
+    // :M: ctx test the simple payload parser used in streaming
     const testCases = [
       { payload: 'todo implement feature', expected: { markers: ['todo'], prose: 'implement feature' } },
       { payload: 'security, todo validate inputs', expected: { markers: ['security', 'todo'], prose: 'validate inputs' } },
@@ -85,7 +85,7 @@ describe('Large File Streaming', () => {
     ];
 
     // Test the parsePayloadSimple method directly
-    const parseMethod = (GrepaSearch as any).parsePayloadSimple;
+    const parseMethod = (CairnSearch as any).parsePayloadSimple;
     
     testCases.forEach(({ payload, expected }) => {
       const result = parseMethod(payload);
@@ -95,7 +95,7 @@ describe('Large File Streaming', () => {
   });
 
   it('should maintain memory efficiency with large files', async () => {
-    // :A: perf test memory usage doesn't explode with large files
+    // :M: perf test memory usage doesn't explode with large files
     // Force garbage collection if available for more reliable baseline
     if (global.gc) {
       global.gc();
@@ -108,7 +108,7 @@ describe('Large File Streaming', () => {
       context: 1
     };
 
-    const result = await GrepaSearch.search([largeTestFile], searchOptions);
+    const result = await CairnSearch.search([largeTestFile], searchOptions);
     
     // Force GC again to get more accurate final measurement
     if (global.gc) {
@@ -132,7 +132,7 @@ describe('Large File Streaming', () => {
       markers: ['test']
     };
 
-    const result = await GrepaSearch.search([nonExistentFile], searchOptions);
+    const result = await CairnSearch.search([nonExistentFile], searchOptions);
     
     // Should handle missing files gracefully
     expect(result.ok).toBe(false);
@@ -145,10 +145,10 @@ describe('Large File Streaming', () => {
     // Create a second large file for concurrent processing test
     const largeTestFile2 = `${testDir}/large-test-file-2.ts`;
     
-    let content = '// :A: tldr Second large test file\n';
+    let content = '// :M: tldr Second large test file\n';
     for (let i = 0; i < 50000; i++) {
       if (i % 2000 === 0) {
-        content += `// :A: concurrent processing line ${i}\n`;
+        content += `// :M: concurrent processing line ${i}\n`;
       } else {
         content += `const secondFile${i} = "content ${i}";\n`;
       }
@@ -161,7 +161,7 @@ describe('Large File Streaming', () => {
         markers: ['concurrent']
       };
 
-      const result = await GrepaSearch.search([largeTestFile, largeTestFile2], searchOptions);
+      const result = await CairnSearch.search([largeTestFile, largeTestFile2], searchOptions);
       
       expect(result.ok).toBe(true);
       if (result.ok) {
@@ -174,7 +174,7 @@ describe('Large File Streaming', () => {
   });
 
   it('should respect context buffer limits in streaming', () => {
-    // :A: ctx test context buffer management
+    // :M: ctx test context buffer management
     const contextSize = 5;
     const maxBufferSize = contextSize * 2 + 1;
     const buffer: string[] = [];
@@ -192,17 +192,17 @@ describe('Large File Streaming', () => {
   });
 
   it('should validate anchor format in streaming mode', () => {
-    // :A: sec test anchor validation during streaming
+    // :M: sec test anchor validation during streaming
     const testLines = [
-      '// :A: valid anchor',
-      '// :A:invalid no space',
-      '// :A: ',
-      '// :A: multiple, markers test',
+      '// :M: valid anchor',
+      '// :M:invalid no space',
+      '// :M: ',
+      '// :M: multiple, markers test',
       'no anchor here'
     ];
 
     const validAnchors = testLines.filter(line => {
-      const anchorIndex = line.indexOf(':A:');
+      const anchorIndex = line.indexOf(':M:');
       if (anchorIndex === -1) return false;
       
       const afterAnchor = line.substring(anchorIndex + 3);

@@ -1,9 +1,9 @@
-// :A: tldr CSV formatter for Magic Anchor outputs
+// :M: tldr CSV formatter for Cairn outputs
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
 import type { SearchResult, MagicAnchor } from '@cairn/types';
 
 export class CSVFormatter implements IFormatter {
-  // :A: api format data as CSV
+  // :M: api format data as CSV
   format(input: FormatterInput): string {
     switch (input.type) {
       case 'search':
@@ -19,7 +19,7 @@ export class CSVFormatter implements IFormatter {
     }
   }
 
-  // :A: api format search results as CSV
+  // :M: api format search results as CSV
   private formatSearchResults(results: SearchResult[]): string {
     const headers = ['File', 'Line', 'Column', 'Contexts', 'Prose'];
     const rows = [headers];
@@ -38,18 +38,18 @@ export class CSVFormatter implements IFormatter {
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :A: api format list results as CSV
+  // :M: api format list results as CSV
   private formatListResults(results: SearchResult[]): string {
-    // :A: ctx same format as search results
+    // :M: ctx same format as search results
     return this.formatSearchResults(results);
   }
 
-  // :A: api format parse results as CSV
+  // :M: api format parse results as CSV
   private formatParseResults(data: { file: string; result: { anchors: MagicAnchor[]; errors: any[] } }): string {
     const headers = ['File', 'Line', 'Column', 'Contexts', 'Prose', 'Status'];
     const rows = [headers];
 
-    // :A: ctx add anchors
+    // :M: ctx add anchors
     for (const anchor of data.result.anchors) {
       rows.push([
         this.escapeCsvField(data.file),
@@ -61,7 +61,7 @@ export class CSVFormatter implements IFormatter {
       ]);
     }
 
-    // :A: ctx add errors
+    // :M: ctx add errors
     for (const error of data.result.errors) {
       rows.push([
         this.escapeCsvField(data.file),
@@ -76,7 +76,7 @@ export class CSVFormatter implements IFormatter {
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :A: api format unique contexts as CSV
+  // :M: api format unique contexts as CSV
   private formatContexts(contexts: string[]): string {
     const headers = ['Context'];
     const rows = [headers];
@@ -88,23 +88,23 @@ export class CSVFormatter implements IFormatter {
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :A: api format default output
+  // :M: api format default output
   private formatDefault(input: FormatterInput): string {
     const headers = ['Type', 'Data'];
     const rows = [headers, [input.type, JSON.stringify(input.data)]];
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :A: api escape CSV field values and prevent formula injection
+  // :M: api escape CSV field values and prevent formula injection
   private escapeCsvField(field: string): string {
-    // :A: sec neutralize potential formula-injection payloads (CVE-2014-3524)
+    // :M: sec neutralize potential formula-injection payloads (CVE-2014-3524)
     if (/^[=+\-@]/.test(field)) {
       field = `'${field}`;
     }
     
-    // :A: ctx if field contains comma, quotes, or newline, wrap in quotes
+    // :M: ctx if field contains comma, quotes, or newline, wrap in quotes
     if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-      // :A: ctx escape quotes by doubling them
+      // :M: ctx escape quotes by doubling them
       return `"${field.replace(/"/g, '""')}"`;
     }
     return field;

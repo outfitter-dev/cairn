@@ -8,7 +8,7 @@
 
 ## 1. Why capture priors?
 
-Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:A:` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents so contributors can understand **why `:A:` feels familiar** even if the exact sigil is new.
+Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:A:` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents so contributors can understand **why `:A:` feels familiar** even if the exact identifier is new.
 
 ---
 
@@ -39,7 +39,7 @@ Open-source projects thrive on conventions that *already worked elsewhere*. Befo
 4. **Minimal surface area matters**
    The most successful anchors fit anywhere a comment does—source, config, even SQL.
 
-These insights justify a **single, three-character sigil** (`:A:`) and a tiny grammar: fresh enough to stand out, but orthodox enough that every Unix tool and language server can consume it.
+These insights justify a **single, three-character identifier** (`:A:`) and a tiny grammar: fresh enough to stand out, but orthodox enough that every Unix tool and language server can consume it.
 
 ---
 

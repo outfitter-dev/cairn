@@ -1,5 +1,5 @@
-// :A: tldr JSON formatters for all data types
-import type { SearchResult, MagicAnchor, ParseResult } from '@grepa/types';
+// :M: tldr JSON formatters for all data types
+import type { SearchResult, MagicAnchor, ParseResult } from '@cairn/types';
 import type {
   ISearchResultFormatter,
   IMagicAnchorFormatter,

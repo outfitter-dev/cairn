@@ -1,7 +1,7 @@
-// :A: tldr Type definitions for Magic Anchor parsing and processing
+// :M: tldr Type definitions for Cairn parsing and processing
 
 export interface MagicAnchor {
-  // :A: api core anchor properties
+  // :M: api core anchor properties
   line: number;
   column: number;
   raw: string;
@@ -11,13 +11,13 @@ export interface MagicAnchor {
 }
 
 export interface ParseResult {
-  // :A: api parser output structure
+  // :M: api parser output structure
   anchors: MagicAnchor[];
   errors: ParseError[];
 }
 
 export interface ParseError {
-  // :A: api parsing error information
+  // :M: api parsing error information
   line: number;
   column: number;
   message: string;
@@ -25,7 +25,7 @@ export interface ParseError {
 }
 
 export interface SearchOptions {
-  // :A: api search configuration
+  // :M: api search configuration
   contexts?: string[];
   files?: string[];
   exclude?: string[];
@@ -35,7 +35,7 @@ export interface SearchOptions {
 }
 
 export interface SearchResult {
-  // :A: api search result structure
+  // :M: api search result structure
   anchor: MagicAnchor;
   context?: {
     before: string[];

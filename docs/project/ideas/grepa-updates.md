@@ -53,7 +53,7 @@ After extensive experimentation with earlier prefixes we discovered an even simp
 
 ### Evolution of the Anchor
 
-1. **Concept: "grep anchor"** – the original phrase that inspired a recognizable comment sigil.
+1. **Concept: "grep anchor"** – the original phrase that inspired a recognizable comment identifier.
 2. **Prototype shorthand (`ga`)** – the initials collapsed into a compact prefix that served well in early prototypes.
 3. **Current refinement (`A`)** – optimization for speed and aesthetics: `:A:` retains the anchor mnemonic while shaving a character and improving ergonomics.
 
@@ -61,11 +61,11 @@ After extensive experimentation with earlier prefixes we discovered an even simp
 
 - From this version forward **`:A:` is the canonical anchor prefix**.
 - No migration concerns exist—the project is still in its early stages and all content is maintained by a single author.
-- Custom anchor sigils were considered, but a *single canonical prefix* keeps tooling simple, avoids edge-case parsing, and mirrors the way "TODO" became a universal convention for work-in-progress notes.
+- Custom anchor identifiers were considered, but a *single canonical prefix* keeps tooling simple, avoids edge-case parsing, and mirrors the way "TODO" became a universal convention for work-in-progress notes.
 
 ### Magic Anchors vs Grepa Tooling
 
-With the `:A:` sigil in place we can make a clear terminology split:
+With the `:A:` identifier in place we can make a clear terminology split:
 
 - **Magic Anchors (notation)** – the comment-level grammar that begins with `:A:` and encodes markers, parameters, and prose.  Magic Anchors are *just text* and can be searched or parsed by any standard tool (ripgrep, awk, IDE search, etc.).
 - **Grepa (tooling)** – the reference CLI / library / editor plug-ins that *understand* Magic Anchors and offer value-adds: rich queries, linting, navigation maps, index daemons, etc.
@@ -578,7 +578,7 @@ The following advanced features have been moved to separate design documents for
    - Include multi-line syntax rules
    - Define escape and quoting mechanisms
 
-2. **docs/magic-anchors/LANGUAGE.md** – pending update to `:A:` sigil and examples
+2. **docs/magic-anchors/LANGUAGE.md** – pending update to `:A:` identifier and examples
    - Language guidelines for notation flexibility
    - "Accommodates", "recommends", "enables" terminology
 

@@ -1,4 +1,4 @@
-// :A: tldr Search functionality for Cairns across files
+// :M: tldr Search functionality for Cairns across files
 import { readFile, stat } from 'fs/promises';
 import { createReadStream } from 'fs';
 import { extname } from 'path';
@@ -16,7 +16,7 @@ import * as readline from 'readline';
  * All operations are async for better performance and scalability.
  */
 export class CairnSearch {
-  // :A: api search configuration constants
+  // :M: api search configuration constants
   private static readonly DEFAULT_EXTENSIONS = [
     '.ts', '.js', '.jsx', '.tsx', '.md', '.txt',
     '.py', '.java', '.c', '.cpp', '.h', '.go',
@@ -31,18 +31,18 @@ export class CairnSearch {
    * @param options - Search options for filtering
    * @returns Promise<Result> containing search results or error
    */
-  // :A: api main search method
+  // :M: api main search method
   static async search(
     patterns: string[],
     options: SearchOptions = {}
   ): Promise<Result<SearchResult[]>> {
-    // :A: ctx validate search options
+    // :M: ctx validate search options
     const optionsValidation = searchOptionsSchema.safeParse(options);
     if (!optionsValidation.success) {
       return failure(fromZod(optionsValidation.error));
     }
 
-    // :A: ctx validate patterns
+    // :M: ctx validate patterns
     if (patterns.length === 0) {
       return failure(makeError(
         'cli.missingArgument',
@@ -50,7 +50,7 @@ export class CairnSearch {
       ));
     }
 
-    // :A: ctx resolve files with error handling
+    // :M: ctx resolve files with error handling
     const filesResult = await CairnSearch.resolveFiles(patterns, options);
     if (!filesResult.ok) {
       return filesResult;
@@ -59,7 +59,7 @@ export class CairnSearch {
     const results: SearchResult[] = [];
     const errors: AppError[] = [];
 
-    // :A: ctx process each file concurrently for better performance
+    // :M: ctx process each file concurrently for better performance
     const filePromises = filesResult.data.map(file => 
       CairnSearch.processFile(file, options)
     );
@@ -81,15 +81,15 @@ export class CairnSearch {
       }
     }
 
-    // :A: ctx check if we found any results
+    // :M: ctx check if we found any results
     if (results.length === 0 && errors.length === 0) {
       return failure(makeError(
         'search.noResults',
-        'No Magic Anchors found matching the search criteria'
+        'No Cairns found matching the search criteria'
       ));
     }
 
-    // :A: ctx check for too many results
+    // :M: ctx check for too many results
     if (results.length > CairnSearch.MAX_RESULTS) {
       return failure(makeError(
         'search.tooManyResults',
@@ -100,13 +100,13 @@ export class CairnSearch {
     return success(results);
   }
 
-  // :A: api resolve file patterns to actual file paths using glob
+  // :M: api resolve file patterns to actual file paths using glob
   private static async resolveFiles(
     patterns: string[],
     options: SearchOptions
   ): Promise<Result<string[]>> {
     try {
-      // :A: ctx use globby for proper glob pattern support
+      // :M: ctx use globby for proper glob pattern support
       const globOptions = {
         absolute: true,
         onlyFiles: true,
@@ -121,7 +121,7 @@ export class CairnSearch {
 
       const files = await globby(patterns, globOptions);
 
-      // :A: ctx filter by extensions (case-insensitive to handle .TS, .Js, etc.)
+      // :M: ctx filter by extensions (case-insensitive to handle .TS, .Js, etc.)
       const filteredFiles = files.filter(file => {
         const ext = extname(file).toLowerCase();
         return CairnSearch.DEFAULT_EXTENSIONS.includes(ext);
@@ -144,12 +144,12 @@ export class CairnSearch {
     }
   }
 
-  // :A: api process single file with error handling
+  // :M: api process single file with error handling
   private static async processFile(
     file: string,
     options: SearchOptions
   ): Promise<Result<SearchResult[]>> {
-    // :A: ctx check file size first
+    // :M: ctx check file size first
     const statResult = await tryAsync(
       () => stat(file),
       'file.readError'
@@ -159,12 +159,12 @@ export class CairnSearch {
       return statResult;
     }
 
-    // :A: perf handle large files with streaming
+    // :M: perf handle large files with streaming
     if (statResult.data.size > CairnSearch.MAX_FILE_SIZE) {
       return CairnSearch.processLargeFile(file, options);
     }
 
-    // :A: ctx read file content
+    // :M: ctx read file content
     const contentResult = await tryAsync(
       () => readFile(file, 'utf-8'),
       'file.readError'
@@ -178,7 +178,7 @@ export class CairnSearch {
       ));
     }
 
-    // :A: ctx parse file content
+    // :M: ctx parse file content
     const parseResult = MagicAnchorParser.parseWithResult(
       contentResult.data,
       file
@@ -188,7 +188,7 @@ export class CairnSearch {
       return parseResult;
     }
 
-    // :A: ctx filter anchors based on search criteria
+    // :M: ctx filter anchors based on search criteria
     const results: SearchResult[] = [];
     for (const anchor of parseResult.data.anchors) {
       if (CairnSearch.matchesSearch(anchor, options)) {
@@ -205,7 +205,7 @@ export class CairnSearch {
     return success(results);
   }
 
-  // :A: api check if anchor matches search criteria
+  // :M: api check if anchor matches search criteria
   private static matchesSearch(anchor: MagicAnchor, options: SearchOptions): boolean {
     if (!options.contexts || options.contexts.length === 0) {
       return true;
@@ -218,7 +218,7 @@ export class CairnSearch {
     );
   }
 
-  // :A: api get context lines around an anchor
+  // :M: api get context lines around an anchor
   private static getContext(content: string, lineNumber: number, contextLines: number): {
     before: string[];
     after: string[];
@@ -227,12 +227,12 @@ export class CairnSearch {
     const before: string[] = [];
     const after: string[] = [];
 
-    // :A: ctx get lines before (1-indexed to 0-indexed)
+    // :M: ctx get lines before (1-indexed to 0-indexed)
     for (let i = Math.max(0, lineNumber - contextLines - 1); i < lineNumber - 1; i++) {
       before.push(lines[i] || '');
     }
 
-    // :A: ctx get lines after
+    // :M: ctx get lines after
     for (let i = lineNumber; i < Math.min(lines.length, lineNumber + contextLines); i++) {
       after.push(lines[i] || '');
     }
@@ -240,7 +240,7 @@ export class CairnSearch {
     return { before, after };
   }
 
-  // :A: api get all unique contexts from search results
+  // :M: api get all unique contexts from search results
   static getUniqueContexts(results: SearchResult[]): string[] {
     const contexts = new Set<string>();
     results.forEach(result => {
@@ -249,7 +249,7 @@ export class CairnSearch {
     return Array.from(contexts).sort();
   }
 
-  // :A: api group results by context
+  // :M: api group results by context
   static groupByContext(results: SearchResult[]): Record<string, SearchResult[]> {
     const grouped: Record<string, SearchResult[]> = {};
     
@@ -265,7 +265,7 @@ export class CairnSearch {
     return grouped;
   }
 
-  // :A: api group results by file
+  // :M: api group results by file
   static groupByFile(results: SearchResult[]): Record<string, SearchResult[]> {
     const grouped: Record<string, SearchResult[]> = {};
     
@@ -280,7 +280,7 @@ export class CairnSearch {
     return grouped;
   }
 
-  // :A: api process large files using streaming to avoid memory issues
+  // :M: api process large files using streaming to avoid memory issues
   private static async processLargeFile(
     file: string,
     options: SearchOptions
@@ -300,7 +300,7 @@ export class CairnSearch {
       rl.on('line', (line) => {
         lineNumber++;
         
-        // :A: ctx maintain context buffer for surrounding lines
+        // :M: ctx maintain context buffer for surrounding lines
         if (contextSize > 0) {
           contextBuffer.push(line);
           if (contextBuffer.length > contextSize * 2 + 1) {
@@ -308,10 +308,10 @@ export class CairnSearch {
           }
         }
 
-        // :A: ctx check for anchor in current line
+        // :M: ctx check for anchor in current line
         const anchorMatch = line.indexOf(':M:');
         if (anchorMatch !== -1) {
-          // :A: ctx parse the line for a valid anchor
+          // :M: ctx parse the line for a valid anchor
           const afterAnchor = line.substring(anchorMatch + 3);
           
           if (afterAnchor.startsWith(' ')) {
@@ -360,9 +360,9 @@ export class CairnSearch {
     });
   }
 
-  // :A: api simple payload parser for streaming (avoids full parser overhead)
+  // :M: api simple payload parser for streaming (avoids full parser overhead)
   private static parsePayloadSimple(payload: string): { contexts: string[]; prose?: string } {
-    // :A: ctx find first space not in parentheses for context/prose split
+    // :M: ctx find first space not in parentheses for context/prose split
     let parenDepth = 0;
     let spaceIndex = -1;
     
@@ -394,7 +394,7 @@ export class CairnSearch {
     };
   }
 
-  // :A: api get context from buffer for streaming
+  // :M: api get context from buffer for streaming
   private static getContextFromBuffer(
     buffer: string[],
     _currentLine: number,

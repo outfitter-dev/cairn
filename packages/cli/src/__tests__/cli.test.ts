@@ -1,8 +1,8 @@
-// :A: tldr Tests for CLI functionality
+// :M: tldr Tests for CLI functionality
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { CLI } from '../index.js';
 
-// :A: ctx mock console methods for testing
+// :M: ctx mock console methods for testing
 const mockConsoleLog = vi.fn();
 const mockConsoleError = vi.fn();
 
@@ -23,7 +23,7 @@ describe('CLI', () => {
     expect(() => new CLI()).not.toThrow();
   });
 
-  // :A: todo add more integration tests when CLI stabilizes
+  // :M: todo add more integration tests when CLI stabilizes
   // The following tests are commented out due to process.exit handling issues
   // They can be re-enabled once we have better test infrastructure
   
@@ -41,6 +41,6 @@ describe('CLI', () => {
   });
   */
 
-  // :A: todo add more integration tests for search and list commands
-  // :A: ctx these would require more complex mocking of file system and glob operations
+  // :M: todo add more integration tests for search and list commands
+  // :M: ctx these would require more complex mocking of file system and glob operations
 });

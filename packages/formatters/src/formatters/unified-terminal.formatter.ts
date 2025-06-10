@@ -1,10 +1,10 @@
-// :A: tldr Unified terminal formatter with color support
+// :M: tldr Unified terminal formatter with color support
 import chalk from 'chalk';
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
 import type { SearchResult, MagicAnchor } from '@cairn/types';
 
 export class TerminalFormatter implements IFormatter {
-  // :A: api format data for terminal display
+  // :M: api format data for terminal display
   format(input: FormatterInput): string {
     switch (input.type) {
       case 'search':
@@ -20,7 +20,7 @@ export class TerminalFormatter implements IFormatter {
     }
   }
 
-  // :A: api format search results for terminal
+  // :M: api format search results for terminal
   private formatSearchResults(results: SearchResult[]): string {
     if (results.length === 0) {
       return chalk.yellow('No anchors found');
@@ -29,7 +29,7 @@ export class TerminalFormatter implements IFormatter {
     const output: string[] = [];
     output.push(chalk.green(`Found ${results.length} anchor(s):\n`));
 
-    // :A: ctx group by file
+    // :M: ctx group by file
     const byFile = new Map<string, SearchResult[]>();
     for (const result of results) {
       const file = result.anchor.file || 'unknown';
@@ -39,7 +39,7 @@ export class TerminalFormatter implements IFormatter {
       byFile.get(file)!.push(result);
     }
 
-    // :A: ctx display each file
+    // :M: ctx display each file
     for (const [file, fileResults] of byFile) {
       output.push(chalk.blue(file));
       for (const result of fileResults) {
@@ -54,13 +54,13 @@ export class TerminalFormatter implements IFormatter {
     return output.join('\n');
   }
 
-  // :A: api format list results
+  // :M: api format list results
   private formatListResults(results: SearchResult[]): string {
-    // :A: ctx same format as search results
+    // :M: ctx same format as search results
     return this.formatSearchResults(results);
   }
 
-  // :A: api format parse results
+  // :M: api format parse results
   private formatParseResults(data: { file: string; result: { anchors: MagicAnchor[]; errors: any[] } }): string {
     const output: string[] = [];
     
@@ -81,7 +81,7 @@ export class TerminalFormatter implements IFormatter {
     return output.join('\n');
   }
 
-  // :A: api format unique contexts
+  // :M: api format unique contexts
   private formatContexts(contexts: string[]): string {
     const output: string[] = [];
     output.push(chalk.green(`Found ${contexts.length} unique context(s):\n`));
@@ -93,14 +93,14 @@ export class TerminalFormatter implements IFormatter {
     return output.join('\n');
   }
 
-  // :A: api format single anchor with line and column number
+  // :M: api format single anchor with line and column number
   private formatAnchor(anchor: MagicAnchor): string {
     const contexts = anchor.contexts.map(c => chalk.cyan(c)).join(', ');
     const prose = anchor.prose ? ` ${anchor.prose}` : '';
     return `${chalk.yellow(`${anchor.line}:${anchor.column}`)}: ${contexts}${prose}`;
   }
 
-  // :A: api format context lines
+  // :M: api format context lines
   private formatContext(result: SearchResult): string {
     const output: string[] = [];
     

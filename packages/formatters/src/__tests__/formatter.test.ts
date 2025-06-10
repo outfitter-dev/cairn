@@ -1,6 +1,6 @@
-// :A: tldr Tests for formatter implementations
+// :M: tldr Tests for formatter implementations
 import { describe, it, expect } from 'vitest';
-import type { MagicAnchor, SearchResult, ParseResult } from '@grepa/types';
+import type { MagicAnchor, SearchResult, ParseResult } from '@cairn/types';
 import {
   JsonSearchResultFormatter,
   JsonMagicAnchorFormatter,
@@ -17,7 +17,7 @@ import {
 const mockAnchor: MagicAnchor = {
   line: 42,
   column: 1,
-  raw: '// :A: todo, api implement authentication',
+  raw: '// :M: todo, api implement authentication',
   markers: ['todo', 'api'],
   prose: 'implement authentication',
   file: 'src/auth.ts',

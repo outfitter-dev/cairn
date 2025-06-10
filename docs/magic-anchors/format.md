@@ -13,14 +13,14 @@ Every grep-anchor follows this pattern:
 ### Components
 
 1. **Comment Leader**: Language-appropriate comment syntax
-2. **Sigil**: The marker `:A:` (or custom sigil)
+2. **Sigil**: The marker `:A:` (or custom identifier)
 3. **Payload**: One or more tokens
 
 ## Formal Grammar
 
 ```ebnf
-anchor      ::= comment-leader sigil payload
-sigil       ::= ":A:" | ":" identifier ":"
+anchor      ::= comment-leader identifier payload
+identifier       ::= ":A:" | ":" identifier ":"
 payload     ::= token ( separator token )*
 token       ::= bare-token | parameter | json-object | array
 bare-token  ::= ["@"] [a-zA-Z0-9_.-]+
@@ -38,7 +38,7 @@ separator   ::= "," | " " | "|"
 ```
 
 ### Custom Sigils
-Projects can define custom sigils:
+Projects can define custom identifiers:
 ```javascript
 // :proj:milestone-1  // Project-specific
 // :team:backend      // Team-specific
@@ -117,7 +117,7 @@ Markers are organized into six semantic groups:
 
 ## Whitespace Rules
 
-- **Mandatory space after sigil**: `:A: todo` ✓ (NOT `:A:todo` ✗)
+- **Mandatory space after identifier**: `:A: todo` ✓ (NOT `:A:todo` ✗)
 - Space separates markers from prose: `:A: todo implement cache` ✓
 - Leading/trailing spaces in values are trimmed
 

@@ -16,7 +16,7 @@ This file lists every **documentation change** required to bring the public docs
 ## 1  Anchor prefix change → `:A:`
 
 **What changes**  
-Switch every example, search command, and prose reference from the legacy `:ga:` sigil to the new canonical `:A:` anchor prefix.
+Switch every example, search command, and prose reference from the legacy `:ga:` identifier to the new canonical `:A:` anchor prefix.
 
 **Lines**  
 `docs/project/ideas/grepa-updates.md#L1-L120` (intro & “The `:A:` Anchor”).
@@ -25,7 +25,7 @@ Switch every example, search command, and prose reference from the legacy `:ga:`
 1. README quick-start examples
 2. All snippets in `docs/guides/quick-start.md`, `docs/examples.md`
 3. Regex hints – change `rg ":ga:"` → `rg ":A:"`
-4. Update screenshots / asciinema casts if they show the old sigil
+4. Update screenshots / asciinema casts if they show the old identifier
 
 ## 2  Eliminate dot notation (except literals)
 

@@ -1,8 +1,8 @@
-// :A: tldr Error handling types following TypeScript conventions
+// :M: tldr Error handling types following TypeScript conventions
 export type ErrorCode =
   // Parse errors
   | 'parse.invalidSyntax'     // Invalid Magic Anchor syntax
-  | 'parse.missingSpace'      // Missing space after :A:
+  | 'parse.missingSpace'      // Missing space after :M:
   | 'parse.emptyPayload'      // Empty anchor payload
   | 'parse.invalidMarker'     // Invalid marker format
   | 'parse.tooManyMarkers'    // Too many markers on one line
@@ -59,7 +59,7 @@ export const makeError = (
   cause,
 });
 
-// :A: api Maps ErrorCodes to appropriate status codes
+// :M: api Maps ErrorCodes to appropriate status codes
 function getStatusCode(code: ErrorCode): number {
   const mapping: Record<ErrorCode, number> = {
     // Parse errors - 400 Bad Request

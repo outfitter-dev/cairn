@@ -10,8 +10,8 @@ Magic Anchors provide a breadcrumb protocol that enables developers and AI agent
 ## Core Grammar
 
 ```ebnf
-anchor      ::= comment-leader sigil space marker-list prose?
-sigil       ::= ":A:" | ":" identifier ":"
+anchor      ::= comment-leader identifier space marker-list prose?
+identifier       ::= ":A:" | ":" identifier ":"
 space       ::= " "                    # exactly one ASCII space
 marker-list ::= marker ("," marker)*
 marker      ::= key delimiter?
@@ -27,13 +27,13 @@ prose       ::= text                   # everything after markers
 ## Basic Structure
 
 ### The `:A:` Sigil
-The notation uses `:A:` as the canonical sigil, though custom sigils are accommodated for team-specific needs.
+The notation uses `:A:` as the canonical identifier, though custom identifiers are accommodated for team-specific needs.
 
 ```javascript
-// Standard sigil (mandatory single space after)
+// Standard identifier (mandatory single space after)
 // :A: todo implement authentication
 
-// Custom sigil (alternative)
+// Custom identifier (alternative)
 // :team: todo implement authentication
 ```
 
@@ -46,7 +46,7 @@ The notation uses `:A:` as the canonical sigil, though custom sigils are accommo
 Markers classify the anchor's purpose. Markers are organized into six semantic groups for discoverability.
 
 ```javascript
-// Core markers with mandatory space after sigil
+// Core markers with mandatory space after identifier
 // :A: todo implement rate limiting
 // :A: bug memory leak in auth service
 // :A: sec validate all user inputs

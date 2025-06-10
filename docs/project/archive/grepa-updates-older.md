@@ -47,11 +47,11 @@
 | Term | Definition | Example |
 |------|------------|---------|
 | **Sigil** | Literal sentinel that opens every grep-anchor. | `:ga:` |
-| **Marker** | First string after the sigil. | `tldr`, `sec`, `temp` |
+| **Marker** | First string after the identifier. | `tldr`, `sec`, `temp` |
 | **Parameter** | Optional payload tied to a single marker. | `(param)`, `[params]`, `{json}`, `=param` |
-| **Mention** | A string or list of strings after the sigil and marker, preceded by an `@` symbol. | `@alice` in `:ga:owner@alice` |
+| **Mention** | A string or list of strings after the identifier and marker, preceded by an `@` symbol. | `@alice` in `:ga:owner@alice` |
 | **Prose** | Free-form description that follows after the structured payload. | `try this first` |
-| **Grep-anchor** | Complete structured part = sigil + marker (+ parameter|prose). | `:ga:gh(issue#4)` |
+| **Grep-anchor** | Complete structured part = identifier + marker (+ parameter|prose). | `:ga:gh(issue#4)` |
 | **Variable** | A named value that can be substituted for a literal value. | `$owner=@alice` in `:ga:owner($owner)` |
 
 ### Additional Terminology Details
@@ -66,7 +66,7 @@
 
 ## Character Treatment Recommendations
 
-- Colons `:` should be use in the `:<sigil>:`
+- Colons `:` should be use in the `:<identifier>:`
 - Pipes `|` should be used as an "or"
   - Note: When a `|` is used in Markdown documents, unless it's within a comment, fenced code, or code block, it may inadvertently cause rendering issues.
 - Forward slashes `/`should be used to represent paths
@@ -224,7 +224,7 @@ meta:
   url: git+https://github.com/galligan/grepa.git
 
 format:
-  anchors: ":ga:" # override sigil (optional)
+  anchors: ":ga:" # override identifier (optional)
   markers:
     case: default # or lower,upper,kebab,snake,camel
     maxLength: 10 # default 10

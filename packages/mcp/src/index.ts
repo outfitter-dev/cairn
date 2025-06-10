@@ -1,5 +1,5 @@
-// :A: tldr MCP server stub for future Grepa MCP server implementation
-// :A: todo implement MCP server functionality
+// :M: tldr MCP server stub for future Cairn MCP server implementation
+// :M: todo implement MCP server functionality
 
 export interface McpServer {
   start(): Promise<void>;
@@ -8,6 +8,6 @@ export interface McpServer {
 }
 
 export function createMcpServer(): McpServer {
-  // :A: todo implement actual MCP server
+  // :M: todo implement actual MCP server
   throw new Error('MCP server not yet implemented');
 }
