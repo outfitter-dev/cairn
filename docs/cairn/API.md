@@ -1,34 +1,34 @@
-<!-- :A: tldr API reference documentation for Grepa library -->
+<!-- :M: TL;DR API reference documentation for Cairn library -->
 
-# Grepa API Reference
+# Cairn API Reference
 
 ## Installation
 
 ```bash
-npm install grepa
+npm install @cairn/core
 # or
-pnpm add grepa
+pnpm add @cairn/core
 ```
 
 ## Core Modules
 
-### MagicAnchorParser
+### CairnParser
 
-Parser for Magic Anchor syntax (`:A: marker prose`).
+Parser for Cairn syntax (`:M: context prose`).
 
 ```typescript
-import { MagicAnchorParser } from 'grepa';
+import { CairnParser } from '@cairn/core';
 ```
 
 #### Parser Methods
 
 ##### `parse(content: string, filename?: string): ParseResult`
 
-Parse content for Magic Anchors (legacy sync method).
+Parse content for Cairns (legacy sync method).
 
 ```typescript
-const result = MagicAnchorParser.parse(fileContent, 'example.ts');
-console.log(result.anchors); // Array of MagicAnchor objects
+const result = CairnParser.parse(fileContent, 'example.ts');
+console.log(result.anchors); // Array of Cairn objects
 console.log(result.errors);  // Array of ParseError objects
 ```
 
@@ -37,7 +37,7 @@ console.log(result.errors);  // Array of ParseError objects
 Parse content using Result pattern for better error handling.
 
 ```typescript
-const result = MagicAnchorParser.parseWithResult(fileContent);
+const result = CairnParser.parseWithResult(fileContent);
 if (result.ok) {
   console.log(result.data.anchors);
 } else {
@@ -45,31 +45,31 @@ if (result.ok) {
 }
 ```
 
-##### `findByMarker(anchors: MagicAnchor[], marker: string): MagicAnchor[]`
+##### `findByContext(anchors: Cairn[], context: string): Cairn[]`
 
-Find anchors containing a specific marker.
+Find Cairns containing a specific context.
 
 ```typescript
-const todoAnchors = MagicAnchorParser.findByMarker(anchors, 'todo');
+const todoCairns = CairnParser.findByContext(anchors, 'todo');
 ```
 
-### GrepaSearch
+### CairnSearch
 
-Search functionality for finding Magic Anchors across files.
+Search functionality for finding Cairns across files.
 
 ```typescript
-import { GrepaSearch } from 'grepa';
+import { CairnSearch } from '@cairn/core';
 ```
 
 #### Search Methods
 
 ##### `search(patterns: string[], options?: SearchOptions): SearchResult[]`
 
-Search files for anchors (legacy sync method).
+Search files for Cairns (legacy sync method).
 
 ```typescript
-const results = GrepaSearch.search(['src/**/*.ts'], {
-  markers: ['todo', 'security'],
+const results = CairnSearch.search(['src/**/*.ts'], {
+  contexts: ['todo', 'security'],
   context: 2,
   recursive: true
 });
@@ -80,47 +80,47 @@ const results = GrepaSearch.search(['src/**/*.ts'], {
 Search with Result pattern and async support.
 
 ```typescript
-const result = await GrepaSearch.searchWithResult(['src/'], {
-  markers: ['todo']
+const result = await CairnSearch.searchWithResult(['src/'], {
+  contexts: ['todo']
 });
 
 if (result.ok) {
   result.data.forEach(item => {
     console.log(`${item.anchor.file}:${item.anchor.line}`);
-    console.log(item.anchor.markers);
+    console.log(item.anchor.contexts);
   });
 }
 ```
 
-##### `getUniqueMarkers(results: SearchResult[]): string[]`
+##### `getUniqueContexts(results: SearchResult[]): string[]`
 
-Extract all unique markers from search results.
+Extract all unique contexts from search results.
 
 ```typescript
-const markers = GrepaSearch.getUniqueMarkers(results);
+const contexts = CairnSearch.getUniqueContexts(results);
 // ['todo', 'security', 'api', ...]
 ```
 
-##### `groupByMarker(results: SearchResult[]): Record<string, SearchResult[]>`
+##### `groupByContext(results: SearchResult[]): Record<string, SearchResult[]>`
 
-Group search results by marker.
+Group search results by context.
 
 ```typescript
-const grouped = GrepaSearch.groupByMarker(results);
-console.log(grouped.todo);     // All results with 'todo' marker
-console.log(grouped.security); // All results with 'security' marker
+const grouped = CairnSearch.groupByContext(results);
+console.log(grouped.todo);     // All results with 'todo' context
+console.log(grouped.security); // All results with 'security' context
 ```
 
 ## Types
 
-### MagicAnchor
+### Cairn
 
 ```typescript
-interface MagicAnchor {
+interface Cairn {
   line: number;        // Line number (1-indexed)
   column: number;      // Column number (1-indexed)
   raw: string;         // Original line content
-  markers: string[];   // Array of markers
+  contexts: string[];  // Array of contexts
   prose?: string;      // Optional prose description
   file?: string;       // File path (if provided)
 }
@@ -130,11 +130,11 @@ interface MagicAnchor {
 
 ```typescript
 interface SearchOptions {
-  markers?: string[];    // Filter by specific markers
-  context?: number;      // Number of context lines
-  recursive?: boolean;   // Search recursively
-  files?: string[];      // Filter by file patterns
-  exclude?: string[];    // Exclude file patterns
+  contexts?: string[];    // Filter by specific contexts
+  context?: number;       // Number of context lines
+  recursive?: boolean;    // Search recursively
+  files?: string[];       // Filter by file patterns
+  exclude?: string[];     // Exclude file patterns
 }
 ```
 
@@ -142,7 +142,7 @@ interface SearchOptions {
 
 ```typescript
 interface SearchResult {
-  anchor: MagicAnchor;
+  anchor: Cairn;
   context?: {
     before: string[];
     after: string[];
@@ -182,16 +182,16 @@ Common error codes:
 - `file.notFound` - File or directory not found
 - `file.readError` - Cannot read file
 - `file.tooLarge` - File exceeds size limit
-- `parse.invalidSyntax` - Invalid Magic Anchor syntax
-- `parse.missingSpace` - Missing space after :A:
-- `parse.emptyPayload` - Empty anchor payload
-- `search.noResults` - No anchors found
+- `parse.invalidSyntax` - Invalid Cairn syntax
+- `parse.missingSpace` - Missing space after :M:
+- `parse.emptyPayload` - Empty context payload
+- `search.noResults` - No Cairns found
 - `cli.missingArgument` - Missing required argument
 
 ## CLI Programmatic Usage
 
 ```typescript
-import { CLI } from 'grepa';
+import { CLI } from '@cairn/core';
 
 const cli = new CLI();
 await cli.run(); // Parses process.argv
@@ -202,29 +202,29 @@ await cli.run(); // Parses process.argv
 ### Basic Parsing
 
 ```typescript
-import { MagicAnchorParser } from 'grepa';
+import { CairnParser } from '@cairn/core';
 
 const code = `
-// :A: todo implement validation
+// :M: ctx implement validation
 function validate(input: string) {
-  // :A: security check for SQL injection
+  // :M: ctx
   return input;
 }
 `;
 
-const result = MagicAnchorParser.parseWithResult(code);
+const result = CairnParser.parseWithResult(code);
 if (result.ok) {
-  console.log(`Found ${result.data.anchors.length} anchors`);
+  console.log(`Found ${result.data.anchors.length} cairns`);
 }
 ```
 
 ### Search with Context
 
 ```typescript
-import { GrepaSearch } from 'grepa';
+import { CairnSearch } from '@cairn/core';
 
-const result = await GrepaSearch.searchWithResult(['src/'], {
-  markers: ['security'],
+const result = await CairnSearch.searchWithResult(['src/'], {
+  contexts: ['security'],
   context: 3
 });
 
@@ -241,9 +241,9 @@ if (result.ok) {
 ### Error Handling Example
 
 ```typescript
-import { GrepaSearch, isAppError } from 'grepa';
+import { CairnSearch, isAppError } from '@cairn/core';
 
-const result = await GrepaSearch.searchWithResult(['missing-dir/']);
+const result = await CairnSearch.searchWithResult(['missing-dir/']);
 
 if (!result.ok) {
   switch (result.error.code) {
@@ -251,7 +251,7 @@ if (!result.ok) {
       console.error('Directory not found');
       break;
     case 'search.noResults':
-      console.log('No Magic Anchors found');
+      console.log('No Cairns found');
       break;
     default:
       console.error(`Error: ${result.error.message}`);

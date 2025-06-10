@@ -1,8 +1,8 @@
-<!-- :A: tldr Contributing guidelines for Grepa project -->
+<!-- :M: tldr Contributing guidelines for the Cairn project -->
 
-# Contributing to Grepa
+# Contributing to Cairn
 
-Thank you for your interest in contributing to Grepa! This guide will help you get started.
+Thank you for your interest in contributing to Cairn! This guide will help you get started.
 
 ## Getting Started
 
@@ -15,8 +15,8 @@ Thank you for your interest in contributing to Grepa! This guide will help you g
 
 1. Fork and clone the repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/grepa.git
-   cd grepa
+   git clone https://github.com/YOUR_USERNAME/cairn.git
+   cd cairn
    ```
 
 2. Install dependencies:
@@ -81,23 +81,22 @@ We follow strict TypeScript conventions:
 - No direct throwing of errors
 - See `docs/cairn/conventions/typescript.md` for details
 
-### Magic Anchors
+### Cairns
 
-Use Magic Anchors in your code:
+Use Cairns in your code:
 
 ```typescript
-// :A: tldr Brief description of the module
+// :M: tldr Brief description of the module
 export class MyClass {
-  // :A: api Public method documentation
+  // :M: api Public method documentation
   public myMethod(): Result<string> {
-    // :A: ctx Important context or assumptions
-    // :A: sec Security considerations
+    // :M: ctx Important context or assumptions
+    // :M: sec Security considerations
   }
 }
 ```
 
 ### Commit Messages
-
 Follow conventional commits:
 
 - `feat:` New features

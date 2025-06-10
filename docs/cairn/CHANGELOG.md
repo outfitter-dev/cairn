@@ -1,10 +1,10 @@
-# Grepa CLI – Changelog
+# Cairn CLI – Changelog
 
 > [!INFO]
-> The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and adheres to semantic versioning for the spec itself (independent of the grepa tooling version).
+> The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+> and adheres to semantic versioning for the CLI itself (independent of the Cairns language spec).
 
-All notable changes to the **Grepa tooling** will be documented in this file.  The versioning here refers to the CLI / libraries themselves, independent of the Magic-Anchor language spec (see `../magic-anchors/CHANGELOG.md`).
-
+All notable changes to the **Cairn tooling** will be documented in this file.  The versioning here refers to the CLI /libraries themselves, independent of the Cairns language spec (see `../cairns/CHANGELOG.md`).
 ## v0.1.1
 
 ### Added
