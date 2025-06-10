@@ -1,9 +1,9 @@
-# Magic Anchors – Changelog
+# Cairns – Changelog
 
 > [!INFO]
-> The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and adheres to semantic versioning for the spec itself (independent of the grepa tooling version).
+> The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and adheres to semantic versioning for the spec itself (independent of the cairn tooling version).
 
-All notable changes to the Magic-Anchor language specification will be documented in this file.
+All notable changes to the Cairn language specification will be documented in this file.
 
 ## v0.1.1 – 2025-05-28
 

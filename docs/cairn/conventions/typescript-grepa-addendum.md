@@ -1,6 +1,6 @@
 # TypeScript Conventions - Grepa Addendum
 
-<!-- :A: tldr Grepa-specific TypeScript conventions and adaptations -->
+<!-- :M: tldr Cairn-specific TypeScript conventions and adaptations -->
 
 This document extends the base TypeScript conventions with Grepa-specific patterns.
 
@@ -16,7 +16,7 @@ export type GrepaErrorCode =
   
   // Parsing errors
   | 'parse.invalidAnchor'  // Invalid Magic Anchor syntax
-  | 'parse.missingSpace'   // Missing space after :A:
+  | 'parse.missingSpace'   // Missing space after :M:
   | 'parse.emptyMarkers'   // No markers provided
   
   // Search errors
@@ -39,7 +39,7 @@ export type GrepaErrorCode =
 ```typescript
 // Check if a line contains a Magic Anchor
 export function hasMagicAnchor(line: string): boolean {
-  return line.includes(':A: ');
+  return line.includes(':M: ');
 }
 
 // Type guard for valid marker
@@ -147,7 +147,7 @@ class SearchCommand implements CLICommand {
 // Use Result pattern in tests
 describe('MagicAnchorParser', () => {
   it('should parse valid anchor', () => {
-    const result = MagicAnchorParser.parseWithResult('// :A: todo implement');
+    const result = CairnParser.parseWithResult('// :M: todo implement');
     
     expect(result.ok).toBe(true);
     if (result.ok) {
