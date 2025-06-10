@@ -2,10 +2,10 @@
 import { z } from 'zod';
 
 // :A: api Base schemas for reusability
-const markerSchema = z.string()
-  .min(1, 'Marker cannot be empty')
-  .max(50, 'Marker too long')
-  .regex(/^[a-zA-Z0-9_@-]+(\([^)]*\))?$/, 'Invalid marker format');
+const contextSchema = z.string()
+  .min(1, 'Context cannot be empty')
+  .max(50, 'Context too long')
+  .regex(/^[a-zA-Z0-9_@-]+(\([^)]*\))?$/, 'Invalid context format');
 
 const lineNumberSchema = z.number()
   .int('Line number must be an integer')
@@ -20,7 +20,7 @@ export const magicAnchorSchema = z.object({
   line: lineNumberSchema,
   column: columnNumberSchema,
   raw: z.string().min(1, 'Raw line cannot be empty'),
-  markers: z.array(markerSchema).min(1, 'At least one marker required'),
+  contexts: z.array(contextSchema).min(1, 'At least one context required'),
   prose: z.string().optional(),
   file: z.string().optional(),
 });
@@ -47,7 +47,7 @@ export type ParseResultValidated = z.infer<typeof parseResultSchema>;
 
 // :A: api Search Options schema
 export const searchOptionsSchema = z.object({
-  markers: z.array(markerSchema).optional(),
+  contexts: z.array(contextSchema).optional(),
   files: z.array(z.string()).optional(),
   exclude: z.array(z.string()).optional(),
   context: z.number().int().nonnegative().optional(),
@@ -79,7 +79,7 @@ export const searchCommandOptionsSchema = z.object({
 
 export const listCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
-  markers: z.boolean().optional(),
+  contexts: z.boolean().optional(),
   format: outputFormatSchema.optional(),
   // Controls whether to respect .gitignore files during listing
   // Default: true (respects .gitignore)

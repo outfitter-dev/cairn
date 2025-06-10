@@ -1,5 +1,5 @@
 // :A: tldr Base formatter interface for all output formatters
-import type { SearchResult, MagicAnchor, ParseResult } from '@grepa/types';
+import type { SearchResult, MagicAnchor, ParseResult } from '@cairn/types';
 
 export interface IFormatter<T> {
   format(data: T): string;
@@ -14,5 +14,5 @@ export interface FormatterOptions {
   color?: boolean;
   context?: number;
   showFullPath?: boolean;
-  markersOnly?: boolean;
+  contextsOnly?: boolean;
 }

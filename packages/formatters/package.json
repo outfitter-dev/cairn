@@ -1,5 +1,5 @@
 {
-  "name": "@grepa/formatters",
+  "name": "@cairn/formatters",
   "version": "0.2.0",
   "type": "module",
   "main": "dist/index.js",
@@ -13,7 +13,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@grepa/types": "workspace:*",
+    "@cairn/types": "workspace:*",
     "chalk": "^5.4.1"
   },
   "devDependencies": {

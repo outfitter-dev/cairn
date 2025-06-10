@@ -1,6 +1,6 @@
 // :A: tldr CSV formatter for Magic Anchor outputs
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
-import type { SearchResult, MagicAnchor } from '@grepa/types';
+import type { SearchResult, MagicAnchor } from '@cairn/types';
 
 export class CSVFormatter implements IFormatter {
   // :A: api format data as CSV
@@ -12,8 +12,8 @@ export class CSVFormatter implements IFormatter {
         return this.formatListResults(input.data);
       case 'parse':
         return this.formatParseResults(input.data);
-      case 'markers':
-        return this.formatMarkers(input.data);
+      case 'contexts':
+        return this.formatContexts(input.data);
       default:
         return this.formatDefault(input);
     }
@@ -21,7 +21,7 @@ export class CSVFormatter implements IFormatter {
 
   // :A: api format search results as CSV
   private formatSearchResults(results: SearchResult[]): string {
-    const headers = ['File', 'Line', 'Column', 'Markers', 'Prose'];
+    const headers = ['File', 'Line', 'Column', 'Contexts', 'Prose'];
     const rows = [headers];
 
     for (const result of results) {
@@ -30,7 +30,7 @@ export class CSVFormatter implements IFormatter {
         this.escapeCsvField(anchor.file || ''),
         anchor.line.toString(),
         anchor.column.toString(),
-        this.escapeCsvField(anchor.markers.join(', ')),
+        this.escapeCsvField(anchor.contexts.join(', ')),
         this.escapeCsvField(anchor.prose || '')
       ]);
     }
@@ -46,7 +46,7 @@ export class CSVFormatter implements IFormatter {
 
   // :A: api format parse results as CSV
   private formatParseResults(data: { file: string; result: { anchors: MagicAnchor[]; errors: any[] } }): string {
-    const headers = ['File', 'Line', 'Column', 'Markers', 'Prose', 'Status'];
+    const headers = ['File', 'Line', 'Column', 'Contexts', 'Prose', 'Status'];
     const rows = [headers];
 
     // :A: ctx add anchors
@@ -55,7 +55,7 @@ export class CSVFormatter implements IFormatter {
         this.escapeCsvField(data.file),
         anchor.line.toString(),
         anchor.column.toString(),
-        this.escapeCsvField(anchor.markers.join(', ')),
+        this.escapeCsvField(anchor.contexts.join(', ')),
         this.escapeCsvField(anchor.prose || ''),
         'OK'
       ]);
@@ -76,13 +76,13 @@ export class CSVFormatter implements IFormatter {
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :A: api format unique markers as CSV
-  private formatMarkers(markers: string[]): string {
-    const headers = ['Marker'];
+  // :A: api format unique contexts as CSV
+  private formatContexts(contexts: string[]): string {
+    const headers = ['Context'];
     const rows = [headers];
 
-    for (const marker of markers) {
-      rows.push([this.escapeCsvField(marker)]);
+    for (const context of contexts) {
+      rows.push([this.escapeCsvField(context)]);
     }
 
     return rows.map(row => row.join(',')).join('\n');

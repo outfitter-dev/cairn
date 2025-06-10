@@ -5,7 +5,7 @@ export interface MagicAnchor {
   line: number;
   column: number;
   raw: string;
-  markers: string[];
+  contexts: string[];
   prose?: string;
   file?: string;
 }
@@ -26,7 +26,7 @@ export interface ParseError {
 
 export interface SearchOptions {
   // :A: api search configuration
-  markers?: string[];
+  contexts?: string[];
   files?: string[];
   exclude?: string[];
   context?: number;

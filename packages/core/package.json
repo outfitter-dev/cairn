@@ -1,5 +1,5 @@
 {
-  "name": "@grepa/core",
+  "name": "@cairn/core",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -14,7 +14,7 @@
     "dist"
   ],
   "dependencies": {
-    "@grepa/types": "workspace:*",
+    "@cairn/types": "workspace:*",
     "globby": "^14.1.0",
     "ignore": "^7.0.4",
     "zod": "^3.24.1"

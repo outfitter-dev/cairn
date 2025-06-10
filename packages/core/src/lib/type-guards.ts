@@ -1,5 +1,5 @@
 // :A: tldr Type guards and assertion functions
-import type { MagicAnchor, ParseError } from '@grepa/types';
+import type { MagicAnchor, ParseError } from '@cairn/types';
 
 // :A: api Basic type guards
 export function isString(value: unknown): value is string {
@@ -30,11 +30,11 @@ export function isMagicAnchor(value: unknown): value is MagicAnchor {
     'line' in value &&
     'column' in value &&
     'raw' in value &&
-    'markers' in value &&
+    'contexts' in value &&
     typeof (value as MagicAnchor).line === 'number' &&
     typeof (value as MagicAnchor).column === 'number' &&
     typeof (value as MagicAnchor).raw === 'string' &&
-    Array.isArray((value as MagicAnchor).markers)
+    Array.isArray((value as MagicAnchor).contexts)
   );
 }
 

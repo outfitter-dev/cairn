@@ -1,5 +1,5 @@
 {
-  "name": "@grepa/magic-anchors",
+  "name": "@cairn/cairns",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -14,7 +14,7 @@
     "dist"
   ],
   "dependencies": {
-    "@grepa/types": "workspace:*"
+    "@cairn/types": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b",

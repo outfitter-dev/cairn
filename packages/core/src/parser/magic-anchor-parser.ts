@@ -1,12 +1,12 @@
-// :A: tldr Core parser for Magic Anchor syntax (:A: marker prose)
-import type { MagicAnchor, ParseResult, ParseError } from '@grepa/types';
+// :A: tldr Core parser for Cairn syntax (:M: context prose)
+import type { MagicAnchor, ParseResult, ParseError } from '@cairn/types';
 import { type Result, success, failure } from '../lib/result.js';
 import { makeError } from '../lib/error.js';
 import { parseInputSchema } from '../schemas/index.js';
 import { fromZod } from '../lib/zod-adapter.js';
 
 /**
- * Parser for Magic Anchor syntax (`:A: marker prose`).
+ * Parser for Cairn syntax (`:M: context prose`).
  * Handles both sync and async parsing with Result pattern support.
  */
 export class MagicAnchorParser {
@@ -14,7 +14,7 @@ export class MagicAnchorParser {
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   
   /**
-   * Parse content for Magic Anchors using Result pattern.
+   * Parse content for Cairns using Result pattern.
    * @param content - The text content to parse
    * @param filename - Optional filename for context
    * @returns Result containing parsed anchors or error
@@ -63,22 +63,22 @@ export class MagicAnchorParser {
     anchor?: MagicAnchor;
     error?: ParseError;
   } | null {
-    // :A: ctx look for :A: pattern anywhere in the line
-    const anchorIndex = line.indexOf(':A:');
+    // :A: ctx look for :M: pattern anywhere in the line
+    const anchorIndex = line.indexOf(':M:');
     if (anchorIndex === -1) {
       return null;
     }
     
-    // :A: ctx extract everything after :A: (including the space)
+    // :A: ctx extract everything after :M: (including the space)
     const afterAnchor = line.substring(anchorIndex + 3);
     
-    // :A: sec validate required space after :A:
+    // :A: sec validate required space after :M:
     if (!afterAnchor.startsWith(' ')) {
       return {
         error: {
           line: lineNumber,
           column: anchorIndex + 3, // Point to where the space should be
-          message: 'Missing required space after :A:',
+          message: 'Missing required space after :M:',
           raw: line
         }
       };
@@ -97,22 +97,22 @@ export class MagicAnchorParser {
       };
     }
     
-    // :A: ctx parse markers and prose from payload
-    const { markers, prose } = this.parsePayload(payload);
+    // :A: ctx parse contexts and prose from payload
+    const { contexts, prose } = this.parsePayload(payload);
     
     return {
       anchor: {
         line: lineNumber,
         column: anchorIndex + 1,
         raw: line,
-        markers,
+        contexts,
         ...(prose ? { prose } : {})
       }
     };
   }
   
-  // :A: api extract markers and prose from payload string
-  private static parsePayload(payload: string): { markers: string[]; prose?: string } {
+  // :A: api extract contexts and prose from payload string
+  private static parsePayload(payload: string): { contexts: string[]; prose?: string } {
     // :A: ctx safer string-based parsing to avoid ReDoS vulnerability
     // :A: ctx find first space that isn't inside parentheses or after a comma
     let parenDepth = 0;
@@ -170,36 +170,36 @@ export class MagicAnchorParser {
       const prose = payload.substring(spaceIndex + 1).trim();
       
       return {
-        markers: MagicAnchorParser.parseMarkers(markersStr),
+        contexts: MagicAnchorParser.parseContexts(markersStr),
         ...(prose ? { prose } : {})
       };
     }
     
-    // :A: ctx no prose found, entire payload is markers
+    // :A: ctx no prose found, entire payload is contexts
     return {
-      markers: MagicAnchorParser.parseMarkers(payload)
+      contexts: MagicAnchorParser.parseContexts(payload)
     };
   }
   
-  // :A: api split comma-separated markers
-  private static parseMarkers(markersStr: string): string[] {
-    return markersStr
+  // :A: api split comma-separated contexts
+  private static parseContexts(contextsStr: string): string[] {
+    return contextsStr
       .split(',')
-      .map(marker => marker.trim())
-      .filter(marker => marker.length > 0);
+      .map(context => context.trim())
+      .filter(context => context.length > 0);
   }
   
-  // :A: api convenience method to find anchors by marker
-  static findByMarker(anchors: MagicAnchor[], marker: string): MagicAnchor[] {
+  // :A: api convenience method to find anchors by context
+  static findByContext(anchors: MagicAnchor[], context: string): MagicAnchor[] {
     return anchors.filter(anchor => 
-      anchor.markers.some((m: string) => m === marker || m.startsWith(`${marker}(`))
+      anchor.contexts.some((c: string) => c === context || c.startsWith(`${context}(`))
     );
   }
   
   // :A: api convenience method to find anchors by pattern
   static findByPattern(anchors: MagicAnchor[], pattern: RegExp): MagicAnchor[] {
     return anchors.filter(anchor =>
-      anchor.markers.some((marker: string) => pattern.test(marker)) ||
+      anchor.contexts.some((context: string) => pattern.test(context)) ||
       (anchor.prose && pattern.test(anchor.prose))
     );
   }

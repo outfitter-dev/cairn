@@ -1,5 +1,5 @@
 {
-  "name": "@grepa/mcp",
+  "name": "@cairn/mcp",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -14,8 +14,8 @@
     "dist"
   ],
   "dependencies": {
-    "@grepa/types": "workspace:*",
-    "@grepa/core": "workspace:*"
+    "@cairn/types": "workspace:*",
+    "@cairn/core": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b",

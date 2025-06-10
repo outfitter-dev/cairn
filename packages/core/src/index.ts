@@ -1,4 +1,4 @@
-// :A: tldr Core exports for Grepa parsing and search functionality
+// :A: tldr Core exports for Cairn parsing and search functionality
 export * from './schemas/index.js';
 export * from './parser/magic-anchor-parser.js';
 export * from './search/grepa-search.js';

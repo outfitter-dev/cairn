@@ -6,7 +6,7 @@ import { existsSync } from 'fs';
 import { isAbsolute, resolve } from 'path';
 import { 
   MagicAnchorParser, 
-  GrepaSearch, 
+  CairnSearch, 
   success, 
   failure, 
   makeError, 
@@ -16,9 +16,9 @@ import {
   listCommandOptionsSchema, 
   fromZod,
   filePathSchema
-} from '@grepa/core';
-import type { Result, AppError } from '@grepa/core';
-import { FormatterFactory } from '@grepa/formatters';
+} from '@cairn/core';
+import type { Result, AppError } from '@cairn/core';
+import { FormatterFactory } from '@cairn/formatters';
 
 // :A: sec rate limiting configuration
 interface RateLimitConfig {
@@ -59,7 +59,7 @@ export class CLI {
   // :A: api configure CLI commands and options
   private setupCommands(): void {
     this.program
-      .name('grepa')
+      .name('cairn')
       .description('Magic Anchor parser and search tool')
       .version('0.2.0');
 
@@ -79,16 +79,16 @@ export class CLI {
     // :A: api search command to find specific anchors
     this.program
       .command('search')
-      .description('Search for anchors by marker')
-      .argument('<marker>', 'Marker to search for')
+      .description('Search for anchors by context')
+      .argument('<context>', 'Context to search for')
       .argument('[patterns...]', 'File patterns to search (default: current directory)')
       .option('-j, --json', 'Output as JSON')
       .option('-c, --context <lines>', 'Show context lines', '0')
       .option('-f, --format <format>', 'Output format (terminal, json, csv)', 'terminal')
       .option('--no-gitignore', 'Do not respect .gitignore files')
       .option('--exclude <patterns...>', 'Patterns to exclude')
-      .action(async (marker: string, patterns: string[], options) => {
-        const result = await this.searchCommand(marker, patterns, options);
+      .action(async (context: string, patterns: string[], options) => {
+        const result = await this.searchCommand(context, patterns, options);
         this.handleCommandResult(result);
       });
 
@@ -98,7 +98,7 @@ export class CLI {
       .description('List all anchors in file(s)')
       .argument('[patterns...]', 'File patterns to analyze (default: current directory)')
       .option('-j, --json', 'Output as JSON')
-      .option('-m, --markers', 'Show only markers')
+      .option('-c, --contexts', 'Show only contexts')
       .option('-f, --format <format>', 'Output format (terminal, json, csv)', 'terminal')
       .option('--no-gitignore', 'Do not respect .gitignore files')
       .option('--exclude <patterns...>', 'Patterns to exclude')
@@ -381,7 +381,7 @@ export class CLI {
 
   // :A: api handle search command with Result pattern
   private async searchCommand(
-    marker: string,
+    context: string,
     patterns: string[],
     options: Record<string, unknown>
   ): Promise<Result<void>> {
@@ -399,11 +399,11 @@ export class CLI {
 
     const validOptions = optionsValidation.data;
     
-    // :A: ctx validate marker
-    if (!marker || marker.trim().length === 0) {
+    // :A: ctx validate context
+    if (!context || context.trim().length === 0) {
       return failure(makeError(
         'cli.missingArgument',
-        'Marker cannot be empty'
+        'Context cannot be empty'
       ));
     }
 
@@ -411,7 +411,7 @@ export class CLI {
     const searchPatterns = patterns.length > 0 ? patterns : ['./**/*'];
     
     const searchOptions = {
-      markers: [marker],
+      contexts: [context],
       context: (() => {
         const parsed = parseInt(validOptions.context ?? '0', 10);
         return isNaN(parsed) || parsed < 0 ? 0 : parsed;
@@ -421,7 +421,7 @@ export class CLI {
     };
 
     // :A: ctx use new async search method
-    const searchResult = await GrepaSearch.search(searchPatterns, searchOptions);
+    const searchResult = await CairnSearch.search(searchPatterns, searchOptions);
     if (!searchResult.ok) {
       return searchResult;
     }
@@ -465,7 +465,7 @@ export class CLI {
     const searchPatterns = patterns.length > 0 ? patterns : ['./**/*'];
 
     // :A: ctx search for all anchors
-    const searchResult = await GrepaSearch.search(searchPatterns, {
+    const searchResult = await CairnSearch.search(searchPatterns, {
       respectGitignore: validOptions.gitignore !== false,
       exclude: (options['exclude'] as string[] | undefined) || []
     });
@@ -482,12 +482,12 @@ export class CLI {
           : 'terminal'
     );
     
-    if (validOptions.markers) {
-      // :A: ctx show only unique markers
-      const uniqueMarkers = GrepaSearch.getUniqueMarkers(searchResult.data);
+    if (validOptions.contexts) {
+      // :A: ctx show only unique contexts
+      const uniqueContexts = CairnSearch.getUniqueContexts(searchResult.data);
       const output = formatter.format({
-        type: 'markers',
-        data: uniqueMarkers
+        type: 'contexts',
+        data: uniqueContexts
       });
       console.log(output);
     } else {

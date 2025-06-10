@@ -1,24 +1,24 @@
 {
-  "name": "grepa",
+  "name": "cairn",
   "version": "0.2.0",
-  "description": "Grep-anchor specification for making codebases discoverable",
+  "description": "Comment Anchors: Inline References & Notes - Making codebases discoverable",
   "keywords": [
-    "grep",
-    "grep-anchors",
+    "cairn",
     "code-navigation",
     "ai-navigation",
     "documentation",
     "developer-tools",
     "ripgrep",
-    "code-search"
+    "code-search",
+    "comment-anchors"
   ],
-  "homepage": "https://github.com/galligan/grepa#readme",
+  "homepage": "https://github.com/galligan/cairn#readme",
   "bugs": {
-    "url": "https://github.com/galligan/grepa/issues"
+    "url": "https://github.com/galligan/cairn/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/galligan/grepa.git"
+    "url": "git+https://github.com/galligan/cairn.git"
   },
   "license": "MIT",
   "author": "Matt Galligan",

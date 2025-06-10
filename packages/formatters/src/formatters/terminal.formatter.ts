@@ -1,6 +1,6 @@
 // :A: tldr Terminal formatters with color support for human-readable output
 import chalk from 'chalk';
-import type { SearchResult, MagicAnchor, ParseResult } from '@grepa/types';
+import type { SearchResult, MagicAnchor, ParseResult } from '@cairn/types';
 import type {
   ISearchResultFormatter,
   IMagicAnchorFormatter,
@@ -44,20 +44,20 @@ export class TerminalSearchResultFormatter implements ISearchResultFormatter {
 
   private formatAnchor(anchor: MagicAnchor): string {
     const location = anchor.file !== undefined ? `${anchor.file}:${anchor.line}` : `Line ${anchor.line}`;
-    const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
+    const contexts = anchor.contexts.map(c => chalk.cyan(c)).join(', ');
     const prose = anchor.prose !== undefined ? chalk.gray(` - ${anchor.prose}`) : '';
     
-    return `${chalk.dim(location)} ${markers}${prose}`;
+    return `${chalk.dim(location)} ${contexts}${prose}`;
   }
 }
 
 export class TerminalMagicAnchorFormatter implements IMagicAnchorFormatter {
   format(anchor: MagicAnchor): string {
     const location = anchor.file !== undefined ? `${anchor.file}:${anchor.line}` : `Line ${anchor.line}`;
-    const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
+    const contexts = anchor.contexts.map(c => chalk.cyan(c)).join(', ');
     const prose = anchor.prose !== undefined ? chalk.gray(` - ${anchor.prose}`) : '';
     
-    return `${chalk.dim(location)} ${markers}${prose}`;
+    return `${chalk.dim(location)} ${contexts}${prose}`;
   }
 }
 
@@ -99,10 +99,10 @@ export class TerminalMagicAnchorListFormatter implements IMagicAnchorListFormatt
       chalk.green(`Found ${anchors.length} anchor(s):\n`)
     ];
     
-    if (this.options.markersOnly) {
-      const uniqueMarkers = [...new Set(anchors.flatMap(a => a.markers))];
-      uniqueMarkers.sort().forEach(marker => {
-        output.push(chalk.cyan(`• ${marker}`));
+    if (this.options.contextsOnly) {
+      const uniqueContexts = [...new Set(anchors.flatMap(a => a.contexts))];
+      uniqueContexts.sort().forEach(context => {
+        output.push(chalk.cyan(`• ${context}`));
       });
     } else {
       anchors.forEach(anchor => {

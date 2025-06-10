@@ -1,9 +1,9 @@
-// :A: tldr Search functionality for Magic Anchors across files
+// :A: tldr Search functionality for Cairns across files
 import { readFile, stat } from 'fs/promises';
 import { createReadStream } from 'fs';
 import { extname } from 'path';
 import { MagicAnchorParser } from '../parser/magic-anchor-parser.js';
-import type { MagicAnchor, SearchOptions, SearchResult } from '@grepa/types';
+import type { MagicAnchor, SearchOptions, SearchResult } from '@cairn/types';
 import { type Result, success, failure, tryAsync } from '../lib/result.js';
 import { type AppError, makeError } from '../lib/error.js';
 import { searchOptionsSchema } from '../schemas/index.js';
@@ -12,10 +12,10 @@ import { globby } from 'globby';
 import * as readline from 'readline';
 
 /**
- * Search functionality for finding Magic Anchors across files.
+ * Search functionality for finding Cairns across files.
  * All operations are async for better performance and scalability.
  */
-export class GrepaSearch {
+export class CairnSearch {
   // :A: api search configuration constants
   private static readonly DEFAULT_EXTENSIONS = [
     '.ts', '.js', '.jsx', '.tsx', '.md', '.txt',
@@ -51,7 +51,7 @@ export class GrepaSearch {
     }
 
     // :A: ctx resolve files with error handling
-    const filesResult = await GrepaSearch.resolveFiles(patterns, options);
+    const filesResult = await CairnSearch.resolveFiles(patterns, options);
     if (!filesResult.ok) {
       return filesResult;
     }
@@ -61,7 +61,7 @@ export class GrepaSearch {
 
     // :A: ctx process each file concurrently for better performance
     const filePromises = filesResult.data.map(file => 
-      GrepaSearch.processFile(file, options)
+      CairnSearch.processFile(file, options)
     );
 
     const fileResults = await Promise.allSettled(filePromises);
@@ -90,10 +90,10 @@ export class GrepaSearch {
     }
 
     // :A: ctx check for too many results
-    if (results.length > GrepaSearch.MAX_RESULTS) {
+    if (results.length > CairnSearch.MAX_RESULTS) {
       return failure(makeError(
         'search.tooManyResults',
-        `Found ${results.length} results, exceeding limit of ${GrepaSearch.MAX_RESULTS}`
+        `Found ${results.length} results, exceeding limit of ${CairnSearch.MAX_RESULTS}`
       ));
     }
 
@@ -124,7 +124,7 @@ export class GrepaSearch {
       // :A: ctx filter by extensions (case-insensitive to handle .TS, .Js, etc.)
       const filteredFiles = files.filter(file => {
         const ext = extname(file).toLowerCase();
-        return GrepaSearch.DEFAULT_EXTENSIONS.includes(ext);
+        return CairnSearch.DEFAULT_EXTENSIONS.includes(ext);
       });
 
       if (filteredFiles.length === 0) {
@@ -160,8 +160,8 @@ export class GrepaSearch {
     }
 
     // :A: perf handle large files with streaming
-    if (statResult.data.size > GrepaSearch.MAX_FILE_SIZE) {
-      return GrepaSearch.processLargeFile(file, options);
+    if (statResult.data.size > CairnSearch.MAX_FILE_SIZE) {
+      return CairnSearch.processLargeFile(file, options);
     }
 
     // :A: ctx read file content
@@ -191,11 +191,11 @@ export class GrepaSearch {
     // :A: ctx filter anchors based on search criteria
     const results: SearchResult[] = [];
     for (const anchor of parseResult.data.anchors) {
-      if (GrepaSearch.matchesSearch(anchor, options)) {
+      if (CairnSearch.matchesSearch(anchor, options)) {
         const result: SearchResult = {
           anchor,
           ...(options.context && options.context > 0
-            ? { context: GrepaSearch.getContext(contentResult.data, anchor.line, options.context) }
+            ? { context: CairnSearch.getContext(contentResult.data, anchor.line, options.context) }
             : {})
         };
         results.push(result);
@@ -207,13 +207,13 @@ export class GrepaSearch {
 
   // :A: api check if anchor matches search criteria
   private static matchesSearch(anchor: MagicAnchor, options: SearchOptions): boolean {
-    if (!options.markers || options.markers.length === 0) {
+    if (!options.contexts || options.contexts.length === 0) {
       return true;
     }
 
-    return options.markers.some((marker: string) => 
-      anchor.markers.some((anchorMarker: string) => 
-        anchorMarker === marker || anchorMarker.startsWith(`${marker}(`)
+    return options.contexts.some((context: string) => 
+      anchor.contexts.some((anchorContext: string) => 
+        anchorContext === context || anchorContext.startsWith(`${context}(`)
       )
     );
   }
@@ -240,25 +240,25 @@ export class GrepaSearch {
     return { before, after };
   }
 
-  // :A: api get all unique markers from search results
-  static getUniqueMarkers(results: SearchResult[]): string[] {
-    const markers = new Set<string>();
+  // :A: api get all unique contexts from search results
+  static getUniqueContexts(results: SearchResult[]): string[] {
+    const contexts = new Set<string>();
     results.forEach(result => {
-      result.anchor.markers.forEach(marker => markers.add(marker));
+      result.anchor.contexts.forEach(context => contexts.add(context));
     });
-    return Array.from(markers).sort();
+    return Array.from(contexts).sort();
   }
 
-  // :A: api group results by marker
-  static groupByMarker(results: SearchResult[]): Record<string, SearchResult[]> {
+  // :A: api group results by context
+  static groupByContext(results: SearchResult[]): Record<string, SearchResult[]> {
     const grouped: Record<string, SearchResult[]> = {};
     
     results.forEach(result => {
-      result.anchor.markers.forEach(marker => {
-        if (!grouped[marker]) {
-          grouped[marker] = [];
+      result.anchor.contexts.forEach(context => {
+        if (!grouped[context]) {
+          grouped[context] = [];
         }
-        grouped[marker].push(result);
+        grouped[context].push(result);
       });
     });
 
@@ -309,7 +309,7 @@ export class GrepaSearch {
         }
 
         // :A: ctx check for anchor in current line
-        const anchorMatch = line.indexOf(':A:');
+        const anchorMatch = line.indexOf(':M:');
         if (anchorMatch !== -1) {
           // :A: ctx parse the line for a valid anchor
           const afterAnchor = line.substring(anchorMatch + 3);
@@ -317,22 +317,22 @@ export class GrepaSearch {
           if (afterAnchor.startsWith(' ')) {
             const payload = afterAnchor.substring(1).trim();
             if (payload) {
-              const { markers, prose } = GrepaSearch.parsePayloadSimple(payload);
+              const { contexts, prose } = CairnSearch.parsePayloadSimple(payload);
               
               const anchor: MagicAnchor = {
                 line: lineNumber,
                 column: anchorMatch + 1,
                 raw: line,
-                markers,
+                contexts,
                 file,
                 ...(prose ? { prose } : {})
               };
 
-              if (GrepaSearch.matchesSearch(anchor, options)) {
+              if (CairnSearch.matchesSearch(anchor, options)) {
                 const result: SearchResult = {
                   anchor,
                   ...(contextSize > 0
-                    ? { context: GrepaSearch.getContextFromBuffer(contextBuffer, lineNumber, contextSize) }
+                    ? { context: CairnSearch.getContextFromBuffer(contextBuffer, lineNumber, contextSize) }
                     : {})
                 };
                 results.push(result);
@@ -361,8 +361,8 @@ export class GrepaSearch {
   }
 
   // :A: api simple payload parser for streaming (avoids full parser overhead)
-  private static parsePayloadSimple(payload: string): { markers: string[]; prose?: string } {
-    // :A: ctx find first space not in parentheses for marker/prose split
+  private static parsePayloadSimple(payload: string): { contexts: string[]; prose?: string } {
+    // :A: ctx find first space not in parentheses for context/prose split
     let parenDepth = 0;
     let spaceIndex = -1;
     
@@ -381,16 +381,16 @@ export class GrepaSearch {
     }
     
     if (spaceIndex > 0) {
-      const markersStr = payload.substring(0, spaceIndex);
+      const contextsStr = payload.substring(0, spaceIndex);
       const prose = payload.substring(spaceIndex + 1).trim();
       return {
-        markers: markersStr.split(',').map(m => m.trim()).filter(m => m),
+        contexts: contextsStr.split(',').map(c => c.trim()).filter(c => c),
         ...(prose ? { prose } : {})
       };
     }
     
     return {
-      markers: payload.split(',').map(m => m.trim()).filter(m => m)
+      contexts: payload.split(',').map(c => c.trim()).filter(c => c)
     };
   }
 

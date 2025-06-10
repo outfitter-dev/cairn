@@ -1,7 +1,7 @@
 // :A: tldr Unified terminal formatter with color support
 import chalk from 'chalk';
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
-import type { SearchResult, MagicAnchor } from '@grepa/types';
+import type { SearchResult, MagicAnchor } from '@cairn/types';
 
 export class TerminalFormatter implements IFormatter {
   // :A: api format data for terminal display
@@ -13,8 +13,8 @@ export class TerminalFormatter implements IFormatter {
         return this.formatListResults(input.data);
       case 'parse':
         return this.formatParseResults(input.data);
-      case 'markers':
-        return this.formatMarkers(input.data);
+      case 'contexts':
+        return this.formatContexts(input.data);
       default:
         return JSON.stringify(input, null, 2);
     }
@@ -81,13 +81,13 @@ export class TerminalFormatter implements IFormatter {
     return output.join('\n');
   }
 
-  // :A: api format unique markers
-  private formatMarkers(markers: string[]): string {
+  // :A: api format unique contexts
+  private formatContexts(contexts: string[]): string {
     const output: string[] = [];
-    output.push(chalk.green(`Found ${markers.length} unique marker(s):\n`));
+    output.push(chalk.green(`Found ${contexts.length} unique context(s):\n`));
     
-    for (const marker of markers.sort()) {
-      output.push(chalk.cyan(`• ${marker}`));
+    for (const context of contexts.sort()) {
+      output.push(chalk.cyan(`• ${context}`));
     }
 
     return output.join('\n');
@@ -95,9 +95,9 @@ export class TerminalFormatter implements IFormatter {
 
   // :A: api format single anchor with line and column number
   private formatAnchor(anchor: MagicAnchor): string {
-    const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
+    const contexts = anchor.contexts.map(c => chalk.cyan(c)).join(', ');
     const prose = anchor.prose ? ` ${anchor.prose}` : '';
-    return `${chalk.yellow(`${anchor.line}:${anchor.column}`)}: ${markers}${prose}`;
+    return `${chalk.yellow(`${anchor.line}:${anchor.column}`)}: ${contexts}${prose}`;
   }
 
   // :A: api format context lines
