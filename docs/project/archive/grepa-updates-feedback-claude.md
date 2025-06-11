@@ -1,8 +1,8 @@
-# Claude Feedback – grepa-updates.md
+# Claude Feedback – cairn-updates.md
 
 <!-- :M: tldr unfiltered feedback on grepa syntax updates and architectural decisions -->
 
-This document provides Claude's feedback on the grepa-updates.md implementation plan, building on the structured review in grepa-updates-feedback.md.
+This document provides Claude's feedback on the cairn-updates.md implementation plan, building on the structured review in cairn-updates-feedback.md.
 
 ---
 
@@ -211,4 +211,4 @@ The notation/tooling language distinction (docs/notation/LANGUAGE.md vs docs/too
 
 ---
 
-*This feedback treats grepa-updates.md as a working document while identifying areas that need resolution before specification finalization.*
+*This feedback treats cairn-updates.md as a working document while identifying areas that need resolution before specification finalization.*

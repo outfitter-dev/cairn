@@ -98,7 +98,7 @@ Added missing markers to core groups:
 
 ## Key Documentation Updates Made
 
-### Main Document (grepa-updates.md)
+### Main Document (cairn-updates.md)
 - **Key Decisions section**: Comprehensive architectural summary
 - **Multi-line syntax**: Simplified approach with clear rationale
 - **Anchor density guidelines**: Strategic placement recommendations with examples
@@ -106,7 +106,7 @@ Added missing markers to core groups:
 - **Marker groups**: Enhanced with `flag`, `about`, `decision`
 
 ### Archive Management
-- Created `grepa-updates-old.md` and `grepa-updates-older.md` for historical reference
+- Created `cairn-updates-old.md` and `cairn-updates-older.md` for historical reference
 - Preserved comprehensive implementation details while simplifying main document
 
 ## Implementation Roadmap
@@ -165,7 +165,7 @@ Added missing markers to core groups:
 
 ## Historical Context
 
-This session represents the culmination of extensive syntax analysis and architectural discussions. The comprehensive implementation plan in `grepa-updates.md` now serves as the authoritative specification for grepa syntax updates, with all major decisions documented and ready for implementation.
+This session represents the culmination of extensive syntax analysis and architectural discussions. The comprehensive implementation plan in `cairn-updates.md` now serves as the authoritative specification for grepa syntax updates, with all major decisions documented and ready for implementation.
 
 The project successfully balanced simplicity with power, maintaining the core grep-ability that makes Magic Anchors uniquely valuable while providing sufficient expressiveness for complex use cases through future tooling.
 

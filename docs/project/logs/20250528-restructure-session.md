@@ -5,7 +5,7 @@
 ## Session Overview
 
 **Date**: 28 May 2025  
-**Focus**: Bring documentation hierarchy in line with the post-`grepa-updates` architecture; lay groundwork for versioned spec & tooling docs.  
+**Focus**: Bring documentation hierarchy in line with the post-`cairn-updates` architecture; lay groundwork for versioned spec & tooling docs.  
 **Outcome**: v0.1.1 docs milestone shipped.
 
 ## Major Accomplishments
@@ -17,7 +17,7 @@
 | `docs/notation/` | `docs/magic-anchors/` |
 | `docs/toolset/`  | `docs/grepa/`        |
 
-All files were moved with `git mv` to preserve history.  In-repo links updated (README, migration plan, grepa-updates).  Historical log and feedback files intentionally untouched.
+All files were moved with `git mv` to preserve history.  In-repo links updated (README, migration plan, cairn-updates).  Historical log and feedback files intentionally untouched.
 
 ### 2  Version tracking files ✅ ADDED
 
@@ -28,11 +28,11 @@ All files were moved with `git mv` to preserve history.  In-repo links updated (
 ### 3  Advanced & Archive folders ✅ CREATED
 
 • `docs/magic-anchors/advanced/` – deep-dive topics; moved `advanced-patterns.md`.  
-• `docs/project/archive/` – parked older drafts (`grepa-updates-old*.md`).
+• `docs/project/archive/` – parked older drafts (`cairn-updates-old*.md`).
 
 ### 4  Spec & guidance tidy-up ✅
 
-• `grepa-updates.md` – synced with v2 decisions, removed legacy `rel()` section, added canonical marker / parameter tables, updated examples to real-world snippets.  
+• `cairn-updates.md` – synced with v2 decisions, removed legacy `rel()` section, added canonical marker / parameter tables, updated examples to real-world snippets.  
 • “Completed work since v0 draft” block lists restructure & new files.  
 • `docs/project/plans/docs-migration.md` – progress snapshot checklist added; shows what’s left.
 
@@ -62,6 +62,6 @@ docs/magic-anchors/CHANGELOG.md
 docs/grepa/CHANGELOG.md
 docs/grepa/ROADMAP.md
 docs/magic-anchors/advanced/advanced-patterns.md (moved)
-docs/project/archive/grepa-updates-old*.md (moved)
+docs/project/archive/cairn-updates-old*.md (moved)
 docs/project/logs/20250528-restructure-session.md (this file)
 ```

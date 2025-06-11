@@ -2,12 +2,12 @@
 
 # Documentation Migration Plan
 
-This file lists every **documentation change** required to bring the public docs in sync with the latest decisions captured in `docs/project/ideas/grepa-updates.md` (especially the **“## Doc Updates”** section).  Each subsection below includes:
+This file lists every **documentation change** required to bring the public docs in sync with the latest decisions captured in `docs/project/ideas/cairn-updates.md` (especially the **“## Doc Updates”** section).  Each subsection below includes:
 
 • Why the change is needed – short context
 • Exactly **what** has to change (content, examples, wording)
 • Primary locations to update (README, guides, notation spec, etc.)
-• Deep-link to the relevant lines in `grepa-updates.md` for quick reference
+• Deep-link to the relevant lines in `cairn-updates.md` for quick reference
 
 > Tip Every heading in the source update document now has an inline marker `<!-- :M: todo #doc-migration -->`.  Search `rg "#doc-migration"` to jump between them.
 
@@ -19,7 +19,7 @@ This file lists every **documentation change** required to bring the public docs
 Switch every example, search command, and prose reference from the legacy `:ga:` identifier to the new canonical `:M:` anchor prefix.
 
 **Lines**  
-`docs/project/ideas/grepa-updates.md#L1-L120` (intro & “The `:M:` Anchor”).
+`docs/project/ideas/cairn-updates.md#L1-L120` (intro & “The `:M:` Anchor”).
 
 **Action items**
 1. README quick-start examples
@@ -33,7 +33,7 @@ Switch every example, search command, and prose reference from the legacy `:ga:`
 Dots can be ambiguous (hierarchy vs literal).  New rule keeps dots **only** inside literal values (semver, file paths, URLs).  Hierarchical composition now uses `:` or `()`.
 
 **Reference**  
-`grepa-updates.md#L753-L791`  (`### Eliminate Dot Notation`).
+`cairn-updates.md#L753-L791`  (`### Eliminate Dot Notation`).
 
 **Actions**
 • Replace every `priority.high`, `api.v2.users`, etc. with the colon / paren style in all docs.  
@@ -43,7 +43,7 @@ Dots can be ambiguous (hierarchy vs literal).  New rule keeps dots **only** insi
 ## 3  Require colon delimiter for all key-value markers
 
 **Reference**  
-`grepa-updates.md#L792-L803`.
+`cairn-updates.md#L792-L803`.
 
 **Changes**
 1. Mentions: `owner@alice` → `owner:@alice` in guides & spec
@@ -52,7 +52,7 @@ Dots can be ambiguous (hierarchy vs literal).  New rule keeps dots **only** insi
 ## 4  Simplified delimiter rules (colon vs parentheses)
 
 **Reference**  
-`grepa-updates.md#L804-L836`.
+`cairn-updates.md#L804-L836`.
 
 | Delimiter | Meaning | Example |
 |-----------|---------|---------|
@@ -65,7 +65,7 @@ Dots can be ambiguous (hierarchy vs literal).  New rule keeps dots **only** insi
 ## 5  Spacing & quoting rules
 
 **Reference**  
-`grepa-updates.md#L837-L859`.
+`cairn-updates.md#L837-L859`.
 
 **Key points**
 • No quotes for simple identifiers.  
@@ -77,7 +77,7 @@ Add a quick table to `docs/magic-anchors/payloads.md`.  Update any sample sed/rg
 ## 6  Universal parameters & todo consolidation
 
 **Reference**  
-`grepa-updates.md#L860-L903`.
+`cairn-updates.md#L860-L903`.
 
 Tasks
 1. Deprecate standalone `FIXME`, `BLOCKED`, etc. examples – show them as `todo()` parameters.  
@@ -87,7 +87,7 @@ Tasks
 ## 7  Core marker groups system
 
 **Reference**  
-`grepa-updates.md#L904-L1001`.
+`cairn-updates.md#L904-L1001`.
 
 Actions
 1. Create a new table in `docs/conventions/common-patterns.md` listing the six groups with 1-sentence purpose.  
@@ -97,7 +97,7 @@ Actions
 ## 8  Anchor density guidelines
 
 **Reference**  
-`grepa-updates.md#L1002-L1070`.
+`cairn-updates.md#L1002-L1070`.
 
 Docs
 • Integrate this guidance into `docs/guides/progressive-enhancement.md` (“When & where to add anchors”).  
@@ -106,7 +106,7 @@ Docs
 ## 9  Hashtags for conceptual linking
 
 **Reference**  
-`grepa-updates.md#L1087-L1126`.
+`cairn-updates.md#L1087-L1126`.
 
 To do
 – Add subsection “Conceptual tags” in `docs/advanced-patterns.md`.  
@@ -116,7 +116,7 @@ To do
 ## 10  Universal parameter groups
 
 **Reference**  
-`grepa-updates.md#L1127-L1190`.
+`cairn-updates.md#L1127-L1190`.
 
 Steps
 1. Move parameter-group table into `docs/magic-anchors/payloads.md` (it belongs with value syntax).  
@@ -139,7 +139,7 @@ Add `[x]` checkboxes once each item is completed.  When all sections above are f
 
 - [x] Repo restructure (`notation`→`magic-anchors`, `toolset`→`grepa`).
 - [x] Changelogs created (`magic-anchors/CHANGELOG.md`, `grepa/CHANGELOG.md`).
-- [x] Anchor prefix examples updated in **core spec** & **grepa-updates.md**.  (Guides / README still pending.)
+- [x] Anchor prefix examples updated in **core spec** & **cairn-updates.md**.  (Guides / README still pending.)
 - [ ] Dot-notation purge across *all* docs – main spec done; guides & conventions still need sweeps.
 - [ ] Colon-delimiter rule reflected in every example (partial).
 - [ ] Spacing & quoting rules table in `magic-anchors/payloads.md` (todo).

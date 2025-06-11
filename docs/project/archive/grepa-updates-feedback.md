@@ -1,6 +1,6 @@
-# Review Feedback – grepa-updates.md
+# Review Feedback – cairn-updates.md
 
-This document captures a complete red-pen review of `docs/project/ideas/grepa-updates.md`.  Comments are grouped by theme.  Inline fixes are shown in **diff** fences so they can be copy-pasted.  Line numbers refer to the current file version.
+This document captures a complete red-pen review of `docs/project/ideas/cairn-updates.md`.  Comments are grouped by theme.  Inline fixes are shown in **diff** fences so they can be copy-pasted.  Line numbers refer to the current file version.
 
 ---
 

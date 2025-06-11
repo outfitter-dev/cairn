@@ -30,12 +30,13 @@ type ToastOptions = {
 
 // :M: api Human-readable error messages
 export function humanise(err: AppError): string {
-  // Parse errors
+  const messages: Record<ErrorCode, string> = {
+    // Parse errors
     'parse.invalidSyntax': 'Invalid Cairn syntax found',
     'parse.missingSpace': 'Missing required space after :M: context',
     'parse.emptyPayload': 'Cairn payload cannot be empty',
-    'parse.invalidMarker': 'Invalid context format',
-    'parse.tooManyMarkers': 'Too many contexts on a single line',
+    'parse.invalidContext': 'Invalid context format',
+    'parse.tooManyContexts': 'Too many contexts on a single line',
     'file.accessDenied': "You don't have permission to access this file",
     'file.tooLarge': 'File size exceeds the maximum allowed limit',
     'file.invalidPath': 'The file path is invalid',
@@ -71,7 +72,7 @@ export function humanise(err: AppError): string {
   const message = messages[err.code];
   
   // :M: ctx log unmapped error codes for debugging
-  if (!message && err.code) {
+  if (!message && err.code && process.env.NODE_ENV !== 'production') {
     console.warn(`Unmapped error code: ${err.code}`, { error: err });
   }
 

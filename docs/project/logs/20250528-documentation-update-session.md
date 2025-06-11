@@ -4,7 +4,7 @@
 
 ## Session Overview
 
-This session implemented the comprehensive documentation updates for Magic Anchors v0.1.1, migrating all documentation from the `:ga:` syntax to the canonical `:M:` syntax and implementing key architectural decisions from `grepa-updates.md`.
+This session implemented the comprehensive documentation updates for Magic Anchors v0.1.1, migrating all documentation from the `:ga:` syntax to the canonical `:M:` syntax and implementing key architectural decisions from `cairn-updates.md`.
 
 ## Key Architectural Decisions Implemented
 
@@ -121,7 +121,7 @@ This session implemented the comprehensive documentation updates for Magic Ancho
 
 3. **Third commit**: "docs: comprehensive update to Magic Anchors notation and delimiter semantics"
    - All documentation updates
-   - Implemented key decisions from grepa-updates.md
+   - Implemented key decisions from cairn-updates.md
 
 ## Impact
 
