@@ -1,10 +1,10 @@
-<!-- :M: tldr comprehensive implementation plan for grepa syntax updates and specification refinements -->
-# Grepa Syntax Updates - Implementation Plan
+<!-- :M: tldr comprehensive implementation plan for Cairn syntax updates and specification refinements -->
+# Cairn Syntax Updates - Implementation Plan
 
 > **Architecture Document**: This is a forward-looking architectural specification that extends beyond the "simple pattern" approach described in the root README.md. It outlines comprehensive syntax enhancements and advanced features for future implementation.
 
 <!-- :M: meta comprehensive architectural design document for syntax updates -->
-This document outlines the complete implementation plan for updating grepa's syntax specification, core patterns, and tooling integration based on architectural analysis and syntax refinement discussions.
+This document outlines the complete implementation plan for updating Cairn's syntax specification, core patterns, and tooling integration based on architectural analysis and syntax refinement discussions.
 
 ## Key Decisions
 

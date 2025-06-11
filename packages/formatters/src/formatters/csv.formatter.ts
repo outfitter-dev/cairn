@@ -91,7 +91,7 @@ export class CSVFormatter implements IFormatter {
   // :M: api format default output
   private formatDefault(input: FormatterInput): string {
     const headers = ['Type', 'Data'];
-    const rows = [headers, [input.type, JSON.stringify(input.data)]];
+    const rows = [headers, [input.type, this.escapeCsvField(JSON.stringify(input.data))]];
     return rows.map(row => row.join(',')).join('\n');
   }
 

@@ -18,10 +18,10 @@ describe('Large File Streaming', () => {
     
     // Add 100,000 lines to make it large enough to trigger streaming
     for (let i = 0; i < 100000; i++) {
-      if (i % 1000 === 0) {
-        content += `// :M: milestone line ${i}\n`;
-      } else if (i % 5000 === 0) {
+      if (i % 5000 === 0) {
         content += `// :M: security check security validation at line ${i}\n`;
+      } else if (i % 1000 === 0) {
+        content += `// :M: milestone line ${i}\n`;
       } else {
         content += `const line${i} = "content for line ${i}";\n`;
       }

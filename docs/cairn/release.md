@@ -2,7 +2,7 @@
 
 # Release Process
 
-This document describes the automated release process for the Grepa project using [Changesets](https://github.com/changesets/changesets) and GitHub Actions.
+This document describes the automated release process for the Cairn project using [Changesets](https://github.com/changesets/changesets) and GitHub Actions.
 
 ## Overview
 
@@ -93,8 +93,8 @@ Changesets are stored in `.changeset/` as markdown files:
 
 ```markdown
 ---
-"@grepa/cli": minor
-"@grepa/core": patch
+"@cairn/cli": minor
+"@cairn/core": patch
 ---
 
 Added new search functionality to the CLI and fixed parser edge cases

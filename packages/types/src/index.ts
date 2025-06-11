@@ -1,6 +1,6 @@
 // :M: tldr Type definitions for Cairn parsing and processing
 
-export interface MagicAnchor {
+export interface Cairn {
   // :M: api core anchor properties
   line: number;
   column: number;
@@ -10,9 +10,12 @@ export interface MagicAnchor {
   file?: string;
 }
 
+// :M: deprecated Backward compatibility alias
+export type MagicAnchor = Cairn;
+
 export interface ParseResult {
   // :M: api parser output structure
-  anchors: MagicAnchor[];
+  anchors: Cairn[];
   errors: ParseError[];
 }
 

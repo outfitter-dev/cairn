@@ -25,7 +25,7 @@ These systems work together to reduce repetition, ensure consistency, and suppor
 
 **Purpose**: Define reusable values that can be referenced across multiple cairns for consistency and maintainability.
 
-**Configuration in grepaconfig.yaml:**
+**Configuration in cairnconfig.yaml:**
 
 ```yaml
 variables:
@@ -93,7 +93,7 @@ variables:
 
 ### Variable Scope and Context
 
-**Global Variables**: Defined in root `grepaconfig.yaml`, available everywhere
+**Global Variables**: Defined in root `cairnconfig.yaml`, available everywhere
 
 **Local Variables**: Defined in directory-specific config files, override globals
 
@@ -302,7 +302,7 @@ aliases:
 ## Configuration Integration
 
 <!-- :M: spec unified configuration system supporting all three features -->
-### Complete grepaconfig.yaml Example
+### Complete cairnconfig.yaml Example
 
 ```yaml
 # Variables, Templates, and Aliases Configuration

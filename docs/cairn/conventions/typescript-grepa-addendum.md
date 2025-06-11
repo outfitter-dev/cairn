@@ -1,13 +1,13 @@
-# TypeScript Conventions - Grepa Addendum
+# TypeScript Conventions - Cairn Addendum
 
 <!-- :M: tldr Cairn-specific TypeScript conventions and adaptations -->
 
-This document extends the base TypeScript conventions with Grepa-specific patterns.
+This document extends the base TypeScript conventions with Cairn-specific patterns.
 
-## Grepa-Specific Error Codes
+## Cairn-Specific Error Codes
 
 ```typescript
-export type GrepaErrorCode =
+export type CairnErrorCode =
   // File system errors
   | 'file.notFound'        // File or directory not found
   | 'file.readError'       // Cannot read file

@@ -1,6 +1,6 @@
 # Documentation & Repo Restructure Session – May 28 2025
 
-<!-- :M: tldr moved notation → magic-anchors, toolset → grepa, created changelogs, roadmap, archives -->
+<!-- :M: tldr moved notation → cairns, toolset → cairn, created changelogs, roadmap, archives -->
 
 ## Session Overview
 

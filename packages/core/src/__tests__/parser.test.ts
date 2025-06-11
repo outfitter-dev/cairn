@@ -1,11 +1,11 @@
 // :M: tldr Tests for Cairn parser functionality
 import { describe, it, expect } from 'vitest';
-import { MagicAnchorParser } from '../parser/magic-anchor-parser.js';
+import { CairnParser } from '../parser/cairn-parser.js';
 
-describe('MagicAnchorParser', () => {
+describe('CairnParser', () => {
   it('should parse basic anchor with single marker', () => {
     const content = '// :M: todo implement validation';
-    const result = MagicAnchorParser.parseWithResult(content);
+    const result = CairnParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -22,7 +22,7 @@ describe('MagicAnchorParser', () => {
   
   it('should parse anchor with multiple markers', () => {
     const content = '// :M: sec, todo validate inputs';
-    const result = MagicAnchorParser.parseWithResult(content);
+    const result = CairnParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -36,7 +36,7 @@ describe('MagicAnchorParser', () => {
   
   it('should parse anchor without prose', () => {
     const content = '// :M: tldr';
-    const result = MagicAnchorParser.parseWithResult(content);
+    const result = CairnParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -50,7 +50,7 @@ describe('MagicAnchorParser', () => {
   
   it('should detect missing space after :M:', () => {
     const content = '// :M:todo fix this';
-    const result = MagicAnchorParser.parseWithResult(content);
+    const result = CairnParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -62,7 +62,7 @@ describe('MagicAnchorParser', () => {
   
   it('should detect empty anchor payload', () => {
     const content = '// :M: ';
-    const result = MagicAnchorParser.parseWithResult(content);
+    const result = CairnParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -78,18 +78,18 @@ describe('MagicAnchorParser', () => {
       // :M: sec validate
       // :M: todo, perf optimize
     `;
-    const result = MagicAnchorParser.parseWithResult(content);
+    const result = CairnParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      const todoAnchors = MagicAnchorParser.findByContext(result.data.anchors, 'todo');
+      const todoAnchors = CairnParser.findByContext(result.data.anchors, 'todo');
       expect(todoAnchors).toHaveLength(2);
     }
   });
 
   it('should handle file size limit', () => {
     const largeContent = 'x'.repeat(11 * 1024 * 1024); // 11MB
-    const result = MagicAnchorParser.parseWithResult(largeContent);
+    const result = CairnParser.parseWithResult(largeContent);
     
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -99,7 +99,7 @@ describe('MagicAnchorParser', () => {
 
   it('should handle parentheses in markers correctly', () => {
     const content = '// :M: issue(123), owner(@alice) fix authentication';
-    const result = MagicAnchorParser.parseWithResult(content);
+    const result = CairnParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {

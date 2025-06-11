@@ -79,11 +79,11 @@ export class CLI {
     // :M: api search command to find specific anchors
     this.program
       .command('search')
-      .description('Search for anchors by context')
+      .description('Search for Cairns by context')
       .argument('<context>', 'Context to search for')
       .argument('[patterns...]', 'File patterns to search (default: current directory)')
       .option('-j, --json', 'Output as JSON')
-      .option('-c, --context <lines>', 'Show context lines', '0')
+      .option('-c, --context-lines <lines>', 'Show context lines', '0')
       .option('-f, --format <format>', 'Output format (terminal, json, csv)', 'terminal')
       .option('--no-gitignore', 'Do not respect .gitignore files')
       .option('--exclude <patterns...>', 'Patterns to exclude')
@@ -95,7 +95,7 @@ export class CLI {
     // :M: api list command to show all anchors
     this.program
       .command('list')
-      .description('List all anchors in file(s)')
+      .description('List all Cairns in file(s)')
       .argument('[patterns...]', 'File patterns to analyze (default: current directory)')
       .option('-j, --json', 'Output as JSON')
       .option('-c, --contexts', 'Show only contexts')
@@ -413,7 +413,7 @@ export class CLI {
     const searchOptions = {
       contexts: [context],
       context: (() => {
-        const parsed = parseInt(validOptions.context ?? '0', 10);
+        const parsed = parseInt(validOptions.contextLines ?? '0', 10);
         return isNaN(parsed) || parsed < 0 ? 0 : parsed;
       })(),
       respectGitignore: validOptions.gitignore !== false,

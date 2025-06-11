@@ -16,13 +16,13 @@ Think of it like learning to write musical notes - the notation is simple and co
 ## Core Format
 
 ```
-<comment-leader> :M: <space> <marker-list> <optional prose>
+<comment-leader> :M: <space> <context-list> <optional prose>
 ```
 
 The notation consists of:
 1. **Identifier**: `:M:` (or custom like `:proj:`)
 2. **Space**: Exactly one ASCII space (mandatory)
-3. **Markers**: One or more markers with optional parameters
+3. **Contexts**: One or more contexts with optional parameters
 4. **Prose**: Optional human-readable description
 
 ## Quick Examples

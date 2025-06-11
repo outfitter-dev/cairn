@@ -2,7 +2,7 @@
 import { readFile, stat } from 'fs/promises';
 import { createReadStream } from 'fs';
 import { extname } from 'path';
-import { MagicAnchorParser } from '../parser/magic-anchor-parser.js';
+import { CairnParser } from '../parser/cairn-parser.js';
 import type { MagicAnchor, SearchOptions, SearchResult } from '@cairn/types';
 import { type Result, success, failure, tryAsync } from '../lib/result.js';
 import { type AppError, makeError } from '../lib/error.js';
@@ -179,7 +179,7 @@ export class CairnSearch {
     }
 
     // :M: ctx parse file content
-    const parseResult = MagicAnchorParser.parseWithResult(
+    const parseResult = CairnParser.parseWithResult(
       contentResult.data,
       file
     );

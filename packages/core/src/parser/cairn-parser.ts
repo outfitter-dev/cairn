@@ -9,7 +9,7 @@ import { fromZod } from '../lib/zod-adapter.js';
  * Parser for Cairn syntax (`:M: context prose`).
  * Handles both sync and async parsing with Result pattern support.
  */
-export class MagicAnchorParser {
+export class CairnParser {
   // :M: api parser configuration constants
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   
@@ -29,10 +29,10 @@ export class MagicAnchorParser {
 
     // :M: ctx check file size limit using byte length to prevent multi-byte character bypass
     const contentByteLength = Buffer.byteLength(content, 'utf8');
-    if (contentByteLength > MagicAnchorParser.MAX_FILE_SIZE) {
+    if (contentByteLength > CairnParser.MAX_FILE_SIZE) {
       return failure(makeError(
         'file.tooLarge',
-        `File exceeds maximum size of ${Math.round(contentByteLength / 1024 / 1024)}MB (limit: ${Math.round(MagicAnchorParser.MAX_FILE_SIZE / 1024 / 1024)}MB)`
+        `File exceeds maximum size of ${Math.round(contentByteLength / 1024 / 1024)}MB (limit: ${Math.round(CairnParser.MAX_FILE_SIZE / 1024 / 1024)}MB)`
       ));
     }
 
@@ -170,14 +170,14 @@ export class MagicAnchorParser {
       const prose = payload.substring(spaceIndex + 1).trim();
       
       return {
-        contexts: MagicAnchorParser.parseContexts(markersStr),
+        contexts: CairnParser.parseContexts(markersStr),
         ...(prose ? { prose } : {})
       };
     }
     
     // :M: ctx no prose found, entire payload is contexts
     return {
-      contexts: MagicAnchorParser.parseContexts(payload)
+      contexts: CairnParser.parseContexts(payload)
     };
   }
   
