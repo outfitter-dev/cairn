@@ -1,6 +1,6 @@
 # TypeScript Conventions – Cairn Addendum
 
-<!-- :M: tldr Cairn-specific TypeScript conventions and adaptations -->
+> **TL;DR**: Cairn-specific TypeScript conventions and adaptations for working with the Cairn codebase.
 
 This document extends the base TypeScript conventions with Cairn-specific patterns.
 
@@ -52,7 +52,7 @@ export function isValidContext(context: string): boolean {
 export function isParameterizedContext(
   context: string
 ): context is `${string}(${string})` {
-  return context.includes('(') && context.includes(')');
+  return /^[a-zA-Z0-9_@:,\[\]-]+\([^)]*\)$/.test(context);
 }
 ```
 
@@ -63,8 +63,11 @@ export function isParameterizedContext(
 Always use the Result pattern for file operations:
 
 ```typescript
+import { readFile } from 'fs/promises';
+import { tryAsync, type Result } from '@cairn/core';
+
 async function readFileWithResult(path: string): Promise<Result<string>> {
-  return tryAsync(() => fs.promises.readFile(path, 'utf-8'), 'file.readError');
+  return tryAsync(() => readFile(path, 'utf-8'), 'file.readError');
 }
 ```
 
@@ -73,11 +76,13 @@ async function readFileWithResult(path: string): Promise<Result<string>> {
 Use composed schemas for cairn validation:
 
 ```typescript
+import { z } from 'zod';
+
 const contextSchema = z
   .string()
   .min(1, 'Context cannot be empty')
   .max(50, 'Context too long')
-  .regex(/^[a-zA-Z0-9_@-]+(\([^)]*\))?$/, 'Invalid context format');
+  .regex(/^[a-zA-Z0-9_@:,\[\]-]+(\([^)]*\))?$/, 'Invalid context format');
 
 const cairnPayloadSchema = z
   .string()
@@ -119,19 +124,26 @@ type SearchOptions = ContextSearchOptions | FileSearchOptions;
 Each command should return a Result:
 
 ```typescript
+import { type Result, failure, fromZod } from '@cairn/core';
+import { type SearchResult } from '@cairn/types';
+
 interface CLICommand<T = void> {
   execute(args: string[], options: unknown): Promise<Result<T>>;
 }
 
-class SearchCommand implements CLICommand {
-  async execute(args: string[], options: unknown): Promise<Result<void>> {
+class SearchCommand implements CLICommand<SearchResult[]> {
+  async execute(args: string[], options: unknown): Promise<Result<SearchResult[]>> {
     // Validate options
     const validationResult = searchOptionsSchema.safeParse(options);
     if (!validationResult.success) {
       return failure(fromZod(validationResult.error));
     }
 
-    // Execute search…
+    // Execute search
+    const searchResult = await this.performSearch(args, validationResult.data);
+    
+    // Return success with the search results
+    return searchResult; // Returns Result<SearchResult[]>
   }
 }
 ```
@@ -140,7 +152,7 @@ class SearchCommand implements CLICommand {
 
 - **Files**: kebab-case (`cairn-parser.ts`)
 - **Classes**: PascalCase (`CairnParser`)
-- **Interfaces**: prefix with ‘I’ only for service contracts (`ISearchService`)
+- **Interfaces**: PascalCase without prefix (`SearchService`, not `ISearchService`)
 - **Type aliases**: PascalCase (`SearchResult`)
 - **Constants**: UPPER_SNAKE_CASE (`DEFAULT_EXTENSIONS`)
 - **Cairns**: always refer to them as “Cairns”, not “anchors” or “markers”, in code and docs.
@@ -148,6 +160,9 @@ class SearchCommand implements CLICommand {
 ## Testing Patterns
 
 ```typescript
+import { describe, it, expect } from 'vitest';
+import { CairnParser } from '@cairn/core';
+
 // Use Result pattern in tests
 describe('CairnParser', () => {
   it('should parse valid cairn', () => {
@@ -155,8 +170,8 @@ describe('CairnParser', () => {
 
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.data.cairns).toHaveLength(1);
-      expect(result.data.cairns[0].contexts).toContain('todo');
+      expect(result.data.anchors).toHaveLength(1);
+      expect(result.data.anchors[0].contexts).toContain('todo');
     }
   });
 });
