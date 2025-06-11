@@ -5,7 +5,7 @@ import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { isAbsolute, resolve } from 'path';
 import { 
-  MagicAnchorParser, 
+  CairnParser, 
   CairnSearch, 
   success, 
   failure, 
@@ -341,7 +341,7 @@ export class CLI {
           continue;
         }
         
-        const parseResult = MagicAnchorParser.parseWithResult(content, file);
+        const parseResult = CairnParser.parseWithResult(content, file);
 
         if (!parseResult.ok) {
           errors.push(parseResult.error);

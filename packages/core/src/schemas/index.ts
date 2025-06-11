@@ -69,7 +69,7 @@ export const parseCommandOptionsSchema = z.object({
 
 export const searchCommandOptionsSchema = z.object({
   json: z.boolean().optional(),
-  context: z.string().regex(/^\d+$/, 'Context must be a number').optional(),
+  contextLines: z.string().regex(/^\d+$/, 'Context lines must be a number').optional(),
   format: outputFormatSchema.optional(),
   // Controls whether to respect .gitignore files during search
   // Default: true (respects .gitignore)
