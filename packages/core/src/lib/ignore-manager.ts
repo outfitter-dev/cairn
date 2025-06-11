@@ -1,4 +1,4 @@
-// :M: tldr Centralized ignore file management for grepa
+// :M: tldr Centralized ignore file management for cairn
 import { readFileSync, existsSync } from 'fs';
 import { join, relative, dirname } from 'path';
 import ignore from 'ignore';
@@ -8,7 +8,7 @@ import { makeError } from './error.js';
 import { assert, assertNonNull } from './type-guards.js';
 
 /**
- * Manages ignore patterns from various sources (.gitignore, .grepaignore, etc.)
+ * Manages ignore patterns from various sources (.gitignore, .cairnignore, etc.)
  * Follows DRY principle by centralizing all ignore logic
  */
 export class IgnoreManager {
@@ -88,10 +88,10 @@ export class IgnoreManager {
       ig.add(gitignoreResult.data);
     }
     
-    // :M: ctx load .grepaignore (project-specific)
-    const grepaignoreResult = this.loadIgnoreFile(dir, '.grepaignore');
-    if (grepaignoreResult.ok) {
-      ig.add(grepaignoreResult.data);
+    // :M: ctx load .cairnignore (project-specific)
+    const cairnignoreResult = this.loadIgnoreFile(dir, '.cairnignore');
+    if (cairnignoreResult.ok) {
+      ig.add(cairnignoreResult.data);
     }
 
     this.cache.set(dir, ig);

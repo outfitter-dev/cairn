@@ -57,4 +57,4 @@ echo "Reverting version changes..."
 find . -name "package.json" -not -path "./node_modules/*" -exec git checkout -- {} \;
 
 echo "Beta published successfully! Install with:"
-echo "  npm install -g @grepa/cli@beta"
+echo "  npm install -g @cairn/cli@beta"

@@ -1,7 +1,7 @@
 // :M: tldr Custom ESLint rules plugin
 module.exports = {
   meta: {
-    name: '@grepa/eslint-plugin',
+    name: '@cairn/eslint-plugin',
     version: '0.0.0'
   },
   rules: {
