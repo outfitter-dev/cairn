@@ -63,20 +63,20 @@ After extensive experimentation with earlier prefixes we discovered an even simp
 - No migration concerns exist—the project is still in its early stages and all content is maintained by a single author.
 - Custom anchor identifiers were considered, but a *single canonical prefix* keeps tooling simple, avoids edge-case parsing, and mirrors the way "TODO" became a universal convention for work-in-progress notes.
 
-### Magic Anchors vs Grepa Tooling
+### Cairns vs Cairn Tooling
 
 With the `:M:` identifier in place we can make a clear terminology split:
 
-- **Magic Anchors (notation)** – the comment-level grammar that begins with `:M:` and encodes markers, parameters, and prose.  Magic Anchors are *just text* and can be searched or parsed by any standard tool (ripgrep, awk, IDE search, etc.).
-- **Grepa (tooling)** – the reference CLI / library / editor plug-ins that *understand* Magic Anchors and offer value-adds: rich queries, linting, navigation maps, index daemons, etc.
+- **Cairns (notation)** – the comment-level grammar that begins with `:M:` and encodes contexts, parameters, and prose. Cairns are *just text* and can be searched or parsed by any standard tool (ripgrep, awk, IDE search, etc.).
+- **Cairn (tooling)** – the reference CLI / library / editor plug-ins that *understand* Cairns and offer value-adds: rich queries, linting, navigation maps, index daemons, etc.
 
 This separation keeps the notation vendor-neutral and future-proof:
 
-1. **Portability** – teams can adopt Magic Anchors today and still rely on plain `rg` if they don't want extra tooling.
-2. **Pluggability** – other ecosystems (Bazel rules, language servers, CI pipelines) can add Magic-Anchor awareness without pulling in the full Grepa stack.
-3. **Innovation surface** – Grepa can evolve aggressively (indexes, LSP, dashboards) while the core notation remains stable.
+1. **Portability** – teams can adopt Cairns today and still rely on plain `rg` if they don't want extra tooling.
+2. **Pluggability** – other ecosystems (Bazel rules, language servers, CI pipelines) can add Cairn awareness without pulling in the full Cairn stack.
+3. **Innovation surface** – Cairn can evolve aggressively (indexes, LSP, dashboards) while the core notation remains stable.
 
-#### Magic Anchor Grammar Snapshot
+#### Cairn Grammar Snapshot
 
 ```
 <comment leader> :M: <space> <marker-list> <optional prose>
@@ -89,7 +89,7 @@ delimiter     ::= ":" | "(" | "["             # colon / paren / array start
 - The single space after `:M:` is **mandatory**.
 - The entire anchor content – markers plus optional prose – must fit on one line **or** follow the multi-line rules (see "Multi-line Anchor Syntax" below).
 
-> Draft tagline for the README: **`grep:M:` — Magic Anchors for Codebases**.
+> Draft tagline for the README: **`grep:M:` — Cairns for Codebases**.
 
 ### Prose Formatting Guidelines
 
@@ -460,7 +460,7 @@ These examples follow the updated delimiter guidelines:
 ## Core Marker Groups System
 
 <!-- :M: spec canonical list of first-class markers -->
-Magic Anchors organize their **markers** into six semantic groups.  Group names are *not* written in anchors – they simply help you remember which marker to reach for and make it easier to run group-level searches.
+Cairns organize their **contexts** into six semantic groups. Group names are *not* written in cairns – they simply help you remember which context to reach for and make it easier to run group-level searches.
 
 | Group | Purpose | Primary markers (synonyms in parentheses) |
 |-------|---------|-------------------------------------------|
@@ -526,9 +526,9 @@ The following advanced features have been moved to separate design documents for
 ## Breadcrumb Protocol Framework
 
 <!-- :M: concept grep-anchor as standardized navigation protocol -->
-### Grepa as Universal Navigation Protocol
+### Cairn as Universal Navigation Protocol
 
-**Core Metaphor**: Grepa as a "breadcrumb protocol" - a standardized way to leave navigational markers throughout codebases that both humans and AI agents can follow.
+**Core Metaphor**: Cairn as a "breadcrumb protocol" - a standardized way to leave navigational markers throughout codebases that both humans and AI agents can follow.
 
 **Traditional Breadcrumbs**: Leave a trail to find your way back  
 **Web Breadcrumbs**: Show navigation path (Home > Products > Laptops > Dell)  

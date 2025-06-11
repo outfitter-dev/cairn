@@ -9,7 +9,7 @@ The technical specification for Cairns notation - a lightweight marking system f
 Cairns notation is the **format** for writing searchable code markers. It defines:
 - How to write the `:M:` marker with mandatory single space
 - Delimiter semantics (`:` for classifications, `()` for parameters, `[]` for arrays)
-- Marker organization into six semantic groups
+- Context organization into six semantic groups
 
 Think of it like learning to write musical notes - the notation is simple and consistent, while what you compose with it (conventions) can be infinitely varied.
 
@@ -28,9 +28,9 @@ The notation consists of:
 ## Quick Examples
 
 ```javascript
-// :M: todo                      // Simple marker
-// :M: sec,perf                  // Multiple markers
-// :M: todo(priority:high)       // Marker with parameter
+// :M: todo                      // Simple context
+// :M: sec,perf                  // Multiple contexts
+// :M: todo(priority:high)       // Context with parameter
 // :M: owner:@alice              // Classification with mention
 // :M: blocked:[4,7]             // Array of values
 // :M: todo: implement caching   // With prose description
@@ -38,9 +38,9 @@ The notation consists of:
 
 ## Learn More
 
-- [Specification](./SPEC.md) - Complete notation specification
-- [Payload Types](./payloads.md) - Parameter and value structures
-- [Examples](./examples.md) - Notation in practice
+- [Specification](./SPEC.md) - Complete notation specification.
+- [Payload Types](./payloads.md) - Parameter and value structures.
+- [Examples](./examples.md) - Notation in practice.
 - [Language Guide](./LANGUAGE.md) - How to write about Cairns
 
 ## Key Principles

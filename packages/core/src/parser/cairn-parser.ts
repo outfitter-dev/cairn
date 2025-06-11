@@ -41,7 +41,7 @@ export class CairnParser {
     const lines = content.split('\n');
     
     lines.forEach((line, lineIndex) => {
-      const anchorMatch = this.findAnchorInLine(line, lineIndex + 1);
+      const anchorMatch = CairnParser.findAnchorInLine(line, lineIndex + 1);
       if (anchorMatch) {
         if (anchorMatch.error) {
           errors.push(anchorMatch.error);
@@ -98,7 +98,7 @@ export class CairnParser {
     }
     
     // :M: ctx parse contexts and prose from payload
-    const { contexts, prose } = this.parsePayload(payload);
+    const { contexts, prose } = CairnParser.parsePayload(payload);
     
     return {
       anchor: {
@@ -181,12 +181,44 @@ export class CairnParser {
     };
   }
   
-  // :M: api split comma-separated contexts
+  // :M: api split comma-separated contexts handling nested parentheses
   private static parseContexts(contextsStr: string): string[] {
-    return contextsStr
-      .split(',')
-      .map(context => context.trim())
-      .filter(context => context.length > 0);
+    const contexts: string[] = [];
+    let current = '';
+    let parenDepth = 0;
+    let bracketDepth = 0;
+    
+    for (let i = 0; i < contextsStr.length; i++) {
+      const char = contextsStr[i];
+      
+      if (char === '(') {
+        parenDepth++;
+      } else if (char === ')') {
+        if (parenDepth > 0) parenDepth--;
+      } else if (char === '[') {
+        bracketDepth++;
+      } else if (char === ']') {
+        if (bracketDepth > 0) bracketDepth--;
+      } else if (char === ',' && parenDepth === 0 && bracketDepth === 0) {
+        // :M: ctx top-level comma, split here
+        const trimmed = current.trim();
+        if (trimmed.length > 0) {
+          contexts.push(trimmed);
+        }
+        current = '';
+        continue;
+      }
+      
+      current += char;
+    }
+    
+    // :M: ctx add final context if any
+    const trimmed = current.trim();
+    if (trimmed.length > 0) {
+      contexts.push(trimmed);
+    }
+    
+    return contexts;
   }
   
   // :M: api convenience method to find anchors by context

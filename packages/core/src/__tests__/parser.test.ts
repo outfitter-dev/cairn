@@ -109,4 +109,17 @@ describe('CairnParser', () => {
       expect(anchor!.prose).toBe('fix authentication');
     }
   });
+
+  it('should handle complex nested parentheses and brackets in contexts', () => {
+    const content = '// :M: todo(priority:high,tags:[ui,backend]), blocked:[4,7], owner:@alice test complex parsing';
+    const result = CairnParser.parseWithResult(content);
+    
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.anchors).toHaveLength(1);
+      const anchor = result.data.anchors[0];
+      expect(anchor!.contexts).toEqual(['todo(priority:high,tags:[ui,backend])', 'blocked:[4,7]', 'owner:@alice']);
+      expect(anchor!.prose).toBe('test complex parsing');
+    }
+  });
 });
