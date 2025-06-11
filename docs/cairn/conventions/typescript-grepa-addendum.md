@@ -45,8 +45,9 @@ export function hasCairn(line: string): boolean {
 }
 
 // Type guard for valid context
+// Allows: todo, priority:high, owner:@alice, blocked:[4,7], issue(123)
 export function isValidContext(context: string): boolean {
-  return /^[a-zA-Z0-9_@-]+(\([^)]*\))?$/.test(context);
+  return /^[a-zA-Z0-9_@:,\[\]-]+(\([^)]*\))?$/.test(context);
 }
 
 // Type guard for parameterised context

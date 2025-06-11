@@ -122,4 +122,23 @@ describe('CairnParser', () => {
       expect(anchor!.prose).toBe('test complex parsing');
     }
   });
+
+  it('should validate contexts with colons and array syntax', () => {
+    const testCases = [
+      { content: '// :M: priority:high', expectedContexts: ['priority:high'] },
+      { content: '// :M: owner:@alice', expectedContexts: ['owner:@alice'] },
+      { content: '// :M: blocked:[123,456]', expectedContexts: ['blocked:[123,456]'] },
+      { content: '// :M: tags:[ui,backend,api]', expectedContexts: ['tags:[ui,backend,api]'] },
+      { content: '// :M: status:in-progress', expectedContexts: ['status:in-progress'] },
+    ];
+
+    testCases.forEach(({ content, expectedContexts }) => {
+      const result = CairnParser.parseWithResult(content);
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.data.anchors).toHaveLength(1);
+        expect(result.data.anchors[0]!.contexts).toEqual(expectedContexts);
+      }
+    });
+  });
 });

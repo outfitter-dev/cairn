@@ -5,7 +5,7 @@ import { z } from 'zod';
 const contextSchema = z.string()
   .min(1, 'Context cannot be empty')
   .max(50, 'Context too long')
-  .regex(/^[a-zA-Z0-9_@-]+(\([^)]*\))?$/, 'Invalid context format');
+  .regex(/^[a-zA-Z0-9_@:,\[\]-]+(\([^)]*\))?$/, 'Invalid context format');
 
 const lineNumberSchema = z.number()
   .int('Line number must be an integer')
