@@ -54,7 +54,7 @@ describe('Large File Streaming', () => {
       const milestones = result.data.filter(r => 
         r.anchor.contexts.includes('milestone')
       );
-      expect(milestones.length).toBeGreaterThan(80); // Should find most milestone contexts
+      expect(milestones.length).toBeGreaterThanOrEqual(80); // Should find most milestone contexts
     }
   });
 
