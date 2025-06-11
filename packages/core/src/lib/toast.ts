@@ -30,15 +30,12 @@ type ToastOptions = {
 
 // :M: api Human-readable error messages
 export function humanise(err: AppError): string {
-  const messages: Record<ErrorCode, string> = {
-    // Parse errors
+  // Parse errors
     'parse.invalidSyntax': 'Invalid Cairn syntax found',
     'parse.missingSpace': 'Missing required space after :M: context',
     'parse.emptyPayload': 'Cairn payload cannot be empty',
-    'parse.invalidContext': 'Invalid context format',
-    'parse.tooManyContexts': 'Too many contexts on a single line',
-    'file.notFound': 'The requested file could not be found',
-    'file.readError': 'Unable to read the file',
+    'parse.invalidMarker': 'Invalid context format',
+    'parse.tooManyMarkers': 'Too many contexts on a single line',
     'file.accessDenied': "You don't have permission to access this file",
     'file.tooLarge': 'File size exceeds the maximum allowed limit',
     'file.invalidPath': 'The file path is invalid',

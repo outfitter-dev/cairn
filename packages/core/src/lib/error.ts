@@ -48,7 +48,6 @@ export interface AppError {
   statusCode?: number;
   cause?: unknown;
 }
-
 export const makeError = (
   code: ErrorCode,
   message: string,
