@@ -1,5 +1,3 @@
-<!-- TODO: rename file to typescript-cairn-addendum.md once all doc links are updated -->
-
 # TypeScript Conventions – Cairn Addendum
 
 <!-- :M: tldr Cairn-specific TypeScript conventions and adaptations -->
@@ -17,7 +15,7 @@ export type CairnErrorCode =
   | 'file.accessDenied'      // Permission denied
 
   // Parsing errors
-  | 'parse.invalidCairn'     // Invalid Cairn syntax
+  | 'parse.invalidContext'   // Invalid context syntax
   | 'parse.missingSpace'     // Missing space after :M:
   | 'parse.emptyContexts'    // No contexts provided
 
