@@ -15,7 +15,7 @@ Think of it like learning to write musical notes - the notation is simple and co
 
 ## Core Format
 
-```
+```text
 <comment-leader> :M: <space> <context-list> <optional prose>
 ```
 

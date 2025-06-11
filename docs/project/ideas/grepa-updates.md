@@ -78,11 +78,11 @@ This separation keeps the notation vendor-neutral and future-proof:
 
 #### Cairn Grammar Snapshot
 
-```
-<comment leader> :M: <space> <marker-list> <optional prose>
+```text
+<comment leader> :M: <space> <context-list> <optional prose>
 
-marker-list   ::= marker ("," marker)*
-marker        ::= key [ delimiter value ]
+context-list  ::= context ("," context)*
+context       ::= key [ delimiter value ]
 delimiter     ::= ":" | "(" | "["             # colon / paren / array start
 ```
 
@@ -135,13 +135,13 @@ All major architectural decisions have been finalized. This document serves as t
 **Completed work since v0 draft**
 
 - Documentation folders have been streamlined:
-  - `docs/notation/` → `docs/magic-anchors/`
-  - `docs/toolset/`  → `docs/grepa/`
-- A `CHANGELOG.md` was added under `docs/magic-anchors/` to track language-level changes.
-- Created `docs/magic-anchors/advanced/` for deep-dive topics (moved `advanced-patterns.md`).
-- Added `docs/grepa/CHANGELOG.md` and `docs/grepa/ROADMAP.md` for tooling version history and future milestones.
+  - `docs/notation/` → `docs/cairns/`
+  - `docs/toolset/`  → `docs/cairn/`
+- A `CHANGELOG.md` was added under `docs/cairns/` to track language-level changes.
+- Created `docs/cairns/advanced/` for deep-dive topics (moved `advanced-patterns.md`).
+- Added `docs/cairn/CHANGELOG.md` and `docs/cairn/ROADMAP.md` for tooling version history and future milestones.
 - Archived superseded drafts to `docs/project/archive/` for historical reference.
-- Version milestone **v0.1.1** recorded in both `docs/magic-anchors/CHANGELOG.md` and `docs/grepa/CHANGELOG.md`.
+- Version milestone **v0.1.1** recorded in both `docs/cairns/CHANGELOG.md` and `docs/cairn/CHANGELOG.md`.
 
 <!-- :M: ctx this plan implements decisions from extensive syntax analysis and architectural discussions -->
 ## Implementation Overview
@@ -196,7 +196,7 @@ All major architectural decisions have been finalized. This document serves as t
 <!-- :M: config flexible team configuration for priority notation preferences -->
 ### Configurable Priority Schemes
 
-Teams can configure their preferred priority notation system in `grepaconfig.yaml` to standardize team-wide conventions.
+Teams can configure their preferred priority notation system in `cairnconfig.yaml` to standardize team-wide conventions.
 
 **Numeric Scheme Configuration:**
 
@@ -705,6 +705,6 @@ The following advanced features have been moved to separate design documents for
 <!-- :M: completion comprehensive implementation plan finalized -->
 ## Conclusion
 
-This implementation plan provides a comprehensive framework for updating grepa's syntax specification with enhanced readability, powerful relational capabilities, flexible configuration systems, and robust plugin architecture. The systematic approach ensures backward compatibility while enabling advanced features that support both human understanding and AI agent efficiency.
+This implementation plan provides a comprehensive framework for updating Cairn's syntax specification with enhanced readability, powerful relational capabilities, flexible configuration systems, and robust plugin architecture. The systematic approach ensures backward compatibility while enabling advanced features that support both human understanding and AI agent efficiency.
 
 All architectural decisions have been finalized and documented. Implementation can proceed with confidence in the design's coherence and extensibility.

@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { CairnParser } from '../parser/cairn-parser.js';
 
 describe('CairnParser', () => {
-  it('should parse basic anchor with single marker', () => {
+  it('should parse basic anchor with single context', () => {
     const content = '// :M: todo implement validation';
     const result = CairnParser.parseWithResult(content);
     
@@ -20,7 +20,7 @@ describe('CairnParser', () => {
     }
   });
   
-  it('should parse anchor with multiple markers', () => {
+  it('should parse anchor with multiple contexts', () => {
     const content = '// :M: sec, todo validate inputs';
     const result = CairnParser.parseWithResult(content);
     
@@ -72,7 +72,7 @@ describe('CairnParser', () => {
     }
   });
   
-  it('should find anchors by marker', () => {
+  it('should find anchors by context', () => {
     const content = `
       // :M: todo implement
       // :M: sec validate
@@ -88,7 +88,8 @@ describe('CairnParser', () => {
   });
 
   it('should handle file size limit', () => {
-    const largeContent = 'x'.repeat(11 * 1024 * 1024); // 11MB
+    // 11MB - exceeds the 10MB limit
+    const largeContent = 'x'.repeat(10 * 1024 * 1024 + 1);
     const result = CairnParser.parseWithResult(largeContent);
     
     expect(result.ok).toBe(false);
@@ -97,7 +98,7 @@ describe('CairnParser', () => {
     }
   });
 
-  it('should handle parentheses in markers correctly', () => {
+  it('should handle parentheses in contexts correctly', () => {
     const content = '// :M: issue(123), owner(@alice) fix authentication';
     const result = CairnParser.parseWithResult(content);
     
