@@ -1,6 +1,6 @@
 # Grepa Implementation Audit: archive/implement-grepa-app Branch
-<!-- :A: tldr Comprehensive audit of the grepa implementation from the archive branch -->
-<!-- :A: archive Documentation of implementation before incremental rebuild -->
+<!-- :M: tldr Comprehensive audit of the grepa implementation from the archive branch -->
+<!-- :M: archive Documentation of implementation before incremental rebuild -->
 
 > **Date**: May 30, 2025  
 > **Branch**: archive/implement-grepa-app  
@@ -15,7 +15,7 @@ This document provides a comprehensive audit of the Grepa implementation as it e
 1. **Working MVP Implementation**: The branch contains a functional grepa CLI with core scanning, parsing, and reporting capabilities
 2. **Monorepo Architecture**: Well-structured pnpm workspace with clear separation of concerns
 3. **Incomplete Packages**: Several packages exist as placeholders without implementation (formatters, mcp, types, magic-anchors)
-4. **Different Anchor Pattern**: Uses `:ga:` instead of the current `:A:` pattern
+4. **Different Anchor Pattern**: Uses `:ga:` instead of the current `:M:` pattern
 5. **Solid Foundation**: The architecture is extensible and follows good TypeScript practices
 
 ## Repository Structure
@@ -74,7 +74,7 @@ Zod-based configuration with sensible defaults:
 
 ```typescript
 {
-  anchorPattern: ":ga:", // Note: different from current :A:
+  anchorPattern: ":ga:", // Note: different from current :M:
   ignorePatterns: {
     common: ["node_modules", ".git", "dist", "build"],
     documentation: ["*.md", "*.txt", "*.mdx"],
@@ -144,7 +144,7 @@ interface InventoryReport {
 
 ### 1. Anchor Pattern
 - **Archive**: Uses `:ga:` pattern
-- **Current**: Uses `:A:` pattern (Magic Anchors)
+- **Current**: Uses `:M:` pattern (Magic Anchors)
 
 ### 2. Project Focus
 - **Archive**: Implementation-first with working CLI tools
@@ -181,7 +181,7 @@ The following components could be valuable to reintroduce:
 
 ## Recommendations
 
-1. **Pattern Migration**: Update `:ga:` to `:A:` if reintroducing code
+1. **Pattern Migration**: Update `:ga:` to `:M:` if reintroducing code
 2. **Selective Adoption**: Cherry-pick working components rather than wholesale adoption
 3. **Documentation First**: Maintain current approach of documentation before implementation
 4. **Test Coverage**: Ensure comprehensive tests before reintroduction

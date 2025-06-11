@@ -6,7 +6,7 @@ Successfully updated all three documentation files (README.md, CLAUDE.md, llms.t
 
 ### Terminology Updates:
 1. **"Grepa" → "Cairn"** (product name)
-2. **":A:" → ":M:"** (identifier change)
+2. **":M:" → ":M:"** (identifier change)
 3. **"Magic Anchors" → "Cairns"** (notation name)
 4. **"marker" → "context"** (what we call the tags like todo, fix, etc.)
 5. **"sigil" → "identifier"** (the `:M:` pattern)

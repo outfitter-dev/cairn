@@ -1,4 +1,4 @@
-<!-- :A: tldr PR #26 feedback organized by priority with dependencies -->
+<!-- :M: tldr PR #26 feedback organized by priority with dependencies -->
 
 # PR #26 Monorepo Conversion - Feedback Checklist
 
@@ -14,7 +14,7 @@ This document organizes all feedback from the PR review, sorted by priority with
 - [ ] Fix test coverage gaps
 
 ### High Priority (Dependencies & Breaking Changes)
-- [ ] Update all `:ga:` references to `:A:` in documentation
+- [ ] Update all `:ga:` references to `:M:` in documentation
 - [ ] Fix import paths that may break with monorepo structure
 - [ ] Add missing dependencies in package.json files
 - [ ] Fix ESLint rule issues in custom plugin
@@ -90,9 +90,9 @@ This document organizes all feedback from the PR review, sorted by priority with
 ### 4. Documentation Updates
 
 **Files: All docs/**
-- **Issue**: Inconsistent use of `:ga:` vs `:A:`
+- **Issue**: Inconsistent use of `:ga:` vs `:M:`
 - **Priority**: High
-- **Fix**: Global find/replace all `:ga:` with `:A:`
+- **Fix**: Global find/replace all `:ga:` with `:M:`
 - **Dependencies**: Must be done before merging to avoid confusion
 
 **Grammar/Typo Issues**:
@@ -170,7 +170,7 @@ This document organizes all feedback from the PR review, sorted by priority with
    - TypeScript config
 
 2. **Update Documentation**
-   - Global `:ga:` → `:A:` replacement
+   - Global `:ga:` → `:M:` replacement
    - Fix grammar and typos
 
 3. **Fix Dependencies**

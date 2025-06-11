@@ -1,6 +1,6 @@
 # Claude Feedback – grepa-updates.md
 
-<!-- :A: tldr unfiltered feedback on grepa syntax updates and architectural decisions -->
+<!-- :M: tldr unfiltered feedback on grepa syntax updates and architectural decisions -->
 
 This document provides Claude's feedback on the grepa-updates.md implementation plan, building on the structured review in grepa-updates-feedback.md.
 
@@ -8,8 +8,8 @@ This document provides Claude's feedback on the grepa-updates.md implementation 
 
 ## 1. High-level Strategic Observations
 
-### `:A:` Anchor Evolution is Excellent
-The ergonomic argument for `:A:` over `:ga:` is compelling. The shift+colon → shift+A flow genuinely feels faster, and the visual clarity improvement is real. This kind of simplification often determines adoption success.
+### `:M:` Anchor Evolution is Excellent
+The ergonomic argument for `:M:` over `:ga:` is compelling. The shift+colon → shift+A flow genuinely feels faster, and the visual clarity improvement is real. This kind of simplification often determines adoption success.
 
 ### Working Document vs. Specification Tension
 Understood that this is a scratchpad document. However, the scope breadth (from basic syntax to comprehensive architecture) creates cognitive load even in working documents. Consider section headers that signal "speculative" vs "decided" content.
@@ -40,7 +40,7 @@ The ripgrep search limitations for multi-line anchors break the core value propo
 
 **Potential solutions:**
 
-- Require single-line summary even in multi-line anchors: `<!-- :A: todo,priority:critical fix auth bug -->`
+- Require single-line summary even in multi-line anchors: `<!-- :M: todo,priority:critical fix auth bug -->`
 - Add closing sentinels as suggested in feedback: `:V:`
 - Consider multi-line as a documentation-only feature, not for active searching
 
@@ -60,9 +60,9 @@ The universal relational system is sophisticated but may be solving problems mos
 ### Progressive Disclosure Missing
 The document jumps from basic anchors to complex relational systems without intermediate steps. Suggest structuring as capability levels:
 
-1. **Level 0**: Basic anchors (`:A: todo`, `:A: sec`, `:A: ctx`)
-2. **Level 1**: Simple parameters (`:A: todo,priority:high`)
-3. **Level 2**: Relationships (`:A: depends(on:auth)`)
+1. **Level 0**: Basic anchors (`:M: todo`, `:M: sec`, `:M: ctx`)
+2. **Level 1**: Simple parameters (`:M: todo,priority:high`)
+3. **Level 2**: Relationships (`:M: depends(on:auth)`)
 4. **Level 3**: Advanced syntax (multi-line, templates, conditionals)
 
 ### Configuration System Complexity (Lines 100-148)
@@ -84,22 +84,22 @@ No guidance exists on appropriate anchor density. Too many anchors create noise,
 **Suggested guidelines:**
 
 - Rough target: 1 anchor per 50-100 lines of code
-- Functions >20 lines should have `:A: tldr`
-- Complex business logic should have `:A: ctx`
-- All TODOs should be `:A: todo` for searchability
+- Functions >20 lines should have `:M: tldr`
+- Complex business logic should have `:M: ctx`
+- All TODOs should be `:M: todo` for searchability
 
 ### Anti-patterns Documentation
 Missing guidance on what NOT to do:
 
 ```javascript
 // Anti-pattern: Micro-anchoring every line
-// :A: variable declare user variable
+// :M: variable declare user variable
 let user = getCurrentUser();
-// :A: check validate user exists  
+// :M: check validate user exists  
 if (!user) return;
 
 // Better: Anchor the logical unit
-// :A: auth,ctx assumes user is authenticated before this point
+// :M: auth,ctx assumes user is authenticated before this point
 function processUserRequest() {
     let user = getCurrentUser();
     if (!user) return;
@@ -118,7 +118,7 @@ No strategy for managing anchor evolution over time:
 ### Ecosystem Integration Strategy
 Rather than building comprehensive tooling, focus on making anchors integrate well with existing tools:
 
-- GitHub Issues: `:A: issue(123)` should link automatically
+- GitHub Issues: `:M: issue(123)` should link automatically
 - Slack/Teams: Anchor search bots for team channels
 - CI/CD: Simple anchor validation hooks
 - IDE plugins: Lightweight search/navigation only
@@ -129,13 +129,13 @@ The validation section (lines 624-648) lacks concrete error examples:
 ```bash
 # Good: Clear error messages
 grepa validate: Error in auth.js:42
-  ":A: depends(on:missing-service)" 
+  ":M: depends(on:missing-service)" 
   Service 'missing-service' not found in project
 
 # Good: Helpful suggestions  
 grepa validate: Warning in user.js:15
-  ":A: todo,priority.high" uses deprecated syntax
-  Suggestion: Change to ":A: todo,priority:high"
+  ":M: todo,priority.high" uses deprecated syntax
+  Suggestion: Change to ":M: todo,priority:high"
 ```
 
 ---
@@ -156,7 +156,7 @@ grepa validate: Warning in user.js:15
 
 ### Search Pattern Issues
 
-- Line 251: `rg ":A: todo"` won't find multi-line anchors as noted
+- Line 251: `rg ":M: todo"` won't find multi-line anchors as noted
 - Line 257: Complex regex patterns assume high ripgrep expertise
 - Need simpler fallback search strategies for common cases
 

@@ -1,6 +1,6 @@
 # Branch Protection Rules
 
-<!-- :A: tldr Documentation for required GitHub branch protection settings -->
+<!-- :M: tldr Documentation for required GitHub branch protection settings -->
 
 This file documents the recommended branch protection rules for the `main` branch.
 

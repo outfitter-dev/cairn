@@ -1,6 +1,6 @@
-# Historical Priors for `:A: `-Style Anchors
-<!-- :A: tldr Historical precedents and inspiration for grep-anchor patterns -->
-<!-- :A: docs Analysis of prior art in code annotation systems -->
+# Historical Priors for `:M: `-Style Anchors
+<!-- :M: tldr Historical precedents and inspiration for grep-anchor patterns -->
+<!-- :M: docs Analysis of prior art in code annotation systems -->
 
 *Version 0.1 – living document*
 
@@ -8,7 +8,7 @@
 
 ## 1. Why capture priors?
 
-Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:A:` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents so contributors can understand **why `:A:` feels familiar** even if the exact identifier is new.
+Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:M:` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents so contributors can understand **why `:M:` feels familiar** even if the exact identifier is new.
 
 ---
 
@@ -39,17 +39,17 @@ Open-source projects thrive on conventions that *already worked elsewhere*. Befo
 4. **Minimal surface area matters**
    The most successful anchors fit anywhere a comment does—source, config, even SQL.
 
-These insights justify a **single, three-character identifier** (`:A:`) and a tiny grammar: fresh enough to stand out, but orthodox enough that every Unix tool and language server can consume it.
+These insights justify a **single, three-character identifier** (`:M:`) and a tiny grammar: fresh enough to stand out, but orthodox enough that every Unix tool and language server can consume it.
 
 ---
 
-## 4. What `:A: ` adds to the conversation
+## 4. What `:M: ` adds to the conversation
 
 * Suggests unifying many patterns under a single token
 * Supports structured parameters for richer metadata
 * Considers AI agents alongside humans as consumers of code comments
 
-The `:A: ` pattern builds on decades of existing practice, packaging these ideas into a simple, portable approach.
+The `:M: ` pattern builds on decades of existing practice, packaging these ideas into a simple, portable approach.
 
 ---
 

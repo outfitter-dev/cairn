@@ -1,15 +1,15 @@
-<!-- :A: tldr Comprehensive documentation update session implementing Magic Anchors v0.1.1 specification -->
+<!-- :M: tldr Comprehensive documentation update session implementing Magic Anchors v0.1.1 specification -->
 
 # Documentation Update Session - 2025-05-28
 
 ## Session Overview
 
-This session implemented the comprehensive documentation updates for Magic Anchors v0.1.1, migrating all documentation from the `:ga:` syntax to the canonical `:A:` syntax and implementing key architectural decisions from `grepa-updates.md`.
+This session implemented the comprehensive documentation updates for Magic Anchors v0.1.1, migrating all documentation from the `:ga:` syntax to the canonical `:M:` syntax and implementing key architectural decisions from `grepa-updates.md`.
 
 ## Key Architectural Decisions Implemented
 
-1. **Canonical Anchor**: `:A:` is now THE single canonical prefix (no custom anchors)
-2. **Mandatory Space**: Single ASCII space required after `:A:`
+1. **Canonical Anchor**: `:M:` is now THE single canonical prefix (no custom anchors)
+2. **Mandatory Space**: Single ASCII space required after `:M:`
 3. **Delimiter Semantics**:
    - Colon (`:`) for classifications
    - Parentheses `()` for parameters
@@ -22,9 +22,9 @@ This session implemented the comprehensive documentation updates for Magic Ancho
 ## Files Updated
 
 ### 1. README.md
-- Migrated all `:ga:` references to `:A:` with mandatory space
+- Migrated all `:ga:` references to `:M:` with mandatory space
 - Updated terminology: Magic Anchors (notation) vs Grepa (tooling)
-- **Removed custom anchors section** - replaced with "Why `:A:`?" explaining single canonical prefix
+- **Removed custom anchors section** - replaced with "Why `:M:`?" explaining single canonical prefix
 - Updated all code examples to new syntax
 - Revised project management patterns to use parameters
 - Removed link to custom anchors guide
@@ -34,7 +34,7 @@ This session implemented the comprehensive documentation updates for Magic Ancho
 - Added formal grammar with mandatory space requirement:
   ```ebnf
   anchor ::= comment-leader identifier space marker-list prose?
-  identifier  ::= ":A:" | ":" identifier ":"
+  identifier  ::= ":M:" | ":" identifier ":"
   space  ::= " "  # exactly one ASCII space
   ```
 - Added 6 marker groups table (todo, info, notice, trigger, domain, status)
@@ -47,7 +47,7 @@ This session implemented the comprehensive documentation updates for Magic Ancho
 - Updated title to "Magic Anchors Notation"
 - Clarified Magic Anchors vs Grepa distinction
 - Updated core format to show mandatory space
-- Revised all examples to `:A:` syntax
+- Revised all examples to `:M:` syntax
 
 ### 4. docs/magic-anchors/format.md
 - Renamed to "Magic Anchors Format Specification"
@@ -64,7 +64,7 @@ This session implemented the comprehensive documentation updates for Magic Ancho
 - Updated all examples to new syntax
 
 ### 6. docs/magic-anchors/examples.md
-- Updated all examples from `:ga:` to `:A:`
+- Updated all examples from `:ga:` to `:M:`
 - Replaced JSON examples with parameter syntax
 - Updated mention patterns to use colon delimiter
 - Revised complex examples to show multi-line approach
@@ -78,13 +78,13 @@ This session implemented the comprehensive documentation updates for Magic Ancho
   - Mandatory space requirement
 
 ### 8. CLAUDE.md
-- Complete migration from `:ga:` to `:A:` syntax
+- Complete migration from `:ga:` to `:M:` syntax
 - Updated marker examples and philosophy
 - Added delimiter rules section
 - Updated search examples
 
 ### 9. llms.txt
-- Updated all examples to `:A:` syntax
+- Updated all examples to `:M:` syntax
 - Revised to reflect new delimiter semantics
 - Updated grammar section
 
@@ -99,7 +99,7 @@ This session implemented the comprehensive documentation updates for Magic Ancho
 - Flexible delimiter usage
 
 ### After
-- `:A:` canonical prefix with mandatory single space
+- `:M:` canonical prefix with mandatory single space
 - No custom anchors - single standard only
 - No JSON/YAML within anchors
 - No regex patterns
@@ -111,7 +111,7 @@ This session implemented the comprehensive documentation updates for Magic Ancho
 
 ## Commits Created
 
-1. **First commit**: "docs: update documentation to Magic Anchors terminology and :A: syntax"
+1. **First commit**: "docs: update documentation to Magic Anchors terminology and :M: syntax"
    - Initial migration of documentation structure
    - Created version tracking files
 

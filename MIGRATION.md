@@ -38,8 +38,8 @@ cairn search "todo"
 ### **3. Core Pattern**
 ```javascript
 // Old pattern
-// :A: todo implement validation
-// :A: security check permissions
+// :M: todo implement validation
+// :M: security check permissions
 
 // New pattern
 // :M: todo implement validation  
@@ -155,12 +155,12 @@ cairn parse --format json --contexts-only
 Use find-and-replace tools to update your codebase:
 
 ```bash
-# Update all :A: patterns to :M:
+# Update all :M: patterns to :M:
 find . -type f \( -name "*.ts" -o -name "*.js" -o -name "*.md" \) \
-  -exec sed -i 's/:A:/:M:/g' {} +
+  -exec sed -i 's/:M:/:M:/g' {} +
 
 # Update search commands in documentation  
-find . -name "*.md" -exec sed -i 's/rg ":A:"/rg ":M:"/g' {} +
+find . -name "*.md" -exec sed -i 's/rg ":M:"/rg ":M:"/g' {} +
 ```
 
 ### **Step 7: Update Configuration**
@@ -169,7 +169,7 @@ find . -name "*.md" -exec sed -i 's/rg ":A:"/rg ":M:"/g' {} +
 ```json
 {
   // Before
-  "todo-tree.regex.regex": ":A: (\\w+)",
+  "todo-tree.regex.regex": ":M: (\\w+)",
   
   // After
   "todo-tree.regex.regex": ":M: (\\w+)"
@@ -180,7 +180,7 @@ find . -name "*.md" -exec sed -i 's/rg ":A:"/rg ":M:"/g' {} +
 ```bash
 #!/bin/sh
 # Before
-if git diff --cached | grep -q ":A: temp"; then
+if git diff --cached | grep -q ":M: temp"; then
 
 # After  
 if git diff --cached | grep -q ":M: temp"; then
@@ -213,10 +213,10 @@ find . -type f \( -name "*.ts" -o -name "*.js" -o -name "*.tsx" -o -name "*.jsx"
   -exec sed -i 's/GrepaSearch/CairnSearch/g' {} +
 
 # Update code patterns
-echo "🔄 Updating :A: to :M: patterns..."
+echo "🔄 Updating :M: to :M: patterns..."
 find . -type f \( -name "*.ts" -o -name "*.js" -o -name "*.md" -o -name "*.txt" \) \
   -not -path "./node_modules/*" \
-  -exec sed -i 's/:A:/:M:/g' {} +
+  -exec sed -i 's/:M:/:M:/g' {} +
 
 # Update property names
 echo "🏷️ Updating API property names..."
@@ -256,9 +256,9 @@ chmod +x migrate-to-cairn.sh
 | grepa | cairn | CLI command |
 | @grepa/* | @cairn/* | Package namespace |
 | Magic Anchors | Cairns | Core concept |
-| :A: | :M: | Pattern identifier |
+| :M: | :M: | Pattern identifier |
 | marker | context | Individual tags (todo, security, etc.) |
-| sigil | identifier | Technical term for :A:/:M: |
+| sigil | identifier | Technical term for :M:/:M: |
 | GrepaSearch | CairnSearch | Main search class |
 
 ## 🧪 **Testing Your Migration**
@@ -280,7 +280,7 @@ node -e "
 "
 
 # Search for any remaining old patterns
-grep -r ":A:" . --exclude-dir=node_modules || echo "✅ No :A: patterns found"
+grep -r ":M:" . --exclude-dir=node_modules || echo "✅ No :M: patterns found"
 grep -r "@grepa" . --exclude-dir=node_modules || echo "✅ No @grepa references found"
 ```
 

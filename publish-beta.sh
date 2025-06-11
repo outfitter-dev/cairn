@@ -1,5 +1,5 @@
 #!/bin/bash
-# :A: tldr Script to publish beta versions for testing
+# :M: tldr Script to publish beta versions for testing
 
 set -euo pipefail
 

@@ -20,11 +20,11 @@ All notable changes to the Cairn language specification will be documented in th
 
 ### Changed
 
-- Replaced all `:ga:` identifiers with the canonical `:A:` anchor
-- Complete documentation update to new `:A:` syntax with mandatory single space
+- Replaced all `:ga:` identifiers with the canonical `:M:` anchor
+- Complete documentation update to new `:M:` syntax with mandatory single space
 - Revised SPEC.md with comprehensive delimiter semantics and examples
 - Updated all documentation examples to use new delimiter patterns
-- Removed custom anchor recommendations - `:A:` is now the single canonical prefix
+- Removed custom anchor recommendations - `:M:` is now the single canonical prefix
 - Reorganized payloads.md to focus on delimiter semantics rather than payload types
 - Removed legacy `rel()` wrapper in relational examples
 

@@ -1,6 +1,6 @@
 # TypeScript Conventions Refactor Session
 
-<!-- :A: tldr Session log for implementing TypeScript conventions from issue #28 -->
+<!-- :M: tldr Session log for implementing TypeScript conventions from issue #28 -->
 
 **Date**: 2025-05-30
 **Branch**: `feat/cli-improvements` -> `feat/dependency-injection`

@@ -54,8 +54,8 @@ This document captures a complete red-pen review of `docs/project/ideas/grepa-up
   +The first space following the last structured marker delimits the prose boundary.
 
 @@
-  -// :A:regex('user-\d+')
-  +// :A:regex('user-\d+')   // one backslash is enough in single quotes
+  -// :M:regex('user-\d+')
+  +// :M:regex('user-\d+')   // one backslash is enough in single quotes
 ```
 
 *(extra leading spaces prevent the diff snippet from confusing the patch parser)*

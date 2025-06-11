@@ -1,6 +1,6 @@
 # Syntax Completion Session - May 28, 2025
 
-<!-- :A: tldr comprehensive syntax updates session completing major architectural decisions -->
+<!-- :M: tldr comprehensive syntax updates session completing major architectural decisions -->
 
 ## Session Overview
 
@@ -13,7 +13,7 @@ This session completed the comprehensive syntax update effort for grepa, finaliz
 ## Major Accomplishments
 
 ### 1. Multi-line Anchor Problem ✅ SOLVED
-- **Issue**: Multi-line anchors broke grep-ability (`rg ":A: todo"` couldn't find continuation lines)
+- **Issue**: Multi-line anchors broke grep-ability (`rg ":M: todo"` couldn't find continuation lines)
 - **Solution**: Simplified to single-line anchors under 120 chars + multiple anchor lines for context
 - **Rationale**: Preserves core grep-ability value proposition
 - **Future**: CLI tooling may add multi-line search helpers later
@@ -21,12 +21,12 @@ This session completed the comprehensive syntax update effort for grepa, finaliz
 **Decision Example:**
 ```javascript
 // Single-line anchors (preferred)
-// :A: todo(assign:@alice,priority:high) implement OAuth integration
+// :M: todo(assign:@alice,priority:high) implement OAuth integration
 
 // Multiple related anchor lines for context
-// :A: todo(assign:@alice,priority:high) implement OAuth integration  
-// :A: context OAuth flow requires PKCE for security compliance
-// :A: depends(service:session-api) user sessions must exist first
+// :M: todo(assign:@alice,priority:high) implement OAuth integration  
+// :M: context OAuth flow requires PKCE for security compliance
+// :M: depends(service:session-api) user sessions must exist first
 ```
 
 ### 2. Anchor Density Guidelines ✅ COMPLETED
@@ -43,7 +43,7 @@ This session completed the comprehensive syntax update effort for grepa, finaliz
 - **Hierarchical paths**: `#auth/oauth/google` (like Obsidian)
 - **Versioning with dots**: `#api-v2.1`, `#jquery.3.6.0`
 - **Purpose**: Cross-cutting conceptual relationships spanning multiple anchors
-- **Search**: `rg "#mobile-app"`, `rg ":A:.*todo.*#mobile"`
+- **Search**: `rg "#mobile-app"`, `rg ":M:.*todo.*#mobile"`
 
 ### 4. Marker Groups Enhanced ✅ FINALIZED
 Added missing markers to core groups:
@@ -58,7 +58,7 @@ Added missing markers to core groups:
 ## Architectural Decisions Finalized
 
 ### Core Syntax Framework
-- **`:A:` anchor prefix** - canonical, no custom identifiers
+- **`:M:` anchor prefix** - canonical, no custom identifiers
 - **Delimiter semantics**: `:` for classification, `()` for attachment, `.` for literals only
 - **6 marker groups**: `todo`, `info`, `notice`, `trigger`, `domain`, `status` (~40 markers)
 - **6 parameter groups**: `mention`, `relation`, `workflow`, `priority`, `lifecycle`, `scope`
@@ -88,7 +88,7 @@ Added missing markers to core groups:
 1. **Create anti-pattern examples section** - Show what NOT to do
 2. **Update future doc**: Rename `template-engine.md` → `variables-and-templates.md`
 3. **Add variable system and alias system** to variables-and-templates.md
-4. **Add proper grepaconfig.yaml example** to main document (updated for `:A:` anchors)
+4. **Add proper grepaconfig.yaml example** to main document (updated for `:M:` anchors)
 
 ### Pending (Low Priority)
 1. Create UUID/ID system future document
@@ -113,7 +113,7 @@ Added missing markers to core groups:
 
 ### Phase 1: Documentation Completion (Near-term)
 - Anti-pattern examples to prevent common mistakes
-- Updated `grepaconfig.yaml` with `:A:` anchors and current syntax
+- Updated `grepaconfig.yaml` with `:M:` anchors and current syntax
 - Variables and templates consolidation
 - Validation error examples
 

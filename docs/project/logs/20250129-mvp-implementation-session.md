@@ -1,4 +1,4 @@
-<!-- :A: tldr Session log for Grepa MVP implementation and documentation -->
+<!-- :M: tldr Session log for Grepa MVP implementation and documentation -->
 
 # Grepa MVP Implementation Session
 

@@ -1,4 +1,4 @@
-// :A: tldr Commitlint configuration for conventional commits
+// :M: tldr Commitlint configuration for conventional commits
 export default {
   extends: ['@commitlint/config-conventional'],
   rules: {

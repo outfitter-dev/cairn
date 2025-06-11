@@ -1,4 +1,4 @@
-<!-- :A: tldr High-level checklist for migrating existing documentation to the new `:A:` notation and delimiter rules.  -->
+<!-- :M: tldr High-level checklist for migrating existing documentation to the new `:M:` notation and delimiter rules.  -->
 
 # Documentation Migration Plan
 
@@ -9,22 +9,22 @@ This file lists every **documentation change** required to bring the public docs
 • Primary locations to update (README, guides, notation spec, etc.)
 • Deep-link to the relevant lines in `grepa-updates.md` for quick reference
 
-> Tip Every heading in the source update document now has an inline marker `<!-- :A: todo #doc-migration -->`.  Search `rg "#doc-migration"` to jump between them.
+> Tip Every heading in the source update document now has an inline marker `<!-- :M: todo #doc-migration -->`.  Search `rg "#doc-migration"` to jump between them.
 
 ---
 
-## 1  Anchor prefix change → `:A:`
+## 1  Anchor prefix change → `:M:`
 
 **What changes**  
-Switch every example, search command, and prose reference from the legacy `:ga:` identifier to the new canonical `:A:` anchor prefix.
+Switch every example, search command, and prose reference from the legacy `:ga:` identifier to the new canonical `:M:` anchor prefix.
 
 **Lines**  
-`docs/project/ideas/grepa-updates.md#L1-L120` (intro & “The `:A:` Anchor”).
+`docs/project/ideas/grepa-updates.md#L1-L120` (intro & “The `:M:` Anchor”).
 
 **Action items**
 1. README quick-start examples
 2. All snippets in `docs/guides/quick-start.md`, `docs/examples.md`
-3. Regex hints – change `rg ":ga:"` → `rg ":A:"`
+3. Regex hints – change `rg ":ga:"` → `rg ":M:"`
 4. Update screenshots / asciinema casts if they show the old identifier
 
 ## 2  Eliminate dot notation (except literals)
@@ -91,7 +91,7 @@ Tasks
 
 Actions
 1. Create a new table in `docs/conventions/common-patterns.md` listing the six groups with 1-sentence purpose.  
-2. Update search examples: `rg ":A:.*notice"` etc.  
+2. Update search examples: `rg ":M:.*notice"` etc.  
 3. Add group tags to the glossary in `docs/magic-anchors/README.md`.
 
 ## 8  Anchor density guidelines

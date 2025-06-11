@@ -1,4 +1,4 @@
-<!-- :A: tldr: task list for grepa project -->
+<!-- :M: tldr: task list for grepa project -->
 # Tasks
 
 ## In Progress

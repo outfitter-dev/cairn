@@ -1,4 +1,4 @@
-<!-- :A: tldr Session log for implementing full TypeScript convention compliance -->
+<!-- :M: tldr Session log for implementing full TypeScript convention compliance -->
 
 # TypeScript Conventions Compliance Session
 
