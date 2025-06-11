@@ -1,4 +1,4 @@
-<!-- :M: tldr Contributing guidelines for the Cairn project -->
+&lt;!-- :M: tldr Contributing guidelines for the Cairn project --&gt;
 
 # Contributing to Cairn
 
@@ -38,17 +38,17 @@ Thank you for your interest in contributing to Cairn! This guide will help you g
 
 ### Available Scripts
 
-- `pnpm build` - Build the TypeScript code
-- `pnpm dev` - Watch mode for development
-- `pnpm test` - Run tests
-- `pnpm test:watch` - Run tests in watch mode
-- `pnpm typecheck` - Type check without building
-- `pnpm lint` - Run ESLint
-- `pnpm changeset` - Create a changeset for your changes
+- pnpm build - Build the TypeScript code
+- pnpm dev - Watch mode for development
+- pnpm test - Run tests
+- pnpm test:watch - Run tests in watch mode
+- pnpm typecheck - Type check without building
+- pnpm lint - Run ESLint
+- pnpm changeset - Create a changeset for your changes
 
 ### Git Workflow
 
-1. Create a feature branch from `dev`:
+1. Create a feature branch from dev:
    ```bash
    git checkout dev
    git pull

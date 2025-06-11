@@ -88,7 +88,7 @@ function getStatusCode(code: ErrorCode): number {
     'cli.missingArgument': 400,
     'cli.invalidOption': 400,
 
-    // Security errors  
+    // Security errors
     'security.rateLimitExceeded': 429,
     'security.maliciousContent': 400,
     'security.contentTooLarge': 413,

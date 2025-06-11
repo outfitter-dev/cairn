@@ -1,4 +1,6 @@
-# TypeScript Conventions - Cairn Addendum
+<!-- TODO: rename file to typescript-cairn-addendum.md once all doc links are updated -->
+
+# TypeScript Conventions – Cairn Addendum
 
 <!-- :M: tldr Cairn-specific TypeScript conventions and adaptations -->
 
@@ -8,84 +10,87 @@ This document extends the base TypeScript conventions with Cairn-specific patter
 
 ```typescript
 export type CairnErrorCode =
-  // File system errors
-  | 'file.notFound'        // File or directory not found
-  | 'file.readError'       // Cannot read file
-  | 'file.writeError'      // Cannot write file
-  | 'file.accessDenied'    // Permission denied
-  
+  // File-system errors
+  | 'file.notFound'          // File or directory not found
+  | 'file.readError'         // Cannot read file
+  | 'file.writeError'        // Cannot write file
+  | 'file.accessDenied'      // Permission denied
+
   // Parsing errors
-  | 'parse.invalidAnchor'  // Invalid Magic Anchor syntax
-  | 'parse.missingSpace'   // Missing space after :M:
-  | 'parse.emptyMarkers'   // No markers provided
-  
+  | 'parse.invalidCairn'     // Invalid Cairn syntax
+  | 'parse.missingSpace'     // Missing space after :M:
+  | 'parse.emptyContexts'    // No contexts provided
+
   // Search errors
-  | 'search.noResults'     // No anchors found
-  | 'search.tooManyResults'// Result limit exceeded
-  | 'search.invalidPattern'// Invalid search pattern
-  
+  | 'search.noResults'       // No cairns found
+  | 'search.tooManyResults'  // Result limit exceeded
+  | 'search.invalidPattern'  // Invalid search pattern
+
   // CLI errors
-  | 'cli.missingArgument'  // Required argument missing
-  | 'cli.invalidCommand'   // Unknown command
-  | 'cli.invalidOption'    // Invalid option value
-  
+  | 'cli.missingArgument'    // Required argument missing
+  | 'cli.invalidCommand'     // Unknown command
+  | 'cli.invalidOption'      // Invalid option value
+
   // Generic errors (from base)
-  | 'validation'           // Schema validation failure
-  | 'unexpected';          // Unhandled error
+  | 'validation'             // Schema validation failure
+  | 'unexpected';            // Unhandled error
 ```
 
-## Magic Anchor Type Guards
+## Cairn Type Guards
 
 ```typescript
-// Check if a line contains a Magic Anchor
-export function hasMagicAnchor(line: string): boolean {
+// Check if a line contains a Cairn
+export function hasCairn(line: string): boolean {
   return line.includes(':M: ');
 }
 
-// Type guard for valid marker
-export function isValidMarker(marker: string): boolean {
-  return /^[a-zA-Z0-9_@-]+(\([^)]*\))?$/.test(marker);
+// Type guard for valid context
+export function isValidContext(context: string): boolean {
+  return /^[a-zA-Z0-9_@-]+(\([^)]*\))?$/.test(context);
 }
 
-// Type guard for parameterized marker
-export function isParameterizedMarker(marker: string): marker is `${string}(${string})` {
-  return marker.includes('(') && marker.includes(')');
+// Type guard for parameterised context
+export function isParameterizedContext(
+  context: string
+): context is `${string}(${string})` {
+  return context.includes('(') && context.includes(')');
 }
 ```
 
-## Grepa-Specific Patterns
+## Cairn-Specific Patterns
 
-### 1. File System Operations
+### 1. File-System Operations
 
-Always use Result pattern for file operations:
+Always use the Result pattern for file operations:
 
 ```typescript
 async function readFileWithResult(path: string): Promise<Result<string>> {
-  return tryAsync(
-    () => fs.promises.readFile(path, 'utf-8'),
-    'file.readError'
-  );
+  return tryAsync(() => fs.promises.readFile(path, 'utf-8'), 'file.readError');
 }
 ```
 
-### 2. Magic Anchor Validation
+### 2. Cairn Validation
 
-Use composed schemas for anchor validation:
+Use composed schemas for cairn validation:
 
 ```typescript
-const markerSchema = z.string()
-  .min(1, 'Marker cannot be empty')
-  .max(50, 'Marker too long')
-  .regex(/^[a-zA-Z0-9_@-]+(\([^)]*\))?$/, 'Invalid marker format');
+const contextSchema = z
+  .string()
+  .min(1, 'Context cannot be empty')
+  .max(50, 'Context too long')
+  .regex(/^[a-zA-Z0-9_@-]+(\([^)]*\))?$/, 'Invalid context format');
 
-const anchorPayloadSchema = z.string()
-  .refine(payload => payload.trim().length > 0, 
-    'Payload must contain non-whitespace characters');
+const cairnPayloadSchema = z
+  .string()
+  .refine(
+    (payload) => payload.trim().length > 0,
+    'Payload must contain non-whitespace characters'
+  );
 ```
 
 ### 3. Search Pattern Composition
 
-Use utility types for search options:
+Utility types for search options:
 
 ```typescript
 // Base search options
@@ -94,10 +99,10 @@ interface BaseSearchOptions {
   respectGitignore?: boolean;
 }
 
-// Marker-specific search
-interface MarkerSearchOptions extends BaseSearchOptions {
-  markers: string[];
-  context?: number;
+// Context-specific search
+interface ContextSearchOptions extends BaseSearchOptions {
+  contexts: string[];
+  contextLines?: number;
 }
 
 // File-specific search
@@ -107,7 +112,7 @@ interface FileSearchOptions extends BaseSearchOptions {
 }
 
 // Combined search options
-type SearchOptions = MarkerSearchOptions | FileSearchOptions;
+type SearchOptions = ContextSearchOptions | FileSearchOptions;
 ```
 
 ### 4. CLI Command Pattern
@@ -126,33 +131,33 @@ class SearchCommand implements CLICommand {
     if (!validationResult.success) {
       return failure(fromZod(validationResult.error));
     }
-    
-    // Execute search...
+
+    // Execute search…
   }
 }
 ```
 
 ## Naming Conventions
 
-- **Files**: Use kebab-case for files (`magic-anchor-parser.ts`)
-- **Classes**: Use PascalCase (`MagicAnchorParser`)
-- **Interfaces**: Prefix with 'I' only for service interfaces (`ISearchService`)
-- **Type aliases**: Use PascalCase (`SearchResult`)
-- **Constants**: Use UPPER_SNAKE_CASE for true constants (`DEFAULT_EXTENSIONS`)
-- **Magic Anchors**: Always refer to as "Magic Anchors" not "anchors" in types/docs
+- **Files**: kebab-case (`cairn-parser.ts`)
+- **Classes**: PascalCase (`CairnParser`)
+- **Interfaces**: prefix with ‘I’ only for service contracts (`ISearchService`)
+- **Type aliases**: PascalCase (`SearchResult`)
+- **Constants**: UPPER_SNAKE_CASE (`DEFAULT_EXTENSIONS`)
+- **Cairns**: always refer to them as “Cairns”, not “anchors” or “markers”, in code and docs.
 
 ## Testing Patterns
 
 ```typescript
 // Use Result pattern in tests
-describe('MagicAnchorParser', () => {
-  it('should parse valid anchor', () => {
+describe('CairnParser', () => {
+  it('should parse valid cairn', () => {
     const result = CairnParser.parseWithResult('// :M: todo implement');
-    
+
     expect(result.ok).toBe(true);
     if (result.ok) {
-      expect(result.data.anchors).toHaveLength(1);
-      expect(result.data.anchors[0].markers).toContain('todo');
+      expect(result.data.cairns).toHaveLength(1);
+      expect(result.data.cairns[0].contexts).toContain('todo');
     }
   });
 });
@@ -160,16 +165,16 @@ describe('MagicAnchorParser', () => {
 
 ## Integration with Base Conventions
 
-1. **Always use Result<T>** for operations that can fail
-2. **Map file system errors** to appropriate GrepaErrorCode
-3. **Use type guards** before type assertions
-4. **Compose schemas** for validation
-5. **Export types** from @grepa/types package
+1. **Always use Result<T>** for operations that can fail  
+2. **Map file-system errors** to the appropriate CairnErrorCode  
+3. **Use type guards** before type assertions  
+4. **Compose schemas** for validation  
+5. **Export types** from `@cairn/types` package  
 
 ## Future Considerations
 
-As Grepa evolves, consider:
-- Stream-based file processing for large codebases
-- Async iterators for search results
-- Worker threads for parallel parsing
+As Cairn evolves, consider:  
+- Stream-based file processing for large codebases  
+- Async iterators for search results  
+- Worker threads for parallel parsing  
 - WebAssembly for performance-critical parsing

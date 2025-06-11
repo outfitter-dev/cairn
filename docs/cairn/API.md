@@ -152,8 +152,6 @@ interface SearchResult {
 
 ### Result<T, E>
 
-Result pattern for error handling.
-
 ```typescript
 type Result<T, E = AppError> =
   | { ok: true; data: T }
@@ -205,11 +203,11 @@ await cli.run(); // Parses process.argv
 import { CairnParser } from '@cairn/core';
 
 const code = `
-// :M: ctx implement validation
-function validate(input: string) {
-  // :M: ctx
-  return input;
-}
+  // :M: ctx implement validation
+  function validate(input: string) {
+    // :M: ctx
+    return input;
+  }
 `;
 
 const result = CairnParser.parseWithResult(code);
