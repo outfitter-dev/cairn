@@ -1,7 +1,7 @@
-// :M: tldr Core exports for Cairn parsing and search functionality
+// :M: tldr Core exports for waymark parsing and search functionality
 export * from './schemas/index.js';
-export * from './parser/cairn-parser.js';
-export * from './search/cairn-search.js';
+export * from './parser/waymark-parser.js';
+export * from './search/waymark-search.js';
 export * from './lib/error.js';
 export * from './lib/result.js';
 export * from './lib/type-guards.js';

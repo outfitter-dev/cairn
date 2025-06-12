@@ -5,8 +5,8 @@ import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { isAbsolute, resolve } from 'path';
 import { 
-  CairnParser, 
-  CairnSearch, 
+  WaymarkParser, 
+  WaymarkSearch, 
   success, 
   failure, 
   makeError, 
@@ -16,9 +16,9 @@ import {
   listCommandOptionsSchema, 
   fromZod,
   filePathSchema
-} from '@cairn/core';
-import type { Result, AppError } from '@cairn/core';
-import { FormatterFactory } from '@cairn/formatters';
+} from '@waymark/core';
+import type { Result, AppError } from '@waymark/core';
+import { FormatterFactory } from '@waymark/formatters';
 
 // :M: sec rate limiting configuration
 interface RateLimitConfig {
@@ -27,10 +27,10 @@ interface RateLimitConfig {
 }
 
 /**
- * Command Line Interface for Cairn parsing and search tool.
+ * Command Line Interface for Waymark parsing and search tool.
  * 
  * Features:
- * - Parse files for Magic Anchors with comprehensive validation
+ * - Parse files for waymarks with comprehensive validation
  * - Search for specific anchors across multiple files and patterns
  * - List all anchors with filtering and formatting options
  * - Advanced security: path validation, content scanning, rate limiting
@@ -59,14 +59,14 @@ export class CLI {
   // :M: api configure CLI commands and options
   private setupCommands(): void {
     this.program
-      .name('cairn')
-      .description('Cairn parser and search tool')
+      .name('waymark')
+      .description('Waymark parser and search tool')
       .version('0.2.0');
 
     // :M: api parse command to analyze files for anchors
     this.program
       .command('parse')
-      .description('Parse file(s) for Cairns')
+      .description('Parse file(s) for waymarks')
       .argument('<files...>', 'Files to parse')
       .option('-j, --json', 'Output as JSON')
       .option('-v, --verbose', 'Show parsing errors')
@@ -79,7 +79,7 @@ export class CLI {
     // :M: api search command to find specific anchors
     this.program
       .command('search')
-      .description('Search for Cairns by context')
+      .description('Search for waymarks by context')
       .argument('<context>', 'Context to search for')
       .argument('[patterns...]', 'File patterns to search (default: current directory)')
       .option('-j, --json', 'Output as JSON')
@@ -95,7 +95,7 @@ export class CLI {
     // :M: api list command to show all anchors
     this.program
       .command('list')
-      .description('List all Cairns in file(s)')
+      .description('List all waymarks in file(s)')
       .argument('[patterns...]', 'File patterns to analyze (default: current directory)')
       .option('-j, --json', 'Output as JSON')
       .option('-c, --contexts', 'Show only contexts')
@@ -285,7 +285,7 @@ export class CLI {
     for (const pattern of suspiciousPatterns) {
       if (pattern.test(content)) {
         // :M: ctx log suspicious content for audit
-        if (process.env['CAIRN_SECURITY_LOG'] === 'true') {
+        if (process.env['WAYMARK_SECURITY_LOG'] === 'true') {
           console.warn(chalk.yellow(`Security warning: Suspicious pattern detected in ${filename}`));
         }
         // Don't block, just warn - the user might be legitimately searching security code
@@ -341,7 +341,7 @@ export class CLI {
           continue;
         }
         
-        const parseResult = CairnParser.parseWithResult(content, file);
+        const parseResult = WaymarkParser.parseWithResult(content, file);
 
         if (!parseResult.ok) {
           errors.push(parseResult.error);
@@ -421,7 +421,7 @@ export class CLI {
     };
 
     // :M: ctx use new async search method
-    const searchResult = await CairnSearch.search(searchPatterns, searchOptions);
+    const searchResult = await WaymarkSearch.search(searchPatterns, searchOptions);
     if (!searchResult.ok) {
       return searchResult;
     }
@@ -465,7 +465,7 @@ export class CLI {
     const searchPatterns = patterns.length > 0 ? patterns : ['./**/*'];
 
     // :M: ctx search for all anchors
-    const searchResult = await CairnSearch.search(searchPatterns, {
+    const searchResult = await WaymarkSearch.search(searchPatterns, {
       respectGitignore: validOptions.gitignore !== false,
       exclude: (options['exclude'] as string[] | undefined) || []
     });
@@ -484,7 +484,7 @@ export class CLI {
     
     if (validOptions.contexts) {
       // :M: ctx show only unique contexts
-      const uniqueContexts = CairnSearch.getUniqueContexts(searchResult.data);
+      const uniqueContexts = WaymarkSearch.getUniqueContexts(searchResult.data);
       const output = formatter.format({
         type: 'contexts',
         data: uniqueContexts

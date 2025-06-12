@@ -5,7 +5,7 @@
     { "path": "packages/core" },
     { "path": "packages/formatters" },
     { "path": "packages/cli" },
-    { "path": "packages/cairns" },
+    { "path": "packages/waymarks" },
     { "path": "packages/mcp" },
     { "path": "packages/utils/eslint-plugin" }
   ]

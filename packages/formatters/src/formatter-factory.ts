@@ -1,22 +1,22 @@
 // :M: tldr Factory for creating appropriate formatters based on format type
 import type {
   ISearchResultFormatter,
-  IMagicAnchorFormatter,
+  IWaymarkFormatter,
+  IWaymarkListFormatter,
   IParseResultFormatter,
-  IMagicAnchorListFormatter,
   FormatterOptions,
 } from './interfaces';
 import {
   JsonSearchResultFormatter,
-  JsonMagicAnchorFormatter,
+  JsonWaymarkFormatter,
+  JsonWaymarkListFormatter,
   JsonParseResultFormatter,
-  JsonMagicAnchorListFormatter,
 } from './formatters/json.formatter';
 import {
   TerminalSearchResultFormatter,
-  TerminalMagicAnchorFormatter,
+  TerminalWaymarkFormatter,
   TerminalParseResultFormatter,
-  TerminalMagicAnchorListFormatter,
+  TerminalWaymarkListFormatter,
 } from './formatters/terminal.formatter';
 
 export type FormatType = 'json' | 'terminal';
@@ -47,11 +47,11 @@ export class FormatterFactory {
     );
   }
 
-  static createMagicAnchorFormatter(format: FormatType): IMagicAnchorFormatter {
+  static createWaymarkFormatter(format: FormatType): IWaymarkFormatter {
     return this.createFormatter(
       format,
-      JsonMagicAnchorFormatter,
-      TerminalMagicAnchorFormatter
+      JsonWaymarkFormatter,
+      TerminalWaymarkFormatter
     );
   }
 
@@ -66,12 +66,12 @@ export class FormatterFactory {
     }
   }
 
-  static createMagicAnchorListFormatter(format: FormatType, options?: FormatterOptions): IMagicAnchorListFormatter {
+  static createWaymarkListFormatter(format: FormatType, options?: FormatterOptions): IWaymarkListFormatter {
     switch (format) {
       case 'json':
-        return new JsonMagicAnchorListFormatter();
+        return new JsonWaymarkListFormatter();
       case 'terminal':
-        return new TerminalMagicAnchorListFormatter(options);
+        return new TerminalWaymarkListFormatter(options);
       default:
         throw new Error(`Unknown format: ${format satisfies never}`);
     }

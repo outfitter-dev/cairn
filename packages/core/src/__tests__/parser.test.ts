@@ -1,11 +1,11 @@
-// :M: tldr Tests for Cairn parser functionality
+// :M: tldr Tests for waymark parser functionality
 import { describe, it, expect } from 'vitest';
-import { CairnParser } from '../parser/cairn-parser.js';
+import { WaymarkParser } from '../parser/waymark-parser.js';
 
-describe('CairnParser', () => {
+describe('WaymarkParser', () => {
   it('should parse basic anchor with single context', () => {
     const content = '// :M: todo implement validation';
-    const result = CairnParser.parseWithResult(content);
+    const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -22,7 +22,7 @@ describe('CairnParser', () => {
   
   it('should parse anchor with multiple contexts', () => {
     const content = '// :M: sec, todo validate inputs';
-    const result = CairnParser.parseWithResult(content);
+    const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -36,7 +36,7 @@ describe('CairnParser', () => {
   
   it('should parse anchor without prose', () => {
     const content = '// :M: tldr';
-    const result = CairnParser.parseWithResult(content);
+    const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -50,7 +50,7 @@ describe('CairnParser', () => {
   
   it('should detect missing space after :M:', () => {
     const content = '// :M:todo fix this';
-    const result = CairnParser.parseWithResult(content);
+    const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -62,7 +62,7 @@ describe('CairnParser', () => {
   
   it('should detect empty anchor payload', () => {
     const content = '// :M: ';
-    const result = CairnParser.parseWithResult(content);
+    const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -78,11 +78,11 @@ describe('CairnParser', () => {
       // :M: sec validate
       // :M: todo, perf optimize
     `;
-    const result = CairnParser.parseWithResult(content);
+    const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      const todoAnchors = CairnParser.findByContext(result.data.anchors, 'todo');
+      const todoAnchors = WaymarkParser.findByContext(result.data.anchors, 'todo');
       expect(todoAnchors).toHaveLength(2);
     }
   });
@@ -90,7 +90,7 @@ describe('CairnParser', () => {
   it('should handle file size limit', () => {
     // 11MB - exceeds the 10MB limit
     const largeContent = 'x'.repeat(10 * 1024 * 1024 + 1);
-    const result = CairnParser.parseWithResult(largeContent);
+    const result = WaymarkParser.parseWithResult(largeContent);
     
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -100,7 +100,7 @@ describe('CairnParser', () => {
 
   it('should handle parentheses in contexts correctly', () => {
     const content = '// :M: issue(123), owner(@alice) fix authentication';
-    const result = CairnParser.parseWithResult(content);
+    const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -113,7 +113,7 @@ describe('CairnParser', () => {
 
   it('should handle complex nested parentheses and brackets in contexts', () => {
     const content = '// :M: todo(priority:high,tags:[ui,backend]), blocked:[4,7], owner:@alice test complex parsing';
-    const result = CairnParser.parseWithResult(content);
+    const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -134,7 +134,7 @@ describe('CairnParser', () => {
     ];
 
     testCases.forEach(({ content, expectedContexts }) => {
-      const result = CairnParser.parseWithResult(content);
+      const result = WaymarkParser.parseWithResult(content);
       expect(result.ok).toBe(true);
       if (result.ok) {
         expect(result.data.anchors).toHaveLength(1);

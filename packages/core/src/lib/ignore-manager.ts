@@ -1,4 +1,4 @@
-// :M: tldr Centralized ignore file management for cairn
+// :M: tldr Centralized ignore file management for waymark
 import { readFileSync, existsSync } from 'fs';
 import { join, relative, dirname } from 'path';
 import ignore from 'ignore';
@@ -8,7 +8,7 @@ import { makeError } from './error.js';
 import { assert, assertNonNull } from './type-guards.js';
 
 /**
- * Manages ignore patterns from various sources (.gitignore, .cairnignore, etc.)
+ * Manages ignore patterns from various sources (.gitignore, .waymarkignore, etc.)
  * Follows DRY principle by centralizing all ignore logic
  */
 export class IgnoreManager {
@@ -88,10 +88,10 @@ export class IgnoreManager {
       ig.add(gitignoreResult.data);
     }
     
-    // :M: ctx load .cairnignore (project-specific)
-    const cairnignoreResult = this.loadIgnoreFile(dir, '.cairnignore');
-    if (cairnignoreResult.ok) {
-      ig.add(cairnignoreResult.data);
+    // :M: ctx load .waymarkignore (project-specific)
+    const waymarkignoreResult = this.loadIgnoreFile(dir, '.waymarkignore');
+    if (waymarkignoreResult.ok) {
+      ig.add(waymarkignoreResult.data);
     }
 
     this.cache.set(dir, ig);

@@ -1,6 +1,6 @@
-// :M: tldr Type definitions for Cairn parsing and processing
+// :M: tldr Type definitions for waymark parsing and processing
 
-export interface Cairn {
+export interface Waymark {
   // :M: api core anchor properties
   line: number;
   column: number;
@@ -10,12 +10,9 @@ export interface Cairn {
   file?: string;
 }
 
-// :M: deprecated Backward compatibility alias
-export type MagicAnchor = Cairn;
-
 export interface ParseResult {
   // :M: api parser output structure
-  anchors: Cairn[];
+  anchors: Waymark[];
   errors: ParseError[];
 }
 
@@ -39,7 +36,7 @@ export interface SearchOptions {
 
 export interface SearchResult {
   // :M: api search result structure
-  anchor: MagicAnchor;
+  anchor: Waymark;
   context?: {
     before: string[];
     after: string[];

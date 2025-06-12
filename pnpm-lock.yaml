@@ -42,21 +42,15 @@ importers:
         specifier: ^1.2.0
         version: 1.6.1(@types/node@20.17.57)
 
-  packages/cairns:
-    dependencies:
-      '@cairn/types':
-        specifier: workspace:*
-        version: link:../types
-
   packages/cli:
     dependencies:
-      '@cairn/core':
+      '@waymark/core':
         specifier: workspace:*
         version: link:../core
-      '@cairn/formatters':
+      '@waymark/formatters':
         specifier: workspace:*
         version: link:../formatters
-      '@cairn/types':
+      '@waymark/types':
         specifier: workspace:*
         version: link:../types
       chalk:
@@ -68,7 +62,7 @@ importers:
 
   packages/core:
     dependencies:
-      '@cairn/types':
+      '@waymark/types':
         specifier: workspace:*
         version: link:../types
       globby:
@@ -83,7 +77,7 @@ importers:
 
   packages/formatters:
     dependencies:
-      '@cairn/types':
+      '@waymark/types':
         specifier: workspace:*
         version: link:../types
       chalk:
@@ -99,14 +93,20 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@cairn/core':
+      '@waymark/core':
         specifier: workspace:*
         version: link:../core
-      '@cairn/types':
+      '@waymark/types':
         specifier: workspace:*
         version: link:../types
 
   packages/types: {}
+
+  packages/waymarks:
+    dependencies:
+      '@waymark/types':
+        specifier: workspace:*
+        version: link:../types
 
 packages:
 

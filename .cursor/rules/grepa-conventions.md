@@ -2,7 +2,7 @@
 description: "How to write effective grep-anchors in your codebase"
 alwaysApply: true
 ---
-
+<!-- :M: fixme, refactor uses old `:ga:` pattern, "grep anchor" vs "waymark" -->
 # Grepa Writing Conventions
 
 This guide explains how to write grep-anchors (`:ga:` patterns) effectively in your codebase. While `grepa-use.md` focuses on searching, this document covers the conventions for adding anchors to your code.

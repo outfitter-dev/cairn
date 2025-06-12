@@ -2,7 +2,7 @@
 
 export type ErrorCode =
   // Parse errors
-  | 'parse.invalidSyntax'     // Invalid Magic Anchor syntax
+  | 'parse.invalidSyntax'     // Invalid waymark syntax
   | 'parse.missingSpace'      // Missing space after :M:
   | 'parse.emptyPayload'      // Empty anchor payload
   | 'parse.invalidContext'    // Invalid context format

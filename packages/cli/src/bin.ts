@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// :M: tldr CLI entry point for Cairn command
+// :M: tldr CLI entry point for `waymark` command
 import { CLI } from './index.js';
 
 void (async () => {

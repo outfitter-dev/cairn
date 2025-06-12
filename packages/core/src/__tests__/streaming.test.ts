@@ -1,7 +1,7 @@
 // :M: tldr Tests for large file streaming functionality
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeFileSync, unlinkSync, existsSync, mkdirSync, rmSync } from 'fs';
-import { CairnSearch } from '../search/cairn-search.js';
+import { WaymarkSearch } from '../search/waymark-search.js';
 
 describe('Large File Streaming', () => {
   const testDir = './test-streaming';
@@ -44,7 +44,7 @@ describe('Large File Streaming', () => {
       context: 2
     };
 
-    const result = await CairnSearch.search([largeTestFile], searchOptions);
+    const result = await WaymarkSearch.search([largeTestFile], searchOptions);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -64,7 +64,7 @@ describe('Large File Streaming', () => {
       context: 3
     };
 
-    const result = await CairnSearch.search([largeTestFile], searchOptions);
+    const result = await WaymarkSearch.search([largeTestFile], searchOptions);
     
     expect(result.ok).toBe(true);
     if (result.ok && result.data.length > 0) {
@@ -85,7 +85,7 @@ describe('Large File Streaming', () => {
     ];
 
     // Test the parsePayloadSimple method directly
-    const parseMethod = (CairnSearch as any).parsePayloadSimple;
+    const parseMethod = (WaymarkSearch as any).parsePayloadSimple;
     
     testCases.forEach(({ payload, expected }) => {
       const result = parseMethod(payload);
@@ -108,7 +108,7 @@ describe('Large File Streaming', () => {
       context: 1
     };
 
-    const result = await CairnSearch.search([largeTestFile], searchOptions);
+    const result = await WaymarkSearch.search([largeTestFile], searchOptions);
     
     // Force GC again to get more accurate final measurement
     if (global.gc) {
@@ -132,7 +132,7 @@ describe('Large File Streaming', () => {
       contexts: ['test']
     };
 
-    const result = await CairnSearch.search([nonExistentFile], searchOptions);
+    const result = await WaymarkSearch.search([nonExistentFile], searchOptions);
     
     // Should handle missing files gracefully
     expect(result.ok).toBe(false);
@@ -161,7 +161,7 @@ describe('Large File Streaming', () => {
         contexts: ['concurrent']
       };
 
-      const result = await CairnSearch.search([largeTestFile, largeTestFile2], searchOptions);
+      const result = await WaymarkSearch.search([largeTestFile, largeTestFile2], searchOptions);
       
       expect(result.ok).toBe(true);
       if (result.ok) {

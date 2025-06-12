@@ -1,7 +1,7 @@
 // :M: tldr Custom ESLint rules plugin
 module.exports = {
   meta: {
-    name: '@cairn/eslint-plugin',
+    name: '@waymark/eslint-plugin',
     version: '0.0.0'
   },
   rules: {

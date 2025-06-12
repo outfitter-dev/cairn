@@ -1,20 +1,16 @@
-# 🔱 Cairn - Cairns for Semantic Code Navigation
+# 〽️ Waymark - Blazing fast code navigation for AI agents
 <!-- :M: tldr Universal pattern for making codebases AI-navigable and greppable -->
 <!-- :M: core Main project documentation and overview -->
 
-> [!WARNING]
-> **📦 Migrating from Grepa?** This project was formerly known as "Grepa" with the package namespace `@grepa/*`. We've rebranded to **Cairn** with breaking changes. See the **[Migration Guide](MIGRATION.md)** for complete upgrade instructions.
-
 > [!IMPORTANT]
-> **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/galligan/cairn/issues) or share your thoughts!
+> **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/outfitter-dev/waymark/issues) or share your thoughts!
 
 > [!TIP]
-> **A simple pattern for code navigation.** Cairns (`:M:`) provide a consistent way to mark important spots in code that both AI agents and humans can easily find with grep. Cairn is the tooling that understands and processes these cairns.
+> **A simple pattern for code navigation.** Waymarks (`:M:`) provide a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
 
 ## 📚 Documentation
 
 - **[Quick Start](docs/guides/quick-start.md)** - Get started in 5 minutes
-- **[Migration Guide](MIGRATION.md)** - Upgrading from Grepa to Cairn
 - **[Examples](docs/examples.md)** - Real-world patterns and workflows  
 - **[Conventions](docs/conventions/)** - Common tags and best practices
 - **[Progressive Guide](docs/guides/progressive-enhancement.md)** - Adopt at your own pace
@@ -39,9 +35,9 @@ Current approaches fail because they're:
 
 > **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
 
-## 💡 Proposed Solution: Cairns (`:M:`)
+## 💡 Proposed Solution: Waymarks (`:M:`)
 
-A **Cairn** is a small, consistent context that helps make comments more discoverable:
+A **waymark** is a small, consistent context that helps make comments more discoverable:
 
 ```javascript
 // :M: todo add input validation
@@ -61,14 +57,14 @@ rg ":M: todo"     # Find all tasks
 
 ### Why `:M:`?
 
-The `:M:` cairn is the canonical prefix for Cairns. Like how "TODO" became a universal convention, using a single standard prefix:
+The `:M:` identifier is the canonical prefix for waymarks. Like how "TODO" became a universal convention, using a single standard prefix:
 
 - **Keeps tooling simple** - One pattern to search, parse, and lint
-- **Avoids edge cases** - No conflicts between different cairn styles
+- **Avoids edge cases** - No conflicts between different waymark styles
 - **Universal understanding** - Any developer or AI can recognize `:M:`
 - **Fast to type** - Hold Shift for `:`, then `M`, then `:` in one fluid motion
 
-**For monorepos:** Use contexts to distinguish services instead of different cairns:
+**For monorepos:** Use contexts to distinguish services instead of different waymarks:
 
 ```javascript
 // :M: auth-service,todo implement OAuth
@@ -80,34 +76,34 @@ The `:M:` cairn is the canonical prefix for Cairns. Like how "TODO" became a uni
 ### As a Global CLI Tool
 
 ```bash
-npm install -g cairn
+npm install -g waymark
 # or
-pnpm add -g cairn
+pnpm add -g waymark
 ```
 
 ### As a Dev Dependency
 
 ```bash
-npm install --save-dev cairn
+npm install --save-dev waymark
 # or
-pnpm add -D cairn
+pnpm add -D waymark
 ```
 
 ### CLI Usage
 
 ```bash
-# Parse files for Cairns
-cairn parse src/**/*.ts
+# Parse files for waymarks
+waymark parse src/**/*.ts
 
 # Search for specific contexts
-cairn search todo src/
-cairn search security --context 2
+waymark search todo src/
+waymark search security --context 2
 
 # List all anchors in files
-cairn list src/ --json
+waymark list src/ --json
 
 # Show only unique contexts
-cairn list src/ --contexts
+waymark list src/ --contexts
 ```
 
 ## 🚀 Quick Start
@@ -287,16 +283,16 @@ def create_user(self, email: str, name: str):
 
 ## 🚪 Escape Hatch
 
-If you need to remove all Cairn contexts:
+If you need to remove all waymarks:
 
 ```bash
-# Find all files with :M: contexts
+# Find all files with waymarks
 rg -l ":M:" 
 
 # Preview what would be removed
 rg ":M:.*$" 
 
-# Remove all :M: contexts (backup first!)
+# Remove all waymarks (backup first!)
 find . -type f -exec sed -i.bak 's/:M:[^*]*//g' {} +
 ```
 
@@ -332,8 +328,8 @@ rg ":M: (\w+)" -o | sort | uniq -c
 ## 🎬 Getting Started
 
 1. **Try it now**: Add `// :M: todo` to something in your code
-2. **Search for it**: Run `rg ":M:"` or `cairn search todo`
-3. **Tell your AI**: "Look for :M: cairns to understand the codebase"
+2. **Search for it**: Run `rg ":M:"` or `waymark search todo`
+3. **Tell your AI**: "Look for :M: waymarks to understand the codebase"
 4. **Evolve naturally**: Add patterns as you need them
 
 **The goal is discoverability.** Start simple and let your patterns evolve with your needs.
@@ -345,8 +341,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 ### Quick Setup
 
 ```bash
-git clone https://github.com/galligan/cairn.git
-cd cairn
+git clone https://github.com/outfitter-dev/waymark.git
+cd waymark
 pnpm install
 pnpm build
 pnpm test
@@ -356,25 +352,11 @@ pnpm test
 
 ### Core Documentation
 
-- [Quick Start Guide](docs/guides/quick-start.md) - Get started with Cairns in 5 minutes
-- [Examples](docs/examples.md) - Real-world Cairn usage patterns
-- [Progressive Enhancement](docs/guides/progressive-enhancement.md) - Three levels of adoption
-
-### Cairns Notation
-
-- [Cairns Overview](docs/cairns/README.md) - Technical format specification
-- [Format Specification](docs/cairns/SPEC.md) - Detailed syntax rules
-- [Payload Rules](docs/cairns/payloads.md) - How to structure tag payloads
-- [Examples](docs/cairns/examples.md) - Notation examples across languages
-
-### Conventions & Patterns
-
-- [Conventions Overview](docs/conventions/README.md) - Usage patterns and best practices
-- [Common Patterns](docs/conventions/common-patterns.md) - Essential tags like `tldr`, `sec`, `tmp`
-- [AI Patterns](docs/conventions/ai-patterns.md) - Working with AI agents using `@cursor` and `@claude`
-- [Workflow Patterns](docs/conventions/workflow-patterns.md) - Task tracking and workflows
-- [Domain-Specific](docs/conventions/domain-specific.md) - Specialized patterns for frameworks
-- [Combinations](docs/conventions/combinations.md) - Using multiple tags effectively
+- [Quick Start Guide](docs/guides/quick-start.md) - Get started with waymarks in 5 minutes
+- [Examples](docs/examples.md) - Real-world waymark usage patterns
+- [Syntax Reference](docs/syntax.md) - Complete waymark syntax
+- [Conventions](docs/conventions.md) - Common patterns and best practices
+- [Documentation Hub](docs/) - All documentation resources
 
 ### Advanced Topics
 
@@ -391,13 +373,13 @@ pnpm test
 
 ## 🌟 Inspiration: Lessons from OpenAI Codex
 
-The idea for Cairns comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
+The idea for waymarks comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
 
 > *"Make your codebase discoverable — a well-named and organised tree lets Codex navigate the filesystem as quickly as a brand-new engineer might."*
 
-They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `cairn.yml` dictionary.
+They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `waymark.yml` dictionary.
 
-That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:M:` formalizes. Think of Cairns as the portable follow-up to Codex's internal practice, distilled into a three-character identifier any OSS project or LLM can rely on.
+That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:M:` formalizes. Think of waymarks as the portable follow-up to Codex's internal practice, distilled into a three-character identifier any OSS project or LLM can rely on.
 
 ### Sources
 

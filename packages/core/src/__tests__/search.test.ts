@@ -1,10 +1,10 @@
-// :M: tldr Tests for CairnSearch functionality
+// :M: tldr Tests for WaymarkSearch functionality
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeFileSync, unlinkSync, mkdirSync, rmdirSync } from 'fs';
 import { resolve } from 'path';
-import { CairnSearch } from '../search/cairn-search.js';
+import { WaymarkSearch } from '../search/waymark-search.js';
 
-describe('CairnSearch', () => {
+describe('WaymarkSearch', () => {
   const testDir = './test-files';
   const testFile1 = `${testDir}/test1.ts`;
   const testFile2 = `${testDir}/test2.md`;
@@ -40,7 +40,7 @@ Some content here.
   });
 
   it('should search for anchors by context', async () => {
-    const result = await CairnSearch.search([testFile1], { contexts: ['todo'] });
+    const result = await WaymarkSearch.search([testFile1], { contexts: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -53,7 +53,7 @@ Some content here.
   });
 
   it('should search multiple files', async () => {
-    const result = await CairnSearch.search([testFile1, testFile2], { contexts: ['todo'] });
+    const result = await WaymarkSearch.search([testFile1, testFile2], { contexts: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -66,7 +66,7 @@ Some content here.
   });
 
   it('should include context when requested', async () => {
-    const result = await CairnSearch.search([testFile1], { 
+    const result = await WaymarkSearch.search([testFile1], { 
       contexts: ['todo'],
       context: 2
     });
@@ -83,7 +83,7 @@ Some content here.
   });
 
   it('should search with glob patterns', async () => {
-    const result = await CairnSearch.search([`${testDir}/*.ts`], { contexts: ['todo'] });
+    const result = await WaymarkSearch.search([`${testDir}/*.ts`], { contexts: ['todo'] });
     
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -95,11 +95,11 @@ Some content here.
   });
 
   it('should get unique contexts from results', async () => {
-    const result = await CairnSearch.search([testFile1, testFile2]);
+    const result = await WaymarkSearch.search([testFile1, testFile2]);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      const contexts = CairnSearch.getUniqueContexts(result.data);
+      const contexts = WaymarkSearch.getUniqueContexts(result.data);
       expect(contexts).toContain('tldr');
       expect(contexts).toContain('todo');
       expect(contexts).toContain('sec');
@@ -109,11 +109,11 @@ Some content here.
   });
 
   it('should group results by context', async () => {
-    const result = await CairnSearch.search([testFile1, testFile2]);
+    const result = await WaymarkSearch.search([testFile1, testFile2]);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      const grouped = CairnSearch.groupByContext(result.data);
+      const grouped = WaymarkSearch.groupByContext(result.data);
       expect(grouped['todo']).toHaveLength(2);
       expect(grouped['tldr']).toHaveLength(1);
       expect(grouped['api']).toHaveLength(1);
@@ -121,11 +121,11 @@ Some content here.
   });
 
   it('should group results by file', async () => {
-    const result = await CairnSearch.search([testFile1, testFile2]);
+    const result = await WaymarkSearch.search([testFile1, testFile2]);
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      const grouped = CairnSearch.groupByFile(result.data);
+      const grouped = WaymarkSearch.groupByFile(result.data);
       // :M: ctx use absolute paths for lookup
       const absFile1 = resolve(testFile1);
       const absFile2 = resolve(testFile2);
@@ -135,7 +135,7 @@ Some content here.
   });
 
   it('should handle non-existent files gracefully', async () => {
-    const result = await CairnSearch.search(['non-existent-file.ts']);
+    const result = await WaymarkSearch.search(['non-existent-file.ts']);
     
     expect(result.ok).toBe(false);
     if (!result.ok) {
@@ -144,7 +144,7 @@ Some content here.
   });
 
   it('should respect file extension filtering', async () => {
-    const result = await CairnSearch.search([`${testDir}/*`]);
+    const result = await WaymarkSearch.search([`${testDir}/*`]);
     
     expect(result.ok).toBe(true);
     if (result.ok) {

@@ -1,17 +1,17 @@
 ---
-"@cairn/core": patch
-"@cairn/cli": patch
-"@cairn/formatters": patch
-"@cairn/cairns": patch
-"@cairn/types": patch
-"@cairn/mcp": patch
+"@waymark/core": minor
+"@waymark/cli": minor
+"@waymark/formatters": minor
+"@waymark/waymarks": minor
+"@waymark/types": minor
+"@waymark/mcp": minor
 ---
 
-Initial npm release of cairn packages
+Initial npm release of waymark packages
 
-- First public release of all @cairn packages
-- Core functionality for Cairns notation
-- CLI tool for searching and managing cairns
+- First public release of all @waymark packages
+- Core functionality for waymark syntax
+- CLI tool for searching and managing waymarks
 - Multiple output formatters (terminal, JSON, CSV)
 - TypeScript types and interfaces
 - MCP server integration (experimental)

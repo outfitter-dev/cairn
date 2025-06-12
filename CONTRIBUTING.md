@@ -1,8 +1,8 @@
-&lt;!-- :M: tldr Contributing guidelines for the Cairn project --&gt;
+&lt;!-- :M: tldr Contributing guidelines for the Waymark project --&gt;
 
-# Contributing to Cairn
+# Contributing to Waymark
 
-Thank you for your interest in contributing to Cairn! This guide will help you get started.
+Thank you for your interest in contributing to Waymark! This guide will help you get started.
 
 ## Getting Started
 
@@ -15,8 +15,8 @@ Thank you for your interest in contributing to Cairn! This guide will help you g
 
 1. Fork and clone the repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/cairn.git
-   cd cairn
+   git clone https://github.com/YOUR_USERNAME/waymark.git
+   cd waymark
    ```
 
 2. Install dependencies:
@@ -79,11 +79,11 @@ We follow strict TypeScript conventions:
 - Use Result<T, E> pattern for error handling
 - Runtime validation with Zod schemas
 - No direct throwing of errors
-- See `docs/cairn/conventions/typescript.md` for details
+- See `docs/tooling/conventions/typescript.md` for details
 
-### Cairns
+### Waymarks
 
-Use Cairns in your code:
+Use waymarks in your code:
 
 ```typescript
 // :M: tldr Brief description of the module

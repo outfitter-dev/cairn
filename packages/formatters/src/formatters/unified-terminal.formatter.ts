@@ -1,7 +1,7 @@
 // :M: tldr Unified terminal formatter with color support
 import chalk from 'chalk';
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
-import type { SearchResult, MagicAnchor } from '@cairn/types';
+import type { SearchResult, Waymark } from '@waymark/types';
 
 export class TerminalFormatter implements IFormatter {
   // :M: api format data for terminal display
@@ -61,7 +61,7 @@ export class TerminalFormatter implements IFormatter {
   }
 
   // :M: api format parse results
-  private formatParseResults(data: { file: string; result: { anchors: MagicAnchor[]; errors: any[] } }): string {
+  private formatParseResults(data: { file: string; result: { anchors: Waymark[]; errors: any[] } }): string {
     const output: string[] = [];
     
     output.push(chalk.blue(`\n📁 ${data.file}`));
@@ -94,7 +94,7 @@ export class TerminalFormatter implements IFormatter {
   }
 
   // :M: api format single anchor with line and column number
-  private formatAnchor(anchor: MagicAnchor): string {
+  private formatAnchor(anchor: Waymark): string {
     const contexts = anchor.contexts.map(c => chalk.cyan(c)).join(', ');
     const prose = anchor.prose ? ` ${anchor.prose}` : '';
     return `${chalk.yellow(`${anchor.line}:${anchor.column}`)}: ${contexts}${prose}`;

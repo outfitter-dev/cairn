@@ -1,4 +1,4 @@
-// :M: tldr Main entry point for @cairn/formatters package
+// :M: tldr Main entry point for @waymark/formatters package
 export * from './interfaces';
 export * from './formatter-factory';
 export * from './formatters/json.formatter';

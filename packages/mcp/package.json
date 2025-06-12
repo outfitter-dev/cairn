@@ -1,5 +1,5 @@
 {
-  "name": "@cairn/mcp",
+  "name": "@waymark/mcp",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -14,8 +14,8 @@
     "dist"
   ],
   "dependencies": {
-    "@cairn/types": "workspace:*",
-    "@cairn/core": "workspace:*"
+    "@waymark/types": "workspace:*",
+    "@waymark/core": "workspace:*"
   },
   "scripts": {
     "build": "tsc -b",

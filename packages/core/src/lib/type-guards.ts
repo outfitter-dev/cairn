@@ -1,5 +1,5 @@
 // :M: tldr Type guards and assertion functions
-import type { MagicAnchor, ParseError } from '@cairn/types';
+import type { ParseError, Waymark } from '@waymark/types';
 
 // :M: api Basic type guards
 export function isString(value: unknown): value is string {
@@ -22,8 +22,8 @@ export function hasProperty<K extends PropertyKey>(
   return obj != null && typeof obj === 'object' && key in obj;
 }
 
-// :M: api Magic Anchor type guard
-export function isMagicAnchor(value: unknown): value is MagicAnchor {
+// :M: api Waymark type guard
+export function isWaymark(value: unknown): value is Waymark {
   return (
     typeof value === 'object' &&
     value !== null &&
@@ -31,10 +31,10 @@ export function isMagicAnchor(value: unknown): value is MagicAnchor {
     'column' in value &&
     'raw' in value &&
     'contexts' in value &&
-    typeof (value as MagicAnchor).line === 'number' &&
-    typeof (value as MagicAnchor).column === 'number' &&
-    typeof (value as MagicAnchor).raw === 'string' &&
-    Array.isArray((value as MagicAnchor).contexts)
+    typeof (value as Waymark).line === 'number' &&
+    typeof (value as Waymark).column === 'number' &&
+    typeof (value as Waymark).raw === 'string' &&
+    Array.isArray((value as Waymark).contexts)
   );
 }
 

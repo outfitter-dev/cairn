@@ -1,9 +1,9 @@
 {
-  "name": "cairn",
+  "name": "waymark",
   "version": "0.2.0",
   "description": "Comment Anchors: Inline References & Notes - Making codebases discoverable",
   "keywords": [
-    "cairn",
+    "waymark",
     "code-navigation",
     "ai-navigation",
     "documentation",
@@ -12,13 +12,13 @@
     "code-search",
     "comment-anchors"
   ],
-  "homepage": "https://github.com/galligan/cairn#readme",
+  "homepage": "https://github.com/galligan/waymark#readme",
   "bugs": {
-    "url": "https://github.com/galligan/cairn/issues"
+    "url": "https://github.com/galligan/waymark/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/galligan/cairn.git"
+    "url": "git+https://github.com/galligan/waymark.git"
   },
   "license": "MIT",
   "author": "Matt Galligan",

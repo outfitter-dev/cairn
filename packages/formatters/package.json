@@ -1,7 +1,7 @@
 {
-  "name": "@cairn/formatters",
+  "name": "@waymark/formatters",
   "version": "0.2.0",
-  "description": "Output formatters for Cairns search results (terminal, JSON, CSV)",
+  "description": "Output formatters for waymark search results (terminal, JSON, CSV)",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@cairn/types": "workspace:*",
+    "@waymark/types": "workspace:*",
     "chalk": "^5.4.1"
   },
   "devDependencies": {

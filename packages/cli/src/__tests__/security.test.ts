@@ -309,16 +309,16 @@ describe('CLI Security Features', () => {
 
     it('should provide security audit logs when enabled', () => {
       // :M: sec test security logging capability
-      const originalEnv = process.env['CAIRN_SECURITY_LOG'];
-      process.env['CAIRN_SECURITY_LOG'] = 'true';
+      const originalEnv = process.env['WAYMARK_SECURITY_LOG'];
+      process.env['WAYMARK_SECURITY_LOG'] = 'true';
       
-      expect(process.env['CAIRN_SECURITY_LOG']).toBe('true');
+      expect(process.env['WAYMARK_SECURITY_LOG']).toBe('true');
       
       // Restore original environment
       if (originalEnv !== undefined) {
-        process.env['CAIRN_SECURITY_LOG'] = originalEnv;
+        process.env['WAYMARK_SECURITY_LOG'] = originalEnv;
       } else {
-        process.env['CAIRN_SECURITY_LOG'] = undefined as any;
+        process.env['WAYMARK_SECURITY_LOG'] = undefined as any;
       }
     });
   });

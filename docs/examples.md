@@ -1,411 +1,290 @@
-# Cairn Examples
-<!-- :M: tldr Real-world examples of cairn usage patterns -->
-<!-- :M: example Comprehensive examples for AI agents and developers -->
+# Waymark Examples
+<!-- :M: tldr Practical waymark patterns organized by use case -->
+<!-- :M: example Real-world usage patterns for developers and AI agents -->
 
-*Examples and patterns for working with Cairns*
+Examples and patterns for working with waymarks, organized by common use cases.
 
----
+## Todo Patterns
 
-## 1. AI Agent Workflows
-
-### Task Delegation
-- `:M: @agent` - Direct any AI agent to implement or complete code
-  - Use when you want AI to write implementation
-  - Can specify particular agents like `@cursor`, `@claude`, `@copilot`
-  - Combine with other tags for context
+### Basic Task Management
 
 ```javascript
-// :M: @agent implement pagination
-// :M: ctx use cursor-based pagination, not offset
-// :M: requirement handle empty results gracefully
-class PostsList {
-  async fetchPosts(cursor?: string) {
-    // :M: todo implementation needed
-    throw new Error("Not implemented");
+// Simple todos
+// :M: todo implement validation
+// :M: fix handle edge case
+// :M: bug memory leak in auth service
+
+// With priority and assignment
+// :M: todo priority:high implement OAuth
+// :M: todo(assign:@alice) add unit tests
+// :M: bug(severity:critical) fix race condition
+```
+
+### AI Agent Tasks
+
+```python
+# Direct AI implementation
+# :M: @agent implement pagination
+# :M: @claude write comprehensive tests
+# :M: @cursor optimize this function
+
+# AI with specific instructions
+# :M: @agent use async/await, not callbacks
+# :M: @agent implement with proper error handling
+# :M: @agent add TypeScript types throughout
+```
+
+### Complex Workflows
+
+```typescript
+// Task with full context
+// :M: todo implement rate limiting
+// :M: ctx max 100 requests per minute per user
+// :M: depends(redis) use Redis for distributed counting
+// :M: deadline:2024-03-15
+
+// Blocked tasks
+// :M: todo add payment processing
+// :M: blocked(issue:AUTH-123) waiting on auth service
+// :M: owner:@payments-team
+```
+
+## Development Patterns
+
+### Working with Documentation Comments
+
+Waymarks complement existing documentation systems - they add searchability without replacing standard practices.
+
+```javascript
+/**
+ * Calculates the total price including tax
+ * @param {number} price - Base price
+ * @param {number} taxRate - Tax rate as decimal
+ * @returns {number} Total price with tax
+ * :M: todo add currency conversion support
+ * :M: ctx assumes USD for now
+ */
+function calculateTotal(price, taxRate) {
+  // :M: perf consider caching for repeated calculations
+  return price * (1 + taxRate);
+}
+```
+
+```python
+def process_order(order_data: dict) -> Order:
+    """
+    Process a customer order through the payment system.
+    
+    Args:
+        order_data: Dictionary containing order details
+        
+    Returns:
+        Processed Order object
+        
+    Raises:
+        ValidationError: If order data is invalid
+        PaymentError: If payment processing fails
+    
+    :M: sec validate all payment data
+    :M: todo add retry logic for failed payments
+    """
+    # :M: ctx payment gateway has 30s timeout
+    # :M: business max transaction amount is $10,000
+    pass
+```
+
+```java
+/**
+ * User authentication service
+ * 
+ * Handles login, logout, and session management
+ * 
+ * @since 1.0
+ * @author Team Auth
+ * 
+ * :M: security critical component
+ * :M: review check OWASP compliance
+ */
+public class AuthService {
+    /**
+     * Validates user credentials
+     * 
+     * @param username User's username
+     * @param password User's password
+     * @return Authentication token if valid
+     * 
+     * :M: todo implement rate limiting
+     * :M: sec never log passwords
+     */
+    public String authenticate(String username, String password) {
+        // :M: ctx passwords are bcrypt hashed
+        // :M: audit log all auth attempts
+    }
+}
+```
+
+### Type Definitions and Interfaces
+
+```typescript
+/**
+ * User profile data structure
+ * :M: api public interface - maintain compatibility
+ */
+interface UserProfile {
+  id: string;           // :M: ctx UUID v4 format
+  email: string;        // :M: sec PII - handle carefully
+  preferences: {
+    theme: 'light' | 'dark';  // :M: feature dark mode support
+    notifications: boolean;    // :M: todo implement notification system
+  };
+  createdAt: Date;      // :M: ctx stored as UTC
+}
+
+// :M: deprecated use UserProfile instead
+interface LegacyUser {
+  userId: number;       // :M: migration convert to UUID
+}
+```
+
+### Test Patterns
+
+```javascript
+describe('PaymentProcessor', () => {
+  // :M: test needs more edge cases
+  // :M: ctx mock external payment gateway
+  
+  it('should handle successful payments', () => {
+    // :M: todo test with different currencies
+    // :M: @agent add assertion for audit log
+  });
+  
+  it('should retry failed payments', () => {
+    // :M: test verify exponential backoff
+    // :M: ctx max 3 retries
+  });
+  
+  // :M: test missing: concurrent payment handling
+  // :M: test missing: partial payment scenarios
+});
+```
+
+## Metadata Patterns
+
+### Configuration and Environment
+
+```yaml
+# config/production.yml
+database:
+  host: prod-db.example.com  # :M: sec use environment variable
+  port: 5432
+  pool_size: 20             # :M: perf tuned for high load
+  
+cache:
+  provider: redis           # :M: ctx Redis 6.2+ required
+  ttl: 3600                # :M: config 1 hour cache
+  
+# :M: todo add monitoring configuration
+# :M: review verify production settings
+```
+
+### Version and Lifecycle
+
+```javascript
+// :M: since:v2.0 new API endpoint
+// :M: deprecated:v3.0 use /api/v3/users instead
+// :M: until:v4.0 will be removed
+router.get('/api/v2/users', (req, res) => {
+  // :M: breaking returns different format than v1
+  // :M: migration guide at docs/migration-v2.md
+});
+
+// Feature flags
+// :M: feature new-checkout-flow
+// :M: experiment 10% rollout
+if (features.isEnabled('new-checkout-flow', user)) {
+  // :M: metrics track conversion rate
+  return newCheckoutProcess();
+}
+```
+
+### Issue Tracking Integration
+
+```python
+# :M: issue(BUG-1234) intermittent timeout
+# :M: jira(PROJ-456) parent epic
+# :M: pr(789) implements this feature
+def sync_user_data():
+    # :M: owner:@data-team
+    # :M: sprint:2024-Q1
+    pass
+```
+
+## Security Patterns
+
+```javascript
+// Input validation
+function updateProfile(userId, data) {
+  // :M: sec validate all user inputs
+  // :M: ctx prevent SQL injection
+  // :M: todo add rate limiting
+  
+  // :M: sec check user owns this profile
+  if (!userOwnsProfile(userId, profileId)) {
+    // :M: audit log unauthorized access attempt
+    throw new ForbiddenError();
   }
 }
-```
 
-### Implementation Guidance
-- `:M: ctx` - Critical information AI needs to know
-  - Document assumptions that aren't obvious from code
-  - Explain business rules or constraints
-  - Clarify architectural decisions
-
-```python
-# :M: ctx user_ids are UUIDs, not sequential integers
-# :M: ctx all timestamps are UTC, convert for display only
-class UserService:
-    # :M: @agent implement with proper timezone handling
-    def get_user_activity(self, user_id: str, date: datetime):
-        # :M: sec validate UUID format
-        pass
-```
-
-### Code Review Requests
-- `:M: review` - Mark code for AI or human review
-  - Security implications
-  - Performance concerns
-  - Best practices
-
-```go
-// :M: review check for race conditions
-// :M: ctx concurrent access from multiple goroutines
-func (c *Cache) Set(key string, value interface{}) {
-    // :M: todo add mutex protection
-    c.data[key] = value
+// Sensitive data handling
+// :M: sec PII data - encrypt at rest
+// :M: compliance GDPR requirements
+class UserDataStore {
+  // :M: sec never log sensitive fields
+  // :M: audit all data access
 }
 ```
 
----
-
-## 2. Security Patterns
-
-### Input Validation
-- `:M: sec` - Mark security-critical code
-  - Input sanitization points
-  - Authentication boundaries
-  - Sensitive data handling
-
-```javascript
-// :M: sec validate all user inputs
-// :M: ctx prevent SQL injection and XSS
-function updateUserProfile(userId, profileData) {
-  // :M: todo sanitize HTML content
-  // :M: sec check user owns this profile
-  const query = `UPDATE users SET profile = ? WHERE id = ?`;
-  return db.execute(query, [profileData, userId]);
-}
-```
-
-### Authentication & Authorization
-- `:M: auth` - Authentication/authorization checkpoints
-  - Permission boundaries
-  - Token validation
-  - Access control
-
-```python
-# :M: auth verify user permissions
-# :M: sec ensure proper scoping
-@require_auth
-def delete_resource(resource_id: str, user: User):
-    # :M: ctx only owners and admins can delete
-    resource = Resource.get(resource_id)
-    
-    # :M: sec prevent unauthorized access
-    if resource.owner_id != user.id and not user.is_admin:
-        raise Forbidden("Cannot delete resource")
-    
-    # :M: audit log deletion for compliance
-    audit_log.record("resource_deleted", resource_id, user.id)
-    resource.delete()
-```
-
----
-
-## 3. Performance Optimization
-
-### Database Queries
-- `:M: perf` - Performance-sensitive code
-  - N+1 query problems
-  - Inefficient algorithms
-  - Resource-intensive operations
+## Performance Patterns
 
 ```ruby
 # :M: perf N+1 query detected
-# :M: ctx each post triggers separate comment count query
+# :M: todo use includes or join
 def get_posts_with_stats
   posts = Post.all
   
-  # :M: todo use includes or join
   posts.map do |post|
     {
       title: post.title,
       # :M: perf this hits DB for each post
-      comment_count: post.comments.count,
-      author: post.author.name
+      comment_count: post.comments.count
     }
   end
 end
-```
 
-### Caching Opportunities
-- `:M: cache` - Places where caching would help
-  - Expensive computations
-  - Frequent API calls
-  - Static data
-
-```typescript
-// :M: cache expensive calculation
-// :M: ctx called on every request
-function calculatePricing(items: CartItem[]): number {
-  // :M: perf consider memoization
-  // :M: todo add Redis caching with TTL
-  return items.reduce((total, item) => {
-    const discount = calculateComplexDiscount(item);
-    return total + (item.price * item.quantity * discount);
-  }, 0);
-}
-```
-
----
-
-## 4. Code Quality & Maintenance
-
-### Temporary Code
-- `:M: temp` - Code that should be removed
-  - Workarounds for bugs
-  - Quick fixes
-  - Migration shims
-
-```javascript
-// :M: temp remove after Chrome 120 fix ships
-// :M: ctx workaround for scrolling bug
-// :M: issue(CHR-4823) track browser fix
-function patchChromeScroll() {
-  if (navigator.userAgent.includes('Chrome/120')) {
-    // :M: temp force repaint hack
-    document.body.style.display = 'none';
-    document.body.offsetHeight; // trigger reflow
-    document.body.style.display = '';
-  }
-}
-```
-
-### Technical Debt
-- `:M: debt` - Known technical debt
-  - Shortcuts taken
-  - Refactoring needed
-  - Architecture improvements
-
-```python
-# :M: debt refactor to use dependency injection
-# :M: ctx tightly coupled to database implementation
-class OrderService:
-    def __init__(self):
-        # :M: debt hardcoded connection
-        self.db = PostgresConnection("prod-db-url")
-    
-    # :M: todo make database configurable
-    def process_order(self, order_data):
-        # :M: debt extract validation logic
-        if not self._validate_order(order_data):
-            return False
-        
-        # :M: ctx 500+ lines of business logic below
-        # :M: refactor split into smaller methods
-```
-
----
-
-## 5. Documentation & Context
-
-### API Documentation
-- `:M: docs` - Documentation needed
-  - API endpoints
-  - Complex algorithms
-  - Public interfaces
-
-```rust
-// :M: docs add comprehensive examples
-// :M: api public interface - maintain compatibility
-// :M: ctx returns Err for invalid inputs, not panic
-pub fn parse_config(path: &Path) -> Result<Config, ConfigError> {
-    // :M: docs explain config file format
-    // :M: example show valid TOML structure
-    let contents = fs::read_to_string(path)
-        .map_err(|e| ConfigError::IoError(e))?;
-    
-    // :M: docs list all possible error types
-    toml::from_str(&contents)
-        .map_err(|e| ConfigError::ParseError(e.to_string()))
-}
-```
-
-### Business Logic
-- `:M: business` - Business rule documentation
-  - Domain logic
-  - Compliance requirements
-  - Policy implementations
-
-```java
-// :M: business payment processing rules
-// :M: ctx max transaction: $10,000
-// :M: compliance PCI-DSS requirements
-public class PaymentProcessor {
-    // :M: business retry failed payments up to 3 times
-    // :M: ctx exponential backoff: 1s, 2s, 4s
-    public PaymentResult processPayment(Payment payment) {
-        // :M: audit log all payment attempts
-        // :M: sec never log full card numbers
-        
-        // :M: business validate amount limits
-        if (payment.getAmount() > 10000) {
-            // :M: ctx requires manual approval
-            return PaymentResult.requiresApproval();
-        }
-        
-        // :M: todo implement retry logic
-        return attemptPayment(payment);
-    }
-}
-```
-
----
-
-## 6. Testing & Quality Assurance
-
-### Test Coverage
-- `:M: test` - Testing requirements
-  - Missing tests
-  - Edge cases
-  - Test scenarios
-
-```typescript
-// :M: test needs comprehensive unit tests
-// :M: ctx handle null, undefined, empty arrays
-export function mergeConfigs(...configs: Config[]): Config {
-  // :M: test edge case: circular references
-  // :M: test edge case: conflicting values
-  
-  // :M: @agent write tests for all edge cases
-  return configs.reduce((merged, config) => {
-    return deepMerge(merged, config);
-  }, {});
-}
-```
-
-### Error Handling
-- `:M: error` - Error handling needed
-  - Missing try-catch
-  - Unhandled edge cases
-  - Error recovery
-
-```go
-// :M: error add proper error handling
-// :M: ctx network calls can fail
-func FetchUserData(userID string) (*User, error) {
-    // :M: todo handle timeout errors
-    resp, err := http.Get(fmt.Sprintf("/api/users/%s", userID))
-    if err != nil {
-        // :M: error add retry logic
-        return nil, err
-    }
-    
-    // :M: error check response status
-    // :M: ctx API returns 404 for missing users
-    var user User
-    json.NewDecoder(resp.Body).Decode(&user)
-    return &user, nil
-}
-```
-
----
-
-## 7. Feature Development
-
-### Feature Flags
-- `:M: feature` - Feature-flagged code
-  - Experimental features
-  - Gradual rollouts
-  - A/B tests
-
-```python
-# :M: feature new checkout flow
-# :M: ctx 10% rollout to test conversion
-# :M: metrics track success rate
-def checkout_process(cart: Cart, user: User) -> Order:
-    # :M: feature check flag status
-    if feature_flags.is_enabled("new-checkout-v2", user):
-        # :M: todo implement new flow
-        # :M: @agent create optimized checkout
-        return new_checkout_flow(cart, user)
-    else:
-        # :M: deprecated remove after full rollout
-        return legacy_checkout(cart, user)
-```
-
-### API Versioning
-- `:M: version` - Version-specific code
-  - API compatibility
-  - Migration paths
-  - Deprecation notices
-
-```javascript
-// :M: version v2 API endpoint
-// :M: deprecated v1 endpoint - remove in v3
-router.post('/api/v2/users', async (req, res) => {
-  // :M: breaking returns different response format
-  // :M: migration guide at docs/v2-migration.md
-  
-  // :M: ctx v2 uses JSON:API format
-  const user = await createUser(req.body);
-  
-  // :M: todo add pagination headers
-  res.json({
-    data: {
-      type: 'users',
-      id: user.id,
-      attributes: user
-    }
-  });
-});
-```
-
----
-
-## 8. Integration Points
-
-### External Services
-- `:M: integration` - External service touchpoints
-  - API calls
-  - Third-party libraries
-  - Service dependencies
-
-```ruby
-# :M: integration Stripe payment API
-# :M: ctx requires API key in env vars
-# :M: error handle rate limiting (429)
-class PaymentGateway
-  # :M: todo add circuit breaker
-  # :M: ctx timeout after 30 seconds
-  def charge_card(amount, token)
-    # :M: sec never log tokens
-    # :M: audit record all transactions
-    
-    begin
-      # :M: integration Stripe charge creation
-      # :M: docs see https://stripe.com/docs/api/charges
-      Stripe::Charge.create(
-        amount: amount,
-        currency: 'usd',
-        source: token
-      )
-    rescue Stripe::RateLimitError => e
-      # :M: todo implement exponential backoff
-      raise PaymentError.new("Rate limited")
-    end
-  end
+# :M: cache expensive calculation
+# :M: ctx called on every request
+# :M: todo add Redis caching with TTL
+def calculate_recommendations(user)
+  # :M: perf consider background job
+  # :M: metrics track execution time
 end
 ```
 
----
-
-## 9. Search Patterns
+## Search Examples
 
 ### Finding Work
 ```bash
-# All AI agent tasks
+# All todos
+rg ":M: todo"
+
+# High priority items
+rg ":M:.*priority:high"
+
+# AI agent tasks
 rg ":M: @agent"
 
-# Security issues
-rg ":M: sec"
-
-# Performance problems
-rg ":M: perf"
-
-# Temporary code to remove
-rg ":M: temp"
+# Bugs by severity
+rg ":M:.*bug.*severity:critical"
 ```
 
 ### Finding Context
@@ -413,58 +292,61 @@ rg ":M: temp"
 # All contextual information
 rg ":M: ctx"
 
+# Security considerations
+rg ":M: sec" -A 2 -B 2
+
+# Performance issues
+rg ":M: perf"
+
 # Business rules
 rg ":M: business"
-
-# Integration points
-rg ":M: integration"
 ```
 
-### Complex Searches
+### Advanced Searches
 ```bash
-# Security TODOs
-rg ":M: sec.*todo|:M: todo.*security"
+# Tasks assigned to specific person
+rg ":M:.*@alice"
 
-# AI tasks with context
-rg -B2 -A2 ":M: @agent"
+# Deprecated code with timelines
+rg ":M:.*deprecated.*until:"
 
-# Temporary code with deadlines
-rg ":M: temp.*2024"
+# Temporary code to remove
+rg ":M: temp|:M: tmp"
+
+# Find all blockers
+rg ":M:.*blocked" -A 1
 ```
 
----
+## Best Practices
 
-## 10. Best Practices
-
-1. **Layer your tags**: Combine tags for richer meaning
+1. **Waymarks complement, not replace**: Use alongside JSDoc, docstrings, and comments
    ```javascript
-   // :M: sec,todo,p0 critical auth fix needed
+   /**
+    * Standard JSDoc remains unchanged
+    * :M: todo enhance with better examples
+    */
    ```
 
-2. **Add context liberally**: More context helps AI and humans
+2. **Keep related markers together**: Group waymarks that describe the same concern
    ```python
-   # :M: ctx database uses UTC timestamps
-   # :M: ctx user_ids are case-sensitive
+   # :M: sec validate inputs
+   # :M: sec check permissions  
+   # :M: ctx admin users bypass some checks
    ```
 
-3. **Be specific with AI instructions**:
+3. **Be specific with AI instructions**: Clear context helps AI agents
    ```javascript
-   // :M: @agent implement using async/await, not callbacks
-   // :M: @agent add comprehensive error handling
+   // :M: @agent implement using React hooks
+   // :M: @agent include error boundaries
+   // :M: ctx must support React 16.8+
    ```
 
-4. **Link to external resources**:
-   ```go
-   // :M: docs see RFC-7231 section 6.5.1
-   // :M: issue(PROJ-123) tracking in Jira
-   ```
-
-5. **Use consistent vocabulary**: Define patterns for your team
+4. **Use consistent patterns**: Establish team conventions
    ```ruby
-   # Team convention:
-   # :M: shipit - ready for production
-   # :M: holdup - needs review before merge
-   # :M: dragon - here be dragons, proceed carefully
+   # Team patterns:
+   # :M: ship ready for production
+   # :M: hold needs review first
+   # :M: risk proceed with caution
    ```
 
-The goal is to help make codebases more discoverable. Well-placed Cairns can serve as waypoints through your code.
+Remember: Waymarks make codebases more navigable. They're breadcrumbs for both humans and AI.

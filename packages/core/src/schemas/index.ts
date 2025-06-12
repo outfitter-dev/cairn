@@ -15,8 +15,8 @@ const columnNumberSchema = z.number()
   .int('Column number must be an integer')
   .positive('Column number must be positive');
 
-// :M: api Cairn schema
-export const magicAnchorSchema = z.object({
+// :M: api waymark schema
+export const waymarkSchema = z.object({
   line: lineNumberSchema,
   column: columnNumberSchema,
   raw: z.string().min(1, 'Raw line cannot be empty'),
@@ -25,7 +25,7 @@ export const magicAnchorSchema = z.object({
   file: z.string().optional(),
 });
 
-export type MagicAnchorValidated = z.infer<typeof magicAnchorSchema>;
+export type WaymarkValidated = z.infer<typeof waymarkSchema>;
 
 // :M: api Parse Error schema
 export const parseErrorSchema = z.object({
@@ -39,7 +39,7 @@ export type ParseErrorValidated = z.infer<typeof parseErrorSchema>;
 
 // :M: api Parse Result schema
 export const parseResultSchema = z.object({
-  anchors: z.array(magicAnchorSchema),
+  anchors: z.array(waymarkSchema),
   errors: z.array(parseErrorSchema),
 });
 
@@ -90,12 +90,12 @@ export const listCommandOptionsSchema = z.object({
 // :M: api File path validation
 export const filePathSchema = z.string()
   .min(1, 'File path cannot be empty')
-  .refine((path) => !path.includes('\0'), 'File path cannot contain null bytes');
+  .refine((path: string) => !path.includes('\0'), 'File path cannot contain null bytes');
 
 // :M: api Anchor payload validation
 export const anchorPayloadSchema = z.string()
   .min(1, 'Anchor payload cannot be empty')
-  .refine((payload) => {
+  .refine((payload: string) => {
     // Must have at least one non-whitespace character
     return payload.trim().length > 0;
   }, 'Anchor payload must contain non-whitespace characters');

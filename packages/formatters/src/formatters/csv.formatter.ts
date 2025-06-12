@@ -1,6 +1,6 @@
-// :M: tldr CSV formatter for Cairn outputs
+// :M: tldr CSV formatter for waymark outputs
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
-import type { SearchResult, MagicAnchor } from '@cairn/types';
+import type { SearchResult, Waymark } from '@waymark/types';
 
 export class CSVFormatter implements IFormatter {
   // :M: api format data as CSV
@@ -45,7 +45,7 @@ export class CSVFormatter implements IFormatter {
   }
 
   // :M: api format parse results as CSV
-  private formatParseResults(data: { file: string; result: { anchors: MagicAnchor[]; errors: any[] } }): string {
+  private formatParseResults(data: { file: string; result: { anchors: Waymark[]; errors: any[] } }): string {
     const headers = ['File', 'Line', 'Column', 'Contexts', 'Prose', 'Status'];
     const rows = [headers];
 

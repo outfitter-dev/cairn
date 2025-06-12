@@ -2,7 +2,7 @@
 description: "How to search and navigate using Grepa grep-anchors effectively"
 alwaysApply: true
 ---
-
+<!-- :M: fixme, refactor uses old `:ga:` pattern, "grep anchor" vs "waymark" -->
 # Grepa Search and Navigation Guide
 
 This codebase uses grep-anchors (`:ga:` patterns) as a universal navigation system. Understanding how to search and utilize these anchors enables rapid code discovery, context gathering, and intelligent navigation for both development and AI-assisted tasks.

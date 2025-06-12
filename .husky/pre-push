@@ -25,17 +25,17 @@ pnpm build || {
     exit 1
 }
 
-# Check for temporary markers that shouldn't be pushed
-echo "🔍 Checking for temporary code markers..."
+# Check for temporary waymarks that shouldn't be pushed
+echo "🔍 Checking for temporary code waymarks..."
 # Get the remote branch we're pushing to
 remote_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "origin/main")
 # Use three-dot diff to get only files changed in local commits
 files_to_check=$(git diff --name-only "$remote_branch"...HEAD -- '*.ts' '*.js' '*.tsx' '*.jsx')
 if [ -n "$files_to_check" ]; then
-    temp_markers=$(echo "$files_to_check" | xargs grep -l ":A: tmp\|:A: temp" 2>/dev/null || true)
-    if [ -n "$temp_markers" ]; then
-        echo "❌ Found temporary code markers (:A: temp or :A: tmp) in:"
-        echo "$temp_markers"
+    temp_waymarks=$(echo "$files_to_check" | xargs grep -l ":A: tmp\|:A: temp" 2>/dev/null || true)
+    if [ -n "$temp_waymarks" ]; then
+        echo "❌ Found temporary code waymarks (:A: temp or :A: tmp) in:"
+        echo "$temp_waymarks"
         echo "Remove or resolve these before pushing."
         exit 1
     fi

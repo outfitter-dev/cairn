@@ -1,7 +1,7 @@
 {
-  "name": "@cairn/core",
+  "name": "@waymark/core",
   "version": "0.1.0",
-  "description": "Core parsing and search functionality for Cairns code navigation",
+  "description": "Core parsing and search functionality for waymark code navigation",
   "type": "module",
   "exports": {
     ".": {
@@ -15,7 +15,7 @@
     "dist"
   ],
   "dependencies": {
-    "@cairn/types": "workspace:*",
+    "@waymark/types": "workspace:*",
     "globby": "^14.1.0",
     "ignore": "^7.0.4",
     "zod": "^3.24.1"

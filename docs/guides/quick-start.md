@@ -1,18 +1,18 @@
 # Quick Start Guide
-<!-- :M: tldr Get started with Cairns in 5 minutes -->
+<!-- :M: tldr Get started with waymarks in 5 minutes -->
 <!-- :M: guide Essential quick start guide for new users -->
 
-Get started with Cairns in 5 minutes.
+Get started with waymarks in 5 minutes.
 
-## What is Cairn?
+## What is a Waymark?
 
-Cairn uses **Cairns** - special comments with the `:M:` marker that make your code searchable and discoverable.
+**Waymarks** are special comments with the `:M:` identifier that make your code searchable and discoverable.
 
 ## Basic Usage
 
-### 1. Add Your First Cairn
+### 1. Add Your First Waymark
 
-Add a Cairn comment to mark important code:
+Add a waymarked comment to mark important code:
 
 ```javascript
 // :M: todo implement error handling
@@ -24,10 +24,10 @@ function processUser(data) {
 
 ### 2. Search with Ripgrep
 
-Find all cairns in your codebase:
+Find all waymarks in your codebase:
 
 ```bash
-# Find all Cairns
+# Find all waymark
 rg -n ":M:"
 
 # Find specific types
@@ -75,8 +75,8 @@ Assign work and request attention:
 
 ## Next Steps
 
-1. **Learn the notation**: [Notation Guide](../notation/)
-2. **Explore conventions**: [Common Patterns](../conventions/common-patterns.md)
+1. **Learn the syntax**: [Syntax Guide](../syntax.md)
+2. **Explore conventions**: [Conventions](../conventions.md)
 3. **Set up your team**: Create a CONVENTIONS.md file
 
 ## Example Search Commands
@@ -94,7 +94,7 @@ rg -n ":M:.*@alice"
 # Find high priority items
 rg -n ":M:.*p0"
 
-# Count all cairns
+# Count all waymarks
 rg -c ":M:" | awk -F: '{sum+=$2} END {print sum}'
 ```
 
@@ -104,4 +104,4 @@ rg -c ":M:" | awk -F: '{sum+=$2} END {print sum}'
 - Always add a description after markers
 - Use standard markers when possible
 - Document team-specific conventions
-- Review and clean up old cairns regularly
+- Review and clean up old waymarks regularly
