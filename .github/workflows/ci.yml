@@ -1,4 +1,4 @@
-# :A: tldr CI workflow for testing and building on all branches and PRs
+# tldr ::: CI workflow for testing and building on all branches and PRs
 name: CI
 
 on:

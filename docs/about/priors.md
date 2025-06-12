@@ -7,7 +7,7 @@
 
 ## 1. Why capture priors?
 
-Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:::` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents so contributors can understand **why waymarks feel familiar** even if the exact syntax is new.
+Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:::` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents, so contributors can understand **why waymarks feel familiar** even if the exact syntax is new.
 
 ---
 

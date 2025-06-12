@@ -43,7 +43,7 @@ The waymark pattern: `[comment-leader] [prefix] ::: [properties] [note] [#hashta
 - `done :::` - completed work
 - `ask :::` - questions needing answers
 - `review :::` - needs review
-- `needs :::` - dependencies (synonyms: `depends`, `requires`)
+- `needs :::` - dependencies (synonyms: `depends on`, `requires`)
 - `chore :::` - routine maintenance tasks
 - `hotfix :::` - urgent production patch
 - `spike :::` - exploratory proof-of-concept work
@@ -157,7 +157,7 @@ rg ".*::: .* priority:high"
 
 ## Current Repository Structure
 
-```
+```text
 waymark/
 ├── docs/                 # Documentation
 │   ├── about/           # Prior art and history

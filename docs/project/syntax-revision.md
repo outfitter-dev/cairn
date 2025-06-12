@@ -62,7 +62,7 @@ Open-namespace tags for classification, appear anywhere in waymark (prefer at en
 
 Hashtags can be configured as synonyms for the sake of searchability. e.g. `#security` can be configured as `#sec` or `#critical`.
 
-They can also be nested in a heirarchical manner using `/` as a separator. e.g. `#auth/oauth` or `#security/a11y/wcag`. This way a search for `#auth` will find both `#auth` and `#auth/oauth`.
+They can also be nested in a hierarchical manner, using `/` as a separator, e.g. `#auth/oauth` or `#security/a11y/wcag`. This way a search for `#auth` will find both `#auth` and `#auth/oauth`.
 
 ## Syntax Structure
 
@@ -234,7 +234,7 @@ Use brackets to group multiple parameterized values:
 ### @Mentions
 
 - Not prefixes, just searchable mentions
-- In todos without detail key = assignee
+- In to-dos without a detail key = assignee
 
 ```javascript
 // Direct mention
@@ -645,7 +645,7 @@ Waymarks are designed to work alongside existing "magic comment" systems. Tradit
 The waymark CLI can operate in two modes:
 
 1. **Compatibility Mode (default)**: Allows existing magic comments before the `:::` sigil
-   - Auto-detected on install by scanning for TODO/FIXME usage
+   - Auto-detected on installation by scanning for TODO/FIXME usage
    - Preserves existing workflows
    - Both `grep TODO` and `waymark search` work
 

@@ -79,6 +79,8 @@ Add structured data and classification:
 // fix ::: API timeout #backend #critical
 ```
 
+For deeper exploration, see [Conventions](../conventions.md) and [Examples](../examples.md).
+
 ## @Mentions for Assignment
 
 Assign work and request attention:

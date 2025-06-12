@@ -40,7 +40,7 @@
   - [Language-Specific Tips](#language-specific-tips)
 - [Conclusion](#conclusion)
 
-Waymarks work seamlessly across all major documentation systems, because they're just comment content. This enables universal code navigation while preserving existing documentation workflows.
+Waymarks work seamlessly across all major documentation systems because they're just comment content. This enables universal code navigation while preserving existing documentation workflows.
 
 ## Core Integration Principle
 

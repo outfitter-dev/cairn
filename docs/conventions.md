@@ -1,6 +1,8 @@
 <!-- tldr ::: Essential patterns and best practices for waymarks -->
 # Waymark Conventions
 
+> See [Syntax Specification](../syntax.md) for complete grammar details.
+
 Patterns and practices for making your codebase AI-navigable and human-friendly using waymarks.
 
 ## Quick Start
@@ -8,7 +10,7 @@ Patterns and practices for making your codebase AI-navigable and human-friendly 
 Begin with these five essential patterns:
 
 1. `todo :::` - Work that needs doing
-2. `:::` - Important assumptions or constraints (pure notes)
+2. `pure note :::` - Important assumptions or constraints
 3. `warn :::` - Security-critical or risky code
 4. `@mentions` - AI agent instructions
 5. `temp :::` - Temporary code to remove
