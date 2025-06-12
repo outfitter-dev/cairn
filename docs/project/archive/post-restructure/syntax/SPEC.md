@@ -43,7 +43,7 @@ The syntax uses `:M:` as the identifier.
 
 ### Markers
 
-Markers classify the anchor's purpose. Markers are organized into six semantic groups for discoverability.
+Each marker classifies an anchor's purpose and is organized into one of six semantic groups for discoverability.
 
 ```javascript
 // Core markers with mandatory space after identifier

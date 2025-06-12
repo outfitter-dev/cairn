@@ -27,7 +27,7 @@ When implemented, emoji usage will follow these principles:
 ## Implementation Notes
 
 When this feature is implemented:
-- The waymark CLI will support `--emoji` flag for output
+- The waymark CLI will support the `--emoji` flag for output
 - Formatters can optionally align emoji waymarks
 - Search will treat emoji and text contexts as equivalent
 - Configuration will allow custom emoji mappings
@@ -41,7 +41,7 @@ When this feature is implemented:
 - `done` / `✅` - completed work
 - `ask` / `❓` - questions needing answers
 - `review` / `🔍` - needs review
-- `needs` / `🔗` - dependencies (synonyms: `depends`, `requires`)
+- `needs` / `🔗` - dependencies (synonyms: `depends on`, `requires`)
 - `chore` / `🧹` - routine maintenance tasks (e.g., lint fixes, dependency bumps)
 - `hotfix` / `🚑️` - urgent production patch (synonym: `patch`)
 - `spike` / `🧬` - exploratory proof-of-concept work
@@ -174,7 +174,7 @@ Editors can provide:
 
 - Screen readers will announce emoji names
 - Emoji provide visual differentiation beyond color
-- Text form always available as fallback
+- Text form always available as a fallback
 - High contrast themes work well with emoji
 
 ## Migration Path

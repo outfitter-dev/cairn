@@ -166,7 +166,7 @@ import { WaymarkParser } from '@waymark/core';
 // Use Result pattern in tests
 describe('WaymarkParser', () => {
   it('should parse valid waymark', () => {
-    const result = WaymarkParser.parseWithResult('// :M: todo implement');
+    const result = WaymarkParser.parseWithResult('// todo ::: implement');
 
     expect(result.ok).toBe(true);
     if (result.ok) {

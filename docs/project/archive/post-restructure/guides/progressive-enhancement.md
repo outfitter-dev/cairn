@@ -205,7 +205,7 @@ rg -o ":M: (\w+)" -r '$1' | sort | uniq -c | sort -nr
 
 ## Tips for Success
 
-1. **Don't force it**: If a comment doesn't need to be searchable, don't add `:M: `
+1. **Don't force it**: If a comment doesn't need to be searchable, don't add `:M:`
 2. **Stay consistent**: Pick patterns and stick to them
 3. **Document your patterns**: Keep a list in your README
 4. **Start small**: 3-5 patterns are plenty to start

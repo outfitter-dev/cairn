@@ -10,10 +10,10 @@ Core waymark patterns that work across all projects.
 
 <!-- :M: fixme: We shouldn't encourage `ctx` or `tmp`. `context` and `temp` is fine -->
 
-- `sec` instead of `security`
-- `perf` instead of `performance`
-- `ctx` instead of `context`
-- `tmp` instead of `temporary`
+- `sec` rather than `security`
+- `perf` rather than `performance`
+- `ctx` rather than `context`
+- `tmp` rather than `temporary`
 
 Shorter markers can be helpful when you're using them frequently.
 
@@ -284,7 +284,7 @@ Combine markers judiciously for closely related concerns:
 ## Suggestions
 
 - **Start with tldr** - `:M: tldr` for summaries can be widely useful
-- **Add todo and context** - These three patterns cover many use cases
+- **Add to-do and context** - These three patterns cover many use cases
 - **Be consistent** - Picking a style and sticking to it helps
 - **Keep it searchable** - Grep-ability is a key benefit
 - **Document your choices** - Consider listing your patterns in README
