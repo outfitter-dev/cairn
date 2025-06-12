@@ -1,8 +1,8 @@
-<!-- :A: tldr Contributing guidelines for Grepa project -->
+&lt;!-- tldr ::: Contributing guidelines for the Waymark project --&gt;
 
-# Contributing to Grepa
+# Contributing to Waymark
 
-Thank you for your interest in contributing to Grepa! This guide will help you get started.
+Thank you for your interest in contributing to Waymark! This guide will help you get started.
 
 ## Getting Started
 
@@ -15,8 +15,8 @@ Thank you for your interest in contributing to Grepa! This guide will help you g
 
 1. Fork and clone the repository:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/grepa.git
-   cd grepa
+   git clone https://github.com/YOUR_USERNAME/waymark.git
+   cd waymark
    ```
 
 2. Install dependencies:
@@ -38,17 +38,17 @@ Thank you for your interest in contributing to Grepa! This guide will help you g
 
 ### Available Scripts
 
-- `pnpm build` - Build the TypeScript code
-- `pnpm dev` - Watch mode for development
-- `pnpm test` - Run tests
-- `pnpm test:watch` - Run tests in watch mode
-- `pnpm typecheck` - Type check without building
-- `pnpm lint` - Run ESLint
-- `pnpm changeset` - Create a changeset for your changes
+- pnpm build - Build the TypeScript code
+- pnpm dev - Watch mode for development
+- pnpm test - Run tests
+- pnpm test:watch - Run tests in watch mode
+- pnpm typecheck - Type check without building
+- pnpm lint - Run ESLint
+- pnpm changeset - Create a changeset for your changes
 
 ### Git Workflow
 
-1. Create a feature branch from `dev`:
+1. Create a feature branch from dev:
    ```bash
    git checkout dev
    git pull
@@ -79,25 +79,24 @@ We follow strict TypeScript conventions:
 - Use Result<T, E> pattern for error handling
 - Runtime validation with Zod schemas
 - No direct throwing of errors
-- See `docs/grepa/conventions/typescript.md` for details
+- See `docs/tooling/conventions/typescript.md` for details
 
-### Magic Anchors
+### Waymarks
 
-Use Magic Anchors in your code:
+Use waymarks in your code:
 
 ```typescript
-// :A: tldr Brief description of the module
+// tldr ::: Brief description of the module
 export class MyClass {
-  // :A: api Public method documentation
+  // note ::: Public method documentation
   public myMethod(): Result<string> {
-    // :A: ctx Important context or assumptions
-    // :A: sec Security considerations
+    // ::: Important context or assumptions
+    // warn ::: Security considerations #security
   }
 }
 ```
 
 ### Commit Messages
-
 Follow conventional commits:
 
 - `feat:` New features

@@ -1,5 +1,5 @@
 {
-  "name": "@grepa/eslint-plugin",
+  "name": "@waymark/eslint-plugin",
   "version": "0.0.0",
   "main": "./src/index.js",
   "files": ["src"],

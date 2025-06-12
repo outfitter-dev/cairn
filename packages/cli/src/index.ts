@@ -1,12 +1,12 @@
-// :A: tldr Main CLI implementation using Commander.js
+// :M: tldr Main CLI implementation using Commander.js
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { readFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { isAbsolute, resolve } from 'path';
 import { 
-  MagicAnchorParser, 
-  GrepaSearch, 
+  WaymarkParser, 
+  WaymarkSearch, 
   success, 
   failure, 
   makeError, 
@@ -16,21 +16,21 @@ import {
   listCommandOptionsSchema, 
   fromZod,
   filePathSchema
-} from '@grepa/core';
-import type { Result, AppError } from '@grepa/core';
-import { FormatterFactory } from '@grepa/formatters';
+} from '@waymark/core';
+import type { Result, AppError } from '@waymark/core';
+import { FormatterFactory } from '@waymark/formatters';
 
-// :A: sec rate limiting configuration
+// :M: sec rate limiting configuration
 interface RateLimitConfig {
   maxRequests: number;
   windowMs: number;
 }
 
 /**
- * Command Line Interface for Grepa Magic Anchor parsing and search tool.
+ * Command Line Interface for Waymark parsing and search tool.
  * 
  * Features:
- * - Parse files for Magic Anchors with comprehensive validation
+ * - Parse files for waymarks with comprehensive validation
  * - Search for specific anchors across multiple files and patterns
  * - List all anchors with filtering and formatting options
  * - Advanced security: path validation, content scanning, rate limiting
@@ -56,17 +56,17 @@ export class CLI {
     this.setupCommands();
   }
 
-  // :A: api configure CLI commands and options
+  // :M: api configure CLI commands and options
   private setupCommands(): void {
     this.program
-      .name('grepa')
-      .description('Magic Anchor parser and search tool')
+      .name('waymark')
+      .description('Waymark parser and search tool')
       .version('0.2.0');
 
-    // :A: api parse command to analyze files for anchors
+    // :M: api parse command to analyze files for anchors
     this.program
       .command('parse')
-      .description('Parse file(s) for Magic Anchors')
+      .description('Parse file(s) for waymarks')
       .argument('<files...>', 'Files to parse')
       .option('-j, --json', 'Output as JSON')
       .option('-v, --verbose', 'Show parsing errors')
@@ -76,29 +76,29 @@ export class CLI {
         this.handleCommandResult(result);
       });
 
-    // :A: api search command to find specific anchors
+    // :M: api search command to find specific anchors
     this.program
       .command('search')
-      .description('Search for anchors by marker')
-      .argument('<marker>', 'Marker to search for')
+      .description('Search for waymarks by context')
+      .argument('<context>', 'Context to search for')
       .argument('[patterns...]', 'File patterns to search (default: current directory)')
       .option('-j, --json', 'Output as JSON')
-      .option('-c, --context <lines>', 'Show context lines', '0')
+      .option('-c, --context-lines <lines>', 'Show context lines', '0')
       .option('-f, --format <format>', 'Output format (terminal, json, csv)', 'terminal')
       .option('--no-gitignore', 'Do not respect .gitignore files')
       .option('--exclude <patterns...>', 'Patterns to exclude')
-      .action(async (marker: string, patterns: string[], options) => {
-        const result = await this.searchCommand(marker, patterns, options);
+      .action(async (context: string, patterns: string[], options) => {
+        const result = await this.searchCommand(context, patterns, options);
         this.handleCommandResult(result);
       });
 
-    // :A: api list command to show all anchors
+    // :M: api list command to show all anchors
     this.program
       .command('list')
-      .description('List all anchors in file(s)')
+      .description('List all waymarks in file(s)')
       .argument('[patterns...]', 'File patterns to analyze (default: current directory)')
       .option('-j, --json', 'Output as JSON')
-      .option('-m, --markers', 'Show only markers')
+      .option('-c, --contexts', 'Show only contexts')
       .option('-f, --format <format>', 'Output format (terminal, json, csv)', 'terminal')
       .option('--no-gitignore', 'Do not respect .gitignore files')
       .option('--exclude <patterns...>', 'Patterns to exclude')
@@ -108,7 +108,7 @@ export class CLI {
       });
   }
 
-  // :A: api main CLI entry point
+  // :M: api main CLI entry point
   async run(): Promise<void> {
     try {
       await this.program.parseAsync();
@@ -122,7 +122,7 @@ export class CLI {
     }
   }
 
-  // :A: api handle command result with proper error display
+  // :M: api handle command result with proper error display
   private handleCommandResult<T>(result: Result<T>): void {
     if (!result.ok) {
       console.error(chalk.red(`Error: ${humanise(result.error)}`));
@@ -147,7 +147,7 @@ export class CLI {
    * }
    * ```
    */
-  // :A: sec check rate limit for operations
+  // :M: sec check rate limit for operations
   private checkRateLimit(operation: string): Result<void> {
     const now = Date.now();
     const key = `${operation}-${process.cwd()}`;
@@ -189,13 +189,13 @@ export class CLI {
    * // Returns error for /etc/passwd (outside working directory)
    * ```
    */
-  // :A: api validate file paths for security
+  // :M: api validate file paths for security
   private async validateFilePaths(files: string[]): Promise<Result<string[]>> {
     const validatedPaths: string[] = [];
     const cwd = process.cwd();
     
     for (const file of files) {
-      // :A: sec validate file path format
+      // :M: sec validate file path format
       const validation = filePathSchema.safeParse(file);
       if (!validation.success) {
         return failure(makeError(
@@ -204,13 +204,13 @@ export class CLI {
         ));
       }
       
-      // :A: sec prevent directory traversal attacks
+      // :M: sec prevent directory traversal attacks
       const absolutePath = isAbsolute(file) ? file : resolve(cwd, file);
       const normalizedPath = resolve(absolutePath);
       
-      // :A: critical remove the vulnerability that allowed any absolute path starting with '/'
+      // :M: critical remove the vulnerability that allowed any absolute path starting with '/'
       // Only allow paths within the current working directory
-      // :A: sec handle Windows case-insensitive drive letters
+      // :M: sec handle Windows case-insensitive drive letters
       const withinCwd = process.platform === 'win32'
         ? normalizedPath.toLowerCase().startsWith(cwd.toLowerCase())
         : normalizedPath.startsWith(cwd);
@@ -222,7 +222,7 @@ export class CLI {
         ));
       }
       
-      // :A: sec resolve symlinks to prevent bypass attacks
+      // :M: sec resolve symlinks to prevent bypass attacks
       try {
         // Check if file exists before trying to resolve real path
         if (existsSync(normalizedPath)) {
@@ -252,9 +252,9 @@ export class CLI {
     return success(validatedPaths);
   }
 
-  // :A: sec validate file content for security threats
+  // :M: sec validate file content for security threats
   private validateFileContent(content: string, filename: string): Result<void> {
-    // :A: sec check for null bytes (common attack vector)
+    // :M: sec check for null bytes (common attack vector)
     if (content.includes('\0')) {
       return failure(makeError(
         'security.maliciousContent',
@@ -262,7 +262,7 @@ export class CLI {
       ));
     }
 
-    // :A: sec check for excessive file size in memory
+    // :M: sec check for excessive file size in memory
     const contentSize = Buffer.byteLength(content, 'utf8');
     if (contentSize > 50 * 1024 * 1024) { // 50MB limit for in-memory processing
       return failure(makeError(
@@ -271,7 +271,7 @@ export class CLI {
       ));
     }
 
-    // :A: sec check for suspicious patterns (no global flag to avoid state issues)
+    // :M: sec check for suspicious patterns (no global flag to avoid state issues)
     const suspiciousPatterns = [
       /eval\s*\(/i,                    // eval() calls
       /Function\s*\(/i,                // Function constructor
@@ -284,8 +284,8 @@ export class CLI {
 
     for (const pattern of suspiciousPatterns) {
       if (pattern.test(content)) {
-        // :A: ctx log suspicious content for audit
-        if (process.env['GREPA_SECURITY_LOG'] === 'true') {
+        // :M: ctx log suspicious content for audit
+        if (process.env['WAYMARK_SECURITY_LOG'] === 'true') {
           console.warn(chalk.yellow(`Security warning: Suspicious pattern detected in ${filename}`));
         }
         // Don't block, just warn - the user might be legitimately searching security code
@@ -295,18 +295,18 @@ export class CLI {
     return success(undefined);
   }
 
-  // :A: api handle parse command with Result pattern
+  // :M: api handle parse command with Result pattern
   private async parseCommand(
     files: string[],
     options: unknown
   ): Promise<Result<void>> {
-    // :A: sec check rate limit
+    // :M: sec check rate limit
     const rateLimitCheck = this.checkRateLimit('parse');
     if (!rateLimitCheck.ok) {
       return rateLimitCheck;
     }
 
-    // :A: ctx validate options
+    // :M: ctx validate options
     const optionsValidation = parseCommandOptionsSchema.safeParse(options);
     if (!optionsValidation.success) {
       return failure(fromZod(optionsValidation.error));
@@ -314,7 +314,7 @@ export class CLI {
 
     const validOptions = optionsValidation.data;
 
-    // :A: ctx validate file paths
+    // :M: ctx validate file paths
     const pathValidation = await this.validateFilePaths(files);
     if (!pathValidation.ok) {
       return pathValidation;
@@ -331,17 +331,17 @@ export class CLI {
       }
 
       try {
-        // :A: ctx use async file reading
+        // :M: ctx use async file reading
         const content = await readFile(file, 'utf-8');
         
-        // :A: sec validate content before processing
+        // :M: sec validate content before processing
         const contentValidation = this.validateFileContent(content, file);
         if (!contentValidation.ok) {
           errors.push(contentValidation.error);
           continue;
         }
         
-        const parseResult = MagicAnchorParser.parseWithResult(content, file);
+        const parseResult = WaymarkParser.parseWithResult(content, file);
 
         if (!parseResult.ok) {
           errors.push(parseResult.error);
@@ -379,19 +379,19 @@ export class CLI {
     return success(undefined);
   }
 
-  // :A: api handle search command with Result pattern
+  // :M: api handle search command with Result pattern
   private async searchCommand(
-    marker: string,
+    context: string,
     patterns: string[],
     options: Record<string, unknown>
   ): Promise<Result<void>> {
-    // :A: sec check rate limit
+    // :M: sec check rate limit
     const rateLimitCheck = this.checkRateLimit('search');
     if (!rateLimitCheck.ok) {
       return rateLimitCheck;
     }
 
-    // :A: ctx validate options
+    // :M: ctx validate options
     const optionsValidation = searchCommandOptionsSchema.safeParse(options);
     if (!optionsValidation.success) {
       return failure(fromZod(optionsValidation.error));
@@ -399,29 +399,29 @@ export class CLI {
 
     const validOptions = optionsValidation.data;
     
-    // :A: ctx validate marker
-    if (!marker || marker.trim().length === 0) {
+    // :M: ctx validate context
+    if (!context || context.trim().length === 0) {
       return failure(makeError(
         'cli.missingArgument',
-        'Marker cannot be empty'
+        'Context cannot be empty'
       ));
     }
 
-    // :A: ctx use current directory if no patterns specified
+    // :M: ctx use current directory if no patterns specified
     const searchPatterns = patterns.length > 0 ? patterns : ['./**/*'];
     
     const searchOptions = {
-      markers: [marker],
+      contexts: [context],
       context: (() => {
-        const parsed = parseInt(validOptions.context ?? '0', 10);
+        const parsed = parseInt(validOptions.contextLines ?? '0', 10);
         return isNaN(parsed) || parsed < 0 ? 0 : parsed;
       })(),
       respectGitignore: validOptions.gitignore !== false,
       exclude: (options['exclude'] as string[] | undefined) || []
     };
 
-    // :A: ctx use new async search method
-    const searchResult = await GrepaSearch.search(searchPatterns, searchOptions);
+    // :M: ctx use new async search method
+    const searchResult = await WaymarkSearch.search(searchPatterns, searchOptions);
     if (!searchResult.ok) {
       return searchResult;
     }
@@ -442,18 +442,18 @@ export class CLI {
     return success(undefined);
   }
 
-  // :A: api handle list command with Result pattern
+  // :M: api handle list command with Result pattern
   private async listCommand(
     patterns: string[],
     options: Record<string, unknown>
   ): Promise<Result<void>> {
-    // :A: sec check rate limit
+    // :M: sec check rate limit
     const rateLimitCheck = this.checkRateLimit('list');
     if (!rateLimitCheck.ok) {
       return rateLimitCheck;
     }
 
-    // :A: ctx validate options
+    // :M: ctx validate options
     const optionsValidation = listCommandOptionsSchema.safeParse(options);
     if (!optionsValidation.success) {
       return failure(fromZod(optionsValidation.error));
@@ -461,11 +461,11 @@ export class CLI {
 
     const validOptions = optionsValidation.data;
 
-    // :A: ctx use current directory if no patterns specified
+    // :M: ctx use current directory if no patterns specified
     const searchPatterns = patterns.length > 0 ? patterns : ['./**/*'];
 
-    // :A: ctx search for all anchors
-    const searchResult = await GrepaSearch.search(searchPatterns, {
+    // :M: ctx search for all anchors
+    const searchResult = await WaymarkSearch.search(searchPatterns, {
       respectGitignore: validOptions.gitignore !== false,
       exclude: (options['exclude'] as string[] | undefined) || []
     });
@@ -482,12 +482,12 @@ export class CLI {
           : 'terminal'
     );
     
-    if (validOptions.markers) {
-      // :A: ctx show only unique markers
-      const uniqueMarkers = GrepaSearch.getUniqueMarkers(searchResult.data);
+    if (validOptions.contexts) {
+      // :M: ctx show only unique contexts
+      const uniqueContexts = WaymarkSearch.getUniqueContexts(searchResult.data);
       const output = formatter.format({
-        type: 'markers',
-        data: uniqueMarkers
+        type: 'contexts',
+        data: uniqueContexts
       });
       console.log(output);
     } else {

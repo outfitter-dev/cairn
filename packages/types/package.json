@@ -1,6 +1,7 @@
 {
-  "name": "@grepa/types",
+  "name": "@waymark/types",
   "version": "0.1.0",
+  "description": "TypeScript type definitions for waymark code navigation system",
   "type": "module",
   "exports": {
     ".": {

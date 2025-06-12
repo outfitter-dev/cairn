@@ -1,4 +1,4 @@
-// :A: tldr Centralized ignore file management for grepa
+// :M: tldr Centralized ignore file management for waymark
 import { readFileSync, existsSync } from 'fs';
 import { join, relative, dirname } from 'path';
 import ignore from 'ignore';
@@ -8,14 +8,14 @@ import { makeError } from './error.js';
 import { assert, assertNonNull } from './type-guards.js';
 
 /**
- * Manages ignore patterns from various sources (.gitignore, .grepaignore, etc.)
+ * Manages ignore patterns from various sources (.gitignore, .waymarkignore, etc.)
  * Follows DRY principle by centralizing all ignore logic
  */
 export class IgnoreManager {
-  // :A: ctx cache ignore instances by directory
+  // :M: ctx cache ignore instances by directory
   private static cache = new Map<string, Ignore>();
   
-  // :A: ctx default patterns to always ignore
+  // :M: ctx default patterns to always ignore
   private static readonly DEFAULT_IGNORES: Readonly<string[]> = [
     'node_modules',
     '.git',
@@ -31,9 +31,9 @@ export class IgnoreManager {
   /**
    * Check if a file should be ignored based on all ignore rules
    */
-  // :A: api main entry point for ignore checking
+  // :M: api main entry point for ignore checking
   static shouldIgnore(filePath: string): Result<boolean> {
-    // :A: ctx validate input
+    // :M: ctx validate input
     try {
       assert(filePath, 'File path cannot be empty');
       assert(!filePath.includes('\0'), 'File path cannot contain null bytes');
@@ -49,14 +49,14 @@ export class IgnoreManager {
     const igResult = this.getIgnoreInstance(dir);
     
     if (!igResult.ok) {
-      // :A: ctx if we can't load ignore files, default to not ignoring
+      // :M: ctx if we can't load ignore files, default to not ignoring
       return success(false);
     }
 
     const projectRoot = this.findProjectRoot(dir);
     let relativePath = relative(projectRoot, filePath);
     
-    // :A: ctx normalize path separators to POSIX style for cross-platform compatibility
+    // :M: ctx normalize path separators to POSIX style for cross-platform compatibility
     // The ignore library expects forward slashes even on Windows
     if (process.platform === 'win32') {
       relativePath = relativePath.replace(/\\/g, '/');
@@ -68,9 +68,9 @@ export class IgnoreManager {
   /**
    * Get or create ignore instance for a directory
    */
-  // :A: api get ignore instance with caching
+  // :M: api get ignore instance with caching
   private static getIgnoreInstance(dir: string): Result<Ignore> {
-    // :A: ctx check cache first
+    // :M: ctx check cache first
     if (this.cache.has(dir)) {
       const cached = this.cache.get(dir);
       assertNonNull(cached, 'Cached ignore instance should not be null');
@@ -79,19 +79,19 @@ export class IgnoreManager {
 
     const ig = ignore();
     
-    // :A: ctx add default ignores
+    // :M: ctx add default ignores
     ig.add([...this.DEFAULT_IGNORES]);
     
-    // :A: ctx load .gitignore
+    // :M: ctx load .gitignore
     const gitignoreResult = this.loadIgnoreFile(dir, '.gitignore');
     if (gitignoreResult.ok) {
       ig.add(gitignoreResult.data);
     }
     
-    // :A: ctx load .grepaignore (project-specific)
-    const grepaignoreResult = this.loadIgnoreFile(dir, '.grepaignore');
-    if (grepaignoreResult.ok) {
-      ig.add(grepaignoreResult.data);
+    // :M: ctx load .waymarkignore (project-specific)
+    const waymarkignoreResult = this.loadIgnoreFile(dir, '.waymarkignore');
+    if (waymarkignoreResult.ok) {
+      ig.add(waymarkignoreResult.data);
     }
 
     this.cache.set(dir, ig);
@@ -101,7 +101,7 @@ export class IgnoreManager {
   /**
    * Load ignore file content
    */
-  // :A: api load and validate ignore file
+  // :M: api load and validate ignore file
   private static loadIgnoreFile(dir: string, filename: string): Result<string> {
     const filePath = this.findIgnoreFile(dir, filename);
     if (!filePath) {
@@ -126,7 +126,7 @@ export class IgnoreManager {
   /**
    * Find ignore file by traversing up directory tree
    */
-  // :A: api find ignore file in directory hierarchy
+  // :M: api find ignore file in directory hierarchy
   private static findIgnoreFile(startDir: string, filename: string): string | null {
     let currentDir = startDir;
     
@@ -144,7 +144,7 @@ export class IgnoreManager {
   /**
    * Find project root (directory containing .git)
    */
-  // :A: api find project root directory
+  // :M: api find project root directory
   private static findProjectRoot(startDir: string): string {
     let currentDir = startDir;
     
@@ -155,14 +155,14 @@ export class IgnoreManager {
       currentDir = dirname(currentDir);
     }
     
-    // :A: ctx fallback to current directory
+    // :M: ctx fallback to current directory
     return startDir;
   }
 
   /**
    * Clear the cache (useful for testing or when files change)
    */
-  // :A: api clear ignore cache
+  // :M: api clear ignore cache
   static clearCache(): void {
     this.cache.clear();
   }

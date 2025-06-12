@@ -1,10 +1,10 @@
-// :A: tldr Main entry point for @grepa/formatters package
+// :M: tldr Main entry point for @waymark/formatters package
 export * from './interfaces';
 export * from './formatter-factory';
 export * from './formatters/json.formatter';
 export * from './formatters/terminal.formatter';
 
-// :A: api unified formatter exports
+// :M: api unified formatter exports
 export { 
   type IFormatter as IUnifiedFormatter, 
   type FormatterInput 

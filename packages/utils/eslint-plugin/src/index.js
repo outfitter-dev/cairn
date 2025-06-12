@@ -1,7 +1,7 @@
-// :A: tldr Custom ESLint rules plugin
+// :M: tldr Custom ESLint rules plugin
 module.exports = {
   meta: {
-    name: '@grepa/eslint-plugin',
+    name: '@waymark/eslint-plugin',
     version: '0.0.0'
   },
   rules: {

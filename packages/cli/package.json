@@ -1,9 +1,10 @@
 {
-  "name": "@grepa/cli",
+  "name": "@waymark/cli",
   "version": "0.1.0",
+  "description": "Command-line interface for searching and managing waymarks in codebases",
   "type": "module",
   "bin": {
-    "grepa": "./dist/bin.js"
+    "waymark": "./dist/bin.js"
   },
   "exports": {
     ".": {
@@ -17,9 +18,9 @@
     "dist"
   ],
   "dependencies": {
-    "@grepa/types": "workspace:*",
-    "@grepa/core": "workspace:*",
-    "@grepa/formatters": "workspace:*",
+    "@waymark/types": "workspace:*",
+    "@waymark/core": "workspace:*",
+    "@waymark/formatters": "workspace:*",
     "chalk": "^5.4.1",
     "commander": "^12.0.0"
   },

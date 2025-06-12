@@ -1,11 +1,11 @@
-// :A: tldr Terminal formatters with color support for human-readable output
+// :M: tldr Terminal formatters with color support for human-readable output
 import chalk from 'chalk';
-import type { SearchResult, MagicAnchor, ParseResult } from '@grepa/types';
+import type { SearchResult, ParseResult, Waymark } from '@waymark/types';
 import type {
   ISearchResultFormatter,
-  IMagicAnchorFormatter,
+  IWaymarkFormatter,
+  IWaymarkListFormatter,
   IParseResultFormatter,
-  IMagicAnchorListFormatter,
   FormatterOptions,
 } from '../interfaces';
 
@@ -20,49 +20,49 @@ export class TerminalSearchResultFormatter implements ISearchResultFormatter {
     const output: string[] = [];
 
     results.forEach(result => {
-      output.push(this.formatAnchor(result.anchor));
+      output.push(this.formatWaymark(result.anchor));
       
       if (this.options.context && this.options.context > 0 && result.context !== undefined) {
-        // :A: ctx show context lines before
-        result.context.before.forEach((line, index) => {
+        // :M: ctx show context lines before
+        result.context.before.forEach((line: string, index: number) => {
           const lineNum = Math.max(1, result.anchor.line - (this.options.context ?? 0) + index);
           output.push(chalk.dim(`    ${lineNum}: ${line}`));
         });
         
-        // :A: ctx show context lines after  
-        result.context.after.forEach((line, index) => {
+        // :M: ctx show context lines after  
+        result.context.after.forEach((line: string, index: number) => {
           const lineNum = result.anchor.line + index + 1;
           output.push(chalk.dim(`    ${lineNum}: ${line}`));
         });
         
-        output.push(''); // :A: ctx blank line between results
+        output.push(''); // :M: ctx blank line between results
       }
     });
 
     return output.join('\n');
   }
 
-  private formatAnchor(anchor: MagicAnchor): string {
-    const location = anchor.file !== undefined ? `${anchor.file}:${anchor.line}` : `Line ${anchor.line}`;
-    const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
-    const prose = anchor.prose !== undefined ? chalk.gray(` - ${anchor.prose}`) : '';
+  private formatWaymark(waymark: Waymark): string {
+    const location = waymark.file !== undefined ? `${waymark.file}:${waymark.line}` : `Line ${waymark.line}`;
+    const contexts = waymark.contexts.map((c: string) => chalk.cyan(c)).join(', ');
+    const prose = waymark.prose !== undefined ? chalk.gray(` - ${waymark.prose}`) : '';
     
-    return `${chalk.dim(location)} ${markers}${prose}`;
+    return `${chalk.dim(location)} ${contexts}${prose}`;
   }
 }
 
-export class TerminalMagicAnchorFormatter implements IMagicAnchorFormatter {
-  format(anchor: MagicAnchor): string {
-    const location = anchor.file !== undefined ? `${anchor.file}:${anchor.line}` : `Line ${anchor.line}`;
-    const markers = anchor.markers.map(m => chalk.cyan(m)).join(', ');
-    const prose = anchor.prose !== undefined ? chalk.gray(` - ${anchor.prose}`) : '';
+export class TerminalWaymarkFormatter implements IWaymarkFormatter {
+  format(waymark: Waymark): string {
+    const location = waymark.file !== undefined ? `${waymark.file}:${waymark.line}` : `Line ${waymark.line}`;
+    const contexts = waymark.contexts.map((c: string) => chalk.cyan(c)).join(', ');
+    const prose = waymark.prose !== undefined ? chalk.gray(` - ${waymark.prose}`) : '';
     
-    return `${chalk.dim(location)} ${markers}${prose}`;
+    return `${chalk.dim(location)} ${contexts}${prose}`;
   }
 }
 
 export class TerminalParseResultFormatter implements IParseResultFormatter {
-  constructor(private anchorFormatter: TerminalMagicAnchorFormatter = new TerminalMagicAnchorFormatter()) {}
+  constructor(private waymarkFormatter: TerminalWaymarkFormatter = new TerminalWaymarkFormatter()) {}
 
   format(result: ParseResult): string {
     const output: string[] = [];
@@ -71,42 +71,42 @@ export class TerminalParseResultFormatter implements IParseResultFormatter {
     
     if (result.errors.length > 0) {
       output.push(chalk.red(`⚠ ${result.errors.length} errors:`));
-      result.errors.forEach((error) => {
+      result.errors.forEach((error: any) => {
         output.push(chalk.red(`  Line ${error.line}: ${error.message}`));
       });
     }
 
-    result.anchors.forEach((anchor: MagicAnchor) => {
-      output.push(this.anchorFormatter.format(anchor));
+    result.anchors.forEach((waymark: Waymark) => {
+      output.push(this.waymarkFormatter.format(waymark));
     });
 
     return output.join('\n');
   }
 }
 
-export class TerminalMagicAnchorListFormatter implements IMagicAnchorListFormatter {
+export class TerminalWaymarkListFormatter implements IWaymarkListFormatter {
   constructor(
     private options: FormatterOptions = {},
-    private anchorFormatter: TerminalMagicAnchorFormatter = new TerminalMagicAnchorFormatter()
+    private waymarkFormatter: TerminalWaymarkFormatter = new TerminalWaymarkFormatter()
   ) {}
 
-  format(anchors: MagicAnchor[]): string {
-    if (anchors.length === 0) {
+  format(waymarks: Waymark[]): string {
+    if (waymarks.length === 0) {
       return chalk.yellow('No anchors found');
     }
 
     const output: string[] = [
-      chalk.green(`Found ${anchors.length} anchor(s):\n`)
+      chalk.green(`Found ${waymarks.length} anchor(s):\n`)
     ];
     
-    if (this.options.markersOnly) {
-      const uniqueMarkers = [...new Set(anchors.flatMap(a => a.markers))];
-      uniqueMarkers.sort().forEach(marker => {
-        output.push(chalk.cyan(`• ${marker}`));
+    if (this.options.contextsOnly) {
+      const uniqueContexts = [...new Set(waymarks.flatMap(w => w.contexts))];
+      uniqueContexts.sort().forEach(context => {
+        output.push(chalk.cyan(`• ${context}`));
       });
     } else {
-      anchors.forEach(anchor => {
-        output.push(this.anchorFormatter.format(anchor));
+      waymarks.forEach(waymark => {
+        output.push(this.waymarkFormatter.format(waymark));
       });
     }
 

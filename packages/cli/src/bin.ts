@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// :A: tldr CLI entry point for Grepa command
+// :M: tldr CLI entry point for `waymark` command
 import { CLI } from './index.js';
 
 void (async () => {

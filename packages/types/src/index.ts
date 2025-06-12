@@ -1,23 +1,23 @@
-// :A: tldr Type definitions for Magic Anchor parsing and processing
+// :M: tldr Type definitions for waymark parsing and processing
 
-export interface MagicAnchor {
-  // :A: api core anchor properties
+export interface Waymark {
+  // :M: api core anchor properties
   line: number;
   column: number;
   raw: string;
-  markers: string[];
+  contexts: string[];
   prose?: string;
   file?: string;
 }
 
 export interface ParseResult {
-  // :A: api parser output structure
-  anchors: MagicAnchor[];
+  // :M: api parser output structure
+  anchors: Waymark[];
   errors: ParseError[];
 }
 
 export interface ParseError {
-  // :A: api parsing error information
+  // :M: api parsing error information
   line: number;
   column: number;
   message: string;
@@ -25,8 +25,8 @@ export interface ParseError {
 }
 
 export interface SearchOptions {
-  // :A: api search configuration
-  markers?: string[];
+  // :M: api search configuration
+  contexts?: string[];
   files?: string[];
   exclude?: string[];
   context?: number;
@@ -35,8 +35,8 @@ export interface SearchOptions {
 }
 
 export interface SearchResult {
-  // :A: api search result structure
-  anchor: MagicAnchor;
+  // :M: api search result structure
+  anchor: Waymark;
   context?: {
     before: string[];
     after: string[];

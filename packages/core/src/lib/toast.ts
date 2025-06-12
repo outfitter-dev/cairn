@@ -1,15 +1,15 @@
-// :A: tldr Toast wrapper utilities for future UI integration
+// :M: tldr Toast wrapper utilities for future UI integration
 import type { Result } from './result.js';
 import type { AppError, ErrorCode } from './error.js';
 
-// :A: api Mock toast interface (replace with actual library when UI is added)
+// :M: api Mock toast interface (replace with actual library when UI is added)
 interface Toast {
   success(title: string, options?: { description?: string; duration?: number; id?: string }): void;
   error(title: string, options?: { description?: string; duration?: number; id?: string }): void;
   loading(message: string): string;
 }
 
-// :A: ctx Mock implementation for development
+// :M: ctx Mock implementation for development
 const mockToast: Toast = {
   success: (title, options) => console.log(`✅ ${title}`, options?.description || ''),
   error: (title, options) => console.error(`❌ ${title}`, options?.description || ''),
@@ -19,7 +19,7 @@ const mockToast: Toast = {
   },
 };
 
-// :A: api Use this when adding a real toast library
+// :M: api Use this when adding a real toast library
 // import { toast } from 'sonner';
 const toast = mockToast;
 
@@ -28,19 +28,19 @@ type ToastOptions = {
   duration?: number;
 };
 
-// :A: api Human-readable error messages
+// :M: api Human-readable error messages
 export function humanise(err: AppError): string {
-  const messages: Partial<Record<ErrorCode, string>> = {
+  const messages: Record<ErrorCode, string> = {
     // Parse errors
-    'parse.invalidSyntax': 'Invalid Magic Anchor syntax found',
-    'parse.missingSpace': 'Missing required space after :A: marker',
-    'parse.emptyPayload': 'Anchor payload cannot be empty',
-    'parse.invalidMarker': 'Invalid marker format',
-    'parse.tooManyMarkers': 'Too many markers on a single line',
+    'parse.invalidSyntax': 'Invalid waymark syntax found',
+    'parse.missingSpace': 'Missing required space after :M: context',
+    'parse.emptyPayload': 'Waymark payload cannot be empty',
+    'parse.invalidContext': 'Invalid context format',
+    'parse.tooManyContexts': 'Too many contexts on a single line',
     
     // File errors
     'file.notFound': 'The requested file could not be found',
-    'file.readError': 'Unable to read the file',
+    'file.readError': 'There was an error reading the file',
     'file.accessDenied': "You don't have permission to access this file",
     'file.tooLarge': 'File size exceeds the maximum allowed limit',
     'file.invalidPath': 'The file path is invalid',
@@ -56,6 +56,11 @@ export function humanise(err: AppError): string {
     'cli.missingArgument': 'Required argument is missing',
     'cli.invalidOption': 'Invalid option provided',
     
+    // Security errors
+    'security.rateLimitExceeded': 'Rate limit exceeded. Please try again later',
+    'security.maliciousContent': 'Malicious content detected',
+    'security.contentTooLarge': 'Content too large for security processing',
+    
     // Validation errors
     'validation': `Invalid input: ${err.message}`,
     'validation.schema': 'Input does not match expected format',
@@ -70,15 +75,15 @@ export function humanise(err: AppError): string {
 
   const message = messages[err.code];
   
-  // :A: ctx log unmapped error codes for debugging
-  if (!message && err.code) {
+  // :M: ctx log unmapped error codes for debugging
+  if (!message && err.code && process.env['NODE_ENV'] !== 'production') {
     console.warn(`Unmapped error code: ${err.code}`, { error: err });
   }
 
   return message ?? err.message ?? 'An unknown error occurred';
 }
 
-// :A: api Display toast based on Result status
+// :M: api Display toast based on Result status
 export function showResultToast<T>(
   title: string,
   res: Result<T, AppError>,
@@ -100,7 +105,7 @@ export function showResultToast<T>(
   return res.ok;
 }
 
-// :A: api Wrap async operation with loading/success/error toasts
+// :M: api Wrap async operation with loading/success/error toasts
 export async function withToast<T>(
   promise: Promise<Result<T, AppError>>,
   messages: {

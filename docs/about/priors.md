@@ -1,6 +1,5 @@
-# Historical Priors for `:A: `-Style Anchors
-<!-- :A: tldr Historical precedents and inspiration for grep-anchor patterns -->
-<!-- :A: docs Analysis of prior art in code annotation systems -->
+<!-- tldr ::: Historical precedents and inspiration for waymark anchor patterns -->
+# Historical Priors for Waymark-Style Anchors
 
 *Version 0.1 – living document*
 
@@ -8,7 +7,7 @@
 
 ## 1. Why capture priors?
 
-Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:A:` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents so contributors can understand **why `:A:` feels familiar** even if the exact sigil is new.
+Open-source projects thrive on conventions that *already worked elsewhere*. Before standardizing on `:::` it helps to recognize the lineage of comment-level "jump points" that teams have relied on for decades. This section curates those precedents, so contributors can understand **why waymarks feel familiar** even if the exact syntax is new.
 
 ---
 
@@ -39,17 +38,19 @@ Open-source projects thrive on conventions that *already worked elsewhere*. Befo
 4. **Minimal surface area matters**
    The most successful anchors fit anywhere a comment does—source, config, even SQL.
 
-These insights justify a **single, three-character sigil** (`:A:`) and a tiny grammar: fresh enough to stand out, but orthodox enough that every Unix tool and language server can consume it.
+These insights justify a **single, three-character sigil** (`:::`) with optional prefixes and a simple grammar: fresh enough to stand out, but orthodox enough that every Unix tool and language server can consume it.
 
 ---
 
-## 4. What `:A: ` adds to the conversation
+## 4. What waymarks add to the conversation
 
-* Suggests unifying many patterns under a single token
-* Supports structured parameters for richer metadata
-* Considers AI agents alongside humans as consumers of code comments
+* Unify many patterns under a single `:::` sigil with optional prefixes
+* Support structured properties and hashtags for richer metadata
+* Consider AI agents alongside humans as consumers of code comments
+* Provide fixed namespace of prefixes for consistency across teams
+* Enable pure notes without prefixes for contextual information
 
-The `:A: ` pattern builds on decades of existing practice, packaging these ideas into a simple, portable approach.
+Waymarks build on decades of existing practice, packaging these ideas into a simple, portable approach with modern enhancements for AI-native development.
 
 ---
 

@@ -1,20 +1,19 @@
-# 🔱 Grepa - Magic Anchors for Semantic Code Navigation
-<!-- :A: tldr Universal pattern for making codebases AI-navigable and greppable -->
-<!-- :A: core Main project documentation and overview -->
+<!-- tldr ::: Universal pattern for making codebases AI-navigable and greppable -->
+# 〽️ Waymark - Blazing fast code navigation for AI agents
 
 > [!IMPORTANT]
-> **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/galligan/grepa/issues) or share your thoughts!
+> **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/outfitter-dev/waymark/issues) or share your thoughts!
 
 > [!TIP]
-> **A simple pattern for code navigation.** Magic Anchors (`:A:`) provide a consistent way to mark important spots in code that both AI agents and humans can easily find with grep. Grepa is the tooling that understands and processes these anchors.
+> **A simple pattern for code navigation.** Waymarks (`:::`) provide a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
 
 ## 📚 Documentation
 
 - **[Quick Start](docs/guides/quick-start.md)** - Get started in 5 minutes
 - **[Examples](docs/examples.md)** - Real-world patterns and workflows  
-- **[Conventions](docs/conventions/)** - Common tags and best practices
-- **[Progressive Guide](docs/guides/progressive-enhancement.md)** - Adopt at your own pace
-- **[AI Patterns](docs/conventions/ai-patterns.md)** - Working with AI agents
+- **[Conventions](docs/conventions.md)** - Common tags and best practices
+- **[Syntax Reference](docs/syntax.md)** - Complete waymark syntax
+- **[Documentation Hub](docs/)** - All documentation resources
 
 ## 🤔 The Problem
 
@@ -35,14 +34,14 @@ Current approaches fail because they're:
 
 > **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
 
-## 💡 Proposed Solution: Magic Anchors (`:A:`)
+## 💡 Proposed Solution: Waymarks (`:::`)
 
-A **Magic Anchor** is a small, consistent marker that helps make comments more discoverable:
+A **waymark** is a small, consistent marker that helps make comments more discoverable:
 
 ```javascript
-// :A: todo add input validation
+// todo ::: add input validation
 function processPayment(amount) {
-    // :A: sec verify amount is positive
+    // warn ::: verify amount is positive #security
     chargeCard(amount);
 }
 ```
@@ -50,25 +49,25 @@ function processPayment(amount) {
 Search examples:
 
 ```bash
-rg ":A:"          # List all anchors
-rg ":A: sec"      # Jump to security concerns
-rg ":A: todo"     # Find all tasks
+rg ":::"          # List all waymarks
+rg "warn :::"     # Jump to warnings
+rg "todo :::"     # Find all tasks
 ```
 
-### Why `:A:`?
+### Why `:::`?
 
-The `:A:` anchor is the canonical prefix for Magic Anchors. Like how "TODO" became a universal convention, using a single standard prefix:
+The `:::` sigil is the canonical marker for waymarks. Like how "TODO" became a universal convention, using a single standard sigil:
 
-- **Keeps tooling simple** - One pattern to search, parse, and lint
-- **Avoids edge cases** - No conflicts between different anchor styles
-- **Universal understanding** - Any developer or AI can recognize `:A:`
-- **Fast to type** - Hold Shift for `:`, then `A`, then `:` in one fluid motion
+- **Visual clarity** - The `:::` clearly separates prefix from content
+- **Avoids conflicts** - Unlikely to appear in regular code or prose
+- **Universal understanding** - Any developer or AI can recognize `:::`
+- **Fast to type** - Three colons in quick succession
 
-**For monorepos:** Use markers to distinguish services instead of different anchors:
+**For monorepos:** Use hashtags to distinguish services:
 
 ```javascript
-// :A: auth-service,todo implement OAuth
-// :A: web-app,bug fix responsive layout
+// todo ::: implement OAuth #auth-service
+// fix ::: responsive layout #web-app #frontend
 ```
 
 ## 📦 Installation
@@ -76,43 +75,43 @@ The `:A:` anchor is the canonical prefix for Magic Anchors. Like how "TODO" beca
 ### As a Global CLI Tool
 
 ```bash
-npm install -g grepa
+npm install -g waymark
 # or
-pnpm add -g grepa
+pnpm add -g waymark
 ```
 
 ### As a Dev Dependency
 
 ```bash
-npm install --save-dev grepa
+npm install --save-dev waymark
 # or
-pnpm add -D grepa
+pnpm add -D waymark
 ```
 
 ### CLI Usage
 
 ```bash
-# Parse files for Magic Anchors
-grepa parse src/**/*.ts
+# Parse files for waymarks
+waymark parse src/**/*.ts
 
-# Search for specific markers
-grepa search todo src/
-grepa search security --context 2
+# Search for specific contexts
+waymark search todo src/
+waymark search security --context 2
 
 # List all anchors in files
-grepa list src/ --json
+waymark list src/ --json
 
-# Show only unique markers
-grepa list src/ --markers
+# Show only unique contexts
+waymark list src/ --contexts
 ```
 
 ## 🚀 Quick Start
 
 ### 1. Start Simple
 
-- `:A: todo` - Mark work that needs doing
+- `todo :::` - Mark work that needs doing
   ```python
-  # :A: todo implement retry logic
+  # todo ::: implement retry logic
   def api_call():
       response = requests.get(url)
       return response
@@ -120,70 +119,56 @@ grepa list src/ --markers
 
 ### 2. Add AI Instructions
 
-- `:A: @agent` - Direct AI agents to specific tasks
+- `@mentions` - Direct AI agents to specific tasks
   ```javascript
-  // :A: @agent write unit tests for edge cases
+  // todo ::: @agent write unit tests for edge cases
   function divide(a, b) {
-      return a / b;  // :A: todo handle division by zero
+      return a / b;  // fix ::: handle division by zero
   }
   ```
 
 ### 3. Mark Important Context
 
-- `:A: ctx` - Document important assumptions
+- Pure notes - Document important assumptions
   ```go
-  // :A: ctx user_ids are always UUIDs, never integers
+  // ::: user_ids are always UUIDs, never integers
   func GetUser(userID string) (*User, error) {
-      // :A: sec validate UUID format to prevent injection
+      // warn ::: validate UUID format to prevent injection #security
       return db.FindUser(userID)
   }
   ```
 
-### 4. Combine as Needed
+### 4. Use Properties and Hashtags
 
-- Stack multiple tags for richer meaning
+- Add structured data and classification
   ```typescript
-  // :A: sec,todo fix rate limiting
-  // :A: temp,ctx remove after Redis upgrade
+  // todo ::: priority:high fix rate limiting #performance
+  // temp ::: deprecated:v3.0 remove after Redis upgrade
   ```
 
 ## 🎯 Core Patterns
 
 | Pattern | Purpose | Example |
 |---------|---------|---------|
-| `:A: tldr` | Brief summary/overview | `// :A: tldr handles user authentication` |
-| `:A: todo` | Work to be done | `// :A: todo add error handling` |
-| `:A: ctx` | Important context | `// :A: ctx expects UTC timestamps` |
-| `:A: @agent` | AI agent tasks | `// :A: @agent implement this function` |
-| `:A: sec` | Security concerns | `// :A: sec validate all inputs` |
-| `:A: temp` | Temporary code | `// :A: temp remove after v2.0` |
+| `tldr :::` | Brief summary/overview | `// tldr ::: handles user authentication` |
+| `todo :::` | Work to be done | `// todo ::: add error handling` |
+| `:::` | Important context (pure note) | `// ::: expects UTC timestamps` |
+| `@mentions` | AI agent tasks | `// todo ::: @agent implement this function` |
+| `warn :::` | Security/safety concerns | `// warn ::: validate all inputs #security` |
+| `temp :::` | Temporary code | `// temp ::: remove after v2.0` |
 
-## 📈 Progressive Enhancement
+## 📈 Getting Started
 
-### Level 1: Basic TODO Migration
-Start by enhancing your existing TODOs:
-
-```javascript
-// TODO :A: implement caching
-// FIXME :A: sec sanitize user input
-```
-
-### Level 2: Structured Tasks
-Or use standalone markers:
+Start simple and add complexity as needed:
 
 ```javascript
-// :A: todo implement caching
-// :A: todo(task:auth) add OAuth support
-// :A: todo(issue:42) fix memory leak
-```
+// Basic waymarks
+// todo ::: implement caching
+// warn ::: sanitize user input #security
 
-### Level 3: Rich Context
-Add metadata when needed:
-
-```javascript
-// :A: todo(epic:user-onboarding) new user flow
-// :A: todo(deadline:2024-03-01) compliance update
-// :A: todo(owner:@alice) payment integration
+// Add properties and hashtags when helpful
+// todo ::: fixes:#42 fix memory leak
+// todo ::: assign:@alice payment integration #backend
 ```
 
 ## 🤖 Example AI Agent Workflow
@@ -192,27 +177,27 @@ Add metadata when needed:
 
 ```python
 class UserService:
-    # :A: ctx all users must have unique emails
+    # ::: all users must have unique emails
     def create_user(self, email: str, name: str):
-        # :A: @agent implement with proper validation
-        # :A: sec prevent duplicate emails
-        # :A: todo add rate limiting
+        # todo ::: @agent implement with proper validation
+        # warn ::: prevent duplicate emails #security
+        # todo ::: add rate limiting #performance
         pass
 ```
 
 ### 2. AI agent finds the work:
 
 ```bash
-$ rg ":A: @agent"
-user_service.py:4: # :A: @agent implement with proper validation
+$ rg "todo ::: .*@agent"
+user_service.py:4: # todo ::: @agent implement with proper validation
 ```
 
 ### 3. AI reads the context:
 
 ```bash
-$ rg ":A: ctx|:A: sec" user_service.py
-user_service.py:2: # :A: ctx all users must have unique emails
-user_service.py:5: # :A: sec prevent duplicate emails
+$ rg ":::" user_service.py
+user_service.py:2: # ::: all users must have unique emails
+user_service.py:5: # warn ::: prevent duplicate emails #security
 ```
 
 ### 4. AI implements with full understanding:
@@ -223,7 +208,7 @@ def create_user(self, email: str, name: str):
     if not self._is_valid_email(email):
         raise ValueError("Invalid email format")
     
-    # :A: ctx enforcing unique email constraint
+    # ::: enforcing unique email constraint
     if self.user_repo.exists_by_email(email):
         raise DuplicateEmailError(f"Email {email} already exists")
     
@@ -241,7 +226,7 @@ def create_user(self, email: str, name: str):
 
 ### For Developers
 
-- **One command**: `rg ":A:"` shows all important markers
+- **One command**: `rg ":::"` shows all important contexts
 - **Flexible vocabulary**: Use patterns that make sense for your team
 - **Progressive adoption**: Start simple, add richness over time
 
@@ -253,84 +238,72 @@ def create_user(self, email: str, name: str):
 
 ## 🔧 Common Patterns
 
-### Security & Quality
+**Core prefixes:**
+- `todo :::` - Work to be done
+- `fix :::` - Bugs to fix  
+- `warn :::` - Warnings and cautions
+- `temp :::` - Temporary code
+- `tldr :::` - Brief summaries
+- `:::` - Pure notes (no prefix)
 
-- `:A: sec` - Security-critical code
-- `:A: audit` - Needs review
-- `:A: perf` - Performance concerns
-- `:A: bug` - Known issues
+**With properties and hashtags:**
+- `todo ::: fixes:#123 implement auth` - Link to issue
+- `todo ::: assign:@alice payment flow` - Assign ownership
+- `todo ::: priority:high fix memory leak #critical` - Set priority
 
-### Project Management
-
-- `:A: todo` - General tasks
-- `:A: todo(task:specific)` - Specific work items
-- `:A: todo(issue:123)` - Link to issue tracker
-- `:A: todo(epic:auth)` - Feature grouping
-
-### Priority Examples (define your own!)
-
-- `:A: todo(priority:critical)` - Critical priority
-- `:A: urgent` - Needs immediate attention
-- `:A: todo(sprint:next)` - Upcoming work
-- `:A: someday` - Future considerations
-
-### AI-Specific
-
-- `:A: @agent` - Any AI can help
-- `:A: @cursor` - Cursor-specific
-- `:A: prompt` - AI instructions
-- `:A: review` - AI should review
+See [Conventions](docs/conventions.md) for complete patterns.
 
 ## 🚪 Escape Hatch
 
-If you need to remove all Magic Anchor markers:
+If you need to remove all waymarks:
 
 ```bash
-# Find all files with :A: markers
-rg -l ":A:" 
+# Find all files with waymarks
+rg -l ":::" 
 
 # Preview what would be removed
-rg ":A:.*$" 
+rg ".*:::.*$" 
 
-# Remove all :A: markers (backup first!)
-find . -type f -exec sed -i.bak 's/:A:[^*]*//g' {} +
+# Remove all waymarks (backup first!)
+find . -type f -exec sed -i.bak 's/.*:::[^*]*//g' {} +
 ```
 
 ## 📋 Quick Reference
 
 ```bash
 # Find everything
-rg ":A:"
+rg ":::"
 
-# Find by type
-rg ":A: todo"
-rg ":A: sec"
-rg ":A: @agent"
+# Find by prefix
+rg "todo :::"
+rg "warn :::"
+rg "fix :::"
 
 # Find with context (lines before/after)
-rg -B1 -A1 ":A: sec"  # 1 line before and after
-rg -C2 ":A: todo"     # 2 lines context
+rg -B1 -A1 "warn :::"  # 1 line before and after
+rg -C2 "todo :::"      # 2 lines context
 
-# Find related tags nearby
-rg -B2 -A2 ":A: sec" | rg ":A: (sec|todo)"
+# Find by hashtag
+rg "#security"
+rg "#frontend"
 
-# Find combinations
-rg ":A: sec.*todo|:A: todo.*sec"
+# Find @mentions
+rg ":::.*@\w+"
 
 # Find in specific files
-rg ":A:" --type js
-rg ":A:" src/
+rg ":::" --type js
+rg ":::" src/
 
-# Count by type
-rg ":A: (\w+)" -o | sort | uniq -c
+# Extract prefixes
+rg -o "(\w+) :::" -r '$1' | sort | uniq -c
 ```
 
 ## 🎬 Getting Started
 
-1. **Try it now**: Add `// :A: todo` to something in your code
-2. **Search for it**: Run `rg ":A:"` or `grepa search todo`
-3. **Tell your AI**: "Look for :A: markers to understand the codebase"
-4. **Evolve naturally**: Add patterns as you need them
+1. **Try it now**: Add `// todo ::: implement feature` to your code
+2. **Search for it**: Run `rg ":::"` or `waymark search todo`
+3. **Tell your AI**: "Look for ::: waymarks to understand the codebase"
+4. **Evolve naturally**: Add prefixes, properties, and hashtags as needed
 
 **The goal is discoverability.** Start simple and let your patterns evolve with your needs.
 
@@ -341,8 +314,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 ### Quick Setup
 
 ```bash
-git clone https://github.com/galligan/grepa.git
-cd grepa
+git clone https://github.com/outfitter-dev/waymark.git
+cd waymark
 pnpm install
 pnpm build
 pnpm test
@@ -352,48 +325,30 @@ pnpm test
 
 ### Core Documentation
 
-- [Quick Start Guide](docs/guides/quick-start.md) - Get started with Magic Anchors in 5 minutes
-- [Examples](docs/examples.md) - Real-world Magic Anchor usage patterns
-- [Progressive Enhancement](docs/guides/progressive-enhancement.md) - Three levels of adoption
+- [Quick Start Guide](docs/guides/quick-start.md) - Get started with waymarks in 5 minutes
+- [Examples](docs/examples.md) - Real-world waymark usage patterns
+- [Syntax Reference](docs/syntax.md) - Complete waymark syntax
+- [Conventions](docs/conventions.md) - Common patterns and best practices
+- [Waymarks in Documentation](docs/waymarks-in-documentation.md) - Integration with JSDoc, docstrings, etc.
+- [Documentation Hub](docs/) - All documentation resources
 
-### Magic Anchors Notation
+### Tooling & Reference
 
-- [Magic Anchors Overview](docs/magic-anchors/README.md) - Technical format specification
-- [Format Specification](docs/magic-anchors/SPEC.md) - Detailed syntax rules
-- [Payload Rules](docs/magic-anchors/payloads.md) - How to structure tag payloads
-- [Examples](docs/magic-anchors/examples.md) - Notation examples across languages
-
-### Conventions & Patterns
-
-- [Conventions Overview](docs/conventions/README.md) - Usage patterns and best practices
-- [Common Patterns](docs/conventions/common-patterns.md) - Essential tags like `tldr`, `sec`, `tmp`
-- [AI Patterns](docs/conventions/ai-patterns.md) - Working with AI agents using `@cursor` and `@claude`
-- [Workflow Patterns](docs/conventions/workflow-patterns.md) - Task tracking and workflows
-- [Domain-Specific](docs/conventions/domain-specific.md) - Specialized patterns for frameworks
-- [Combinations](docs/conventions/combinations.md) - Using multiple tags effectively
-
-### Advanced Topics
-
-- [Advanced Patterns](docs/advanced-patterns.md) - Complex usage scenarios
-- [What Ifs](docs/what-ifs.md) - Vision for AI-native development
-
-### Project Information
-
+- [CLI Reference](docs/tooling/CLI.md) - Command-line interface
+- [API Reference](docs/tooling/API.md) - Waymark parser and search APIs
 - [Prior Art](docs/about/priors.md) - Related concepts and inspiration
-- [V0 Specification](docs/project/specs/v0.md) - Initial specification
-- [V1 Specification](docs/project/specs/v1.md) - Current specification
 
 ---
 
 ## 🌟 Inspiration: Lessons from OpenAI Codex
 
-The idea for Magic Anchors comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
+The idea for waymarks comes directly from the Codex team's "Missing Manual" interview on Latent Space (May 17, 2025). The engineers emphasized that AI agents need to jump around repos with a single, collision-free token:
 
 > *"Make your codebase discoverable — a well-named and organised tree lets Codex navigate the filesystem as quickly as a brand-new engineer might."*
 
-They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `grepa.yml` dictionary.
+They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `waymark.yml` dictionary.
 
-That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:A:` formalizes. Think of Magic Anchors as the portable follow-up to Codex's internal practice, distilled into a three-character sigil any OSS project or LLM can rely on.
+That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:::` formalizes. Think of waymarks as the portable follow-up to Codex's internal practice, distilled into a three-character sigil any OSS project or LLM can rely on.
 
 ### Sources
 

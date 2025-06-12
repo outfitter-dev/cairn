@@ -1,6 +1,7 @@
 {
-  "name": "@grepa/formatters",
+  "name": "@waymark/formatters",
   "version": "0.2.0",
+  "description": "Output formatters for waymark search results (terminal, JSON, CSV)",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +14,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@grepa/types": "workspace:*",
+    "@waymark/types": "workspace:*",
     "chalk": "^5.4.1"
   },
   "devDependencies": {
