@@ -1,6 +1,5 @@
+<!-- tldr ::: Practical waymark patterns organized by use case -->
 # Waymark Examples
-<!-- :M: tldr Practical waymark patterns organized by use case -->
-<!-- :M: example Real-world usage patterns for developers and AI agents -->
 
 Examples and patterns for working with waymarks, organized by common use cases.
 
@@ -10,43 +9,43 @@ Examples and patterns for working with waymarks, organized by common use cases.
 
 ```javascript
 // Simple todos
-// :M: todo implement validation
-// :M: fix handle edge case
-// :M: bug memory leak in auth service
+// todo ::: implement validation
+// fix ::: handle edge case
+// fix ::: memory leak in auth service
 
 // With priority and assignment
-// :M: todo priority:high implement OAuth
-// :M: todo(assign:@alice) add unit tests
-// :M: bug(severity:critical) fix race condition
+// todo ::: priority:high implement OAuth
+// todo ::: assign:@alice add unit tests
+// fix ::: priority:critical race condition #backend
 ```
 
 ### AI Agent Tasks
 
 ```python
 # Direct AI implementation
-# :M: @agent implement pagination
-# :M: @claude write comprehensive tests
-# :M: @cursor optimize this function
+# todo ::: @agent implement pagination
+# todo ::: @claude write comprehensive tests
+# todo ::: @cursor optimize this function
 
 # AI with specific instructions
-# :M: @agent use async/await, not callbacks
-# :M: @agent implement with proper error handling
-# :M: @agent add TypeScript types throughout
+# todo ::: @agent use async/await, not callbacks
+# todo ::: @agent implement with proper error handling
+# todo ::: @agent add TypeScript types throughout
 ```
 
 ### Complex Workflows
 
 ```typescript
 // Task with full context
-// :M: todo implement rate limiting
-// :M: ctx max 100 requests per minute per user
-// :M: depends(redis) use Redis for distributed counting
-// :M: deadline:2024-03-15
+// todo ::: implement rate limiting
+// ::: max 100 requests per minute per user
+// todo ::: requires:redis use Redis for distributed counting
+// todo ::: deadline:2024-03-15 complete by Q1
 
 // Blocked tasks
-// :M: todo add payment processing
-// :M: blocked(issue:AUTH-123) waiting on auth service
-// :M: owner:@payments-team
+// todo ::: add payment processing
+// hold ::: fixes:#123 waiting on auth service
+// todo ::: assign:@payments-team handle gateway integration
 ```
 
 ## Development Patterns
@@ -61,11 +60,11 @@ Waymarks complement existing documentation systems - they add searchability with
  * @param {number} price - Base price
  * @param {number} taxRate - Tax rate as decimal
  * @returns {number} Total price with tax
- * :M: todo add currency conversion support
- * :M: ctx assumes USD for now
  */
 function calculateTotal(price, taxRate) {
-  // :M: perf consider caching for repeated calculations
+  // todo ::: add currency conversion support
+  // ::: assumes USD for now
+  // note ::: consider caching for repeated calculations #performance
   return price * (1 + taxRate);
 }
 ```
@@ -84,12 +83,11 @@ def process_order(order_data: dict) -> Order:
     Raises:
         ValidationError: If order data is invalid
         PaymentError: If payment processing fails
-    
-    :M: sec validate all payment data
-    :M: todo add retry logic for failed payments
     """
-    # :M: ctx payment gateway has 30s timeout
-    # :M: business max transaction amount is $10,000
+    # warn ::: validate all payment data #security
+    # todo ::: add retry logic for failed payments
+    # ::: payment gateway has 30s timeout
+    # ::: max transaction amount is $10,000
     pass
 ```
 
@@ -101,24 +99,23 @@ def process_order(order_data: dict) -> Order:
  * 
  * @since 1.0
  * @author Team Auth
- * 
- * :M: security critical component
- * :M: review check OWASP compliance
  */
 public class AuthService {
+    // crit ::: security critical component #security
+    // review ::: check OWASP compliance
+    
     /**
      * Validates user credentials
      * 
      * @param username User's username
      * @param password User's password
      * @return Authentication token if valid
-     * 
-     * :M: todo implement rate limiting
-     * :M: sec never log passwords
      */
     public String authenticate(String username, String password) {
-        // :M: ctx passwords are bcrypt hashed
-        // :M: audit log all auth attempts
+        // todo ::: implement rate limiting #security
+        // warn ::: never log passwords #security
+        // ::: passwords are bcrypt hashed
+        // audit ::: log all auth attempts #compliance
     }
 }
 ```
@@ -128,21 +125,21 @@ public class AuthService {
 ```typescript
 /**
  * User profile data structure
- * :M: api public interface - maintain compatibility
  */
 interface UserProfile {
-  id: string;           // :M: ctx UUID v4 format
-  email: string;        // :M: sec PII - handle carefully
+  // important ::: public interface - maintain compatibility
+  id: string;           // ::: UUID v4 format
+  email: string;        // warn ::: PII - handle carefully #security
   preferences: {
-    theme: 'light' | 'dark';  // :M: feature dark mode support
-    notifications: boolean;    // :M: todo implement notification system
+    theme: 'light' | 'dark';  // todo ::: implement dark mode #frontend
+    notifications: boolean;    // todo ::: implement notification system
   };
-  createdAt: Date;      // :M: ctx stored as UTC
+  createdAt: Date;      // ::: stored as UTC
 }
 
-// :M: deprecated use UserProfile instead
+// deprecated ::: v3.0 use UserProfile instead
 interface LegacyUser {
-  userId: number;       // :M: migration convert to UUID
+  userId: number;       // todo ::: migrate to UUID format
 }
 ```
 
@@ -150,21 +147,21 @@ interface LegacyUser {
 
 ```javascript
 describe('PaymentProcessor', () => {
-  // :M: test needs more edge cases
-  // :M: ctx mock external payment gateway
+  // test ::: needs more edge cases
+  // ::: mock external payment gateway
   
   it('should handle successful payments', () => {
-    // :M: todo test with different currencies
-    // :M: @agent add assertion for audit log
+    // todo ::: test with different currencies
+    // todo ::: @agent add assertion for audit log
   });
   
   it('should retry failed payments', () => {
-    // :M: test verify exponential backoff
-    // :M: ctx max 3 retries
+    // test ::: verify exponential backoff
+    // ::: max 3 retries
   });
   
-  // :M: test missing: concurrent payment handling
-  // :M: test missing: partial payment scenarios
+  // test ::: missing concurrent payment handling
+  // test ::: missing partial payment scenarios
 });
 ```
 
@@ -175,34 +172,34 @@ describe('PaymentProcessor', () => {
 ```yaml
 # config/production.yml
 database:
-  host: prod-db.example.com  # :M: sec use environment variable
+  host: prod-db.example.com  # warn ::: use environment variable #security
   port: 5432
-  pool_size: 20             # :M: perf tuned for high load
+  pool_size: 20             # note ::: tuned for high load #performance
   
 cache:
-  provider: redis           # :M: ctx Redis 6.2+ required
-  ttl: 3600                # :M: config 1 hour cache
+  provider: redis           # ::: Redis 6.2+ required
+  ttl: 3600                # ::: 1 hour cache
   
-# :M: todo add monitoring configuration
-# :M: review verify production settings
+# todo ::: add monitoring configuration
+# review ::: verify production settings
 ```
 
 ### Version and Lifecycle
 
 ```javascript
-// :M: since:v2.0 new API endpoint
-// :M: deprecated:v3.0 use /api/v3/users instead
-// :M: until:v4.0 will be removed
+// note ::: since:v2.0 new API endpoint
+// deprecated ::: v3.0 use /api/v3/users instead
+// warn ::: until:v4.0 will be removed #breaking
 router.get('/api/v2/users', (req, res) => {
-  // :M: breaking returns different format than v1
-  // :M: migration guide at docs/migration-v2.md
+  // warn ::: returns different format than v1 #breaking
+  // docs ::: migration guide at docs/migration-v2.md
 });
 
 // Feature flags
-// :M: feature new-checkout-flow
-// :M: experiment 10% rollout
+// flag ::: new-checkout-flow experimental
+// note ::: 10% rollout active
 if (features.isEnabled('new-checkout-flow', user)) {
-  // :M: metrics track conversion rate
+  // note ::: track conversion rate #metrics
   return newCheckoutProcess();
 }
 ```
@@ -210,12 +207,12 @@ if (features.isEnabled('new-checkout-flow', user)) {
 ### Issue Tracking Integration
 
 ```python
-# :M: issue(BUG-1234) intermittent timeout
-# :M: jira(PROJ-456) parent epic
-# :M: pr(789) implements this feature
+# fix ::: fixes:#123 intermittent timeout
+# todo ::: relates-to:PROJ-456 parent epic
+# done ::: closes:#789 implements this feature
 def sync_user_data():
-    # :M: owner:@data-team
-    # :M: sprint:2024-Q1
+    # todo ::: assign:@data-team optimize performance
+    # note ::: planned for 2024-Q1 sprint
     pass
 ```
 
@@ -224,50 +221,67 @@ def sync_user_data():
 ```javascript
 // Input validation
 function updateProfile(userId, data) {
-  // :M: sec validate all user inputs
-  // :M: ctx prevent SQL injection
-  // :M: todo add rate limiting
+  // warn ::: validate all user inputs #security
+  // warn ::: prevent SQL injection #security
+  // todo ::: add rate limiting #security
   
-  // :M: sec check user owns this profile
+  // warn ::: check user owns this profile #security
   if (!userOwnsProfile(userId, profileId)) {
-    // :M: audit log unauthorized access attempt
+    // audit ::: log unauthorized access attempt #security
     throw new ForbiddenError();
   }
 }
 
 // Sensitive data handling
-// :M: sec PII data - encrypt at rest
-// :M: compliance GDPR requirements
 class UserDataStore {
-  // :M: sec never log sensitive fields
-  // :M: audit all data access
+  // warn ::: PII data - encrypt at rest #security #compliance
+  // warn ::: never log sensitive fields #security
+  // audit ::: all data access #compliance
 }
 ```
 
 ## Performance Patterns
 
 ```ruby
-# :M: perf N+1 query detected
-# :M: todo use includes or join
+# warn ::: N+1 query detected #performance
+# todo ::: use includes or join #performance
 def get_posts_with_stats
   posts = Post.all
   
   posts.map do |post|
     {
       title: post.title,
-      # :M: perf this hits DB for each post
+      # warn ::: this hits DB for each post #performance
       comment_count: post.comments.count
     }
   end
 end
 
-# :M: cache expensive calculation
-# :M: ctx called on every request
-# :M: todo add Redis caching with TTL
+# note ::: cache expensive calculation
+# ::: called on every request
+# todo ::: add Redis caching with TTL #performance
 def calculate_recommendations(user)
-  # :M: perf consider background job
-  # :M: metrics track execution time
+  # todo ::: consider background job #performance
+  # note ::: track execution time #metrics
 end
+```
+
+## HTML Comments in Markdown
+
+For markdown files, use HTML comments to make waymarks searchable but not rendered:
+
+```markdown
+<!-- tldr ::: API documentation overview -->
+<!-- todo ::: @galligan add authentication examples -->
+<!-- warn ::: breaking changes in v3.0 -->
+<!-- note ::: last updated 2024-01-30 -->
+
+# API Documentation
+
+This guide covers the REST API endpoints.
+
+<!-- todo ::: add GraphQL documentation -->
+<!-- example ::: include curl examples for each endpoint -->
 ```
 
 ## Search Examples
@@ -275,78 +289,148 @@ end
 ### Finding Work
 ```bash
 # All todos
-rg ":M: todo"
+rg "todo :::"
 
 # High priority items
-rg ":M:.*priority:high"
+rg ":::.*priority:high"
 
 # AI agent tasks
-rg ":M: @agent"
+rg ":::.*@agent"
 
-# Bugs by severity
-rg ":M:.*bug.*severity:critical"
+# Bugs and fixes
+rg "fix :::"
+
+# Critical issues
+rg ":::.*#critical"
 ```
 
 ### Finding Context
 ```bash
-# All contextual information
-rg ":M: ctx"
+# All pure notes
+rg "^[[:space:]]*//[[:space:]]*:::[[:space:]]"
 
 # Security considerations
-rg ":M: sec" -A 2 -B 2
+rg "warn :::.*#security" -A 2 -B 2
 
 # Performance issues
-rg ":M: perf"
+rg "#performance"
 
 # Business rules
-rg ":M: business"
+rg ":::.*business"
 ```
 
 ### Advanced Searches
 ```bash
 # Tasks assigned to specific person
-rg ":M:.*@alice"
+rg ":::.*@alice"
 
 # Deprecated code with timelines
-rg ":M:.*deprecated.*until:"
+rg "deprecated.*v[0-9]"
 
 # Temporary code to remove
-rg ":M: temp|:M: tmp"
+rg "temp :::"
 
 # Find all blockers
-rg ":M:.*blocked" -A 1
+rg "hold :::|blocked" -A 1
+
+# Find by hashtag
+rg "#frontend|#backend|#security"
 ```
 
 ## Best Practices
 
-1. **Waymarks complement, not replace**: Use alongside JSDoc, docstrings, and comments
-   ```javascript
-   /**
-    * Standard JSDoc remains unchanged
-    * :M: todo enhance with better examples
-    */
-   ```
+### 1. Waymarks complement, not replace
+Use alongside JSDoc, docstrings, and comments:
 
-2. **Keep related markers together**: Group waymarks that describe the same concern
-   ```python
-   # :M: sec validate inputs
-   # :M: sec check permissions  
-   # :M: ctx admin users bypass some checks
-   ```
+```javascript
+/**
+ * Standard JSDoc remains unchanged
+ * @param {string} input - User input
+ * @returns {boolean} Validation result
+ */
+function validateInput(input) {
+  // todo ::: add email format validation
+  // warn ::: sanitize before processing #security
+  return true;
+}
+```
 
-3. **Be specific with AI instructions**: Clear context helps AI agents
-   ```javascript
-   // :M: @agent implement using React hooks
-   // :M: @agent include error boundaries
-   // :M: ctx must support React 16.8+
-   ```
+### 2. Keep related markers together
+Group waymarks that describe the same concern:
 
-4. **Use consistent patterns**: Establish team conventions
-   ```ruby
-   # Team patterns:
-   # :M: ship ready for production
-   # :M: hold needs review first
-   # :M: risk proceed with caution
-   ```
+```python
+# warn ::: validate inputs #security
+# warn ::: check permissions #security
+# ::: admin users bypass some checks
+```
+
+### 3. Be specific with AI instructions
+Clear context helps AI agents:
+
+```javascript
+// todo ::: @agent implement using React hooks
+// todo ::: @agent include error boundaries
+// ::: must support React 16.8+
+```
+
+### 4. Use consistent patterns
+Establish team conventions:
+
+```ruby
+# Team patterns:
+# shipped ::: ready for production
+# hold ::: needs review first
+# warn ::: proceed with caution
+```
+
+### 5. Progressive Enhancement
+Start simple and add complexity:
+
+```javascript
+// Level 1: Basic todo
+// todo ::: add validation
+
+// Level 2: Add priority
+// todo ::: priority:high add validation
+
+// Level 3: Add assignment and hashtags
+// todo ::: priority:high assign:@alice add validation #security
+
+// Level 4: Link to issues
+// todo ::: priority:high assign:@alice fixes:#123 add validation #security
+```
+
+## Monorepo Patterns
+
+Use hashtags for service separation:
+
+```javascript
+// Auth service
+// todo ::: implement OAuth #auth-service
+// warn ::: rate limit login attempts #auth-service #security
+
+// Payment service  
+// fix ::: handle timeout errors #payment-service
+// todo ::: add retry logic #payment-service #resilience
+
+// Shared utilities
+// note ::: maintain API compatibility #shared-utils
+// deprecated ::: v3.0 use newUtility() #shared-utils
+```
+
+Search patterns for monorepos:
+
+```bash
+# All auth service issues
+rg "#auth-service"
+
+# Security across all services
+rg "#security"
+
+# Frontend-specific todos
+rg "todo :::.*#frontend"
+```
 
 Remember: Waymarks make codebases more navigable. They're breadcrumbs for both humans and AI.
+
+<!-- note ::: Examples follow new ::: syntax specification -->

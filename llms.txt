@@ -1,130 +1,140 @@
 # Waymark
 
-> Waymark provides a universal pattern (`:M:`) that makes codebases AI-navigable and grep-friendly. Drop tiny, searchable waymarks in comments so AI agents and developers can instantly navigate to the right spot in any codebase.
+> Waymark provides a universal pattern (`:::`) that makes codebases AI-navigable and grep-friendly. Drop tiny, searchable waymarks in comments so AI agents and developers can instantly navigate to the right spot in any codebase.
 
 ## Core Concept
 
-Waymarks are unique, searchable contexts placed in code comments using the pattern `:M: payload`. The canonical waymark is `:M:` (colon-M-colon followed by exactly one space). The payload consists of contexts that classify the code location.
+Waymarks are unique, searchable markers placed in code comments using the pattern `prefix ::: content`. The canonical waymark uses the `:::` sigil (three colons) preceded by a space when a prefix is present. Waymarks can contain prefixes, properties, notes, hashtags, and @mentions.
 
 Key principles:
-- **One waymark per project** - Maintain consistency across your codebase
-- **Tags, not prose** - Use structured tags for reliable pattern matching
-- **Keep tags terse** - Prefer `sec` over `security`, `ctx` over `context`
-- **Progressive adoption** - Start with one tag, expand as needed
+- **One sigil per project** - Maintain consistency with `:::` across your codebase
+- **Visual clarity** - The `:::` sigil clearly separates prefix from content
+- **Progressive adoption** - Start with simple prefixes, expand as needed
 - **AI-first design** - Optimized for LLM navigation and understanding
 
 ## Essential Patterns
 
 ### Basic Usage
 ```javascript
-// :M: todo implement validation
-// :M: sec check user permissions
-// :M: ctx assumes UTC timestamps
-// :M: @agent write unit tests
-// :M: temp remove after v2.0
+// todo ::: implement validation
+// warn ::: check user permissions #security
+// ::: assumes UTC timestamps
+// todo ::: @agent write unit tests
+// temp ::: remove after v2.0
 ```
 
-### Combined Contexts (use judiciously)
+### With Properties and Hashtags
 ```python
-# :M: sec, todo validate inputs  # Good: related concerns, concise
-# :M: perf, debt refactor this loop   # Good: both about code quality
+# todo ::: priority:high validate inputs #security
+# fix ::: assign:@alice memory leak #critical
 ```
 
-### Separate Comments (often better)
+### Pure Notes (no prefix)
 ```python
-# :M: sec check SQL injection vulnerabilities
-# :M: todo add input validation for email format
-# :M: ctx user emails must be unique in database
-# Better: each concern gets proper description
+# ::: all user emails must be unique in database
+# ::: this code is performance-critical
+# ::: deprecated:v2.0 use newMethod() instead
 ```
 
 ### Searching
 ```bash
-rg ":M:"              # All waymarks
-rg ":M: sec"          # Security concerns
-rg ":M:.*@agent"      # AI tasks
+rg ":::"              # All waymarks
+rg "warn :::"         # Security/warning concerns
+rg ":::.*@agent"      # AI tasks
 
-# Context searching (find related contexts)
-rg -B1 -A1 ":M: sec"      # Show 1 line before/after
-rg -C2 ":M: todo"          # Show 2 lines context
-rg -B2 -A2 ":M: sec"
+# Context searching (find related waymarks)
+rg -B1 -A1 "warn :::"      # Show 1 line before/after
+rg -C2 "todo :::"          # Show 2 lines context
+rg -B2 -A2 "fix :::"
 ```
 
-## Context Reference
+## Prefix Reference
 
-**Core Contexts:**
-- `tldr` - Brief summary or overview ("Too Long; Didn't Read")
-- `todo` - Work that needs doing
-- `ctx` - Important context/assumptions
-- `sec` - Security-critical code
-- `@agent` - AI agent instructions
-- `tmp` - Temporary code to remove
+### Work Prefixes
+- `todo` - work to be done
+- `fix` - bugs to fix (synonym: `fixme`)
+- `done` - completed work
+- `ask` - questions needing answers
+- `review` - needs review
+- `needs` - dependencies (synonyms: `depends`, `requires`)
+- `chore` - routine maintenance tasks
+- `hotfix` - urgent production patch
+- `spike` - exploratory proof-of-concept work
 
-**Quality Contexts:**
-- `perf` - Performance concerns
-- `bug` - Known issues
-- `debt` - Technical debt
-- `fix` / `fixme` - Broken code needing immediate fix
-- `error` - Error handling needed
-- `test` - Testing requirements
-- `breaking` - Breaking API changes
-- `freeze` - Code that must not be modified
-- `review` - Needs human review
-- `config` - Configuration values
+### Lifecycle/Maturity Prefixes
+- `stub` - skeleton/basic implementation
+- `draft` - work in progress (synonym: `wip`)
+- `stable` - mature/solid code
+- `shipped` - deployed to production
+- `good` - approved (synonyms: `lgtm`, `approved`)
+- `bad` - not approved
+- `hold` - work intentionally paused
+- `stale` - work that has stagnated
+- `cleanup` - code cleanup needed
+- `remove` - scheduled deletion
 
-**Risk & Severity:**
-- `warn` / `warning` - Potential issues or gotchas
-- `crit` / `critical` - Critical code paths
-- `unsafe` - Dangerous operations
-- `danger` - Extremely risky code
+### Alerts/Warnings Prefixes
+- `warn` - warning
+- `crit` - critical issue (synonym: `critical`)
+- `unsafe` - dangerous code
+- `caution` - proceed carefully
+- `broken` - non-functional code
+- `locked` - do not modify (synonym: `freeze`)
+- `deprecated` - scheduled for removal
+- `audit` - requires audit review
+- `legal` - legal obligations
+- `temp` - temporary code (synonym: `temporary`)
+- `revisit` - flag for future reconsideration
 
-**Documentation:**
-- `api` - Public interfaces
-- `docs` - Documentation needed  
-- `example` - Usage examples
-- `business` - Business logic
-- `meta` - Metadata about files/scripts
-- `tldr` - Brief summary (often in HTML comments)
-- `core` - Core concepts
-- `guide` - How-to guides
-- `spec` - Specifications
+### Information Prefixes
+- `tldr` - brief summary (one per file at top)
+- `summary` - code section summary
+- `note` - general note (synonym: `info`)
+- `thought` - thinking out loud
+- `docs` - documentation reference
+- `why` - explains reasoning
+- `see` - cross-reference (synonyms: `ref`, `xref`)
+- `example` - usage example
 
-**Management:**
-- `issue(ID)` - Link to issue tracker
-- `owner(@person)` - Assign responsibility
-- `priority` - Priority level (p0, p1, etc.)
-- `deadline(date)` - Time constraints
+### Meta Prefixes
+- `important` - important information
+- `hack` - hacky solution
+- `flag` - generic marker
+- `pin` - pinned item
+- `idea` - future possibility
+- `test` - test-specific marker
 
-## Why `:M:`?
+## Why `:::`?
 
-The canonical identifier `:M:` was chosen for:
-- **Brevity**: Just 3 characters
+The `:::` sigil was chosen for:
+- **Visual clarity**: Clearly separates prefix from content
 - **Uniqueness**: Unlikely to conflict with existing code
 - **Consistency**: One standard across all projects
+- **Searchability**: Easy to grep and parse
 
 ## AI Agent Workflows
 
 ### 1. Human marks location
 ```python
 class UserService:
-    # :M: ctx all emails must be unique
+    # ::: all emails must be unique
     def create_user(self, email: str):
-        # :M: @agent implement with validation
-        # :M: sec prevent duplicates
+        # todo ::: @agent implement with validation
+        # warn ::: prevent duplicates #security
         pass
 ```
 
 ### 2. AI finds work
 ```bash
-rg ":M:.*@agent"
-# user_service.py:4: # :M: @agent implement with validation
+rg ":::.*@agent"
+# user_service.py:4: # todo ::: @agent implement with validation
 ```
 
 ### 3. AI reads context
 ```bash
-rg ":M: ctx|:M: sec" user_service.py
-# user_service.py:2: # :M: ctx all emails must be unique
-# user_service.py:5: # :M: sec prevent duplicates
+rg ":::" user_service.py
+# user_service.py:2: # ::: all emails must be unique
+# user_service.py:5: # warn ::: prevent duplicates #security
 ```
 
 ### 4. AI implements with understanding
@@ -134,85 +144,83 @@ rg ":M: ctx|:M: sec" user_service.py
 ### From TODO comments
 ```bash
 # Phase 1: Enhance existing
-sed -i 's/TODO:/TODO :M: /g' **/*.js
+sed -i 's/TODO:/TODO :::/g' **/*.js
 
 # Phase 2: Pure waymarks
-sed -i 's/TODO :M: /:M: todo /g' **/*.js
+sed -i 's/TODO :::/todo :::/g' **/*.js
 ```
 
 ### Progressive adoption
-1. Start with `:M: todo`
-2. Add `:M: ctx` for clarity
-3. Use `:M: @agent` for AI
-4. Link with `:M: issue(123)`
+1. Start with `todo :::`
+2. Add `:::` for pure notes
+3. Use `@mentions` for AI
+4. Link with `fixes:#123`
 
 ## Monorepo Patterns
 
-Use contexts for service namespacing:
+Use hashtags for service namespacing:
 ```javascript
-// :M: auth, todo implement OAuth
-// :M: payment, sec validate amounts
-// :M: shared, api maintain compatibility
+// todo ::: implement OAuth #auth-service
+// fix ::: validate amounts #payment #security
+// note ::: maintain compatibility #shared-api
 ```
 
 Search patterns:
 ```bash
-rg ":M: auth"          # Auth service only
-rg ":M:.*sec"         # All security issues
+rg "#auth-service"     # Auth service only
+rg ":::.*#security"    # All security issues
 ```
 
 ## Advanced Patterns
 
-### Parameter Syntax
+### Properties
 ```javascript
-// :M: issue(123) deadline(2024-03-01)
-// :M: owner(@alice) priority(high)
+// todo ::: fixes:#123 deadline:2024-03-01 implement auth
+// todo ::: assign:@alice priority:high fix memory leak
 ```
 
 ### Multiple Values
 ```javascript
-// :M: blocked:[123,456] owners:[@alice,@bob]
+// todo ::: requires:node(16,18,20) supports multiple versions
+// fix ::: affects:auth,api,frontend security vulnerability
 ```
 
 ### Issue Linking
 ```python
-# :M: issue(123)
-# :M: jira(PROJ-456)
-# :M: github(#789)
+# todo ::: fixes:#123 implement feature
+# fix ::: closes:#456 security patch
+# done ::: relates-to:AUTH-789 completed OAuth
 ```
 
 ### HTML Comments (for markdown)
 ```markdown
-<!-- :M: tldr Quick summary of the document -->
-<!-- :M: core Essential concept explanation -->
-<!-- :M: guide Step-by-step instructions -->
+<!-- tldr ::: Quick summary of the document -->
+<!-- todo ::: @galligan add more examples -->
+<!-- note ::: Essential concept explanation -->
 ```
 
 ## Best Practices
 
-1. **Separate concerns**: Use multiple comments for distinct topics
-2. **Line limits**: Keep under ~80 chars for readable grep output
-3. **Layer contexts carefully**: `:M: sec, todo` only when closely related
-4. **Add context liberally**: More context is better, use separate lines
-5. **Be specific**: "validate UUID" not just "validate"
-6. **Link resources**: `:M: docs(RFC-7231)`
-7. **Stay consistent**: Document team patterns
-8. **Use HTML comments in markdown**: `<!-- :M: tldr summary -->` for non-rendered waymarks
+1. **Space before `:::`**: Required when prefix is present
+2. **Line limits**: Keep under ~80-120 chars for readable grep output
+3. **Be specific**: Use properties for machine-readable data, notes for descriptions
+4. **Use HTML comments in markdown**: `<!-- tldr ::: summary -->` for non-rendered waymarks
+5. **Progressive enhancement**: Start simple, add complexity as needed
 
 ## Implementation
 
 ### VS Code
 ```json
 {
-  "todo-tree.regex.regex": ":M: (\\w+)"
+  "todo-tree.regex.regex": "(\\w+) :::"
 }
 ```
 
 ### Git hooks
 ```bash
-# Block commits with tmp code
-if git diff --cached | grep -q ":M: temp"; then
-  echo "Error: Remove :M: temp contexts"
+# Block commits with temporary code
+if git diff --cached | grep -q ".*:::.*\\(temp\\|tmp\\)"; then
+  echo "Error: Remove temporary waymarks before committing"
   exit 1
 fi
 ```
@@ -220,42 +228,41 @@ fi
 ### CI/CD
 Check for critical issues in pull requests.
 
-
 ## Grammar
 
 ```ebnf
-waymark  ::= ":M:" space payload
-space   ::= " "  # exactly one ASCII space
-payload ::= context-list prose?
-context-list ::= context (", " context)*
-context  ::= bare | parameterized
-bare    ::= "@"? [A-Za-z0-9_-]+
-parameterized ::= bare "(" value ")"
-value   ::= [^)]+  # any chars except closing paren
+waymark  ::= [prefix space] ":::" space content
+prefix   ::= [A-Za-z0-9_-]+
+space    ::= " "  # exactly one ASCII space
+content  ::= (property | hashtag | mention | note)*
+property ::= key ":" value ["(" params ")"]
+hashtag  ::= "#" [A-Za-z0-9/_-]+
+mention  ::= "@" [A-Za-z0-9_-]+
+note     ::= [^#@:]+  # any text without special chars
 ```
 
 ## Resources
 
 - [README](https://github.com/outfitter-dev/waymark/blob/main/README.md): Full documentation
 - [Examples](https://github.com/outfitter-dev/waymark/blob/main/docs/examples.md): Real-world patterns
-- [Conventions](https://github.com/outfitter-dev/waymark/blob/main/docs/conventions/): Context patterns
+- [Conventions](https://github.com/outfitter-dev/waymark/blob/main/docs/conventions/): Prefix patterns
 - [Progressive Guide](https://github.com/outfitter-dev/waymark/blob/main/docs/guides/progressive-enhancement.md): Adoption path
 
 ## Quick Reference
 
 ```bash
 # Find all waymarks
-rg ":M:"
+rg ":::"
 
 # Find with context
-rg -C2 ":M: sec"         # 2 lines before/after
-rg -B3 -A3 ":M: todo"     # 3 lines before, 3 after
+rg -C2 "warn :::"         # 2 lines before/after
+rg -B3 -A3 "todo :::"     # 3 lines before, 3 after
 
 # Find in markdown (including HTML comments)  
-rg "<!-- :M:" --type md
+rg "<!-- .*:::" --type md
 
 # Remove all waymarks (backup first!)
-find . -type f -exec sed -i.bak 's/:M: [^*]*//g' {} +
+find . -type f -exec sed -i.bak 's/.*:::[^*]*//g' {} +
 ```
 
 Remember: The goal is discoverability. Start simple, grow naturally. 

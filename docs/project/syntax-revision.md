@@ -1,13 +1,14 @@
+<!-- tldr ::: Complete specification for revised waymark syntax with ::: sigil -->
+<!-- wip ::: Need to implement these changes -->
 # Syntax Revision - Waymark Terminology & Structure
-
-<!-- ::: tldr Complete specification for revised waymark syntax with ::: sigil -->
 
 This document captures all decisions made during the syntax revision discussion and serves as the specification for implementing the new waymark syntax with the `:::` sigil.
 
 ## Core Terminology
 
-### 1. **Waymark** 
+### 1. **Waymark**
 The entire comment structure containing the `:::` sigil
+
 ```javascript
 // todo ::: implement validation
 ```
@@ -16,22 +17,31 @@ The entire comment structure containing the `:::` sigil
 The `:::` separator that defines a waymark. Always preceded by a space when a prefix is present.
 
 ### 3. **Prefix**
-Optional classifier that appears before the `:::` sigil. Everything before the sigil up to the last space is considered the prefix. Limited to a defined namespace (see Prefix Set below).
+Optional classifier that appears before the `:::` sigil. Everything before the sigil up to the last space is considered the prefix. Limited to a defined namespace (see [Prefix Set](#prefix-set) below).
+
+> [!NOTE]
+> Prefixes are case-insensitive but should not include non-letter characters.
 
 ### 4. **Properties**
-Key:value pairs that provide structured, toolable metadata, appearing after the sigil
+Key:value pairs that provide structured, toolable metadata, appearing anywhere after the sigil
+
 ```javascript
-// todo ::: priority:high assign:@alice implement caching
-//          ^^^^^^^^^^^^^ ^^^^^^^^^^^^^
+// todo ::: priority:high attn:@alice implement caching
+//          ^^^^^^^^^^^^^ ^^^^^^^^^^^
 //          property      property
+
+// tldr ::: this is a performance hotpath owner:@alice
+//          ^^^^                          ^^^^^^^^^^^^
+//          note                          property
 ```
 
 ### 5. **Note**
 Optional human-readable description. **Important**: Any waymark without a prefix is implicitly a pure note.
+
 ```javascript
 // todo ::: priority:high implement proper error handling
-//                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-//                       note
+//                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//                        note
 
 // These are all pure notes (no prefix before :::):
 // ::: this is a performance hotpath
@@ -39,28 +49,42 @@ Optional human-readable description. **Important**: Any waymark without a prefix
 // ::: deprecated:v2.0 moving to new API
 ```
 
+> [!NOTE]
+> As waymarks are typically space delimited, a note would simply be text that does not contain a colon. If a note contains properties or hashtags, the entire line following the sigil is considered a note.
+
 ### 6. **#Hashtags**
 Open-namespace tags for classification, appear anywhere in waymark (prefer at end for style)
+
 ```javascript
 // todo ::: implement auth flow #security #performance
-// fix  ::: button contrast issue #critical #frontend #a11y
+// fix  ::: button contrast issue #critical #frontend/ui #a11y
 ```
+
+Hashtags can be configured as synonyms for the sake of searchability. e.g. `#security` can be configured as `#sec` or `#critical`.
+
+They can also be nested in a heirarchical manner using `/` as a separator. e.g. `#auth/oauth` or `#security/a11y/wcag`. This way a search for `#auth` will find both `#auth` and `#auth/oauth`.
 
 ## Syntax Structure
 
 ### Basic Pattern
-```
-[prefix] ::: [properties] [note] [#hashtags]
+
+```text
+[comment-leader] [prefix] ::: [properties] [note] [#hashtags]
+                 ^^^^^^^^     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                (optional)            (in any order)
 ```
 
 ### Rules
+
 1. **Prefix is optional** - appears before the `:::` sigil
 2. **Everything before `:::`** up to the last space is the prefix
 3. **No prefix = pure note** - waymark is implicitly just a note
-4. **Properties** are space-separated key:value pairs after the sigil
-5. **#Hashtags** can appear anywhere (prefer end)
+4. **Properties** are space-separated key:value pairs placed anywhere after the sigil
+5. **Notes and properties** can appear in any order after the sigil
+6. **#Hashtags** can appear anywhere (prefer end for style)
 
 ### Examples
+
 ```javascript
 // Prefix with properties and note
 // todo ::: priority:high implement caching
@@ -83,57 +107,76 @@ Open-namespace tags for classification, appear anywhere in waymark (prefer at en
 
 ## Prefix Set
 
-Waymarks use a fixed namespace of prefixes to ensure consistency. Each prefix has an optional emoji equivalent for visual scanning.
+Waymarks use a fixed namespace of prefixes to ensure consistency. Prefixes may have equivalent synonyms, e.g. `needs` == `depends` == `requires`. Searches with `waymark` will find all prefixes unless specified otherwise.
 
-### Work
-- `todo` / `📝` - work to be done
-- `fix` / `🐛` - bugs to fix (synonym: `fixme`)
-- `done` / `✅` - completed work
-- `ask` / `❓` - questions needing answers
-- `review` / `🔍` - needs review
-- `needs` / `🔗` - dependencies (synonyms: `depends`, `requires`)
+### Tasks (`task`)
+
+- `todo` - work to be done (synonym: `task`, `issue`)
+- `fix` - bugs to fix (synonym: `fixme`, `bug`)
+- `done` - completed work
+- `ask` - questions needing answers
+- `review` - needs review
+- `chore` - routine maintenance tasks (e.g., lint fixes, dependency bumps)
+- `hotfix` - urgent production patch (synonym: `patch`)
+- `spike` - exploratory proof-of-concept work
 
 ### Lifecycle/Maturity
-- `stub` / `🌱` - skeleton/basic implementation
-- `draft` / `🪴` - work in progress (synonym: `wip`)
-- `stable` / `🌳` - mature/solid code
-- `shipped` / `🚢` - deployed to production
-- `good` / `👍` - approved (synonyms: `lgtm`, `approved`, `thumbsup`)
-- `bad` / `👎` - not approved (synonyms: `nope`, `thumbsdown`)
+
+- `pr` - pull request (synonym: `pull`)
+- `stub` - skeleton/basic implementation
+- `draft` - work in progress (synonym: `wip`)
+- `stable` - mature/solid code
+- `shipped` - deployed to production
+- `good` - approved (synonyms: `lgtm`, `approved`, `thumbsup`)
+- `bad` - not approved (synonyms: `nope`, `thumbsdown`)
+- `hold` - work intentionally paused or blocked (synonym: `paused`)
+- `stale` - work that has stagnated or is out-of-date
+- `cleanup` - code cleanup or dead-code removal
+- `remove` - scheduled deletion (synonym: `delete`)
 
 ### Alerts/Warnings
-- `warn` / `🟠` - warning
-- `crit` / `🔴` - critical issue (synonym: `critical`)
-- `unsafe` / `❌` - dangerous code
-- `caution` / `🚧` - proceed carefully (synonym: `careful`)
-- `broken` / `💥` - non-functional code
-- `locked` / `🔒` - do not modify (synonym: `freeze`)
-- `deprecated` / `💀` - scheduled for removal
-- `temp` / `🍂` - temporary code (synonym: `temporary`)
+
+- `warn` - warning
+- `crit` - critical issue (synonym: `critical`)
+- `unsafe` - dangerous code
+- `caution` - proceed carefully (synonym: `careful`)
+- `broken` - non-functional code
+- `locked` - do not modify (synonym: `freeze`)
+- `needs` - dependencies (synonyms: `depends`, `requires`)
+- `deprecated` - scheduled for removal
+- `audit` - requires audit or compliance review
+- `legal` - legal or licensing obligations
+- `temp` - temporary code (synonym: `temporary`)
+- `revisit` - flag for future reconsideration (synonym: `review-later`)
+- `check` - notice to check on something related
 
 ### Information
-- `tldr` / `🪧` - brief summary (convention: one per file at top)
-- `note` / `✏️` - general note (synonym: `info`)
-- `thought` / `💭` - thinking out loud
-- `docs` / `📚` - documentation reference
-- `why` / `🤔` - explains reasoning
-- `see` / `👀` - cross-reference (synonyms: `ref`, `xref`)
-- `example` / `👉` - usage example
+
+- `tldr` - brief summary: one per file at top (synonym: `aboutme`, `about`)
+- `summary` - code section summary (synonym: `description`)
+- `note` - general note (synonym: `info`)
+- `notice` - notice to the reader
+- `thought` - thinking out loud
+- `docs` - documentation reference
+- `why` - explains reasoning
+- `see` - cross-reference (synonyms: `ref`, `xref`)
+- `example` - usage example
 
 ### Meta
-- `hack` / `🏴‍☠️` - hacky solution
-- `flag` / `🚩` - generic marker
-- `idea` / `💡` - future possibility
-- `test` / `🧪` - test-specific marker
 
-### Examples with Emoji
-```javascript
-// 🪧 ::: handles user authentication with OAuth
-// 📝 ::: implement rate limiting
-// 🐛 ::: race condition when concurrent requests
-// 🔗 ::: Redis connection for session storage
-// 💀 ::: moving to new-auth module in v3.0
-```
+- `ai` - Important context for AI agents (synonym: `agent`)
+- `important` - important information
+- `mustread` - must-read information
+- `hack` - hacky solution
+- `flag` - generic marker
+- `pin` - pinned item
+- `idea` - future possibility
+- `test` - test-specific marker
+
+### Tooling-specific Instructions
+
+- `IGNORE` - tells waymark to ignore this file in search results (must be at the top in all caps)
+- `SKIP` - tells waymark to skip this file for writing new waymarks
 
 ### Existing Magic Comments
 Traditional magic comments (TODO, FIXME, HACK, XXX, NOTE) automatically become prefixes when placed before `:::`:
@@ -158,11 +201,6 @@ Since prefixes have a limited namespace, formatters can align the `:::` sigils f
 // fix    ::: memory leak  
 // tldr   ::: handles authentication
 // locked ::: do not modify until v3.0
-
-// Works with emoji too
-// 📝 ::: implement caching
-// 🐛 ::: memory leak
-// 🪧 ::: handles authentication
 ```
 
 ## Advanced Syntax
@@ -194,6 +232,7 @@ Use brackets to group multiple parameterized values:
 ## Specific Patterns
 
 ### @Mentions
+
 - Not prefixes, just searchable mentions
 - In todos without detail key = assignee
 
@@ -210,11 +249,13 @@ Use brackets to group multiple parameterized values:
 
 ### Assignment Detail Keys
 Suggested keys (use sparingly, not overly opinionated yet):
+
 - `assign:@person` - explicit assignment
 - `for:@person` - alternative assignment
 - `attention:@person` / `attn:@person` - needs someone's attention
 
 ### TLDR Convention
+
 - One per file, at the top
 - Flexible styling
 
@@ -259,6 +300,7 @@ For monorepos, use hashtags or details to namespace by service:
 Keep properties simple and toolable. Use notes for descriptive information.
 
 ### Core Property Keys
+
 - **Assignment**: `assign:@person` or `attn:@person`
 - **Priority**: `priority:high`, `priority:critical`
 - **Dependencies**: `requires:package(version)`, `depends:service`
@@ -269,11 +311,13 @@ Keep properties simple and toolable. Use notes for descriptive information.
 
 ### Philosophy
 Properties should be:
+
 - **Machine-readable**: Can be parsed and analyzed
 - **Searchable**: Can be found with grep patterns
 - **Actionable**: Can drive tooling decisions
 
 Use notes for everything else:
+
 ```javascript
 // ❌ Too specific as properties:
 // ::: cache:5min rate-limit:100 implements:RFC7519
@@ -293,6 +337,7 @@ Use notes for everything else:
 ## Delimiter Summary
 
 Each delimiter has ONE clear purpose:
+
 - `:::` the sigil that marks a waymark
 - `:` creates key:value pairs
 - `()` parameterizes a property
@@ -324,6 +369,7 @@ For indicating relationships:
 ```
 
 ### Relationship Keys
+
 - `fixes:` / `closes:` - will close the issue
 - `relates-to:` / `refs:` - related but doesn't close
 - `blocks:` / `blocked-by:` - dependency relationships
@@ -350,6 +396,7 @@ Teams can configure trackers in `.waymark/settings.json`:
 
 ### Important: Hashtag Conflicts
 Since `#123` format is used for issue references, **numeric-only hashtags are prohibited**:
+
 - ❌ `#123` - ambiguous (issue or hashtag?)
 - ✅ `#security` - clearly a hashtag
 - ✅ `#v123` - has non-numeric characters
@@ -359,6 +406,7 @@ The linter should warn against numeric-only hashtags to prevent confusion.
 ## Search Patterns
 
 ### Basic ripgrep usage
+
 ```bash
 # Find all waymarks
 rg ":::"
@@ -379,6 +427,7 @@ rg "<!-- .*:::" --type md
 ```
 
 ### Advanced extraction
+
 ```bash
 # Count todos by assignee
 rg -o "todo ::: .*@(\w+)" -r '$1' | sort | uniq -c
@@ -395,6 +444,7 @@ rg ".*:::.*fixes:#\d+"
 
 ### Line Length
 Keep waymarks under ~80-120 characters for readable grep output:
+
 ```javascript
 // Good - concise and greppable
 // todo ::: priority:high fix auth timeout #security
@@ -405,6 +455,7 @@ Keep waymarks under ~80-120 characters for readable grep output:
 
 ### Quoting Rules
 Use quotes for values with special characters or spaces:
+
 ```javascript
 // Simple values - no quotes needed
 // todo ::: version:2.0.1 priority:high
@@ -416,6 +467,7 @@ Use quotes for values with special characters or spaces:
 
 ### CI/CD Integration
 Example git hook to prevent temporary code:
+
 ```bash
 #!/bin/bash
 if git diff --cached | grep -q ".*:::.*\(temp\|tmp\)"; then
@@ -507,6 +559,7 @@ func Authenticate(token string) (*Claims, error) {
 ```
 
 ### TypeScript/TSDoc
+
 ```typescript
 /**
  * React component for user profile display
@@ -530,9 +583,9 @@ export const UserProfile: React.FC<UserProfileProps> = memo(({ userId, showBio }
 
 ### Key Benefits
 
-1. **Unified Search**: The waymark CLI can search across all documentation:
+1. **Unified Search**: The waymark CLI can find across all documentation:
    ```bash
-   waymark search "security:critical" --include-docs
+   waymark find "security:critical" --include-docs
    waymark list --prefix tldr --in-docs-only
    ```
 
@@ -550,7 +603,7 @@ The waymark CLI could provide documentation-aware commands:
 
 ```bash
 # Find all documented functions with security concerns
-waymark search "security:" --in-docs
+waymark find "security:" --in-docs
 
 # List all public APIs marked for deprecation  
 waymark list --prefix deprecated --public-only
@@ -602,6 +655,7 @@ The waymark CLI can operate in two modes:
    - Better for new projects
 
 ### Configuration
+
 ```json
 {
   "compatibility": {
@@ -613,6 +667,7 @@ The waymark CLI can operate in two modes:
 
 ### Progressive Migration
 Teams can gradually adopt waymarks:
+
 ```javascript
 // Phase 1: Add waymarks to existing TODOs
 // TODO: implement caching
@@ -633,6 +688,7 @@ Teams can gradually adopt waymarks:
 ## Migration Impact
 
 This revision significantly simplifies the syntax by:
+
 - Eliminating multiple prefixes per waymark
 - Removing complex "context groups" concept
 - Clarifying delimiter usage

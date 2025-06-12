@@ -1,12 +1,11 @@
+<!-- tldr ::: Universal pattern for making codebases AI-navigable and greppable -->
 # 〽️ Waymark - Blazing fast code navigation for AI agents
-<!-- :M: tldr Universal pattern for making codebases AI-navigable and greppable -->
-<!-- :M: core Main project documentation and overview -->
 
 > [!IMPORTANT]
 > **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/outfitter-dev/waymark/issues) or share your thoughts!
 
 > [!TIP]
-> **A simple pattern for code navigation.** Waymarks (`:M:`) provide a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
+> **A simple pattern for code navigation.** Waymarks (`:::`) provide a consistent way to mark important spots in code that both AI agents and humans can easily find with grep.
 
 ## 📚 Documentation
 
@@ -35,14 +34,14 @@ Current approaches fail because they're:
 
 > **grep** is a command-line utility for searching plain-text data sets for lines that match a regular expression. Its name comes from the ed command g/re/p (globally search a regular expression and print). [Learn more on Wikipedia](https://en.wikipedia.org/wiki/Grep).
 
-## 💡 Proposed Solution: Waymarks (`:M:`)
+## 💡 Proposed Solution: Waymarks (`:::`)
 
-A **waymark** is a small, consistent context that helps make comments more discoverable:
+A **waymark** is a small, consistent marker that helps make comments more discoverable:
 
 ```javascript
-// :M: todo add input validation
+// todo ::: add input validation
 function processPayment(amount) {
-    // :M: sec verify amount is positive
+    // warn ::: verify amount is positive #security
     chargeCard(amount);
 }
 ```
@@ -50,25 +49,25 @@ function processPayment(amount) {
 Search examples:
 
 ```bash
-rg ":M:"          # List all anchors
-rg ":M: sec"      # Jump to security concerns
-rg ":M: todo"     # Find all tasks
+rg ":::"          # List all waymarks
+rg "warn :::"     # Jump to warnings
+rg "todo :::"     # Find all tasks
 ```
 
-### Why `:M:`?
+### Why `:::`?
 
-The `:M:` identifier is the canonical prefix for waymarks. Like how "TODO" became a universal convention, using a single standard prefix:
+The `:::` sigil is the canonical marker for waymarks. Like how "TODO" became a universal convention, using a single standard sigil:
 
-- **Keeps tooling simple** - One pattern to search, parse, and lint
-- **Avoids edge cases** - No conflicts between different waymark styles
-- **Universal understanding** - Any developer or AI can recognize `:M:`
-- **Fast to type** - Hold Shift for `:`, then `M`, then `:` in one fluid motion
+- **Visual clarity** - The `:::` clearly separates prefix from content
+- **Avoids conflicts** - Unlikely to appear in regular code or prose
+- **Universal understanding** - Any developer or AI can recognize `:::`
+- **Fast to type** - Three colons in quick succession
 
-**For monorepos:** Use contexts to distinguish services instead of different waymarks:
+**For monorepos:** Use hashtags to distinguish services:
 
 ```javascript
-// :M: auth-service,todo implement OAuth
-// :M: web-app,bug fix responsive layout
+// todo ::: implement OAuth #auth-service
+// fix ::: responsive layout #web-app #frontend
 ```
 
 ## 📦 Installation
@@ -110,9 +109,9 @@ waymark list src/ --contexts
 
 ### 1. Start Simple
 
-- `:M: todo` - Mark work that needs doing
+- `todo :::` - Mark work that needs doing
   ```python
-  # :M: todo implement retry logic
+  # todo ::: implement retry logic
   def api_call():
       response = requests.get(url)
       return response
@@ -120,43 +119,43 @@ waymark list src/ --contexts
 
 ### 2. Add AI Instructions
 
-- `:M: @agent` - Direct AI agents to specific tasks
+- `@mentions` - Direct AI agents to specific tasks
   ```javascript
-  // :M: @agent write unit tests for edge cases
+  // todo ::: @agent write unit tests for edge cases
   function divide(a, b) {
-      return a / b;  // :M: todo handle division by zero
+      return a / b;  // fix ::: handle division by zero
   }
   ```
 
 ### 3. Mark Important Context
 
-- `:M: ctx` - Document important assumptions
+- Pure notes - Document important assumptions
   ```go
-  // :M: ctx user_ids are always UUIDs, never integers
+  // ::: user_ids are always UUIDs, never integers
   func GetUser(userID string) (*User, error) {
-      // :M: sec validate UUID format to prevent injection
+      // warn ::: validate UUID format to prevent injection #security
       return db.FindUser(userID)
   }
   ```
 
-### 4. Combine as Needed
+### 4. Use Properties and Hashtags
 
-- Stack multiple tags for richer meaning
+- Add structured data and classification
   ```typescript
-  // :M: sec,todo fix rate limiting
-  // :M: temp,ctx remove after Redis upgrade
+  // todo ::: priority:high fix rate limiting #performance
+  // temp ::: deprecated:v3.0 remove after Redis upgrade
   ```
 
 ## 🎯 Core Patterns
 
 | Pattern | Purpose | Example |
 |---------|---------|---------|
-| `:M: tldr` | Brief summary/overview | `// :M: tldr handles user authentication` |
-| `:M: todo` | Work to be done | `// :M: todo add error handling` |
-| `:M: ctx` | Important context | `// :M: ctx expects UTC timestamps` |
-| `:M: @agent` | AI agent tasks | `// :M: @agent implement this function` |
-| `:M: sec` | Security concerns | `// :M: sec validate all inputs` |
-| `:M: temp` | Temporary code | `// :M: temp remove after v2.0` |
+| `tldr :::` | Brief summary/overview | `// tldr ::: handles user authentication` |
+| `todo :::` | Work to be done | `// todo ::: add error handling` |
+| `:::` | Important context (pure note) | `// ::: expects UTC timestamps` |
+| `@mentions` | AI agent tasks | `// todo ::: @agent implement this function` |
+| `warn :::` | Security/safety concerns | `// warn ::: validate all inputs #security` |
+| `temp :::` | Temporary code | `// temp ::: remove after v2.0` |
 
 ## 📈 Getting Started
 
@@ -164,12 +163,12 @@ Start simple and add complexity as needed:
 
 ```javascript
 // Basic waymarks
-// :M: todo implement caching
-// :M: sec sanitize user input
+// todo ::: implement caching
+// warn ::: sanitize user input #security
 
-// Add parameters when helpful
-// :M: todo(issue:42) fix memory leak
-// :M: todo(owner:@alice) payment integration
+// Add properties and hashtags when helpful
+// todo ::: fixes:#42 fix memory leak
+// todo ::: assign:@alice payment integration #backend
 ```
 
 ## 🤖 Example AI Agent Workflow
@@ -178,27 +177,27 @@ Start simple and add complexity as needed:
 
 ```python
 class UserService:
-    # :M: ctx all users must have unique emails
+    # ::: all users must have unique emails
     def create_user(self, email: str, name: str):
-        # :M: @agent implement with proper validation
-        # :M: sec prevent duplicate emails
-        # :M: todo add rate limiting
+        # todo ::: @agent implement with proper validation
+        # warn ::: prevent duplicate emails #security
+        # todo ::: add rate limiting #performance
         pass
 ```
 
 ### 2. AI agent finds the work:
 
 ```bash
-$ rg ":M: @agent"
-user_service.py:4: # :M: @agent implement with proper validation
+$ rg "todo ::: .*@agent"
+user_service.py:4: # todo ::: @agent implement with proper validation
 ```
 
 ### 3. AI reads the context:
 
 ```bash
-$ rg ":M: ctx|:M: sec" user_service.py
-user_service.py:2: # :M: ctx all users must have unique emails
-user_service.py:5: # :M: sec prevent duplicate emails
+$ rg ":::" user_service.py
+user_service.py:2: # ::: all users must have unique emails
+user_service.py:5: # warn ::: prevent duplicate emails #security
 ```
 
 ### 4. AI implements with full understanding:
@@ -209,7 +208,7 @@ def create_user(self, email: str, name: str):
     if not self._is_valid_email(email):
         raise ValueError("Invalid email format")
     
-    # :M: ctx enforcing unique email constraint
+    # ::: enforcing unique email constraint
     if self.user_repo.exists_by_email(email):
         raise DuplicateEmailError(f"Email {email} already exists")
     
@@ -239,18 +238,18 @@ def create_user(self, email: str, name: str):
 
 ## 🔧 Common Patterns
 
-**Core patterns:**
-- `:M: todo` - Work to be done
-- `:M: sec` - Security concerns  
-- `:M: ctx` - Important context
-- `:M: @agent` - AI tasks
-- `:M: bug` - Known issues
-- `:M: temp` - Temporary code
+**Core prefixes:**
+- `todo :::` - Work to be done
+- `fix :::` - Bugs to fix  
+- `warn :::` - Warnings and cautions
+- `temp :::` - Temporary code
+- `tldr :::` - Brief summaries
+- `:::` - Pure notes (no prefix)
 
-**With parameters:**
-- `:M: todo(issue:123)` - Link to tracker
-- `:M: todo(owner:@alice)` - Assign ownership
-- `:M: priority:high` - Set priority
+**With properties and hashtags:**
+- `todo ::: fixes:#123 implement auth` - Link to issue
+- `todo ::: assign:@alice payment flow` - Assign ownership
+- `todo ::: priority:high fix memory leak #critical` - Set priority
 
 See [Conventions](docs/conventions.md) for complete patterns.
 
@@ -260,50 +259,51 @@ If you need to remove all waymarks:
 
 ```bash
 # Find all files with waymarks
-rg -l ":M:" 
+rg -l ":::" 
 
 # Preview what would be removed
-rg ":M:.*$" 
+rg ".*:::.*$" 
 
 # Remove all waymarks (backup first!)
-find . -type f -exec sed -i.bak 's/:M:[^*]*//g' {} +
+find . -type f -exec sed -i.bak 's/.*:::[^*]*//g' {} +
 ```
 
 ## 📋 Quick Reference
 
 ```bash
 # Find everything
-rg ":M:"
+rg ":::"
 
-# Find by type
-rg ":M: todo"
-rg ":M: sec"
-rg ":M: @agent"
+# Find by prefix
+rg "todo :::"
+rg "warn :::"
+rg "fix :::"
 
 # Find with context (lines before/after)
-rg -B1 -A1 ":M: sec"  # 1 line before and after
-rg -C2 ":M: todo"     # 2 lines context
+rg -B1 -A1 "warn :::"  # 1 line before and after
+rg -C2 "todo :::"      # 2 lines context
 
-# Find related tags nearby
-rg -B2 -A2 ":M: sec" | rg ":M: (sec|todo)"
+# Find by hashtag
+rg "#security"
+rg "#frontend"
 
-# Find combinations
-rg ":M: sec.*todo|:M: todo.*sec"
+# Find @mentions
+rg ":::.*@\w+"
 
 # Find in specific files
-rg ":M:" --type js
-rg ":M:" src/
+rg ":::" --type js
+rg ":::" src/
 
-# Count by type
-rg ":M: (\w+)" -o | sort | uniq -c
+# Extract prefixes
+rg -o "(\w+) :::" -r '$1' | sort | uniq -c
 ```
 
 ## 🎬 Getting Started
 
-1. **Try it now**: Add `// :M: todo` to something in your code
-2. **Search for it**: Run `rg ":M:"` or `waymark search todo`
-3. **Tell your AI**: "Look for :M: waymarks to understand the codebase"
-4. **Evolve naturally**: Add patterns as you need them
+1. **Try it now**: Add `// todo ::: implement feature` to your code
+2. **Search for it**: Run `rg ":::"` or `waymark search todo`
+3. **Tell your AI**: "Look for ::: waymarks to understand the codebase"
+4. **Evolve naturally**: Add prefixes, properties, and hashtags as needed
 
 **The goal is discoverability.** Start simple and let your patterns evolve with your needs.
 

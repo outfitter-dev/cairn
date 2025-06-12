@@ -1,89 +1,85 @@
+<!-- tldr ::: Complete waymark syntax specification using the ::: sigil -->
 # Waymark Syntax
-<!-- :M: tldr Complete waymark syntax specification and reference -->
-<!-- :M: core The canonical waymark syntax documentation -->
-Waymark syntax is a lightweight marking system for code navigation using the `:M:` identifier.
+
+Waymark syntax is a lightweight marking system for code navigation using the `:::` sigil.
 
 ## Overview
 
 Waymark syntax defines the **structure** for writing searchable code markers:
 
-- The `:M:` identifier with mandatory single space
-- Delimiter semantics (`:` for classifications, `()` for parameters, `[]` for arrays)
-- Context organization into six semantic groups
+- The `:::` sigil with optional prefix
+- Delimiter semantics (`:` for properties, `()` for parameters, `[]` for arrays)
+- Fixed namespace of prefixes organized into semantic groups
+- Properties, hashtags, and @mentions for metadata
 - Simple, grep-friendly patterns
 
-Think of it like learning to write musical notes - the syntax is simple and consistent, while what you compose with it (conventions) can be infinitely varied.
+Think of it like learning to write musical notes - the syntax is simple and consistent, while what you compose with it can be infinitely varied.
 
 ## Basic Syntax
 
 ```text
-<comment-leader> :M: <space> <context-list> <optional prose>
+<comment-leader> [prefix] ::: [properties] [note] [#hashtags]
 ```
 
 The syntax consists of:
 
-1. **Identifier**: `:M:`
-2. **Space**: Exactly one ASCII space (mandatory)
-3. **Contexts**: One or more contexts with optional parameters
-4. **Prose**: Optional human-readable description
+1. **Prefix**: Optional classifier before the `:::` sigil
+2. **Sigil**: `:::` separator (always preceded by space when prefix present)
+3. **Properties**: Key:value pairs for machine-readable metadata
+4. **Note**: Human-readable description
+5. **Hashtags**: Classification tags prefixed with `#`
 
 ### Quick Examples
 
 ```javascript
-// :M: todo                      // Simple context
-// :M: sec,perf                  // Multiple contexts
-// :M: todo(priority:high)       // Context with parameter
-// :M: owner:@alice              // Classification with mention
-// :M: blocked:[4,7]             // Array of values
-// :M: todo: implement caching   // With prose description
+// todo ::: implement caching                    // Prefix with note
+// fix ::: priority:high memory leak             // Prefix with property
+// ::: this is a performance hotpath             // Pure note (no prefix)
+// warn ::: validates all inputs #security       // With hashtag
+// todo ::: assign:@alice implement OAuth flow   // With assignment
+// ::: deprecated:v2.0 use newMethod() instead   // Properties in note
 ```
 
-## Payload Types
+## Syntax Components
 
-Waymarks support three payload types:
+### Prefixes
 
-### Bare Tokens
-
-Simple string identifiers - most common and readable.
+Optional classifiers from a fixed namespace that appear before `:::`:
 
 ```javascript
-// :M: todo
-// :M: v1.2.3
-// :M: high-priority
-// :M: @alice
-// :M: api_endpoint
+// todo ::: implement validation
+// fix ::: memory leak in auth
+// warn ::: security vulnerability
+// tldr ::: handles user authentication
 ```
 
-Format:
-- Alphanumeric characters, dots, dashes, underscores
-- Optional `@` prefix for mentions
-- Case-sensitive
+### Properties
 
-### Parameters `()`
-
-Structured parameters and arguments associated with markers.
+Key:value pairs for structured metadata:
 
 ```javascript
-// :M: blocked(issue:4)           // blocked by issue
-// :M: depends(auth-service)      // simple dependency
-// :M: config(timeout:30,retry:3) // multiple params
-// :M: todo(assign:@alice,priority:high) // task params
+// todo ::: priority:high implement caching
+// ::: deprecated:v2.0 moving to new API
+// fix ::: assign:@alice memory leak issue
 ```
 
-Format:
-- `marker(param:value)` - single parameter
-- `marker(p1:v1,p2:v2)` - multiple parameters
-- Parameters use colon syntax internally
+### Hashtags
 
-### Arrays `[]`
-
-Multiple values, with brackets optional for single values.
+Classification tags for grouping and filtering:
 
 ```javascript
-// :M: blocked:[4,7,12]           // multiple blockers
-// :M: tags:[auth,api,security]   // multiple tags
-// :M: owner:[@alice,@bob]        // multiple owners
-// :M: files:['auth.js','api.js'] // quoted paths
+// todo ::: implement auth flow #security #backend
+// fix ::: button contrast #critical #frontend #a11y
+```
+
+### @Mentions
+
+People or entity references:
+
+```javascript
+// todo ::: @bob implement caching
+// ::: @alice please review this approach
+// todo ::: assign:@carol attention:@dave needs input
 ```
 
 ## Grammar
@@ -91,185 +87,219 @@ Multiple values, with brackets optional for single values.
 The complete formal grammar in EBNF:
 
 ```ebnf
-waymark       ::= comment-leader identifier space marker-list prose?
-identifier  ::= ":M:"
-space       ::= " "                    # exactly one ASCII space
-marker-list ::= marker ("," marker)*
-marker      ::= key delimiter?
-key         ::= identifier | "@" identifier
-delimiter   ::= ":" value | "(" params ")" | "[" array "]"
-value       ::= identifier | quoted-string
-params      ::= param ("," param)*
-param       ::= key ":" value
-array       ::= value ("," value)*
-prose       ::= text                   # everything after markers
+waymark  ::= comment-leader prefix? sigil space payload
+prefix   ::= [A-Za-z0-9_-]+
+sigil    ::= ":::"
+space    ::= " "                    # exactly one ASCII space
+payload  ::= property* note? hashtag*
+property ::= key ":" value space?
+key      ::= [A-Za-z0-9_-]+
+value    ::= simple-value | parameterized-value | array-value
+hashtag  ::= "#" [A-Za-z0-9_/-]+     # hierarchical tags allowed
+mention  ::= "@" [A-Za-z0-9_-]+
+note     ::= text                    # human-readable description
 ```
 
 ## Delimiter Semantics
 
-The syntax uses three distinct delimiters with specific semantic purposes:
+Each delimiter has a specific purpose:
 
-### Colon (`:`) - Classifications
+### `:::` - The Sigil
 
-Used for type:value relationships, classifications, and states.
-
-```javascript
-// :M: priority:high         // priority classification
-// :M: status:blocked        // status classification
-// :M: env:production        // environment type
-// :M: owner:@alice          // ownership (including mentions)
-```
-
-### Parentheses (`()`) - Parameters
-
-Used for structured parameters and arguments associated with markers.
+The core waymark identifier that separates prefix from content:
 
 ```javascript
-// :M: blocked(issue:4)           // parameter with classification
-// :M: depends(auth-service)      // simple parameter
-// :M: config(timeout:30,retry:3) // multiple parameters
+// todo ::: implement validation    // prefix + content
+// ::: this is just a note          // pure note (no prefix)
 ```
 
-### Brackets (`[]`) - Arrays
+### `:` - Properties
 
-Used for multiple values, optional for single values.
+Creates key:value pairs for structured metadata:
 
 ```javascript
-// :M: blocked:[4,7]              // multiple blockers
-// :M: tags:[auth,api,security]   // multiple tags
-// :M: owner:[@alice,@bob]        // multiple owners
-// :M: blocked:4                  // single value (brackets optional)
+// todo ::: priority:high assign:@alice implement caching
+// ::: deprecated:v2.0 use newMethod() instead
 ```
 
-## Context Groups
+### `()` - Parameterized Values
 
-Contexts are organized into six semantic groups:
+Provides parameters to property values:
 
-| Group | Purpose | Primary contexts |
-|-------|---------|------------------|
-| **todo** | Work that needs to be done | `todo`, `bug`, `fix`/`fixme`, `task`, `issue`, `pr`, `review` |
-| **info** | Explanations & guidance | `context`/`ctx`, `note`, `docs`, `tldr`, `example`, `guide` |
-| **notice** | Warnings & alerts | `warn`, `critical`, `unsafe`, `deprecated`, `freeze`, `unstable` |
-| **trigger** | Automated behavior hooks | `action`, `notify`, `alert`, `hook` |
-| **domain** | Domain-specific focus areas | `api`, `security`/`sec`, `perf`, `test`, `data`, `config` |
-| **status** | Lifecycle / completeness | `temp`/`tmp`, `stub`, `draft`, `prototype`, `complete`, `broken` |
+```javascript
+// todo ::: requires:node(>=16) supports:node(16,18,20)
+// ::: affects:versions(1.0-2.5) security vulnerability
+```
+
+### `[]` - Grouped Values
+
+Groups multiple parameterized values:
+
+```javascript
+// todo ::: requires:[npm(>=8),node(16,18,20)] upgrade deps
+// ::: affects:[auth,api,frontend] breaking change
+```
+
+### `#` - Hashtags
+
+Classification tags, can be hierarchical:
+
+```javascript
+// todo ::: implement auth #security #backend
+// fix ::: contrast issue #frontend/ui #a11y/wcag
+```
+
+### `@` - Mentions
+
+People or entity references:
+
+```javascript
+// todo ::: @bob implement caching
+// ::: @alice please review this approach
+```
+
+## Prefix Groups
+
+Prefixes are organized into semantic categories:
+
+| Category | Purpose | Prefixes |
+|----------|---------|----------|
+| **Tasks** | Work to be done | `todo`, `fix`, `done`, `ask`, `review`, `chore`, `hotfix`, `spike` |
+| **Lifecycle** | Code maturity | `stub`, `draft`, `stable`, `shipped`, `good`, `bad`, `hold`, `stale`, `cleanup`, `remove` |
+| **Alerts** | Warnings & issues | `warn`, `crit`, `unsafe`, `caution`, `broken`, `locked`, `needs`, `deprecated`, `audit`, `legal`, `temp`, `revisit`, `check` |
+| **Information** | Context & docs | `tldr`, `summary`, `note`, `notice`, `thought`, `docs`, `why`, `see`, `example` |
+| **Meta** | Special markers | `ai`, `important`, `mustread`, `hack`, `flag`, `pin`, `idea`, `test` |
 
 **Usage Rules:**
-1. Multiple contexts can be combined with commas: `:M: todo,bug,priority:high`
-2. If `todo` appears, it must be the first context
-3. Work markers can appear standalone OR as parameters to `todo`
+1. Only one prefix per waymark
+2. Prefixes are optional - waymarks can be pure notes
+3. Traditional magic comments (TODO, FIXME) can precede `:::`
 
-## Universal Parameter Groups
+## Property Categories
 
-Parameters are organized into six semantic families:
+Properties are organized into semantic families:
 
-| Group | Purpose | Examples |
-|-------|---------|----------|
-| **mention** | People/entities | `owner:@alice`, `assign:@bob`, `team:@frontend` |
-| **relation** | Links/references | `parent:epic-123`, `depends:auth-svc`, `path:src/auth.js` |
-| **workflow** | Coordination | `blocked:[4,7]`, `blocking:12`, `reason:compliance` |
-| **priority** | Importance/risk | `priority:high`, `severity:critical`, `complexity:high` |
-| **lifecycle** | Time/state | `since:1.2.0`, `until:2.0.0`, `status:in-progress` |
-| **scope** | Environment | `env:prod`, `platform:ios`, `region:us-east` |
+| Category | Purpose | Examples |
+|----------|---------|----------|
+| **Assignment** | People/ownership | `assign:@alice`, `attn:@bob`, `for:@team` |
+| **Priority** | Importance/urgency | `priority:high`, `priority:critical` |
+| **Dependencies** | Links/requirements | `requires:package(version)`, `depends:service`, `blocks:#123` |
+| **Issue Tracking** | External references | `fixes:#123`, `closes:#456`, `relates-to:AUTH-789` |
+| **Lifecycle** | Time/versioning | `deprecated:v2.0`, `since:v1.0`, `until:v3.0` |
+| **Files/Paths** | Location info | `path:filename`, `affects:files` |
+| **Messages** | Quoted content | `message:"error text"`, `reason:"compliance"` |
 
 ## Advanced Patterns
 
-### Workflow Patterns
+### Task Management
 
-```python
-# Task management
-# :M: todo priority:high assignee:@alice
-# :M: todo(bug:auth-timeout) deadline:2024-03-15
+```javascript
+// Basic tasks
+// todo ::: implement validation
+// fix ::: priority:high memory leak
+// done ::: added rate limiting
 
-# Code lifecycle
-# :M: deprecated since:v1.8 replacement:newMethod
-# :M: freeze until:v2.0 reason:api-stability
+// With assignments and properties
+// todo ::: assign:@alice priority:high implement caching
+// review ::: @bob please check auth logic #security
+```
 
-# Dependencies
-# :M: depends:[auth,session,crypto]
-# :M: blocks:[checkout,payment]
+### Code Lifecycle
+
+```javascript
+// Maturity markers
+// stub ::: basic implementation
+// draft ::: work in progress
+// stable ::: production ready
+// deprecated ::: v2.0 use newMethod() instead
+```
+
+### Issue Integration
+
+```javascript
+// Issue references
+// todo ::: fixes:#234 implement auth flow
+// done ::: closes:#456 added validation
+// fix ::: blocked-by:#123 waiting on API changes
 ```
 
 ### Monorepo Patterns
 
-Use contexts for service namespacing:
-
 ```javascript
-// In auth service
-// :M: auth, todo implement OAuth flow
-// :M: auth, security validate JWT expiry
+// Service namespacing with hashtags
+// todo ::: implement OAuth #auth #backend
+// fix ::: payment validation #payment #security
 
-// In payment service
-// :M: payment, todo add Stripe webhook
-// :M: payment, perf optimize transaction queries
-
-// Cross-service references
-// :M: depends(auth-service) requires:validateToken
-// :M: blocks(payment-service) reason:breaking-change
-```
-
-### Issue Tracker Integration
-
-```python
-# :M: issue(123)
-# :M: jira(PROJ-456)
-# :M: github(#789)
-# :M: linear(ENG-123) cycle:current
+// Or with properties
+// todo ::: service:auth implement OAuth
+// fix ::: service:payment validate amounts
 ```
 
 ## Quoting Rules
 
 Simple values need no quotes:
 ```javascript
-// :M: priority:high
-// :M: version(2.0.1)
-// :M: owner:@alice
+// todo ::: priority:high
+// ::: version:2.0.1
+// todo ::: assign:@alice
 ```
 
-Use quotes for special characters:
+Use quotes for values with spaces or special characters:
 ```javascript
-// :M: match('user-123')              // string match
-// :M: path('src/data migration.sql') // spaces
-// :M: message('Can\'t connect')      // escaped quote
-// :M: files:['auth.js','lib/utils.js'] // array of paths
+// todo ::: message:"Can't connect to database"
+// note ::: path:"src/data migration.sql"
+// ::: reason:"waiting for compliance approval"
 ```
 
 ## Search Examples
 
 ```bash
 # Find all waymarks
-rg ":M:"
+rg ":::"
 
-# Find by context group
-rg ":M:.*todo"      # All work items
-rg ":M:.*notice"    # All warnings/alerts
-rg ":M:.*domain"    # All domain-specific markers
+# Find by prefix
+rg "todo :::"
+rg "fix :::"
+rg "warn :::"
+
+# Find by properties
+rg ":::.*priority:high"
+rg ":::.*assign:@alice"
+
+# Find by hashtags
+rg "#security"
+rg "#frontend"
 
 # Find with context
-rg -C2 ":M: security"  # 2 lines context
-rg -B3 -A3 ":M: todo"  # 3 lines before/after
+rg -C2 "todo :::"  # 2 lines before/after
+rg -B3 -A3 "fix :::"  # 3 lines before/after
 
-# Find in markdown (including HTML comments)
-rg "<!-- :M:" --type md
+# Find in markdown (HTML comments)
+rg "<!-- .*:::" --type md
 
 # Advanced searches
-rg ":M:.*priority:high.*security"  # High-priority security
-rg ":M:.*@alice" --type js         # Alice's tasks
+rg ":::.*priority:high.*#security"  # High-priority security
+rg ":::.*@alice"                    # Alice's assignments
+rg ":::.*fixes:#\d+"                # Issue fixes
 ```
 
 ## Best Practices
 
-1. **Single space after `:M:`**: Required for consistency and parsing
+1. **Space before `:::`**: Required when prefix is present
 2. **One waymark per line**: Maintains grep-ability
-3. **Be specific**: Use clear context combinations
-4. **Start simple**: Add complexity only when needed
+3. **Be specific**: Use clear prefixes and properties
+4. **Start simple**: Begin with basic prefixes, add properties as needed
 5. **Keep it searchable**: Simple patterns are easier to grep
-6. **Use HTML comments in markdown**: `<!-- :M: tldr summary -->` for non-rendered waymarks
+6. **Line length**: Keep under ~80-120 characters for readable output
+7. **Use HTML comments in markdown**: `<!-- tldr ::: summary -->` for non-rendered waymarks
+8. **Pure notes**: Use waymarks without prefixes for context: `// ::: this explains why`
 
 ## Philosophy
 
-- No complex object syntax within waymarks
-- No regex/pattern matching as core feature
-- Focus on LLM context and navigation
-- Waymark syntax must be expressive enough on its own
-- Boring solutions for boring problems
+1. **Visual Clarity**: The `:::` sigil clearly separates prefix from content
+2. **Progressive Complexity**: Start simple, add advanced features only when needed
+3. **Toolability**: Properties are structured for CLI/linting, notes are freeform
+4. **Flexibility**: Open namespace for hashtags, minimal opinions on property keys
+5. **Searchability**: Every pattern optimized for grep/ripgrep
+6. **AI-Friendly**: Optimized for LLM context and navigation
+7. **Boring solutions for boring problems**: Proven patterns over complexity

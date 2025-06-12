@@ -1,5 +1,5 @@
-<!-- tldr ::: Documentation hub for waymark syntax and conventions -->
 # Waymark Documentation
+<!-- :M: tldr Documentation hub for waymark syntax and conventions -->
 
 Welcome to the waymark documentation. Start here to learn about waymarks - a universal pattern for making codebases searchable and AI-navigable.
 
@@ -12,26 +12,26 @@ Welcome to the waymark documentation. Start here to learn about waymarks - a uni
 
 ## What are Waymarks?
 
-Waymarks are searchable markers in code comments using the `:::` sigil:
+Waymarks are searchable markers in code comments using the `:M:` pattern:
 
 ```javascript
-// todo ::: implement validation
-// warn ::: check user permissions #security
-// ::: assumes UTC timestamps
+// :M: todo implement validation
+// :M: sec check user permissions
+// :M: ctx assumes UTC timestamps
 ```
 
 Search them instantly:
 ```bash
-rg ":::"          # Find all waymarks
-rg "todo :::"     # Find all todos
-rg "#security"    # Find security concerns
+rg ":M:"          # Find all waymarks
+rg ":M: todo"     # Find all todos
+rg ":M: sec"      # Find security concerns
 ```
 
 ## Documentation Structure
 
 ### Core Documentation
 
-- **[Syntax](./syntax.md)** - The `:::` sigil, prefixes, properties, and hashtags
+- **[Syntax](./syntax.md)** - The `:M:` identifier, grammar, and payload types
 - **[Examples](./examples.md)** - Patterns organized by use case
 - **[Conventions](./conventions.md)** - Essential patterns and best practices
 - **[Waymarks in Documentation](./waymarks-in-documentation.md)** - Integration with JSDoc, docstrings, etc.
@@ -54,27 +54,26 @@ rg "#security"    # Find security concerns
 
 ## Key Concepts
 
-### The `:::` Sigil
+### The `:M:` Identifier
 
-The canonical waymark sigil, optionally preceded by a prefix:
+The canonical waymark identifier followed by exactly one space:
 
 ```python
-# todo ::: implement error handling
-#      ^^^
-#      └── Sigil separates prefix from content
+# :M: todo implement error handling
+#    ^
+#    └── Exactly one space required
 ```
 
-### Prefix Categories
+### Context Types
 
-Waymarks use prefixes to classify code locations:
+Waymarks use contexts to classify code locations:
 
-- **Tasks**: `todo`, `fix`, `done`, `review`
-- **Information**: `tldr`, `note`, `docs`, `why`
-- **Alerts**: `warn`, `crit`, `unsafe`, `deprecated`
-- **Meta**: `ai`, `important`, `hack`, `idea`
-- **Lifecycle**: `stub`, `draft`, `stable`, `shipped`
-
-Plus properties (`priority:high`), hashtags (`#security`), and @mentions (`@alice`).
+- **Work**: `todo`, `fix`, `bug`
+- **Context**: `ctx`, `tldr`, `docs`
+- **Security**: `sec`, `warn`, `critical`
+- **AI**: `@agent`, `@claude`, `@cursor`
+- **Quality**: `perf`, `debt`, `test`
+- **Status**: `tmp`, `wip`, `done`
 
 ### Search Patterns
 
@@ -82,21 +81,20 @@ Find waymarks with ripgrep:
 
 ```bash
 # Basic searches
-rg "todo :::"              # All todos
-rg ":::.*@alice"           # Alice's assignments
-rg ":::.*priority:high"    # High priority items
-rg "#security"             # Security hashtag
+rg ":M: todo"              # All todos
+rg ":M:.*@agent"           # AI tasks
+rg ":M:.*priority:high"    # High priority items
 
 # With context
-rg -C2 "warn :::"          # Warnings with 2 lines context
-rg -B3 -A3 "todo :::"      # Todos with surrounding code
+rg -C2 ":M: sec"           # Security with 2 lines context
+rg -B3 -A3 ":M: todo"      # Todos with surrounding code
 ```
 
 ## Getting Started
 
 1. **Add your first waymark**:
    ```javascript
-   // todo ::: add input validation
+   // :M: todo add input validation
    function processUser(data) {
      return data; 
    }
@@ -104,8 +102,8 @@ rg -B3 -A3 "todo :::"      # Todos with surrounding code
 
 2. **Search for it**:
    ```bash
-   rg "todo :::"
-   # => example.js:1:// todo ::: add input validation
+   rg ":M: todo"
+   # => example.js:1:// :M: todo add input validation
    ```
 
 3. **Learn patterns** in the [Quick Start Guide](./guides/quick-start.md)
