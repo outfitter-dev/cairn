@@ -1,6 +1,5 @@
+<!-- tldr ::: Waymarks complement JSDoc, docstrings, and other documentation systems -->
 # Waymarks in Documentation
-<!-- :M: tldr Waymarks complement JSDoc, docstrings, and other doc systems -->
-<!-- :M: guide How waymarks enhance existing documentation -->
 
 Waymarks enhance existing documentation comments with searchable markers, without replacing or interfering with standard practices.
 
@@ -25,247 +24,215 @@ Waymarks add searchability to standard JSDoc:
  * @param {number} price - Base price
  * @param {number} taxRate - Tax rate as decimal
  * @returns {number} Total price with tax
- * :M: todo add currency conversion support
- * :M: ctx assumes USD for now
+ * todo ::: add currency conversion support
+ * note ::: assumes USD for now
  */
 function calculateTotal(price, taxRate) {
-  // :M: perf consider caching for repeated calculations
-  return price * (1 + taxRate);
+  // note ::: consider caching for repeated calculations #performance
+  return price + (price * taxRate);
 }
 ```
 
 ### Python with Docstrings
 
-Works with any docstring format:
-
 ```python
-def process_order(order_data: dict) -> Order:
+def process_payment(amount, currency="USD"):
     """
-    Process a customer order through the payment system.
+    Process a payment transaction
     
     Args:
-        order_data: Dictionary containing order details
+        amount (float): Payment amount
+        currency (str): Currency code
         
     Returns:
-        Processed Order object
+        dict: Transaction result
         
-    Raises:
-        ValidationError: If order data is invalid
-        PaymentError: If payment processing fails
-    
-    :M: sec validate all payment data
-    :M: todo add retry logic for failed payments
+    warn ::: validate all payment data #security
+    todo ::: add retry logic for failed payments
     """
-    # :M: ctx payment gateway has 30s timeout
-    # :M: business max transaction amount is $10,000
-    pass
+    # ::: payment gateway has 30s timeout
+    # note ::: max transaction amount is $10,000 #business-rule
+    return gateway.charge(amount, currency)
 ```
 
 ### TypeScript Interfaces
 
 ```typescript
-/**
- * User profile data structure
- * :M: api public interface - maintain compatibility
- */
-interface UserProfile {
-  id: string;           // :M: ctx UUID v4 format
-  email: string;        // :M: sec PII - handle carefully
+interface User {
+  /** note ::: public interface - maintain compatibility */
+  id: string;           // ::: UUID v4 format
+  email: string;        // warn ::: PII - handle carefully #security
+  
   preferences: {
-    theme: 'light' | 'dark';  // :M: feature dark mode support
-    notifications: boolean;    // :M: todo implement notification system
+    theme: 'light' | 'dark';  // todo ::: implement dark mode support
+    notifications: boolean;    // todo ::: implement notification system
   };
 }
 ```
 
-### Go Documentation
+### Function Documentation
 
-```go
-// Package auth provides HTTP authentication middleware.
-// :M: sec validate all auth headers before processing
-//
-// Basic usage:
-//   handler := auth.Middleware(yourHandler)
-//   http.Handle("/api/", handler)
-package auth
-
-// Middleware provides HTTP authentication for web services.
-// :M: api primary entry point for HTTP auth
-func Middleware(next http.Handler) http.Handler {
-    // :M: ctx assumes Authorization header format: "Bearer <token>"
-    // :M: perf cache token validation results
+```typescript
+// warn ::: validate all auth headers before processing #security
+// tldr ::: primary entry point for HTTP auth
+function authenticateRequest(request: Request): AuthResult {
+    // ::: assumes Authorization header format: "Bearer <token>"
+    // note ::: cache token validation results #performance
+    
+    const token = extractToken(request);
+    return validateToken(token);
 }
 ```
 
 ### Rust Documentation
 
 ```rust
-/// User authentication trait definition
-/// :M: api public trait for auth providers
-/// :M: sec ensure constant-time comparison for tokens
-/// 
-/// # Examples
-/// ```
-/// let auth = AuthProvider::new();
-/// let result = auth.validate_token(&token).await?;
-/// ```
+/// tldr ::: public trait for auth providers
+/// warn ::: ensure constant-time comparison for tokens #security
 pub trait AuthProvider {
-    /// :M: todo add token refresh support
-    async fn validate_token(&self, token: &str) -> Result<User, AuthError>;
+    /// todo ::: add token refresh support
+    fn validate_token(&self, token: &str) -> Result<Claims, AuthError>;
 }
 ```
 
-## Integration Benefits
-
-### 1. Works with All Doc Generators
-
-- **JSDoc/TSDoc**: Generates documentation normally
-- **Sphinx/Doxygen**: Processes without issues
-- **rustdoc/godoc**: Renders documentation unchanged
-- **IDE tooltips**: Continue showing helpful information
-
-### 2. Universal Search
-
-Find waymarks across any language:
+## Search Examples
 
 ```bash
-# All waymarks
-rg ":M:"
+# Find all waymarks
+rg ":::"
 
-# Security issues across all languages
-rg ":M: sec"
+# Security-related waymarks
+rg "warn :::" 
+rg "#security"
 
-# AI tasks in JavaScript/TypeScript
-rg ":M: @agent" --type js
+# AI agent tasks in JavaScript
+rg ":::.*@agent" --type js
 
-# TODOs in documentation blocks
-rg -U "(?:\/\*\*|\"\"\"|\#\#)[\s\S]*?:M: todo"
+# Find in documentation comments (multiline search)
+rg -U "(?:\/\*\*|\"\"\"|\#\#)[\s\S]*?todo :::"
 ```
 
-### 3. Zero Configuration
+## Documentation Integration
 
-No setup required:
-- Add waymarks to existing comments
-- Search with standard tools
-- Documentation continues as normal
+### JSDoc Example
 
-## Best Practices
-
-### 1. Place Waymarks Strategically
-
-In documentation blocks:
 ```javascript
 /**
- * Main description here
- * 
- * @param x Parameter description
- * :M: todo validate parameter range
- * :M: sec sanitize user input
+ * @fileoverview Authentication utilities
+ * todo ::: validate parameter range
+ * warn ::: sanitize user input #security
  */
-```
 
-In inline comments:
-```python
-def calculate_risk(portfolio):
-    # :M: business risk tolerance is 0.05
-    # :M: perf cache calculation results
-    return complex_calculation(portfolio)
-```
-
-### 2. Keep Documentation Primary
-
-Waymarks enhance, not replace:
-- Write complete JSDoc/docstrings first
-- Add waymarks for searchable concerns
-- Don't duplicate information
-
-### 3. Use Consistent Patterns
-
-Team conventions matter:
-```yaml
-# In your README or CONTRIBUTING.md
-Waymark Conventions:
-- :M: todo - work items
-- :M: sec - security concerns  
-- :M: api - public interfaces
-- :M: ctx - important context
-```
-
-## Common Patterns
-
-### API Documentation
-
-```java
 /**
- * Retrieves user by ID
- * 
- * @param userId User identifier
- * @return User object
- * @throws UserNotFoundException
- * 
- * :M: api public REST endpoint
- * :M: sec verify caller permissions
+ * Calculates risk score for transaction
+ * @param {number} amount - Transaction amount
+ * @returns {number} Risk score 0-1
  */
-public User getUser(String userId) { }
+function calculateRisk(amount) {
+    // note ::: risk tolerance is 0.05 #business-rule
+    // note ::: cache calculation results #performance
+    return Math.min(amount / 10000, 1.0);
+}
 ```
 
-### Test Documentation
+### Documentation Standards
+
+Common patterns that work with documentation generators:
+
+- `todo :::` - work items
+- `warn :::` - security concerns  
+- `tldr :::` - file/function summaries
+- `note :::` - important context
+- Pure notes: `::: contextual information`
+
+### Comprehensive API Documentation
 
 ```javascript
-describe('PaymentProcessor', () => {
-  // :M: test missing edge cases
-  // :M: ctx mock external payment gateway
-  
-  it('should handle successful payments', () => {
-    // :M: todo test with different currencies
-  });
-});
+/**
+ * @namespace PaymentAPI
+ * tldr ::: public REST endpoint for payments
+ * warn ::: verify caller permissions #security
+ */
+class PaymentProcessor {
+  // todo ::: add edge case tests
+  // ::: mock external payment gateway in tests
+  processTransaction(data) {
+    // todo ::: test with different currencies
+    return this.gateway.charge(data);
+  }
+}
 ```
 
 ### Configuration Files
 
 ```yaml
-# Database configuration
-# :M: config production values
-# :M: sec use environment variables for passwords
+# note ::: production values #config
+# warn ::: use environment variables for passwords #security
 database:
-  host: ${DB_HOST}
-  port: 5432
-  # :M: perf connection pool tuning
+  host: localhost
+  # note ::: connection pool tuning #performance
   pool_size: 20
 ```
 
-## Migration Strategy
+## Migration from Plain Comments
 
-Adding waymarks to existing code:
+```bash
+# Find TODO comments without waymarks
+rg "TODO(?!.*:::)" --type js
 
-1. **Start with high-value locations**:
-   - Public APIs
-   - Security-critical code
-   - Complex business logic
+# Convert to waymarks
+# TODO todo ::: implement caching
+```
 
-2. **Add incrementally**:
-   ```bash
-   # Find undocumented TODOs
-   rg "TODO(?!.*:M:)" --type js
-   
-   # Add waymarks gradually
-   # TODO: implement caching
-   # TODO :M: todo implement caching
+### Migration Examples
+
+**Before (traditional):**
+```javascript
+// TODO: add validation
+// FIXME: memory leak here
+// NOTE: assumes UTC timestamps
+```
+
+**After (waymarks):**
+```javascript
+// todo ::: add validation
+// fix ::: memory leak here
+// ::: assumes UTC timestamps
+```
+
+## Benefits
+
+- **Searchable**: Find anything with `rg ":::"`
+- **Tool-agnostic**: Works with any documentation system
+- **Language-agnostic**: Same pattern across all files
+- **Non-invasive**: Doesn't break existing tools
+- **Progressive**: Add gradually to existing codebases
+- **AI-friendly**: Structured for agent understanding
+
+## Best Practices
+
+1. **Use HTML comments in markdown**:
+   ```markdown
+   <!-- tldr ::: summary of this document -->
+   <!-- todo ::: @author add more examples -->
    ```
 
-3. **Preserve existing tools**:
-   - Run documentation generators
-   - Verify IDE features work
-   - Check linting passes
+2. **Combine with traditional comments**:
+   ```javascript
+   // TODO todo ::: implement caching
+   // FIXME fix ::: memory leak in auth handler
+   ```
 
-## Summary
+3. **Add properties for metadata**:
+   ```javascript
+   // todo ::: priority:high implement validation
+   // ::: deprecated:v2.0 use newMethod() instead
+   ```
 
-Waymarks provide a lightweight enhancement to existing documentation:
+4. **Use hashtags for classification**:
+   ```python
+   # warn ::: validate inputs #security #critical
+   # todo ::: optimize query #performance #database
+   ```
 
-- **Non-invasive**: Just comments within comments
-- **Language-agnostic**: Works everywhere
-- **Tool-friendly**: No configuration needed
-- **Searchable**: Find anything with `rg ":M:"`
-
-Start with one waymark today. Add `:M: todo` to your next TODO comment and see how it improves discoverability.
+Start with one waymark today. Add `todo :::` to your next TODO comment and see how it improves discoverability.

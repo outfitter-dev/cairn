@@ -226,7 +226,7 @@ def create_user(self, email: str, name: str):
 
 ### For Developers
 
-- **One command**: `rg ":M:"` shows all important contexts
+- **One command**: `rg ":::"` shows all important contexts
 - **Flexible vocabulary**: Use patterns that make sense for your team
 - **Progressive adoption**: Start simple, add richness over time
 
@@ -348,7 +348,7 @@ The idea for waymarks comes directly from the Codex team's "Missing Manual" inte
 
 They also advised capturing agent-specific conventions in a canonical doc so models "grow as model intelligence grows" — echoing our proposal for a root-level `waymark.yml` dictionary.
 
-That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:M:` formalizes. Think of waymarks as the portable follow-up to Codex's internal practice, distilled into a three-character identifier any OSS project or LLM can rely on.
+That mindset — pick a unique string, grep it everywhere, document the contract — is exactly what `:::` formalizes. Think of waymarks as the portable follow-up to Codex's internal practice, distilled into a three-character sigil any OSS project or LLM can rely on.
 
 ### Sources
 

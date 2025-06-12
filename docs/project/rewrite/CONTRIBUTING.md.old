@@ -1,4 +1,4 @@
-&lt;!-- tldr ::: Contributing guidelines for the Waymark project --&gt;
+&lt;!-- :M: tldr Contributing guidelines for the Waymark project --&gt;
 
 # Contributing to Waymark
 
@@ -86,12 +86,12 @@ We follow strict TypeScript conventions:
 Use waymarks in your code:
 
 ```typescript
-// tldr ::: Brief description of the module
+// :M: tldr Brief description of the module
 export class MyClass {
-  // note ::: Public method documentation
+  // :M: api Public method documentation
   public myMethod(): Result<string> {
-    // ::: Important context or assumptions
-    // warn ::: Security considerations #security
+    // :M: ctx Important context or assumptions
+    // :M: sec Security considerations
   }
 }
 ```
