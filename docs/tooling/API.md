@@ -1,6 +1,5 @@
 # Waymark API Reference
-<!-- :M: tldr API reference documentation for @waymark/core library -->
-<!-- :M: api Complete API documentation for waymark parser and search -->
+<!-- tldr ::: API reference documentation for @waymark/core library -->
 
 ## Installation
 
@@ -14,7 +13,7 @@ pnpm add @waymark/core
 
 ### Waymark Parser
 
-Parser for waymark syntax (`:M: context prose`).
+Parser for waymark syntax (`prefix ::: content`).
 
 ```typescript
 import { WaymarkParser } from '@waymark/core';
@@ -181,7 +180,7 @@ Common error codes:
 - `file.readError` - Cannot read file
 - `file.tooLarge` - File exceeds size limit
 - `parse.invalidSyntax` - Invalid waymark syntax
-- `parse.missingSpace` - Missing space after :M:
+- `parse.missingSpace` - Missing space before :::
 - `parse.emptyPayload` - Empty context payload
 - `search.noResults` - No waymarks found
 - `cli.missingArgument` - Missing required argument
@@ -203,9 +202,9 @@ await cli.run(); // Parses process.argv
 import { WaymarkParser } from '@waymark/core';
 
 const code = `
-  // :M: ctx implement validation
+  // ::: implement validation
   function validate(input: string) {
-    // :M: ctx
+    // :::
     return input;
   }
 `;

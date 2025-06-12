@@ -1,6 +1,5 @@
 # Waymark CLI Reference
-<!-- :M: tldr Command-line interface documentation for waymark -->
-<!-- :M: cli Complete CLI command reference and usage examples -->
+<!-- tldr ::: Command-line interface documentation for waymark -->
 
 The waymark CLI provides commands for searching and managing waymarks in your codebase.
 
@@ -96,11 +95,11 @@ Human-readable colored output:
 
 ```
 src/index.js:42:3
-  // :M: todo implement error handling
+  // todo ::: implement error handling
   Contexts: todo
   
 src/auth.js:15:5  
-  // :M: sec validate token expiry
+  // warn ::: validate token expiry #security
   Contexts: sec
 ```
 
@@ -114,7 +113,7 @@ Machine-readable JSON output:
     "file": "src/index.js",
     "line": 42,
     "column": 3,
-    "raw": "// :M: todo implement error handling",
+    "raw": "// todo ::: implement error handling",
     "contexts": ["todo"],
     "prose": "implement error handling"
   }
@@ -232,7 +231,7 @@ waymark list "src/" --format json > waymarks-report.json
 Check your pattern syntax:
 - Use quotes around glob patterns: `"src/**/*.js"`
 - Ensure files exist: `ls src/**/*.js`
-- Check waymark syntax: `:M:` followed by exactly one space
+- Check waymark syntax: `:::` with optional prefix
 
 ### Permission denied
 
