@@ -12,9 +12,9 @@
 
 - **[Quick Start](docs/guides/quick-start.md)** - Get started in 5 minutes
 - **[Examples](docs/examples.md)** - Real-world patterns and workflows  
-- **[Conventions](docs/conventions/)** - Common tags and best practices
-- **[Progressive Guide](docs/guides/progressive-enhancement.md)** - Adopt at your own pace
-- **[AI Patterns](docs/conventions/ai-patterns.md)** - Working with AI agents
+- **[Conventions](docs/conventions.md)** - Common tags and best practices
+- **[Syntax Reference](docs/syntax.md)** - Complete waymark syntax
+- **[Documentation Hub](docs/)** - All documentation resources
 
 ## 🤔 The Problem
 
@@ -158,31 +158,17 @@ waymark list src/ --contexts
 | `:M: sec` | Security concerns | `// :M: sec validate all inputs` |
 | `:M: temp` | Temporary code | `// :M: temp remove after v2.0` |
 
-## 📈 Progressive Enhancement
+## 📈 Getting Started
 
-### Level 1: Basic TODO Migration
-Start by enhancing your existing TODOs:
-
-```javascript
-// TODO :M: implement caching
-// FIXME :M: sec sanitize user input
-```
-
-### Level 2: Structured Tasks
-Or use standalone contexts:
+Start simple and add complexity as needed:
 
 ```javascript
+// Basic waymarks
 // :M: todo implement caching
-// :M: todo(task:auth) add OAuth support
+// :M: sec sanitize user input
+
+// Add parameters when helpful
 // :M: todo(issue:42) fix memory leak
-```
-
-### Level 3: Rich Context
-Add metadata when needed:
-
-```javascript
-// :M: todo(epic:user-onboarding) new user flow
-// :M: todo(deadline:2024-03-01) compliance update
 // :M: todo(owner:@alice) payment integration
 ```
 
@@ -253,33 +239,20 @@ def create_user(self, email: str, name: str):
 
 ## 🔧 Common Patterns
 
-### Security & Quality
-
-- `:M: sec` - Security-critical code
-- `:M: audit` - Needs review
-- `:M: perf` - Performance concerns
+**Core patterns:**
+- `:M: todo` - Work to be done
+- `:M: sec` - Security concerns  
+- `:M: ctx` - Important context
+- `:M: @agent` - AI tasks
 - `:M: bug` - Known issues
+- `:M: temp` - Temporary code
 
-### Project Management
+**With parameters:**
+- `:M: todo(issue:123)` - Link to tracker
+- `:M: todo(owner:@alice)` - Assign ownership
+- `:M: priority:high` - Set priority
 
-- `:M: todo` - General tasks
-- `:M: todo(task:specific)` - Specific work items
-- `:M: todo(issue:123)` - Link to issue tracker
-- `:M: todo(epic:auth)` - Feature grouping
-
-### Priority Examples (define your own!)
-
-- `:M: todo(priority:critical)` - Critical priority
-- `:M: urgent` - Needs immediate attention
-- `:M: todo(sprint:next)` - Upcoming work
-- `:M: someday` - Future considerations
-
-### AI-Specific
-
-- `:M: @agent` - Any AI can help
-- `:M: @cursor` - Cursor-specific
-- `:M: prompt` - AI instructions
-- `:M: review` - AI should review
+See [Conventions](docs/conventions.md) for complete patterns.
 
 ## 🚪 Escape Hatch
 
@@ -356,18 +329,14 @@ pnpm test
 - [Examples](docs/examples.md) - Real-world waymark usage patterns
 - [Syntax Reference](docs/syntax.md) - Complete waymark syntax
 - [Conventions](docs/conventions.md) - Common patterns and best practices
+- [Waymarks in Documentation](docs/waymarks-in-documentation.md) - Integration with JSDoc, docstrings, etc.
 - [Documentation Hub](docs/) - All documentation resources
 
-### Advanced Topics
+### Tooling & Reference
 
-- [Advanced Patterns](docs/advanced-patterns.md) - Complex usage scenarios
-- [What Ifs](docs/what-ifs.md) - Vision for AI-native development
-
-### Project Information
-
+- [CLI Reference](docs/tooling/CLI.md) - Command-line interface
+- [API Reference](docs/tooling/API.md) - Waymark parser and search APIs
 - [Prior Art](docs/about/priors.md) - Related concepts and inspiration
-- [V0 Specification](docs/project/specs/v0.md) - Initial specification
-- [V1 Specification](docs/project/specs/v1.md) - Current specification
 
 ---
 

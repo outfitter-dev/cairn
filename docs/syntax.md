@@ -1,7 +1,6 @@
 # Waymark Syntax
 <!-- :M: tldr Complete waymark syntax specification and reference -->
 <!-- :M: core The canonical waymark syntax documentation -->
-
 Waymark syntax is a lightweight marking system for code navigation using the `:M:` identifier.
 
 ## Overview
