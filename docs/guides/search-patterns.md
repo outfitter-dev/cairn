@@ -1,8 +1,9 @@
+<!-- tldr ::: Complete guide to searching waymarks with ripgrep and the waymark CLI -->
 # Search Patterns Guide
 
-<!-- ::: tldr Complete guide to searching waymarks with ripgrep and the waymark CLI -->
-
 This guide covers searching waymarks using both raw ripgrep/grep commands and the waymark CLI's enhanced capabilities.
+
+<!-- note ::: This document reflects the new ::: syntax specification -->
 
 ## Part 1: Using ripgrep/grep
 
@@ -172,8 +173,8 @@ alias wmc='rg -C2 ":::"'
 # Find security issues
 alias wmsec='rg ":::.*#security"'
 
-# Count waymarks by type
-alias wmcount='rg "^[^:]*:::" -o | sed "s/ ::://" | sort | uniq -c | sort -nr'
+# Count waymarks by prefix
+alias wmcount='rg "^[^:]*[a-z]+ :::" -o | sed "s/ ::://" | sort | uniq -c | sort -nr'
 ```
 
 ### Complex Queries
@@ -205,354 +206,115 @@ rg "temp :::" -g "!*test*" -g "!*spec*"
 
 ```bash
 # Waymark density (waymarks per 100 lines)
-echo "scale=2; $(rg -c ":::" | awk -F: '{sum+=$2} END {print sum}') / $(wc -l **/*.{js,py,md} | tail -1 | awk '{print $1}') * 100" | bc
+echo "scale=2; $(rg -c ":::" | awk -F: '{sum+=$2} END {print sum}') / $(find . -name '*.js' -o -name '*.py' -o -name '*.md' | xargs wc -l | tail -1 | awk '{print $1}') * 100" | bc
 
 # Most used hashtags
 rg -o "#\w+" | sort | uniq -c | sort -nr | head -20
 ```
 
-## Part 2: Waymark CLI Vision
+## Part 2: Waymark CLI Design
 
-The waymark CLI will provide higher-level commands that wrap these ripgrep patterns with better UX and additional features.
+<!-- todo ::: @galligan replace this section with streamlined CLI from cli-design.md -->
+
+The waymark CLI provides ripgrep-style ergonomics with enhanced waymark features. See [CLI Design](../tooling/cli-design.md) for the complete specification.
 
 ### Core Commands
 
-#### `waymark list` - List waymarks with filtering
+#### `waymark find` - Primary search command
 
 ```bash
-# List all waymarks
-waymark list
+# Find all waymarks
+waymark find
 
-# Filter by prefix
-waymark list --prefix todo
-waymark list -p fix,warn  # multiple prefixes
+# Find by prefix
+waymark find -p todo
+waymark find -p fix,warn  # multiple prefixes
 
-# Filter by properties
-waymark list --has priority:high
-waymark list --assigned @alice
+# Find with pattern
+waymark find "auth" -p todo
 
-# Filter by hashtags
-waymark list --tag security
-waymark list --tags security,critical  # multiple tags
+# Find by properties
+waymark find --has priority:high
 
-# Combine filters
-waymark list -p todo --tag security --assigned @alice
+# Find by hashtags
+waymark find -t security
 ```
 
-#### `waymark search` - Full-text search within waymarks
+#### Category Commands with Special Formatting
 
 ```bash
-# Search in waymark content
-waymark search "auth"
-waymark search "implement.*cache"  # regex support
+# Task overview with progress indicators
+waymark task                    # All tasks
+waymark task --open             # Open tasks only
+waymark task --stats            # Task statistics
 
-# Search with filters
-waymark search "validation" --prefix todo
-waymark search "critical" --tag security
-```
+# Information waymarks with tree view
+waymark info                    # All info waymarks
+waymark info --tree             # Tree view by directory
 
-#### `waymark show` - Display waymarks with context
+# Alerts grouped by severity
+waymark alert                   # All alerts
+waymark alert --critical        # Critical only
+waymark alert --grouped         # Group by severity
 
-```bash
-# Show waymark with code context
-waymark show path/to/file.js:42
-
-# Show all in file
-waymark show path/to/file.js
-
-# Show with more context
-waymark show path/to/file.js:42 --context 5
-```
-
-### Task Management
-
-#### `waymark todos` - Specialized todo management
-
-```bash
-# List all todos
-waymark todos
-
-# My todos
-waymark todos --mine  # detects git config user
-waymark todos --assigned @alice
-
-# By priority
-waymark todos --priority high
-waymark todos --critical  # shorthand
-
-# Unassigned todos
-waymark todos --unassigned
-```
-
-#### `waymark assign` - Manage assignments
-
-```bash
-# Assign a todo
-waymark assign path/to/file.js:42 @bob
-
-# Bulk assign
-waymark assign --tag frontend @carol
-
-# Reassign
-waymark assign --from @alice --to @dave
-```
-
-#### `waymark done` - Mark completion
-
-```bash
-# Mark single waymark as done
-waymark done path/to/file.js:42
-
-# Mark by issue
-waymark done --issue 234
-
-# Interactive mode
-waymark done -i  # shows menu of todos
-```
-
-### Reporting
-
-#### `waymark stats` - Statistical analysis
-
-```bash
-# Overall stats
-waymark stats
-
-# By person
-waymark stats --by-person
-
-# By prefix
-waymark stats --by-prefix
-
-# By file/directory
-waymark stats --by-path src/
-
-# Time-based
-waymark stats --since 2024-01-01
-```
-
-#### `waymark report` - Generate reports
-
-```bash
-# Security audit
-waymark report security > security-audit.md
-
-# Sprint planning
-waymark report sprint --priority high,critical
-
-# Technical debt
-waymark report debt
-
-# Custom format
-waymark report --format json
-waymark report --format csv
-```
-
-### AI Agent Features
-
-#### `waymark agent` - Agent-specific commands
-
-```bash
-# Find agent tasks
-waymark agent tasks
-
-# Claim a task
-waymark agent claim path/to/file.js:42
-
-# Mark progress
-waymark agent progress path/to/file.js:42 "Implemented basic structure"
-
-# Complete with summary
-waymark agent complete path/to/file.js:42 "Added validation and error handling"
-```
-
-### Integration Commands
-
-#### `waymark check` - CI/CD integration
-
-```bash
-# Check for issues
-waymark check          # exits 1 if critical issues
-waymark check --strict # exits 1 if any todos
-
-# Specific checks
-waymark check --no-temp     # no temporary code
-waymark check --no-security # no security issues
-waymark check --all-assigned # all todos assigned
-```
-
-#### `waymark sync` - Issue tracker sync
-
-```bash
-# Sync with GitHub issues
-waymark sync github
-
-# Create issues from waymarks
-waymark sync github --create --tag bug
-
-# Update waymarks from issues
-waymark sync github --pull
-```
-
-### Interactive Features
-
-#### `waymark browse` - TUI browser
-
-```bash
-# Interactive browser
-waymark browse
-
-# Start in specific view
-waymark browse --view todos
-waymark browse --view security
-```
-
-#### `waymark add` - Interactive waymark creation
-
-```bash
-# Add waymark to current position (if editor integration)
-waymark add
-
-# Add to specific file
-waymark add path/to/file.js:42
-
-# With template
-waymark add --template todo
-```
-
-### Configuration & Customization
-
-#### Project-level configuration
-
-```bash
-# Initialize waymark in project
-waymark init
-
-# Configure project
-waymark config set prefix.custom "spec"
-waymark config set emoji.todo "📝"
-```
-
-#### Personal configuration
-
-```bash
-# Set your identity
-waymark config --global set user.name "@alice"
-
-# Set preferences
-waymark config --global set ui.emoji true
-waymark config --global set ui.color auto
+# TLDR summaries with file tree
+waymark tldr                    # All file summaries
+waymark tldr --tree             # Tree visualization
+waymark tldr --recent           # Sort by modification time
 ```
 
 ### Advanced Features
 
-#### `waymark watch` - File watching
+#### Context and Relations
 
 ```bash
-# Watch for changes
-waymark watch
+# Show nearby waymarks
+waymark find -p todo --near 5
 
-# Watch with notifications
-waymark watch --notify
+# Find related waymarks in same function/block
+waymark find "cache" --related
 
-# Watch specific patterns
-waymark watch --prefix "todo,fix"
+# Context lines (ripgrep-compatible)
+waymark find -p warn -C2       # 2 lines before/after
+waymark find -p todo -A3 -B1    # 3 after, 1 before
 ```
 
-#### `waymark migrate` - Syntax updates
+#### Export and Integration
 
 ```bash
-# Update to latest syntax
-waymark migrate --to v2
+# Export to JSON
+waymark find --json > waymarks.json
+waymark find --csv > waymarks.csv
 
-# Dry run
-waymark migrate --dry-run
-
-# Interactive
-waymark migrate -i
+# File output
+waymark find -o waymarks.txt
 ```
 
-### Output Formats
+### Configuration
 
-All commands support multiple output formats:
+Configuration files provide shortcuts and aliases:
 
-```bash
-# Human-readable (default)
-waymark list
-
-# JSON
-waymark list --json
-
-# CSV
-waymark list --csv
-
-# Machine-readable
-waymark list --format "{file}:{line}:{prefix}:{content}"
-
-# Quiet (just file:line)
-waymark list -q
+```json
+{
+  "shortcuts": {
+    "mine": "assign:@{user}",
+    "urgent": "priority:high|priority:critical"
+  },
+  "aliases": {
+    "standup": "task --done --since yesterday --author @{user}",
+    "sprint": "task --open --priority high,medium"
+  }
+}
 ```
 
-### Example Workflows
-
-#### Daily standup
+Use shortcuts and aliases:
 
 ```bash
-# What did I do yesterday?
-waymark list --prefix done --since yesterday --mine
+# Using shortcuts
+waymark find --has mine          # Expands to assign:@yourusername
+waymark task --has urgent        # High/critical priority
 
-# What am I doing today?
-waymark todos --mine --priority high,medium
-
-# Any blockers?
-waymark list --has blocked --mine
-```
-
-#### Code review
-
-```bash
-# Security check
-waymark check --security
-
-# TODOs added in this PR
-waymark list --prefix todo --since @{upstream}
-
-# Technical debt introduced
-waymark report debt --since @{upstream}
-```
-
-#### Sprint planning
-
-```bash
-# Unassigned high-priority work
-waymark todos --unassigned --priority high
-
-# Work by component
-waymark todos --group-by tag
-
-# Estimate (if using points)
-waymark stats --sum points --prefix todo
-```
-
-### Performance Considerations
-
-The CLI should:
-- Use ripgrep under the hood for speed
-- Cache results when appropriate
-- Support `.waymarkignore` for exclusions
-- Parallelize operations where possible
-- Stream results for large codebases
-
-### Error Handling
-
-Clear, actionable errors:
-
-```bash
-$ waymark assign file.js:42 alice
-Error: No waymark found at file.js:42
-Hint: Did you mean file.js:43? (todo ::: implement caching)
-
-$ waymark done --issue 999
-Error: No waymarks reference issue #999
-Hint: Use 'waymark list --has "#999"' to search
+# Using aliases
+waymark standup                  # Yesterday's completed tasks
+waymark sprint                   # Current sprint work
 ```

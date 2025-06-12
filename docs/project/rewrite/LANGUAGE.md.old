@@ -1,5 +1,5 @@
-<!-- tldr ::: Guidelines for writing about waymark syntax and tooling -->
 # Waymark Language Guide
+<!-- :M: tldr Guidelines for writing about waymark syntax and tooling -->
 
 This guide helps maintain consistent language when writing about waymark.
 
@@ -15,7 +15,7 @@ The waymark syntax is a pattern specification, not an active system. Use languag
 ### Recommended Words
 
 - **accommodates** - "The syntax accommodates different delimiter styles"
-- **allows** - "The syntax allows both prefix and pure note forms"
+- **allows** - "The syntax allows both `:M: priority:high` and `:M: priority(high)`"
 - **recognizes** - "The syntax recognizes parameterized markers"
 - **accepts** - "Both forms are accepted in the syntax"
 - **permits** - "The syntax permits flexible delimiter usage"
@@ -30,7 +30,7 @@ The waymark syntax is a pattern specification, not an active system. Use languag
 
 ### Example
 
-> The waymark syntax accommodates multiple forms. While `todo ::: priority:high implement cache` is recommended for structured metadata, pure notes like `::: this is performance critical` remain valid for contextual information.
+> The waymark syntax accommodates multiple delimiter styles. While `:M: config:env(prod)` is recommended for clarity, `:M: config(prod)` remains valid when context is unambiguous.
 
 ## Writing About Tooling
 
@@ -52,25 +52,21 @@ Waymark tools are opinionated implementations. Use prescriptive language that cl
 
 ### Example
 
-> The waymark CLI enforces the `:::` sigil syntax and validates prefix namespaces. This ensures consistent parsing across the codebase.
+> The waymark CLI enforces the `:M: priority(high)` syntax and rejects `:M: priority:high` forms. This ensures consistent parsing across the codebase.
 
 ## Key Guidelines
 
-### The `:::` Sigil
+### The `:M:` Pattern
 
-- Always preceded by space when prefix is present
+- Always followed by exactly one ASCII space
 - Three characters for visual clarity and fast typing
-- Matched with simple string search: `':::'`
-- Separates prefix from content clearly
+- Matched with simple string search: `':M:'`
 
 ### Delimiter Rules
 
-- **`:::`** - the sigil that marks waymarks
-- **Colon (`:`)** for properties: `priority:high`
-- **Parentheses `()`** for parameterized values: `requires:node(>=16)`
-- **Brackets `[]`** for grouped values: `requires:[npm(>=8),node(16,18,20)]`
-- **Hash (`#`)** for hashtags: `#security`
-- **At (`@`)** for mentions: `@alice`
+- **Colon (`:`)** for classifications: `priority:high`
+- **Parentheses `()`** for parameters: `blocked(issue:4)`
+- **Brackets `[]`** for arrays: `owner:[@alice,@bob]`
 
 ### Not Supported
 
@@ -83,16 +79,15 @@ Waymark tools are opinionated implementations. Use prescriptive language that cl
 ### Syntax Documentation
 
 > The waymark syntax permits both explicit and implicit assignment:
-> - `todo ::: assign:@alice implement cache` - explicit assignment
-> - `todo ::: @alice implement cache` - implicit assignment
-> - `::: @alice please review this approach` - mention in pure note
+> - `:M: owner:@alice` - explicit owner assignment
+> - `:M: @alice` - implicit assignment (context-dependent)
 
 ### Tool Documentation
 
-> The waymark CLI validates prefix namespaces:
+> The waymark CLI requires explicit scope markers:
 > ```bash
-> waymark validate "todo ::: implement cache"  # Valid
-> waymark validate "custom ::: task"           # Error: Unknown prefix
+> waymark validate ":M: config:env(prod)"  # Valid
+> waymark validate ":M: config(prod)"      # Error: Missing scope
 > ```
 
 ## Cross-References
@@ -109,5 +104,5 @@ When referencing between syntax and tooling:
 ❌ "The syntax requires proper formatting"
 ✅ "Waymark tools validate proper formatting"
 
-❌ "The tool recommends using prefixes"
-✅ "The tool validates prefix namespaces"
+❌ "The tool recommends using parentheses"
+✅ "The tool enforces parenthetical parameters"
