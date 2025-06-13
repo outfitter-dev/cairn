@@ -133,17 +133,17 @@ waymark list src/ --contexts
   ```go
   // ::: user_ids are always UUIDs, never integers
   func GetUser(userID string) (*User, error) {
-      // warn ::: validate UUID format to prevent injection #security
+      // alert ::: validate UUID format to prevent injection +security
       return db.FindUser(userID)
   }
   ```
 
-### 4. Use Properties and Hashtags
+### 4. Use Properties and Tags
 
 - Add structured data and classification
   ```typescript
-  // todo ::: priority:high fix rate limiting #performance
-  // temp ::: deprecated:v3.0 remove after Redis upgrade
+  // todo ::: priority:high fix rate limiting +performance
+  // temp ::: remove after Redis upgrade
   ```
 
 ## 🎯 Core Patterns
@@ -180,8 +180,8 @@ class UserService:
     # ::: all users must have unique emails
     def create_user(self, email: str, name: str):
         # todo ::: @agent implement with proper validation
-        # warn ::: prevent duplicate emails #security
-        # todo ::: add rate limiting #performance
+        # alert ::: prevent duplicate emails +security
+        # todo ::: add rate limiting +performance
         pass
 ```
 
@@ -197,7 +197,7 @@ user_service.py:4: # todo ::: @agent implement with proper validation
 ```bash
 $ rg ":::" user_service.py
 user_service.py:2: # ::: all users must have unique emails
-user_service.py:5: # warn ::: prevent duplicate emails #security
+user_service.py:5: # alert ::: prevent duplicate emails +security
 ```
 
 ### 4. AI implements with full understanding:
