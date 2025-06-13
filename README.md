@@ -1,5 +1,5 @@
 <!-- tldr ::: Universal pattern for making codebases AI-navigable and greppable -->
-# 〽️ Waymark - Blazing fast code navigation for AI agents
+# 🪧 Waymarks ::: Blazing fast code navigation for agents
 
 > [!IMPORTANT]
 > **🚧 Work in Progress** - This is an early proof of concept exploring how to make codebases more navigable for AI agents. I'm actively seeking feedback, suggestions, and use cases. Join the discussion in [Issues](https://github.com/outfitter-dev/waymark/issues) or share your thoughts!
