@@ -380,7 +380,7 @@ Establish team conventions:
 # Team patterns:
 # shipped ::: ready for production
 # hold ::: needs review first
-# warn ::: proceed with caution
+# alert ::: proceed with caution
 ```
 
 ### 5. Progressive Enhancement

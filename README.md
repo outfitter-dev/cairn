@@ -41,7 +41,7 @@ A **waymark** is a small, consistent marker that helps make comments more discov
 ```javascript
 // todo ::: add input validation
 function processPayment(amount) {
-    // warn ::: verify amount is positive #security
+    // alert ::: verify amount is positive +security
     chargeCard(amount);
 }
 ```
@@ -50,7 +50,7 @@ Search examples:
 
 ```bash
 rg ":::"          # List all waymarks
-rg "warn :::"     # Jump to warnings
+rg "alert :::"    # Jump to alerts
 rg "todo :::"     # Find all tasks
 ```
 
@@ -154,7 +154,7 @@ waymark list src/ --contexts
 | `todo :::` | Work to be done | `// todo ::: add error handling` |
 | `:::` | Important context (pure note) | `// ::: expects UTC timestamps` |
 | `@mentions` | AI agent tasks | `// todo ::: @agent implement this function` |
-| `warn :::` | Security/safety concerns | `// warn ::: validate all inputs #security` |
+| `alert :::` | Security/safety concerns | `// alert ::: validate all inputs +security` |
 | `temp :::` | Temporary code | `// temp ::: remove after v2.0` |
 
 ## 📈 Getting Started
@@ -164,7 +164,7 @@ Start simple and add complexity as needed:
 ```javascript
 // Basic waymarks
 // todo ::: implement caching
-// warn ::: sanitize user input #security
+// alert ::: sanitize user input +security
 
 // Add properties and hashtags when helpful
 // todo ::: fixes:#42 fix memory leak
@@ -241,7 +241,7 @@ def create_user(self, email: str, name: str):
 **Core prefixes:**
 - `todo :::` - Work to be done
 - `fix :::` - Bugs to fix  
-- `warn :::` - Warnings and cautions
+- `alert :::` - Warnings and cautions
 - `temp :::` - Temporary code
 - `tldr :::` - Brief summaries
 - `:::` - Pure notes (no prefix)
@@ -276,11 +276,11 @@ rg ":::"
 
 # Find by prefix
 rg "todo :::"
-rg "warn :::"
+rg "alert :::"
 rg "fix :::"
 
 # Find with context (lines before/after)
-rg -B1 -A1 "warn :::"  # 1 line before and after
+rg -B1 -A1 "alert :::"  # 1 line before and after
 rg -C2 "todo :::"      # 2 lines context
 
 # Find by hashtag
