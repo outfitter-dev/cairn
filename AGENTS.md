@@ -12,7 +12,7 @@ The **goal**: make navigation, task discovery and context-gathering trivial for 
 ## 1 · Anatomy of a Waymark
 
 ```text
-<comment-leader> [prefix] ::: [properties] [free-text note] [#hashtags]
+<comment-leader> [marker] ::: [properties] [free-text note] [+tags]
 ```
 
 Example
@@ -25,11 +25,11 @@ Component recap (see `docs/syntax.md` for the formal grammar):
 
 | Element     | Purpose                                   | Example                         |
 |-------------|-------------------------------------------|---------------------------------|
-| **prefix**  | Quick classifier (_one per line, optional_)| `todo`, `fix`, `warn`, `tldr`   |
-| **:::**     | Sigil separating prefix from payload       | always exactly three colons     |
+| **marker**  | Quick classifier (_one per line, optional_)| `todo`, `fix`, `alert`, `tldr`  |
+| **:::**     | Sigil separating marker from payload       | always exactly three colons     |
 | **property**| Key:value pairs for structured metadata    | `priority:high`, `assign:@bob` |
 | **note**    | Free-text human explanation                | `implement OAuth flow`          |
-| **#tags**   | Hierarchical hashtags for ad-hoc grouping  | `#security/auth`                |
+| **+tags**   | Hierarchical tags for ad-hoc grouping     | `+security/auth`                |
 
 ---
 
@@ -39,7 +39,7 @@ Most questions boil down to five core queries—build aliases for them.
 
 ```bash
 # everything
-rg " :::"                       # all waymarks (prefix or pure)
+rg " :::"                       # all waymarks (marker or pure)
 
 # tasks & open work
 rg "todo :::"                   # outstanding work
@@ -48,7 +48,7 @@ rg "todo :::"                   # outstanding work
 rg "tldr :::" --type md,ts,js    # brief overviews
 
 # security warnings
-rg "warn :::" -C2               # context
+rg "alert :::" -C2              # context
 
 # show metadata (e.g. priority)
 rg -o "priority:[a-z]+" | sort | uniq -c
@@ -60,10 +60,10 @@ Pro-tip: add `-C3` (or `-n` for line numbers) as needed.
 
 ## 3 · Writing Guidelines (quick version)
 
-1. **One prefix, one concern.**  `// todo :::` *or* `// warn :::`, never both.
+1. **One marker, one concern.**  `// todo :::` *or* `// alert :::`, never both.
 2. **Put `tldr :::` at the top** of every significant file/module.
 3. **Prefer properties** for structured data (`priority:high`, `assign:@alice`).
-4. **Use hashtags** for broad topics (`#security`, `#frontend/ui`).
+4. **Use tags** for broad topics (`+security`, `+frontend/ui`).
 5. **Keep notes short.** The surrounding code is the long-form.
 
 Lint yourself:

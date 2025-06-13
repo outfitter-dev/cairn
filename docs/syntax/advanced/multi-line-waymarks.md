@@ -41,7 +41,7 @@ waymark_multiline ::= comment_leader marker? ":::" prose newline
 ### 2. Detailed Warnings
 
 ```typescript
-// warn ::: potential memory leak in event handlers
+// alert ::: potential memory leak in event handlers
 //   Event listeners attached in useEffect are not cleaned up
 //   This causes performance degradation over time
 //   Reproduce: rapidly mount/unmount component 100x
@@ -83,7 +83,7 @@ rg -U ":::[^:]*\n.*:::[[:space:]]*$"
 rg -U "todo :::[^:]*\n.*:::[[:space:]]*$"
 
 # Find all multi-line warnings
-rg -U "warn :::[^:]*\n.*:::[[:space:]]*$"
+rg -U "alert :::[^:]*\n.*:::[[:space:]]*$"
 ```
 
 ### Extract full content

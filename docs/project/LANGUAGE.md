@@ -69,7 +69,7 @@ Waymark tools are opinionated implementations. Use prescriptive language that cl
 - **Colon (`:`)** for properties: `priority:high`
 - **Parentheses `()`** for parameterized values: `requires:node(>=16)`
 - **Brackets `[]`** for grouped values: `requires:[npm(>=8),node(16,18,20)]`
-- **Hash (`#`)** for hashtags: `#security`
+- **Plus (`+`)** for tags: `+security`
 - **At (`@`)** for mentions: `@alice`
 
 ### Not Supported
