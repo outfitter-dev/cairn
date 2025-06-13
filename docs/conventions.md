@@ -11,7 +11,7 @@ Begin with these five essential patterns:
 
 1. `todo :::` - Work that needs doing
 2. `pure note :::` - Important assumptions or constraints
-3. `warn :::` - Security-critical or risky code
+3. `alert :::` - Security-critical or risky code
 4. `@mentions` - AI agent instructions
 5. `temp :::` - Temporary code to remove
 
@@ -30,7 +30,7 @@ That's it! You can search all of these with `rg ":::"`.
 **`fix :::`** - Broken code needing immediate attention
 ```python
 # fix ::: null pointer exception here
-# fixme ::: race condition in auth flow
+# fix ::: race condition in auth flow
 ```
 
 **`done :::`** - Completed work for reference
@@ -60,20 +60,20 @@ That's it! You can search all of these with `rg ":::"`.
 
 ### Security & Risk
 
-**`warn :::`** - Security concerns or potential issues
+**`alert :::`** - Security concerns or potential issues
 ```go
-// warn ::: validate all inputs before SQL query #security
-// warn ::: ensure constant-time comparison #crypto
+// alert ::: validate all inputs before SQL query +security
+// alert ::: ensure constant-time comparison +crypto
 ```
 
-**`crit :::`** - Critical code requiring extreme care
+**`alert :::`** - Critical code requiring extreme care
 ```javascript
-// crit ::: payment processing - must be idempotent #financial
+// alert ::: payment processing - must be idempotent +financial
 ```
 
-**`unsafe :::`** - Dangerous operations
+**`risk :::`** - Dangerous operations
 ```rust
-// unsafe ::: direct memory access without bounds checking
+// risk ::: direct memory access without bounds checking
 ```
 
 ### Quality & Maintenance
@@ -81,7 +81,7 @@ That's it! You can search all of these with `rg ":::"`.
 **`temp :::`** - Temporary code to remove
 ```javascript
 // temp ::: remove after Chrome 120 fix ships
-// temporary ::: workaround for Redis bug
+// temp ::: workaround for Redis bug
 ```
 
 **`cleanup :::`** - Code that needs refactoring
@@ -176,29 +176,29 @@ That's it! You can search all of these with `rg ":::"`.
 
 ```javascript
 // todo ::: assign:@alice priority:high implement auth
-// warn ::: deprecated:v3.0 use newMethod() instead #breaking
+// alert ::: deprecated:v3.0 use newMethod() instead +breaking
 // fix ::: affects:auth,api,frontend security vulnerability
 // todo ::: requires:node(16,18,20) supports multiple versions
 ```
 
-## Hashtag Patterns
+## Tag Patterns
 
-### Common Hashtags
+### Common Tags
 
-- `#security` - Security-related issues
-- `#performance` - Performance concerns
-- `#frontend` - Frontend-specific code
-- `#backend` - Backend-specific code
-- `#critical` - Critical priority items
-- `#breaking` - Breaking changes
-- `#a11y` - Accessibility concerns
+- `+security` - Security-related issues
+- `+performance` - Performance concerns
+- `+frontend` - Frontend-specific code
+- `+backend` - Backend-specific code
+- `+critical` - Critical priority items
+- `+breaking` - Breaking changes
+- `+a11y` - Accessibility concerns
 
-### Hierarchical Hashtags
+### Hierarchical Tags
 
 ```javascript
-// warn ::: input validation required #security/input
-// todo ::: optimize rendering #performance/frontend
-// fix ::: API rate limiting #backend/api/auth
+// alert ::: input validation required +security/input
+// todo ::: optimize rendering +performance/frontend
+// fix ::: API rate limiting +backend/api/auth
 ```
 
 ## Best Practices
@@ -217,7 +217,7 @@ Waymarks work alongside existing documentation:
 function calculateTotal(price, taxRate) {
   // todo ::: add currency conversion support
   // ::: assumes USD for now
-  // note ::: consider caching for repeated calculations #performance
+  // note ::: consider caching for repeated calculations +performance
   return price * (1 + taxRate);
 }
 ```
@@ -230,10 +230,10 @@ rg ":::"
 
 # Find specific patterns
 rg "todo :::"              # All todos
-rg "warn :::"              # Security/warning issues
+rg "alert :::"             # Security/warning issues
 rg ":::.*@alice"           # Alice's tasks
 rg ":::.*priority:high"    # High priority items
-rg "#security"             # Security-related items
+rg "\+security"            # Security-related items
 ```
 
 ### 3. Separate Concerns
@@ -245,8 +245,8 @@ Better to use multiple waymarks than cramming everything into one:
 // fix ::: priority:critical validate inputs add caching check permissions
 
 // ✅ Clear and searchable
-// warn ::: validate all user inputs #security
-// todo ::: add rate limiting #performance  
+// alert ::: validate all user inputs +security
+// todo ::: add rate limiting +performance  
 // note ::: consider caching results
 ```
 
@@ -256,7 +256,7 @@ Establish team conventions:
 - Use consistent prefixes (`temp` vs `temporary`)
 - Agree on priority schemes (`p0/p1/p2` vs `critical/high/medium/low`)
 - Document your patterns in a CONVENTIONS.md file
-- Use hashtags consistently across the codebase
+- Use tags consistently across the codebase
 
 ### 5. Start Simple
 
@@ -314,7 +314,7 @@ rg ":M:"
 
 # Convert basic patterns
 sed -i 's/:M: todo/todo :::/g' **/*.js
-sed -i 's/:M: sec/warn :::/g' **/*.js
+sed -i 's/:M: sec/alert :::/g' **/*.js
 sed -i 's/:M: ctx/:::g' **/*.js
 ```
 

@@ -10,7 +10,7 @@ Waymark syntax defines the **structure** for writing searchable code markers:
 - The `:::` sigil with optional prefix
 - Delimiter semantics (`:` for properties, `()` for parameters, `[]` for arrays)
 - Fixed namespace of prefixes organized into semantic groups
-- Properties, hashtags, and @mentions for metadata
+- Properties, tags, and @mentions for metadata
 - Simple, grep-friendly patterns
 
 Think of it like learning to write musical notes - the syntax is simple and consistent, while what you compose with it can be infinitely varied.
@@ -18,16 +18,18 @@ Think of it like learning to write musical notes - the syntax is simple and cons
 ## Basic Syntax
 
 ```text
-<comment-leader> [prefix] ::: [properties] [note] [#hashtags]
+<comment-leader> [signal][marker] ::: [actor] [properties] [note] [+tags]
 ```
 
 The syntax consists of:
 
-1. **Prefix**: Optional classifier before the `:::` sigil
-2. **Sigil**: `:::` separator (always preceded by space when prefix present)
-3. **Properties**: Key:value pairs for machine-readable metadata
-4. **Note**: Human-readable description
-5. **Hashtags**: Classification tags prefixed with `#`
+1. **Signal**: Optional urgency/emphasis symbol (!, ?, *, etc.)
+2. **Marker**: Optional classifier before the `:::` sigil  
+3. **Sigil**: `:::` separator (always preceded by space when marker present)
+4. **Actor**: Optional @mention for assignment
+5. **Properties**: Key:value pairs for machine-readable metadata
+6. **Note**: Human-readable description
+7. **Tags**: Classification tags prefixed with `+`
 
 ### Quick Examples
 
@@ -35,21 +37,21 @@ The syntax consists of:
 // todo ::: implement caching                    // Prefix with note
 // fix ::: priority:high memory leak             // Prefix with property
 // ::: this is a performance hotpath             // Pure note (no prefix)
-// warn ::: validates all inputs #security       // With hashtag
+// alert ::: validates all inputs +security      // With tag
 // todo ::: assign:@alice implement OAuth flow   // With assignment
 // ::: deprecated:v2.0 use newMethod() instead   // Properties in note
 ```
 
 ## Syntax Components
 
-### Prefixes
+### Markers
 
-Optional classifiers from a fixed namespace that appear before `:::`:
+Optional classifiers from a fixed namespace (~41 total) that appear before `:::`:
 
 ```javascript
 // todo ::: implement validation
 // fix ::: memory leak in auth
-// warn ::: security vulnerability
+// alert ::: security vulnerability
 // tldr ::: handles user authentication
 ```
 
@@ -63,13 +65,13 @@ Key:value pairs for structured metadata:
 // fix ::: assign:@alice memory leak issue
 ```
 
-### Hashtags
+### Tags
 
-Classification tags for grouping and filtering:
+Classification tags for grouping and filtering (use + prefix):
 
 ```javascript
-// todo ::: implement auth flow #security #backend
-// fix ::: button contrast #critical #frontend #a11y
+// todo ::: implement auth flow +security +backend
+// fix ::: button contrast +critical +frontend +a11y
 ```
 
 ### @Mentions
@@ -87,15 +89,16 @@ People or entity references:
 The complete formal grammar in EBNF:
 
 ```ebnf
-waymark  ::= comment-leader prefix? sigil space payload
-prefix   ::= [A-Za-z0-9_-]+
+waymark  ::= comment-leader signal? marker? sigil space payload
+signal   ::= "_"? ("!!" | "!" | "??" | "?" | "**" | "*" | "--" | "-" | "~" | "^")
+marker   ::= [A-Za-z0-9_-]+
 sigil    ::= ":::"
 space    ::= " "                    # exactly one ASCII space
 payload  ::= property* note? hashtag*
 property ::= key ":" value space?
 key      ::= [A-Za-z0-9_-]+
 value    ::= simple-value | parameterized-value | array-value
-hashtag  ::= "#" [A-Za-z0-9_/-]+     # hierarchical tags allowed
+tag      ::= "+" [A-Za-z0-9_/-]+     # hierarchical tags allowed
 mention  ::= "@" [A-Za-z0-9_-]+
 note     ::= text                    # human-readable description
 ```
@@ -109,8 +112,8 @@ Each delimiter has a specific purpose:
 The core waymark identifier that separates prefix from content:
 
 ```javascript
-// todo ::: implement validation    // prefix + content
-// ::: this is just a note          // pure note (no prefix)
+// todo ::: implement validation    // marker + content
+// ::: this is just a note          // pure note (no marker)
 ```
 
 ### `:` - Properties
@@ -140,13 +143,13 @@ Groups multiple parameterized values:
 // ::: affects:[auth,api,frontend] breaking change
 ```
 
-### `#` - Hashtags
+### `+` - Tags
 
 Classification tags, can be hierarchical:
 
 ```javascript
-// todo ::: implement auth #security #backend
-// fix ::: contrast issue #frontend/ui #a11y/wcag
+// todo ::: implement auth +security +backend
+// fix ::: contrast issue +frontend/ui +a11y/wcag
 ```
 
 ### `@` - Mentions
@@ -158,22 +161,63 @@ People or entity references:
 // ::: @alice please review this approach
 ```
 
-## Prefix Groups
+## Marker Categories
 
-Prefixes are organized into semantic categories:
+Markers are organized into 8 semantic categories (~41 total):
 
-| Category | Purpose | Prefixes |
-|----------|---------|----------|
-| **Tasks** | Work to be done | `todo`, `fix`, `done`, `ask`, `review`, `chore`, `hotfix`, `spike` |
-| **Lifecycle** | Code maturity | `stub`, `draft`, `stable`, `shipped`, `good`, `bad`, `hold`, `stale`, `cleanup`, `remove` |
-| **Alerts** | Warnings & issues | `warn`, `crit`, `unsafe`, `caution`, `broken`, `locked`, `needs`, `deprecated`, `audit`, `legal`, `temp`, `revisit`, `check` |
-| **Information** | Context & docs | `tldr`, `summary`, `note`, `notice`, `thought`, `docs`, `why`, `see`, `example` |
-| **Meta** | Special markers | `ai`, `important`, `mustread`, `hack`, `flag`, `pin`, `idea`, `test` |
+### Work (`--is work`)
+`todo`, `fix`, `done`, `review`, `refactor`, `needs`, `blocked`
+
+### State & Lifecycle (`--is state`)
+`temp`, `deprecated`, `draft`, `stub`, `cleanup`
+
+### Alert (`--is alert`)
+`alert`, `risk`, `notice`, `always`
+
+### Information & Documentation (`--is info`)
+`tldr`, `note`, `summary`, `example`, `idea`, `about`, `docs`
+
+### Quality & Process (`--is quality`)
+`test`, `audit`, `check`, `lint`, `ci`
+
+### Performance (`--is performance`)
+`perf`, `hotpath`, `mem`, `io`
+
+### Security & Access (`--is security`)
+`sec`, `auth`, `crypto`, `a11y`
+
+### Meta & Special (`--is meta`)
+`flag`, `important`, `hack`, `legal`, `must`, `assert`
 
 **Usage Rules:**
-1. Only one prefix per waymark
-2. Prefixes are optional - waymarks can be pure notes
-3. Traditional magic comments (TODO, FIXME) can precede `:::`
+1. Only one marker per waymark
+2. Markers are optional - waymarks can be pure notes
+3. Signals can modify markers: `!todo :::`, `^must :::`
+
+## Signal Modifiers
+
+Signals modify the urgency/emphasis of markers:
+
+| Symbol | Name | Meaning |
+|--------|------|---------|
+| `!` / `!!` | Bang / Double-bang | `!` critical · `!!` blocker/show-stopper |
+| `?` / `??` | Question / Double-question | `?` needs clarification · `??` highly uncertain |
+| `*` / `**` | Star / Double-star | `*` bookmark · `**` canonical entry point |
+| `~` | Tilde | Experimental / unstable |
+| `^` | Caret | Protected / hazardous – senior review required |
+| `-` / `--` | Tombstone / Instant-prune | `-` mark for removal · `--` prune ASAP |
+| `_` | Underscore | Ignore marker (reserved for future functionality) |
+
+Examples:
+```javascript
+// !todo ::: migrate to new hashing algo
+// ?note ::: does pagination handle zero items?
+// *tldr ::: core event-loop entry point
+// !!alert ::: patch data-loss vulnerability
+// **tldr ::: canonical docs landing page
+// ^must ::: array length must be power of two
+// -todo ::: obsolete after migrating to v5 SDK
+```
 
 ## Property Categories
 
@@ -185,7 +229,7 @@ Properties are organized into semantic families:
 | **Priority** | Importance/urgency | `priority:high`, `priority:critical` |
 | **Dependencies** | Links/requirements | `requires:package(version)`, `depends:service`, `blocks:#123` |
 | **Issue Tracking** | External references | `fixes:#123`, `closes:#456`, `relates-to:AUTH-789` |
-| **Lifecycle** | Time/versioning | `deprecated:v2.0`, `since:v1.0`, `until:v3.0` |
+| **Lifecycle** | Time/versioning | `status:deprecated`, `since:v1.0`, `until:v3.0` |
 | **Files/Paths** | Location info | `path:filename`, `affects:files` |
 | **Messages** | Quoted content | `message:"error text"`, `reason:"compliance"` |
 
@@ -201,7 +245,7 @@ Properties are organized into semantic families:
 
 // With assignments and properties
 // todo ::: assign:@alice priority:high implement caching
-// review ::: @bob please check auth logic #security
+// review ::: @bob please check auth logic +security
 ```
 
 ### Code Lifecycle
@@ -226,9 +270,9 @@ Properties are organized into semantic families:
 ### Monorepo Patterns
 
 ```javascript
-// Service namespacing with hashtags
-// todo ::: implement OAuth #auth #backend
-// fix ::: payment validation #payment #security
+// Service namespacing with tags
+// todo ::: implement OAuth +auth +backend
+// fix ::: payment validation +payment +security
 
 // Or with properties
 // todo ::: service:auth implement OAuth
@@ -266,9 +310,9 @@ rg "warn :::"
 rg ":::.*priority:high"
 rg ":::.*assign:@alice"
 
-# Find by hashtags
-rg "#security"
-rg "#frontend"
+# Find by tags
+rg "\+security"
+rg "\+frontend"
 
 # Find with context
 rg -C2 "todo :::"  # 2 lines before/after
@@ -278,7 +322,7 @@ rg -B3 -A3 "fix :::"  # 3 lines before/after
 rg "<!-- .*:::" --type md
 
 # Advanced searches
-rg ":::.*priority:high.*#security"  # High-priority security
+rg ":::.*priority:high.*\+security"  # High-priority security
 rg ":::.*@alice"                    # Alice's assignments
 rg ":::.*fixes:#\d+"                # Issue fixes
 ```

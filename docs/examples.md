@@ -16,7 +16,7 @@ Examples and patterns for working with waymarks, organized by common use cases.
 // With priority and assignment
 // todo ::: priority:high implement OAuth
 // todo ::: assign:@alice add unit tests
-// fix ::: priority:critical race condition #backend
+// fix ::: priority:critical race condition +backend
 ```
 
 ### AI Agent Tasks
@@ -64,7 +64,7 @@ Waymarks complement existing documentation systems - they add searchability with
 function calculateTotal(price, taxRate) {
   // todo ::: add currency conversion support
   // ::: assumes USD for now
-  // note ::: consider caching for repeated calculations #performance
+  // note ::: consider caching for repeated calculations +performance
   return price * (1 + taxRate);
 }
 ```
@@ -84,7 +84,7 @@ def process_order(order_data: dict) -> Order:
         ValidationError: If order data is invalid
         PaymentError: If payment processing fails
     """
-    # warn ::: validate all payment data #security
+    # alert ::: validate all payment data +security
     # todo ::: add retry logic for failed payments
     # ::: payment gateway has 30s timeout
     # ::: max transaction amount is $10,000
@@ -101,7 +101,7 @@ def process_order(order_data: dict) -> Order:
  * @author Team Auth
  */
 public class AuthService {
-    // crit ::: security critical component #security
+    // alert ::: security critical component +security
     // review ::: check OWASP compliance
     
     /**
@@ -112,10 +112,10 @@ public class AuthService {
      * @return Authentication token if valid
      */
     public String authenticate(String username, String password) {
-        // todo ::: implement rate limiting #security
-        // warn ::: never log passwords #security
+        // todo ::: implement rate limiting +security
+        // alert ::: never log passwords +security
         // ::: passwords are bcrypt hashed
-        // audit ::: log all auth attempts #compliance
+        // audit ::: log all auth attempts +compliance
     }
 }
 ```
@@ -129,9 +129,9 @@ public class AuthService {
 interface UserProfile {
   // important ::: public interface - maintain compatibility
   id: string;           // ::: UUID v4 format
-  email: string;        // warn ::: PII - handle carefully #security
+  email: string;        // alert ::: PII - handle carefully +security
   preferences: {
-    theme: 'light' | 'dark';  // todo ::: implement dark mode #frontend
+    theme: 'light' | 'dark';  // todo ::: implement dark mode +frontend
     notifications: boolean;    // todo ::: implement notification system
   };
   createdAt: Date;      // ::: stored as UTC
@@ -172,9 +172,9 @@ describe('PaymentProcessor', () => {
 ```yaml
 # config/production.yml
 database:
-  host: prod-db.example.com  # warn ::: use environment variable #security
+  host: prod-db.example.com  # alert ::: use environment variable +security
   port: 5432
-  pool_size: 20             # note ::: tuned for high load #performance
+  pool_size: 20             # note ::: tuned for high load +performance
   
 cache:
   provider: redis           # ::: Redis 6.2+ required
@@ -189,9 +189,9 @@ cache:
 ```javascript
 // note ::: since:v2.0 new API endpoint
 // deprecated ::: v3.0 use /api/v3/users instead
-// warn ::: until:v4.0 will be removed #breaking
+// alert ::: until:v4.0 will be removed +breaking
 router.get('/api/v2/users', (req, res) => {
-  // warn ::: returns different format than v1 #breaking
+  // alert ::: returns different format than v1 +breaking
   // docs ::: migration guide at docs/migration-v2.md
 });
 
@@ -199,7 +199,7 @@ router.get('/api/v2/users', (req, res) => {
 // flag ::: new-checkout-flow experimental
 // note ::: 10% rollout active
 if (features.isEnabled('new-checkout-flow', user)) {
-  // note ::: track conversion rate #metrics
+  // note ::: track conversion rate +metrics
   return newCheckoutProcess();
 }
 ```
@@ -221,37 +221,37 @@ def sync_user_data():
 ```javascript
 // Input validation
 function updateProfile(userId, data) {
-  // warn ::: validate all user inputs #security
-  // warn ::: prevent SQL injection #security
-  // todo ::: add rate limiting #security
+  // alert ::: validate all user inputs +security
+  // alert ::: prevent SQL injection +security
+  // todo ::: add rate limiting +security
   
-  // warn ::: check user owns this profile #security
+  // alert ::: check user owns this profile +security
   if (!userOwnsProfile(userId, profileId)) {
-    // audit ::: log unauthorized access attempt #security
+    // audit ::: log unauthorized access attempt +security
     throw new ForbiddenError();
   }
 }
 
 // Sensitive data handling
 class UserDataStore {
-  // warn ::: PII data - encrypt at rest #security #compliance
-  // warn ::: never log sensitive fields #security
-  // audit ::: all data access #compliance
+  // alert ::: PII data - encrypt at rest +security +compliance
+  // alert ::: never log sensitive fields +security
+  // audit ::: all data access +compliance
 }
 ```
 
 ## Performance Patterns
 
 ```ruby
-# warn ::: N+1 query detected #performance
-# todo ::: use includes or join #performance
+# alert ::: N+1 query detected +performance
+# todo ::: use includes or join +performance
 def get_posts_with_stats
   posts = Post.all
   
   posts.map do |post|
     {
       title: post.title,
-      # warn ::: this hits DB for each post #performance
+      # alert ::: this hits DB for each post +performance
       comment_count: post.comments.count
     }
   end
@@ -259,10 +259,10 @@ end
 
 # note ::: cache expensive calculation
 # ::: called on every request
-# todo ::: add Redis caching with TTL #performance
+# todo ::: add Redis caching with TTL +performance
 def calculate_recommendations(user)
-  # todo ::: consider background job #performance
-  # note ::: track execution time #metrics
+  # todo ::: consider background job +performance
+  # note ::: track execution time +metrics
 end
 ```
 
@@ -273,7 +273,7 @@ For markdown files, use HTML comments to make waymarks searchable but not render
 ```markdown
 <!-- tldr ::: API documentation overview -->
 <!-- todo ::: @galligan add authentication examples -->
-<!-- warn ::: breaking changes in v3.0 -->
+<!-- alert ::: breaking changes in v3.0 -->
 <!-- note ::: last updated 2024-01-30 -->
 
 # API Documentation
@@ -301,7 +301,7 @@ rg ":::.*@agent"
 rg "fix :::"
 
 # Critical issues
-rg ":::.*#critical"
+rg ":::.*\+critical"
 ```
 
 ### Finding Context
@@ -310,10 +310,10 @@ rg ":::.*#critical"
 rg "^[[:space:]]*//[[:space:]]*:::[[:space:]]"
 
 # Security considerations
-rg "warn :::.*#security" -A 2 -B 2
+rg "alert :::.*\+security" -A 2 -B 2
 
 # Performance issues
-rg "#performance"
+rg "\+performance"
 
 # Business rules
 rg ":::.*business"
@@ -333,8 +333,8 @@ rg "temp :::"
 # Find all blockers
 rg "hold :::|blocked" -A 1
 
-# Find by hashtag
-rg "#frontend|#backend|#security"
+# Find by tag
+rg "\+frontend|\+backend|\+security"
 ```
 
 ## Best Practices
@@ -350,7 +350,7 @@ Use alongside JSDoc, docstrings, and comments:
  */
 function validateInput(input) {
   // todo ::: add email format validation
-  // warn ::: sanitize before processing #security
+  // alert ::: sanitize before processing +security
   return true;
 }
 ```
@@ -359,8 +359,8 @@ function validateInput(input) {
 Group waymarks that describe the same concern:
 
 ```python
-# warn ::: validate inputs #security
-# warn ::: check permissions #security
+# alert ::: validate inputs +security
+# alert ::: check permissions +security
 # ::: admin users bypass some checks
 ```
 
@@ -394,10 +394,10 @@ Start simple and add complexity:
 // todo ::: priority:high add validation
 
 // Level 3: Add assignment and hashtags
-// todo ::: priority:high assign:@alice add validation #security
+// todo ::: priority:high assign:@alice add validation +security
 
 // Level 4: Link to issues
-// todo ::: priority:high assign:@alice fixes:#123 add validation #security
+// todo ::: priority:high assign:@alice fixes:#123 add validation +security
 ```
 
 ## Monorepo Patterns
@@ -406,29 +406,29 @@ Use hashtags for service separation:
 
 ```javascript
 // Auth service
-// todo ::: implement OAuth #auth-service
-// warn ::: rate limit login attempts #auth-service #security
+// todo ::: implement OAuth +auth-service
+// alert ::: rate limit login attempts +auth-service +security
 
 // Payment service  
-// fix ::: handle timeout errors #payment-service
-// todo ::: add retry logic #payment-service #resilience
+// fix ::: handle timeout errors +payment-service
+// todo ::: add retry logic +payment-service +resilience
 
 // Shared utilities
-// note ::: maintain API compatibility #shared-utils
-// deprecated ::: v3.0 use newUtility() #shared-utils
+// note ::: maintain API compatibility +shared-utils
+// deprecated ::: v3.0 use newUtility() +shared-utils
 ```
 
 Search patterns for monorepos:
 
 ```bash
 # All auth service issues
-rg "#auth-service"
+rg "\+auth-service"
 
 # Security across all services
-rg "#security"
+rg "\+security"
 
 # Frontend-specific todos
-rg "todo :::.*#frontend"
+rg "todo :::.*\+frontend"
 ```
 
 Remember: Waymarks make codebases more navigable. They're breadcrumbs for both humans and AI.

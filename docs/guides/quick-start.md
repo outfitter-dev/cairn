@@ -16,7 +16,7 @@ Add a waymarked comment to mark important code:
 ```javascript
 // todo ::: implement error handling
 function processUser(data) {
-  // warn ::: validate input #security
+  // alert ::: validate input +security
   return data;
 }
 ```
@@ -31,7 +31,7 @@ rg -n ":::"
 
 # Find specific prefixes
 rg -n "todo :::"
-rg -n "warn :::"
+rg -n "alert :::"
 ```
 
 ### 3. Common Patterns
@@ -44,7 +44,7 @@ Start with these essential patterns:
 | `todo :::` | Future work | `// todo ::: add tests` |
 | `:::` | Key assumptions (pure note) | `// ::: UTC timestamps only` |
 | `fix :::` | Broken code | `// fix ::: null pointer exception` |
-| `warn :::` | Security/safety critical | `// warn ::: validate input #security` |
+| `alert :::` | Security/safety critical | `// alert ::: validate input +security` |
 | `@mentions` | Assign to someone | `// todo ::: @alice review this` |
 
 ## Pure Notes vs Prefixed Waymarks
@@ -60,10 +60,10 @@ Waymarks can be pure notes (no prefix) or prefixed:
 // Prefixed waymarks (actionable items)
 // todo ::: implement caching
 // fix ::: handle null case
-// warn ::: validate permissions #security
+// alert ::: validate permissions +security
 ```
 
-## Properties and Hashtags
+## Properties and Tags
 
 Add structured data and classification:
 
@@ -73,10 +73,10 @@ Add structured data and classification:
 // todo ::: assign:@alice add validation
 // fix ::: affects:auth,api memory leak
 
-// Hashtags (classification)
-// todo ::: implement OAuth #auth-service
-// warn ::: rate limit required #security #performance
-// fix ::: API timeout #backend #critical
+// Tags (classification with + prefix)
+// todo ::: implement OAuth +auth-service
+// alert ::: rate limit required +security +performance
+// fix ::: API timeout +backend +critical
 ```
 
 For deeper exploration, see [Conventions](../conventions.md) and [Examples](../examples.md).
@@ -102,7 +102,7 @@ For markdown files, use HTML comments to make waymarks searchable but not render
 ```markdown
 <!-- tldr ::: User authentication guide -->
 <!-- todo ::: @galligan add SSO examples -->
-<!-- warn ::: breaking changes in v3.0 -->
+<!-- alert ::: breaking changes in v3.0 -->
 
 # Authentication Guide
 
@@ -124,15 +124,15 @@ rg -n ":::"
 
 # Find by prefix
 rg -n "todo :::"
-rg -n "warn :::"
+rg -n "alert :::"
 rg -n "fix :::"
 
 # Find pure notes (no prefix)
 rg -n "^[[:space:]]*//[[:space:]]*:::[[:space:]]"
 
-# Find by hashtag
-rg -n "#security"
-rg -n "#frontend"
+# Find by tag
+rg -n "\+security"
+rg -n "\+frontend"
 
 # Find work assigned to Alice
 rg -n ":::.*@alice"
@@ -141,7 +141,7 @@ rg -n ":::.*@alice"
 rg -n ":::.*priority:high"
 
 # Find with context (lines before/after)
-rg -n -C2 "warn :::"
+rg -n -C2 "alert :::"
 
 # Count all waymarks
 rg -c ":::" | awk -F: '{sum+=$2} END {print sum}'
@@ -182,7 +182,7 @@ rg -c ":::" | awk -F: '{sum+=$2} END {print sum}'
 - **Space before `:::`**: Required when prefix is present
 - **Keep markers short**: Under 80-120 characters for readable grep output  
 - **Use properties for structure**: Machine-readable key:value pairs
-- **Use hashtags for grouping**: Cross-cutting concerns like #security
+- **Use tags for grouping**: Cross-cutting concerns like +security
 - **Document team conventions**: Establish consistent patterns
 - **Start simple**: Begin with `todo :::` and `:::`, add complexity as needed
 
@@ -198,10 +198,10 @@ Start simple and add features as needed:
 // todo ::: priority:high add validation
 
 // Level 3: Add hashtags
-// todo ::: priority:high add validation #security
+// todo ::: priority:high add validation +security
 
 // Level 4: Add assignment and issues
-// todo ::: priority:high assign:@alice fixes:#123 add validation #security
+// todo ::: priority:high assign:@alice fixes:#123 add validation +security
 ```
 
 Remember: The goal is **discoverability**. Even one `:::` waymark makes your codebase more navigable than none.

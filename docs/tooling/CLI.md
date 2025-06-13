@@ -4,7 +4,7 @@
 The waymark CLI provides commands for searching and managing waymarks in your codebase.
 
 ## Installation
-
+<!-- fix ::: @claude this should actually just be `npm install -g waymark` -->
 ```bash
 # Global installation
 npm install -g @waymark/cli
@@ -21,13 +21,13 @@ pnpm add -D @waymark/cli
 ### `waymark search [patterns...]`
 
 Search for waymarks in files matching the given patterns.
-
+<!-- fix ::: @claude we are using `find` now. See `search-patterns.md` -->
 ```bash
 # Search all JavaScript files
 waymark search "src/**/*.js"
 
 # Search for specific contexts
-waymark search "src/" --contexts todo,fixme
+waymark search "src/" --contexts todo,fix
 
 # Search with context lines
 waymark search "lib/" --context 3

@@ -33,7 +33,7 @@ The CI workflow (`.github/workflows/ci.yml`) runs on every PR and ensures:
 - TypeScript compiles (`pnpm typecheck`)
 - Linting passes (`pnpm lint`)
 - Build succeeds (`pnpm build`)
-- No temporary code waymarks exist (`pnpm check:anchors`)
+- No temporary code waymarks exist (`pnpm check:waymarks`)
 
 ### 3. Release Process
 
