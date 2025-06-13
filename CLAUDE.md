@@ -10,90 +10,147 @@ About you: @.ai/prompts/MAX.md
 
 The Waymark CLI provides tooling for **waymarks** - a standardized way to mark important code locations using the `:::` sigil in comments. This allows both humans and AI agents to quickly find relevant code sections using simple grep commands.
 
+## Quick Reference for Claude
+
+### Most Common Patterns I'll Use
+```javascript
+// todo ::: implement feature              // Work to do
+// fix ::: bug description                 // Bugs to fix
+// ::: important context here              // Pure notes (no marker)
+// alert ::: security issue +security      // Alerts with tags (+ not #)
+// todo ::: @agent write tests             // AI delegation
+// temp ::: remove after deploy            // Temporary code
+// !todo ::: critical bug fix              // Signal for urgency
+// deprecated ::: use newMethod() instead  // Lifecycle marker
+```
+
+### Key Search Commands
+```bash
+rg ":::"                    # Find all waymarks
+rg "todo :::"               # Find todos
+rg ":::.*@agent"            # Find AI tasks
+rg -C2 "alert :::"          # Show context for alerts
+rg "<!-- .*:::" --type md   # In markdown
+rg "!{1,2}todo :::"         # Find urgent/critical todos
+rg "\b(hotpath|mem|io) :::" # Performance markers
+```
+
 ## Important Notes
 
 - This repository uses waymarks with the `:::` sigil. Use @llms.txt for how to use.
 - The project is transitioning from `:M:` to `:::` syntax
+- **SPACE BEFORE `:::`** is required when prefix is present!
 
 ## Core Concept
 
-The waymark pattern: `[comment-leader] [prefix] ::: [properties] [note] [#hashtags]`
+The waymark pattern: `[comment-leader] [signal][marker] ::: [@actor] [properties] [note] [+tags]`
 
-- **`:::`** - the sigil that defines a waymark (preceded by space when prefix is present)
-- **prefix** - optional classifier before the sigil (e.g., `todo`, `fix`, `tldr`)
-- **properties** - key:value pairs for structured metadata (e.g., `priority:high`)
-- **note** - human-readable description
-- **#hashtags** - open-namespace tags for classification
+### Key Syntax Rules
+
+1. **Space before `:::`**: ALWAYS required when prefix is present
+   - ✅ `// todo ::: implement validation`
+   - ❌ `// todo::: implement validation`
+   
+2. **The `:::` sigil**: Core waymark identifier (three colons)
+   - With prefix: `todo :::`, `fix :::`, `warn :::`
+   - Pure note (no prefix): `// ::: important context here`
+
+3. **Components**:
+   - **signal** - optional urgency/emphasis symbol (!, ?, *, etc.)
+   - **marker** - classifier from fixed namespace (~41 total)
+   - **actor** - @mention if first after :::
+   - **properties** - key:value pairs for structured metadata
+   - **note** - human-readable description
+   - **+tags** - classification tags (use + not #)
+   - **@mentions** - people or entity references
 
 ## Waymark Terminology
 
 - **Waymark**: The entire comment structure containing the `:::` sigil
 - **Sigil**: The `:::` separator that defines a waymark
-- **Prefix**: Optional classifier before `:::` (limited namespace)
+- **Marker**: Optional classifier before `:::` (limited namespace)
+- **Signal**: Optional symbol modifying the marker (!, ?, *, ^, etc.)
 - **Properties**: Machine-readable key:value pairs after `:::`
 - **Note**: Human-readable description (waymarks without prefix are pure notes)
-- **Hashtags**: Classification tags prefixed with `#`
+- **Tags**: Classification tags prefixed with `+`
+- **Pure Note**: Waymark with no marker: `// ::: this explains the context`
 
 ## Common Waymark Prefixes
 
-### Work Prefixes
+### Essential Patterns (Start Here!)
+
+1. **`todo :::`** - Work that needs doing
+2. **Pure note `:::`** - Important assumptions or constraints (no marker)
+3. **`alert :::`** - General warning or attention needed
+4. **`risk :::`** - Potential risk or concern
+4. **`@mentions`** - AI agent instructions
+5. **`temp :::`** - Temporary code to remove
+
+### Work Markers (`--is work`)
 
 - `todo :::` - work to be done
-- `fix :::` - bugs to fix (synonym: `fixme`)
+- `fix :::` - bugs to fix
 - `done :::` - completed work
-- `ask :::` - questions needing answers
 - `review :::` - needs review
-- `needs :::` - dependencies (synonyms: `depends on`, `requires`)
-- `chore :::` - routine maintenance tasks
-- `hotfix :::` - urgent production patch
-- `spike :::` - exploratory proof-of-concept work
+- `refactor :::` - code that needs restructuring
+- `needs :::` - dependencies or requirements
+- `blocked :::` - work blocked by external dependency
 
-### Lifecycle/Maturity Prefixes
+### State & Lifecycle Markers (`--is state`)
 
-- `stub :::` - skeleton/basic implementation
-- `draft :::` - work in progress (synonym: `wip`)
-- `stable :::` - mature/solid code
-- `shipped :::` - deployed to production
-- `good :::` - approved (synonyms: `lgtm`, `approved`)
-- `bad :::` - not approved
-- `hold :::` - work intentionally paused
-- `stale :::` - work that has stagnated
-- `cleanup :::` - code cleanup needed
-- `remove :::` - scheduled deletion
-
-### Alerts/Warnings Prefixes
-
-- `warn :::` - warning
-- `crit :::` - critical issue (synonym: `critical`)
-- `unsafe :::` - dangerous code
-- `caution :::` - proceed carefully
-- `broken :::` - non-functional code
-- `locked :::` - do not modify (synonym: `freeze`)
+- `temp :::` - temporary code
 - `deprecated :::` - scheduled for removal
-- `audit :::` - requires audit review
-- `legal :::` - legal obligations
-- `temp :::` - temporary code (synonym: `temporary`)
-- `revisit :::` - flag for future reconsideration
+- `draft :::` - work in progress
+- `stub :::` - skeleton/basic implementation
+- `cleanup :::` - code cleanup needed
 
-### Information Prefixes
+### Alert Markers (`--is alert`)
 
-- `tldr :::` - brief summary (one per file at top)
+- `alert :::` - general warning or attention needed
+- `risk :::` - potential risk or concern
+- `notice :::` - important information to be aware of
+- `always :::` - always-on marker (e.g. `always ::: @ai review for pii leaks`)
+
+### Information & Documentation Markers (`--is info`)
+
+- `tldr :::` - brief summary (ONLY one per file at top, `**tldr :::` for canonical entry)
+- `note :::` - general note
 - `summary :::` - code section summary
-- `note :::` - general note (synonym: `info`)
-- `thought :::` - thinking out loud
-- `docs :::` - documentation reference
-- `why :::` - explains reasoning
-- `see :::` - cross-reference (synonyms: `ref`, `xref`)
 - `example :::` - usage example
+- `idea :::` - future possibility
+- `about :::` - explains purpose or context
+- `docs :::` - documentation for this code
 
-### Meta Prefixes
+### Quality & Process Markers (`--is quality`)
 
+- `test :::` - test-specific marker
+- `audit :::` - requires audit review
+- `check :::` - needs verification
+- `lint :::` - intentional lint overrides/suppressions
+- `ci :::` - CI/CD related markers
+
+### Performance Markers (`--is performance`)
+
+- `perf :::` - general performance concern (search alias)
+- `hotpath :::` - tight loops/latency hot-paths
+- `mem :::` - memory-sensitive or allocation hotspots
+- `io :::` - disk/network throughput critical sections
+
+### Security & Access Markers (`--is security`)
+
+- `sec :::` - general security requirements (search alias)
+- `auth :::` - authentication/authorization specific
+- `crypto :::` - cryptography-specific requirements
+- `a11y :::` - accessibility requirements/issues
+
+### Meta & Special Markers (`--is meta`)
+
+- `flag :::` - feature flag marker
 - `important :::` - important information
 - `hack :::` - hacky solution
-- `flag :::` - generic marker
-- `pin :::` - pinned item
-- `idea :::` - future possibility
-- `test :::` - test-specific marker
+- `legal :::` - legal/compliance requirements
+- `must :::` - must-hold requirements (use with `^` for critical)
+- `assert :::` - invariants that must hold true
 
 ## Property Keys and Patterns
 
@@ -113,46 +170,83 @@ The waymark pattern: `[comment-leader] [prefix] ::: [properties] [note] [#hashta
 - Assignment in todos: `// todo ::: @bob implement caching`
 - Explicit assignment: `// todo ::: assign:@carol fix bug`
 
-### Hashtags
+### Tags
 
 - Open namespace for classification
 - Can appear anywhere (prefer at end)
-- Examples: `#security`, `#performance`, `#frontend`
-- Hierarchical: `#auth/oauth`, `#security/a11y`
-- **Note**: Numeric-only hashtags prohibited (conflicts with issue refs)
+- Examples: `+security`, `+performance`, `+frontend`
+- Hierarchical: `+auth/oauth`, `+security/a11y`
+- **Note**: Use `+` for tags, not `#` (hashtag reserved for issue refs)
 
-## Search Commands
+## Search Commands (Critical for AI Navigation!)
 
 Using ripgrep (rg) is the primary way to work with waymarks:
+
+### Most Important Searches
 
 ```bash
 # Find all waymarks
 rg ":::"
 
-# Find by prefix
+# Find work to do
 rg "todo :::"
 rg "fix :::"
-rg "warn :::"
 
-# Find by properties
+# Find context (pure notes)
+rg "^[^:]*:::" --type-not md  # Pure notes in code
+rg "// :::"                   # Pure notes in JS/TS/C/etc
+rg "# :::"                    # Pure notes in Python/Ruby/etc
+
+# Find AI tasks
+rg ":::.*@agent"
+rg ":::.*@claude"
+rg "@alice" | rg ":::"        # Specific person's tasks
+```
+
+### Search with Context
+
+```bash
+# Show surrounding code
+rg -C2 "todo :::"             # 2 lines before/after
+rg -B3 -A1 "warn :::"         # 3 before, 1 after
+
+# Find related waymarks nearby
+rg -B5 -A5 ":::" | rg -C2 "cache"  # Find waymarks near "cache" mentions
+```
+
+### Property and Hashtag Searches
+
+```bash
+# By properties
 rg ":::.*priority:high"
 rg ":::.*assign:@alice"
+rg ":::.*deprecated:"
 
-# Find by hashtags
-rg "#security"
-rg ":::.*#security"
+# By tags
+rg "\+security"
+rg ":::.*\+security"
+rg ":::.*\+critical.*\+security"  # Multiple tags
 
-# Find with context
-rg -C2 "todo :::"  # 2 lines before/after
+# Extract specific data
+rg -o "todo ::: .*@(\w+)" -r '$1' | sort | uniq -c  # Count by assignee
+rg -o "priority:(\w+)" -r '$1' | sort | uniq -c      # Count by priority
+```
 
-# Find in markdown (HTML comments)
+### File and Language Specific
+
+```bash
+# In markdown (HTML comments)
 rg "<!-- .*:::" --type md
+rg "<!-- tldr :::" --type md   # Find file summaries
 
-# Extract assignees
-rg -o "todo ::: .*@(\w+)" -r '$1' | sort | uniq -c
+# JavaScript/TypeScript
+rg "// .*:::" -g "*.{js,ts,jsx,tsx}"
 
-# Find high priority items
-rg ".*::: .* priority:high"
+# Python
+rg "# .*:::" -g "*.py"
+
+# Find files with most todos
+rg -c "todo :::" | sort -t: -k2 -nr | head -10
 ```
 
 ## Current Repository Structure
@@ -226,24 +320,47 @@ Waymarks work alongside existing TODO/FIXME patterns:
 ### Progressive Adoption
 1. Start with simple prefixes: `todo :::`, `fix :::`
 2. Add properties as needed: `priority:high`, `assign:@alice`
-3. Use hashtags for grouping: `#security`, `#frontend`
+3. Use tags for grouping: `+security`, `+frontend`
 4. Pure notes for context: `// ::: this explains why`
+
+## Delimiter Semantics (Important!)
+
+Each delimiter has a specific purpose:
+
+- **`:::`** - The sigil that marks a waymark (always with space before when prefix present)
+- **`:`** - Creates key:value pairs for properties
+- **`()`** - Parameterizes a property value
+- **`[]`** - Groups multiple parameterized values
+- **`+`** - Creates tags (hierarchical allowed: `+security/input`)
+- **`#`** - Reserved for issue references only
+- **`@`** - Creates mentions for people/entities
+- **`" "`** - Quotes values with spaces/special chars
 
 ## Best Practices for This Repository
 
-### Using Waymarks
+### Critical Rules
 
-1. **Space before `:::`**: Required when prefix is present
-2. **Delimiter rules**:
-   - `:::` - the sigil that marks a waymark
-   - `:` - creates key:value pairs
-   - `()` - parameterizes a property
-   - `[]` - groups multiple parameterized values
-   - `#` - creates hashtags
-   - `@` - creates mentions
-3. **Line limits**: Keep under ~80-120 chars for readable grep output
-4. **Be specific**: Use properties for machine-readable data, notes for descriptions
-5. **Use HTML comments in markdown**: `<!-- tldr ::: summary -->` for non-rendered waymarks
+1. **Space before `:::`**: ALWAYS required when prefix is present
+   - ✅ `// todo ::: implement feature`
+   - ❌ `// todo::: implement feature`
+
+2. **Pure notes for context**: Use waymarks without prefixes liberally
+   - `// ::: this function is called 1000x per second`
+   - `// ::: all prices are in cents, not dollars`
+   - `// ::: depends on external auth service`
+
+3. **AI-first patterns**: Make waymarks discoverable by AI agents
+   - Use `@agent`, `@claude`, etc. for delegation
+   - Provide context with pure notes near todos
+   - Be explicit about constraints and assumptions
+
+### Writing Effective Waymarks
+
+1. **Be specific**: Use properties for machine-readable data, notes for human context
+2. **Line limits**: Keep under ~80-120 chars for readable grep output  
+3. **Separate concerns**: Multiple focused waymarks > one overloaded waymark
+4. **Use HTML comments in markdown**: `<!-- tldr ::: summary -->` for non-rendered waymarks
+5. **Start simple**: Begin with basic patterns, add complexity only when needed
 
 ### Contributing
 
@@ -267,6 +384,31 @@ When working on this project:
 
 The pre-push hook will automatically run these checks, but running them manually first saves time.
 
+## Signal Modifiers (New!)
+
+Signals modify the urgency/emphasis of markers:
+
+| Symbol | Name | Meaning |
+|--------|------|----------|
+| `!` / `!!` | Bang / Double-bang | `!` critical · `!!` blocker/show-stopper |
+| `?` / `??` | Question / Double-question | `?` needs clarification · `??` highly uncertain |
+| `*` / `**` | Star / Double-star | `*` bookmark · `**` canonical entry point |
+| `~` | Tilde | Experimental / unstable |
+| `^` | Caret | Protected / hazardous – senior review required |
+| `-` / `--` | Tombstone / Instant-prune | `-` mark for removal · `--` prune ASAP |
+| `_` | Underscore | Ignore marker (reserved for future functionality) |
+
+Examples:
+```javascript
+// !todo ::: migrate to new hashing algo
+// ?note ::: does pagination handle zero items?
+// *tldr ::: core event-loop entry point
+// !!sec ::: patch data-loss vulnerability
+// **tldr ::: canonical docs landing page
+// ^must ::: array length must be power of two
+// -todo ::: obsolete after migrating to v5 SDK
+```
+
 ### Documentation Standards
 
 - All markdown files should have `<!-- tldr ::: <short description> -->` at the top
@@ -277,25 +419,99 @@ The pre-push hook will automatically run these checks, but running them manually
 
 ### Examples
 
+#### Basic Waymarks
 ```javascript
-// Basic waymarks
+// Work items
 // todo ::: implement validation
 // fix ::: memory leak in auth handler
-// tldr ::: handles user authentication
+// done ::: added rate limiting
 
-// With properties and hashtags
-// todo ::: priority:high implement caching #performance
-// warn ::: validates all inputs #security
-
-// Pure notes (no prefix)
+// Pure notes (critical for context!)
+// ::: all timestamps are UTC
+// ::: user_ids are UUIDs, not integers
 // ::: this is a performance hotpath
-// ::: assumes UTC timestamps
+```
 
-// With mentions
-// todo ::: @alice implement OAuth flow
-// ::: @bob please review this approach
+#### AI Agent Patterns
+```javascript
+// Direct delegation
+// todo ::: @agent implement error handling
+// todo ::: @claude add comprehensive tests
+// todo ::: @cursor optimize this function
 
+// With specific instructions
+// todo ::: @agent use async/await pattern, not callbacks
+// todo ::: @agent priority:high add TypeScript types throughout
+
+// Review requests
+// review ::: @ai check for security vulnerabilities
+// ::: @alice please review this approach
+```
+
+#### Properties and Metadata
+```javascript
+// Priority levels
+// todo ::: priority:critical system down
+// todo ::: priority:high major bug
+// fix ::: priority:medium performance issue
+
+// Assignment and ownership  
+// todo ::: assign:@alice implement OAuth
+// review ::: attn:@bob,@carol security review needed
+
+// Lifecycle markers
+// deprecated ::: use newMethod() instead
+// temp ::: remove after Chrome 120 ships
+// stub ::: basic implementation, needs completion
+
+// Signals for urgency
+// !todo ::: critical bug fix
+// !!alert ::: security vulnerability
+// ?note ::: needs clarification
+// ^must ::: protected requirement
+```
+
+#### Issue Integration
+```javascript
 // Issue references
 // todo ::: fixes:#234 implement auth flow
 // done ::: closes:#456 added validation
+// fix ::: blocked-by:#123 waiting on API changes
+```
+
+#### Tags for Organization
+```javascript
+// Single tags
+// todo ::: implement caching +performance
+// alert ::: validate inputs +security
+
+// Multiple tags
+// fix ::: button contrast +critical +frontend +a11y
+// todo ::: optimize query +backend +database +performance
+
+// Hierarchical tags
+// alert ::: input validation +security/input
+// todo ::: add unit tests +testing/unit
+```
+
+#### Advanced Patterns
+```javascript
+// Parameterized properties
+// todo ::: requires:node(>=16) upgrade dependencies
+// ::: supports:browsers(chrome,firefox,safari)
+// fix ::: affects:versions(1.0-2.5) security patch
+
+// Grouped parameters
+// todo ::: requires:[npm(>=8),node(16,18,20)] upgrade tooling
+
+// Multiple properties
+// todo ::: assign:@alice priority:high deadline:2024-03-01 implement feature
+```
+
+#### Markdown (HTML Comments)
+```markdown
+<!-- tldr ::: API documentation for user service -->
+<!-- todo ::: @galligan add authentication examples -->
+<!-- alert ::: breaking changes in v2.0 -->
+<!-- ::: assumes REST API knowledge -->
 ```
