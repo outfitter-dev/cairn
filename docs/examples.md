@@ -15,7 +15,7 @@ Examples and patterns for working with waymarks, organized by common use cases.
 
 // With priority and assignment
 // todo ::: priority:high implement OAuth
-// todo ::: assign:@alice add unit tests
+// todo ::: @alice add unit tests
 // fix ::: priority:critical race condition +backend
 ```
 
@@ -45,7 +45,7 @@ Examples and patterns for working with waymarks, organized by common use cases.
 // Blocked tasks
 // todo ::: add payment processing
 // hold ::: fixes:#123 waiting on auth service
-// todo ::: assign:@payments-team handle gateway integration
+// todo ::: @payments-team handle gateway integration
 ```
 
 ## Development Patterns
@@ -211,7 +211,7 @@ if (features.isEnabled('new-checkout-flow', user)) {
 # todo ::: relates-to:PROJ-456 parent epic
 # done ::: closes:#789 implements this feature
 def sync_user_data():
-    # todo ::: assign:@data-team optimize performance
+    # todo ::: @data-team optimize performance
     # note ::: planned for 2024-Q1 sprint
     pass
 ```

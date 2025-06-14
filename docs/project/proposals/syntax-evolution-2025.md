@@ -56,7 +56,7 @@ If info is *not* high-signal *and* needs a value → **property**.  If it's pure
 
 ### Information & Documentation (`--is info`)
 
-- `tldr` - brief summary (ONLY one per file at top, `**tldr ::: ...` canonical entry point)
+- `tldr` - brief summary (ONLY one per file at top, `!!tldr ::: ...` for most critical)
 - `note` - general note (`!note ::: ...` important note)
 - `summary` - code section summary
 - `example` - usage example
@@ -91,7 +91,7 @@ If info is *not* high-signal *and* needs a value → **property**.  If it's pure
 - `important` - important information
 - `hack` - hacky solution
 - `legal` - legal/compliance requirements
-- `must` - must-hold requirements (use with `^` for critical)
+- `must` - must-hold requirements (use with `!` or `!!` for critical)
 - `assert` - invariants that must hold true
 
 Total markers: 41
@@ -144,40 +144,47 @@ Note: Priority also has p0 / p1 / p2 / p3 which are synonyms for critical / high
 - `why` → use `reason:` property
 - `mustread` → use `!!note ::: ...` or `!!tldr ::: ...`
 
-## 4. Symbol Modifiers (orthogonal overlays)
+## 4. Signal Modifiers (Contextual Intensity)
 
-| Symbol | Name        | Semantics (orthogonal to marker)                      |
+| Symbol | Name        | Meaning (context-dependent on marker)                  |
 |--------|-------------|-------------------------------------------------------|
-| `!` / `!!` | Bang / Double-bang | `!` critical · `!!` blocker/show-stopper |
+| `!` / `!!` | Bang / Double-bang | Intensity modifier: important → critical |
 | `?` / `??` | Question / Double-question | `?` needs clarification · `??` highly uncertain |
-| `*` / `**` | Star / Double-star | `*` bookmark · `**` canonical entry point |
-| `~`    | Tilde       | Experimental / unstable                               |
-| `^`    | Caret       | Protected / hazardous – senior review required        |
 | `-` / `--`| Tombstone / Instant-prune | `-` mark for removal · `--` prune ASAP |
 | `_`    | Underscore  | Ignore marker (reserved for future functionality) |
+
+### Signal Interpretation by Context
+
+The `!` and `!!` signals act as **intensity modifiers** with meaning that depends on the marker:
+
+- **Work markers** (`todo`, `fix`): urgency/priority level
+- **Info markers** (`tldr`, `note`): importance/must-read status  
+- **Alert markers** (`alert`, `risk`): severity/criticality
+- **Requirement markers** (`must`, `assert`, `always`): criticality of invariant
 
 Placed *immediately* before the marker with **no space** (double symbol = stronger signal):
 
 ```go
-// !todo ::: migrate to new hashing algo
-// ?note ::: does pagination handle zero items?
-// *tldr ::: core event-loop entry point
-// !!sec ::: patch data-loss vulnerability
-// **tldr ::: canonical docs landing page
-// ??todo ::: clarify missing states diagram
-// ~todo ::: rewrite using streaming parser
-// ^must ::: array length must be power of two
-// ^assert ::: user_id_not_null
-// _note ::: ignored by tooling
-// -todo ::: obsolete after migrating to v5 SDK
-// --note ::: remove legacy explanation immediately
+// !todo ::: migrate to new hashing algo          // Important task
+// !!todo ::: fix data loss bug                   // Critical blocker
+// ?note ::: does pagination handle zero items?   // Unclear assumption
+// !tldr ::: core event-loop entry point          // Important summary
+// !!tldr ::: main application entry point        // Most critical/canonical
+// !!alert ::: patch data-loss vulnerability      // Critical security issue
+// ??todo ::: clarify missing states diagram      // Very unclear requirement
+// ?draft ::: rewrite using streaming parser      // Uncertain experimental work
+// !must ::: array length must be power of two    // Important requirement
+// !!assert ::: user_id never null                // Critical invariant
+// _note ::: ignored by tooling                   // Reserved for future
+// -todo ::: obsolete after migrating to v5 SDK   // Remove later
+// --note ::: remove legacy explanation now       // Remove immediately
 ```
 
 ### 4.1 Updated Grammar Snippet (EBNF)
 
 ```ebnf
-# Signals (urgency/sensitivity)
-signal     ::= "_"? ("!!" | "!" | "??" | "?" | "**" | "*" | "--" | "-" | "~" | "^")
+# Signals (intensity/uncertainty)
+signal     ::= "_"? ("!!" | "!" | "??" | "?" | "--" | "-")
 
 # High-signal keyword
 marker     ::= signal? ALPHANUM_
@@ -185,32 +192,24 @@ marker     ::= signal? ALPHANUM_
 # Optional actor
 actor      ::= "@" ALPHANUM_
 
-# Reference token – ID or branch, optional relation
-reference  ::= "#" refbody (":" relation)?
-refbody    ::= ([A-Za-z]+ "-")? [0-9]+ | [A-Za-z0-9_-]+ "/" [A-Za-z0-9_-]+
-relation   ::= "fixes" | "closes" | "solves" | "blocks" | "depends"
-
 # Context token – one word or blessed key:value
 context    ::= word | key_value
-key_value  ::= key ":" word
-key        ::= "reason" | "since" | "until" | "version" | "affects" | "fixes" | "closes" | "depends"
+key_value  ::= key ":" value
+key        ::= "reason" | "since" | "until" | "version" | "affects" | "fixes" | "closes" | "depends" | "branch"
+value      ::= word | "#" [0-9]+ | quoted_string
 
 # Tag – optional label tokens starting with +
 tag        ::= "+" [A-Za-z0-9_/-]+
 
 # Waymark full
-# First token after ::: determines type: actor (@) > reference (#) > context (word)
+# First token after ::: determines type: actor (@) > context (word/key:value)
 # Order is flexible but first token has precedence for parsing
-waymark    ::= comment_leader marker? ":::" (actor space)? (reference space)? context? (space tag)* (space prose)?
+waymark    ::= comment_leader marker? ":::" (actor space)? context? (space tag)* (space prose)?
 
 word       ::= [A-Za-z0-9_]+
+quoted_string ::= '"' [^"]* '"'
 space      ::= " "
 prose      ::= .*
-
-# Optional: Multi-line waymarks with closing delimiter (see advanced patterns doc)
-# waymark_multiline ::= comment_leader marker? ":::" prose newline
-#                      (comment_leader prose newline)*
-#                      comment_leader prose ":::"
 ```
 
 ### 4.2 Actor (optional `@handle`)
@@ -219,7 +218,7 @@ If the **very first token** after the sigil is an `@handle`, it is parsed as the
 
 ```ts
 // !todo  ::: @alice implement caching
-// ^sec   ::: @security-team reason:timing-attack constant-time compare
+// !!sec  ::: @security-team constant-time compare reason:timing-attack
 // always ::: @ai review for pii leaks
 ```
 
@@ -227,13 +226,48 @@ Search helpers
 
 ```bash
 # Any actor-addressed line
-rg -n '::: *@[A-Za-z0-9_-]+'
+rg -n ':::.*@[A-Za-z0-9_-]+'
 
-# Work assigned to you
-rg -n "todo ::: *@$(whoami)"
+# Work assigned to you (actor can be anywhere after :::)
+rg -n "todo.*:::.*@$(whoami)"
+
+# Work assigned to specific person
+rg -n ":::.*@alice"
 ```
 
-### 4.3 Prose vs `note` Marker
+### 4.3 Action-First Principle with Blessed Properties
+
+The most actionable content should appear immediately after the actor (or `:::` if no actor). Blessed properties provide supporting metadata and can appear anywhere in the prose.
+
+```ts
+// todo ::: implement retry logic fixes:#234
+// done ::: added validation closes:#456  
+// fix  ::: investigate memory leak depends:#789
+// blocked ::: waiting for API changes depends:#123
+// todo ::: @alice implement OAuth flow branch:feature/auth
+// fix ::: resolve payment bug branch:hotfix/payments fixes:#567
+```
+
+This pattern prioritizes readability while maintaining structured metadata:
+
+```bash
+# Find all issue references (anywhere after :::)
+rg -n ':::.*#\d+'
+
+# Find specific relations (anywhere in the waymark content)
+rg -n ':::.*fixes:#\d+'     # What fixes issues
+rg -n ':::.*closes:#\d+'    # What closes issues/PRs  
+rg -n ':::.*depends:#\d+'   # What depends on issues
+
+# Find branch-specific work (anywhere in the waymark content)
+rg -n ':::.*branch:feature/'  # Feature branch work
+rg -n ':::.*branch:hotfix/'   # Hotfix work
+
+# Find work related to specific issue (anywhere after :::)
+rg -n ':::.*#234\b'         # All references to issue #234
+```
+
+### 4.4 Prose vs `note` Marker
 
 Waymarks can end with free-form **prose**. Use the `note` marker when that prose is itself valuable to grep in bulk; otherwise append prose to any other marker.
 
@@ -248,18 +282,22 @@ Examples
 ```ts
 // todo  ::: implement retry logic            // prose describes task
 // note  ::: all timestamps are UTC           // durable context
-// ^must ::: buffer len mod 4                 // critical requirement
+// !must ::: buffer len mod 4                 // critical requirement
 // alert ::: sanitize-input +security         // alert with tag
+// fix   ::: memory leak in auth fixes:#234   // issue reference
 ```
 
 Quick searches
 
 ```bash
 # All contextual notes
-rg 'note :::'
+rg -n 'note :::'
 
-# Todo lines whose prose starts immediately (no verb/property first)
-rg 'todo ::: [a-z]'
+# Todo lines (content can vary after :::)
+rg -n 'todo :::'
+
+# All issue fixes (anywhere in waymark content)
+rg -n ':::.*fixes:#\d+'
 ```
 
 ## 5. TLDR: The Most Critical Marker
@@ -307,12 +345,12 @@ The `tldr` marker is the single most valuable waymark for AI navigation and huma
 
 ### TLDR Patterns by File Type
 
-**Entry points** (use `**tldr` for canonical entries):
+**Entry points** (use `!!tldr` for canonical entries):
 
 ```javascript
-// **tldr ::: Express server entry point binding port 3000 with auth+logging middleware
-// **tldr ::: React app root mounting Redux provider and router
-// **tldr ::: CLI main entry parsing args and dispatching commands
+// !!tldr ::: Express server entry point binding port 3000 with auth+logging middleware
+// !!tldr ::: React app root mounting Redux provider and router
+// !!tldr ::: CLI main entry parsing args and dispatching commands
 ```
 
 **Core libraries**:
@@ -371,11 +409,11 @@ The `tldr` marker is the single most valuable waymark for AI navigation and huma
 // tldr ::: @acme/ui-kit React component library with Storybook
 ```
 
-**For critical code** - Use `*tldr` or `**tldr`:
+**For critical code** - Use `!tldr` or `!!tldr`:
 
 ```javascript
-// *tldr ::: payment processing with PCI compliance and audit logging
-// **tldr ::: main application entry coordinating all services
+// !tldr ::: payment processing with PCI compliance and audit logging
+// !!tldr ::: main application entry coordinating all services
 ```
 
 ### TLDR for Documentation Files
@@ -541,12 +579,13 @@ The `tldr` marker is the single most valuable waymark for AI navigation and huma
 | fixes     | resolves the given ticket       | `fixes:#456` |
 | closes    | closes ticket/PR                | `closes:#12` |
 | depends   | depends on external ticket      | `depends:#789` |
+| branch    | git branch reference            | `branch:feature/auth` |
 
 Only these keys are recognized for context tokens. Additional metadata can appear later in prose.
 
 ## 7. Context token casing guideline
 
-The **context token**—first non-actor, non-reference token after the sigil—should be 1-3 words (preferably 1-2 for readability).
+The **context token**—first non-actor token after the sigil—should be 1-3 words (preferably 1-2 for readability).
 
 **Preferred casing**: `snake_case`
 
@@ -556,8 +595,8 @@ Allowed characters: ASCII letters, digits, and `_`.
 // !!alert ::: p0                      # severity implicit via signal
 // !alert  ::: timing_attack           # snake_case context token (preferred)
 // alert   ::: sql_injection_risk      # clear multi-word context
-// todo    ::: #789:closes migrate_v5  # reference-first pattern
-// blocked ::: #123                    # reference blocking work
+// todo    ::: migrate to v5 closes:#789 branch:feature/migration
+// blocked ::: waiting for API changes depends:#123
 ```
 
 ## 8. Ripgrep Cheat-Sheet
@@ -565,7 +604,7 @@ Allowed characters: ASCII letters, digits, and `_`.
 ### 8.1 Find all waymarks with **any** signal
 
 ```bash
-rg -n "(!{1,2}|\?{1,2}|\*{1,2}|-{1,2}|~|\^|_)[A-Za-z0-9_-]+[[:space:]]+:::"
+rg -n "(!{1,2}|\?{1,2}|-{1,2}|_)[A-Za-z0-9_-]+[[:space:]]+:::"
 ```
 
 ### 8.2 Urgent / critical items (bang)
@@ -593,10 +632,65 @@ rg -n "!{1,2}[A-Za-z0-9_-]*hotpath[[:space:]]+:::"
 ### 8.5 Critical requirements
 
 ```bash
-rg -n "\^must[[:space:]]+:::"              # caret-guarded requirements
+rg -n "!{1,2}must[[:space:]]+:::"          # critical requirements
+rg -n "!{1,2}assert[[:space:]]+:::"        # critical invariants
 ```
 
-### 8.6 Tombstoned waymarks
+### 8.6 Issue references and relations
+
+```bash
+# All issue references (anywhere in waymark content)
+rg -n ":::.*#\d+"
+
+# Specific relations (anywhere in waymark content)
+rg -n ":::.*fixes:#\d+"                    # What fixes issues
+rg -n ":::.*closes:#\d+"                   # What closes PRs/issues
+rg -n ":::.*depends:#\d+"                  # What depends on issues
+
+# Find specific issue across all relations
+rg -n ":::.*#234\b"                        # All references to issue #234
+```
+
+### 8.7 Branch-specific work
+
+```bash
+# All branch references (anywhere in waymark content)
+rg -n ":::.*branch:"
+
+# Feature branch work
+rg -n ":::.*branch:feature/"               # All feature work
+rg -n ":::.*branch:feature/auth"           # Specific feature
+
+# Hotfix work
+rg -n ":::.*branch:hotfix/"                # All hotfixes
+rg -n ":::.*branch:hotfix/security"        # Security hotfixes
+
+# Release branch work
+rg -n ":::.*branch:release/"               # Release preparation
+
+# Work assigned to you on specific branch
+rg -n ":::.*@$(whoami).*branch:feature/"   # Your feature work
+```
+
+### 8.8 Actor-specific searches
+
+```bash
+# All work assigned to specific person (anywhere in waymark content)
+rg -n ":::.*@alice"
+
+# Work assigned to you (anywhere in waymark content)
+rg -n ":::.*@$(whoami)"
+
+# Specific marker assigned to person
+rg -n "todo.*:::.*@alice"                  # Alice's todos
+rg -n "review.*:::.*@security-team"        # Security team reviews
+
+# Combine actor with other metadata
+rg -n ":::.*@alice.*branch:feature/"       # Alice's feature work
+rg -n ":::.*@bob.*fixes:#\d+"              # Bob's issue fixes
+```
+
+### 8.9 Tombstoned waymarks
 
 ```bash
 # Marked for future removal (-)
@@ -606,14 +700,14 @@ rg -n "-[A-Za-z0-9_-]+[[:space:]]+:::"
 rg -n "--[A-Za-z0-9_-]+[[:space:]]+:::"
 ```
 
-### 8.7 Marker frequency audit
+### 8.10 Marker frequency audit
 
 ```bash
-rg -o "(!{1,2}|\?{1,2}|\*{1,2}|-{1,2}|~|\^|_)?[A-Za-z0-9_-]+[[:space:]]+:::" | \
+rg -o "(!{1,2}|\?{1,2}|-{1,2}|_)?[A-Za-z0-9_-]+[[:space:]]+:::" | \
   sed 's/[[:space:]]\+:::.*//' | sort | uniq -c | sort -nr | head
 ```
 
-### 8.8 Performance markers (using alias pattern)
+### 8.11 Performance markers (using alias pattern)
 
 ```bash
 # Find all performance-related waymarks
@@ -628,13 +722,17 @@ rg -n "!{1,2}[A-Za-z0-9_-]*(hotpath|mem|io|perf)[[:space:]]+:::"
 | Need                            | ripgrep one-liner |
 |---------------------------------|--------------------|
 | All waymarks                    | `rg " :::"` |
-| All with signal                 | `rg "(!{1,2}|\?{1,2}|\*{1,2}|-{1,2}|~|\^|_)[A-Za-z0-9_-]+ :::"` |
+| All with signal                 | `rg "(!{1,2}|\?{1,2}|-{1,2}|_)[A-Za-z0-9_-]+ :::"` |
 | Critical TODOs                  | `rg "!{1,2}todo :::"` |
 | Security-critical code          | `rg "\b(sec|auth) :::"` |
 | All performance hotspots        | `rg "\b(hotpath|mem|io|perf) :::"` |
-| Bookmarked summaries            | `rg "\*tldr :::"` |
-| Critical requirements           | `rg "\^must :::"` |
-| Reference-related               | `rg "::: #[0-9]+"` |
+| Important summaries             | `rg "!tldr :::"` |
+| Critical requirements           | `rg "!{1,2}must :::"` |
+| Issue references                | `rg ":::.*#\d+"` |
+| Issue fixes                     | `rg ":::.*fixes:#\d+"` |
+| Branch work                     | `rg ":::.*branch:"` |
+| Feature branches                | `rg ":::.*branch:feature/"` |
+| Work assigned to you            | `rg ":::.*@$(whoami)"` |
 
 ## 10. Migration Plan
 
@@ -677,6 +775,11 @@ find . -type f -exec sed -i '' 's/why :::\([^:]*\)$/note ::: reason:\1/g' {} +
 
 # Convert mustread to double-bang signals
 find . -type f -exec sed -i '' 's/mustread :::/!!note :::/g' {} +
+
+# Update any old reference patterns to blessed key pattern (if any exist)
+find . -type f -exec sed -i '' 's/#\([0-9]\+\):fixes/fixes:#\1/g' {} +
+find . -type f -exec sed -i '' 's/#\([0-9]\+\):closes/closes:#\1/g' {} +
+find . -type f -exec sed -i '' 's/#\([0-9]\+\):depends/depends:#\1/g' {} +
 ```
 
 ### Phase 2: Manual Review Required
@@ -686,6 +789,7 @@ find . -type f -exec sed -i '' 's/mustread :::/!!note :::/g' {} +
 - Review all waymarks for kebab-case context tokens
 - Convert to snake_case: `timing-attack` → `timing_attack`
 - Ensure context tokens are 1-3 words max
+- Update any remaining old reference patterns to blessed key format
 
 #### 2.2 Signal Application
 
@@ -762,7 +866,7 @@ fi
 
 1. ~~Should `audit` remain a marker or become a `process:audit` property?~~ **Resolved**: Keep as marker
 2. ~~Do we keep both `hot` *and* `mem`/`io`, or collapse into a single `perf` marker with `type:` property?~~ **Resolved**: Keep separate, add `perf` as search alias  
-3. ~~Caret (`^`) overlaps conceptually with `assert` – keep both (flag vs marker) or rely on `^assert` combo only?~~ **Resolved**: Keep both, they're orthogonal
+3. ~~Caret (`^`) overlaps conceptually with `assert` – keep both (flag vs marker) or rely on `^assert` combo only?~~ **Resolved**: Removed `^` signal; use `!`/`!!` with markers instead
 4. Should we formalize the ordering preference for tokens after `:::` (@actor > #ref > context)?
 
 ## 12. Conclusion

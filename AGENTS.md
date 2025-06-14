@@ -18,7 +18,7 @@ The **goal**: make navigation, task discovery and context-gathering trivial for 
 Example
 
 ```ts
-// todo ::: assign:@alice priority:high implement caching #backend/performance
+// todo ::: @alice priority:high implement caching #backend/performance
 ```
 
 Component recap (see `docs/syntax.md` for the formal grammar):

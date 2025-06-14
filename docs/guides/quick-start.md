@@ -70,7 +70,7 @@ Add structured data and classification:
 ```javascript
 // Properties (key:value pairs)
 // todo ::: priority:high implement auth
-// todo ::: assign:@alice add validation
+// todo ::: @alice add validation
 // fix ::: affects:auth,api memory leak
 
 // Tags (classification with + prefix)
@@ -91,7 +91,7 @@ Assign work and request attention:
 // review ::: @bob check security implications
 
 // Explicit property assignment
-// todo ::: assign:@charlie priority:high fix bug
+// todo ::: @charlie priority:high fix bug
 // todo ::: attn:@security-team audit this code
 ```
 

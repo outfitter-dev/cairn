@@ -140,8 +140,8 @@ That's it! You can search all of these with `rg ":::"`.
 
 **Assignment & Ownership**
 ```python
-# todo ::: assign:@alice payment module
-# todo ::: assign:@backend-team optimize query
+# todo ::: @alice payment module
+# todo ::: @backend-team optimize query
 # review ::: attn:@alice,@bob security review needed
 ```
 
@@ -175,7 +175,7 @@ That's it! You can search all of these with `rg ":::"`.
 ### Usage Examples
 
 ```javascript
-// todo ::: assign:@alice priority:high implement auth
+// todo ::: @alice priority:high implement auth
 // alert ::: deprecated:v3.0 use newMethod() instead +breaking
 // fix ::: affects:auth,api,frontend security vulnerability
 // todo ::: requires:node(16,18,20) supports multiple versions

@@ -82,9 +82,8 @@ Waymark tools are opinionated implementations. Use prescriptive language that cl
 
 ### Syntax Documentation
 
-> The waymark syntax permits both explicit and implicit assignment:
-> - `todo ::: assign:@alice implement cache` - explicit assignment
-> - `todo ::: @alice implement cache` - implicit assignment
+> The waymark syntax uses the direct actor pattern:
+> - `todo ::: @alice implement cache` - direct actor assignment
 > - `::: @alice please review this approach` - mention in pure note
 
 ### Tool Documentation

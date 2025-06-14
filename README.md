@@ -168,7 +168,7 @@ Start simple and add complexity as needed:
 
 // Add properties and hashtags when helpful
 // todo ::: fixes:#42 fix memory leak
-// todo ::: assign:@alice payment integration #backend
+// todo ::: @alice payment integration #backend
 ```
 
 ## 🤖 Example AI Agent Workflow
@@ -248,7 +248,7 @@ def create_user(self, email: str, name: str):
 
 **With properties and hashtags:**
 - `todo ::: fixes:#123 implement auth` - Link to issue
-- `todo ::: assign:@alice payment flow` - Assign ownership
+- `todo ::: @alice payment flow` - Assign ownership
 - `todo ::: priority:high fix memory leak #critical` - Set priority
 
 See [Conventions](docs/conventions.md) for complete patterns.
