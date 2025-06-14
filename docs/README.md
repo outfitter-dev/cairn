@@ -5,10 +5,10 @@ Welcome to the waymark documentation. Start here to learn about waymarks - a uni
 
 ## Quick Links
 
-- **[Quick Start Guide](./guides/quick-start.md)** - Get started in 5 minutes
-- **[Syntax Reference](./syntax.md)** - Complete waymark syntax specification
-- **[Examples](./examples.md)** - Real-world usage patterns
-- **[Conventions](./conventions.md)** - Best practices and team patterns
+- **[Quick Start Guide](./quick-start.md)** - Get started in 5 minutes
+- **[Syntax Reference](./syntax/README.md)** - Complete waymark syntax specification
+- **[Common Patterns](./usage/patterns/common-patterns.md)** - Real-world usage patterns and best practices
+- **[Search Guide](./usage/search/ripgrep-patterns.md)** - Finding waymarks with ripgrep
 
 ## What are Waymarks?
 
