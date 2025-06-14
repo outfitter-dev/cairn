@@ -148,6 +148,7 @@ Note: Priority also has p0 / p1 / p2 / p3 which are synonyms for critical / high
 
 | Symbol | Name        | Meaning (context-dependent on marker)                  |
 |--------|-------------|-------------------------------------------------------|
+| `*`    | Star        | Branch-scoped work that must be finished before PR merge |
 | `!` / `!!` | Bang / Double-bang | Intensity modifier: important → critical |
 | `?` / `??` | Question / Double-question | `?` needs clarification · `??` highly uncertain |
 | `-` / `--`| Tombstone / Instant-prune | `-` mark for removal · `--` prune ASAP |
@@ -165,6 +166,9 @@ The `!` and `!!` signals act as **intensity modifiers** with meaning that depend
 Placed *immediately* before the marker with **no space** (double symbol = stronger signal):
 
 ```go
+// *todo ::: finish error handling before merge   // Branch-scoped work
+// *fix ::: resolve edge case found in review     // Must fix before PR merge
+// *!todo ::: critical bug blocking PR merge      // Urgent branch work
 // !todo ::: migrate to new hashing algo          // Important task
 // !!todo ::: fix data loss bug                   // Critical blocker
 // ?note ::: does pagination handle zero items?   // Unclear assumption
@@ -183,8 +187,10 @@ Placed *immediately* before the marker with **no space** (double symbol = strong
 ### 4.1 Updated Grammar Snippet (EBNF)
 
 ```ebnf
-# Signals (intensity/uncertainty)
-signal     ::= "_"? ("!!" | "!" | "??" | "?" | "--" | "-")
+# Position and intensity signals are separate
+position_signal ::= "*" | "_"
+intensity_signal ::= ("!!" | "!" | "??" | "?" | "--" | "-")
+signal ::= position_signal? intensity_signal?
 
 # High-signal keyword
 marker     ::= signal? ALPHANUM_
