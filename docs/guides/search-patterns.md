@@ -28,7 +28,7 @@ rg -i ":::"
 # Specific prefix
 rg "todo :::"
 rg "fix :::"
-rg "warn :::"
+rg "alert :::"
 
 # Multiple prefixes (OR)
 rg "(todo|fix) :::"
@@ -51,18 +51,18 @@ rg ":::.*priority:high.*assign:@alice"
 rg ":::.*priority:"
 ```
 
-#### Find by hashtags
+#### Find by tags
 
 ```bash
-# Simple hashtag search
-rg "#security"
-rg "#performance"
+# Simple tag search
+rg "\+security"
+rg "\+performance"
 
-# Hashtags in waymarks only
-rg ":::.*#security"
+# Tags in waymarks only
+rg ":::.*\+security"
 
-# Multiple hashtags
-rg ":::.*#security.*#critical"
+# Multiple tags
+rg ":::.*\+security.*\+critical"
 ```
 
 ### Context Searching
@@ -171,7 +171,7 @@ alias wmt='rg "todo :::"'
 alias wmc='rg -C2 ":::"'
 
 # Find security issues
-alias wmsec='rg ":::.*#security"'
+alias wmsec='rg ":::.*\+security"'
 
 # Count waymarks by prefix
 alias wmcount='rg "^[^:]*[a-z]+ :::" -o | sed "s/ ::://" | sort | uniq -c | sort -nr'
@@ -193,7 +193,7 @@ rg ":::.*until:2023-" # items that should be done by now
 
 ```bash
 # High priority security items
-rg ":::.*priority:high.*#security"
+rg ":::.*priority:high.*\+security"
 
 # Assigned but not done
 rg "@\w+" | rg -v "done :::"

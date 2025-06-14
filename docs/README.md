@@ -16,7 +16,7 @@ Waymarks are searchable markers in code comments using the `:::` sigil:
 
 ```javascript
 // todo ::: implement validation
-// warn ::: check user permissions #security
+// alert ::: check user permissions +security
 // ::: assumes UTC timestamps
 ```
 
@@ -24,14 +24,14 @@ Search them instantly:
 ```bash
 rg ":::"          # Find all waymarks
 rg "todo :::"     # Find all todos
-rg "#security"    # Find security concerns
+rg "\+security"   # Find security concerns
 ```
 
 ## Documentation Structure
 
 ### Core Documentation
 
-- **[Syntax](./syntax.md)** - The `:::` sigil, prefixes, properties, and hashtags
+- **[Syntax](./syntax.md)** - The `:::` sigil, markers, properties, and tags
 - **[Examples](./examples.md)** - Patterns organized by use case
 - **[Conventions](./conventions.md)** - Essential patterns and best practices
 - **[Waymarks in Documentation](./waymarks-in-documentation.md)** - Integration with JSDoc, docstrings, etc.
@@ -64,17 +64,20 @@ The canonical waymark sigil, optionally preceded by a prefix:
 #      └── Sigil separates prefix from content
 ```
 
-### Prefix Categories
+### Marker Categories
 
-Waymarks use prefixes to classify code locations:
+Waymarks use markers to classify code locations (~41 total in 8 categories):
 
-- **Tasks**: `todo`, `fix`, `done`, `review`
-- **Information**: `tldr`, `note`, `docs`, `why`
-- **Alerts**: `warn`, `crit`, `unsafe`, `deprecated`
-- **Meta**: `ai`, `important`, `hack`, `idea`
-- **Lifecycle**: `stub`, `draft`, `stable`, `shipped`
+- **Work**: `todo`, `fix`, `done`, `review`, `refactor`, `needs`, `blocked`
+- **State**: `temp`, `deprecated`, `draft`, `stub`, `cleanup`
+- **Alert**: `alert`, `risk`, `notice`, `always`
+- **Info**: `tldr`, `note`, `summary`, `example`, `idea`, `about`, `docs`
+- **Quality**: `test`, `audit`, `check`, `lint`, `ci`
+- **Performance**: `perf`, `hotpath`, `mem`, `io`
+- **Security**: `sec`, `auth`, `crypto`, `a11y`
+- **Meta**: `flag`, `important`, `hack`, `legal`, `must`, `assert`
 
-Plus properties (`priority:high`), hashtags (`#security`), and @mentions (`@alice`).
+Plus signals (`!todo`, `^must`), properties (`priority:high`), tags (`+security`), and @mentions (`@alice`).
 
 ### Search Patterns
 
@@ -85,10 +88,10 @@ Find waymarks with ripgrep:
 rg "todo :::"              # All todos
 rg ":::.*@alice"           # Alice's assignments
 rg ":::.*priority:high"    # High priority items
-rg "#security"             # Security hashtag
+rg "\+security"            # Security tag
 
 # With context
-rg -C2 "warn :::"          # Warnings with 2 lines context
+rg -C2 "alert :::"         # Alerts with 2 lines context
 rg -B3 -A3 "todo :::"      # Todos with surrounding code
 ```
 

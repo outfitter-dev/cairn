@@ -47,7 +47,7 @@ def process_payment(amount, currency="USD"):
     Returns:
         dict: Transaction result
         
-    warn ::: validate all payment data #security
+    alert ::: validate all payment data +security
     todo ::: add retry logic for failed payments
     """
     # ::: payment gateway has 30s timeout
@@ -61,7 +61,7 @@ def process_payment(amount, currency="USD"):
 interface User {
   /** note ::: public interface - maintain compatibility */
   id: string;           // ::: UUID v4 format
-  email: string;        // warn ::: PII - handle carefully #security
+  email: string;        // alert ::: PII - handle carefully +security
   
   preferences: {
     theme: 'light' | 'dark';  // todo ::: implement dark mode support
@@ -73,7 +73,7 @@ interface User {
 ### Function Documentation
 
 ```typescript
-// warn ::: validate all auth headers before processing #security
+// alert ::: validate all auth headers before processing +security
 // tldr ::: primary entry point for HTTP auth
 function authenticateRequest(request: Request): AuthResult {
     // ::: assumes Authorization header format: "Bearer <token>"
@@ -88,7 +88,7 @@ function authenticateRequest(request: Request): AuthResult {
 
 ```rust
 /// tldr ::: public trait for auth providers
-/// warn ::: ensure constant-time comparison for tokens #security
+/// alert ::: ensure constant-time comparison for tokens +security
 pub trait AuthProvider {
     /// todo ::: add token refresh support
     fn validate_token(&self, token: &str) -> Result<Claims, AuthError>;
@@ -102,8 +102,8 @@ pub trait AuthProvider {
 rg ":::"
 
 # Security-related waymarks
-rg "warn :::" 
-rg "#security"
+rg "alert :::" 
+rg "+security"
 
 # AI agent tasks in JavaScript
 rg ":::.*@agent" --type js
@@ -120,7 +120,7 @@ rg -U "(?:\/\*\*|\"\"\"|\#\#)[\s\S]*?todo :::"
 /**
  * @fileoverview Authentication utilities
  * todo ::: validate parameter range
- * warn ::: sanitize user input #security
+ * alert ::: sanitize user input +security
  */
 
 /**
@@ -140,7 +140,7 @@ function calculateRisk(amount) {
 Common patterns that work with documentation generators:
 
 - `todo :::` - work items
-- `warn :::` - security concerns  
+- `alert :::` - security concerns  
 - `tldr :::` - file/function summaries
 - `note :::` - important context
 - Pure notes: `::: contextual information`
@@ -151,7 +151,7 @@ Common patterns that work with documentation generators:
 /**
  * @namespace PaymentAPI
  * tldr ::: public REST endpoint for payments
- * warn ::: verify caller permissions #security
+ * alert ::: verify caller permissions +security
  */
 class PaymentProcessor {
   // todo ::: add edge case tests
@@ -167,7 +167,7 @@ class PaymentProcessor {
 
 ```yaml
 # note ::: production values #config
-# warn ::: use environment variables for passwords #security
+# alert ::: use environment variables for passwords +security
 database:
   host: localhost
   # note ::: connection pool tuning #performance
@@ -231,7 +231,7 @@ rg "TODO(?!.*:::)" --type js
 
 4. **Use hashtags for classification**:
    ```python
-   # warn ::: validate inputs #security #critical
+   # alert ::: validate inputs +security #critical
    # todo ::: optimize query #performance #database
    ```
 
