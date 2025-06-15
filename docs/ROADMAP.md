@@ -8,7 +8,7 @@ This roadmap tracks upcoming work for the **waymark** tooling layer – the CLI,
 
 - Rich query parser that understands context/parameter grammar (single-line only).
 - `waymark search` sub-command wrapping ripgrep with smart defaults.
-- `waymark lint` for syntax validation and simple rule checking (comma spacing, missing space after `:M:`, etc.).
+- `waymark lint` for syntax validation and simple rule checking (comma spacing, missing space after `:::`, etc.).
 - VS Code extension MVP: gutter icons, hover cards, quick-filter panel.
 
 ## 0.2.0 – Relations & Visualisation

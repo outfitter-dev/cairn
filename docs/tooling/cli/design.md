@@ -23,13 +23,13 @@ waymark find [PATTERN] [OPTIONS]
 # Examples
 waymark find                     # List all waymarks
 waymark find "auth"              # Find "auth" in waymark content
-waymark find -p todo             # Find all todos
-waymark find -p todo "auth"      # Find "auth" in todos
+waymark find -p todo             # Find all todo markers
+waymark find -p todo "auth"      # Find "auth" in todo markers
 ```
 
 ### Category Commands
 
-Special commands for top-level prefix categories with custom formatting:
+Special commands for top-level marker categories with custom formatting:
 
 ```bash
 waymark task [OPTIONS]           # Task-related waymarks (todo, fix, done, etc.)
@@ -43,9 +43,9 @@ waymark tldr [OPTIONS]           # Special: tldr summaries with tree view
 ### Search Filters
 
 ```bash
-# Prefix filtering
--p, --prefix PREFIX              # Include prefix
--P, --prefix-not PREFIX          # Exclude prefix
+# Marker filtering
+-p, --prefix PREFIX              # Include markers with this prefix
+-P, --prefix-not PREFIX          # Exclude markers with this prefix
 
 # Tag filtering  
 -t, --tag TAG                    # Include tag
@@ -124,7 +124,7 @@ waymark task --stats             # Task statistics
 # ◐ [wip] src/cache.js:89 - refactoring cache layer
 ```
 
-**Includes prefixes**: todo, fix, done, wip, review, spike
+**Includes markers**: todo, fix, done, wip, review, spike
 
 ### `waymark info`
 
@@ -144,7 +144,7 @@ waymark info --tree              # Tree view by directory
 #     🤔 why: rate limiting prevents DOS attacks
 ```
 
-**Includes prefixes**: note, docs, why, see, example, tldr
+**Includes markers**: note, docs, why, see, example, tldr
 
 ### `waymark alert`
 
@@ -165,7 +165,7 @@ waymark alert --grouped          # Group by severity
 #   ...
 ```
 
-**Includes prefixes**: warn, crit, unsafe, caution, broken, deprecated
+**Includes markers**: warn, crit, unsafe, caution, broken, deprecated
 
 ### `waymark tldr`
 
@@ -260,10 +260,10 @@ waymark tldr src/auth/
 ### Code Review
 
 ```bash
-# Find todos added in this branch
+# Find todo markers added in this branch
 waymark find -p todo --since @{upstream}
 
-# Check for temporary code
+# Check for temporary code markers
 waymark find -p temp -p hack
 
 # Security audit
@@ -303,7 +303,7 @@ src/cache.js:12: note ::: uses LRU eviction, 1GB max
       "file": "src/auth.js",
       "line": 23,
       "column": 3,
-      "prefix": "todo",
+      "marker": "todo",
       "content": "implement OAuth2 flow",
       "properties": {
         "assign": "@alice"

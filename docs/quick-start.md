@@ -29,7 +29,7 @@ Find all waymarks in your codebase:
 # Find all waymarks
 rg -n ":::"
 
-# Find specific prefixes
+# Find specific markers
 rg -n "todo :::"
 rg -n "alert :::"
 ```
@@ -47,17 +47,17 @@ Start with these essential patterns:
 | `alert :::` | Security/safety critical | `// alert ::: validate input +security` |
 | `@mentions` | Assign to someone | `// todo ::: @alice review this` |
 
-## Pure Notes vs Prefixed Waymarks
+## Pure Notes vs Marked Waymarks
 
-Waymarks can be pure notes (no prefix) or prefixed:
+Waymarks can be pure notes (no marker) or marked:
 
 ```javascript
-// Pure notes (no prefix - just information)
+// Pure notes (no marker - just information)
 // ::: assumes all dates are UTC
 // ::: users must be authenticated
 // ::: performance-critical code path
 
-// Prefixed waymarks (actionable items)
+// Marked waymarks (actionable items)
 // todo ::: implement caching
 // fix ::: handle null case
 // alert ::: validate permissions +security
@@ -79,7 +79,7 @@ Add structured data and classification:
 // fix ::: API timeout +backend +critical
 ```
 
-For deeper exploration, see [Conventions](../conventions.md) and [Examples](../examples.md).
+For deeper exploration, see [Common Patterns](./usage/patterns/common-patterns.md).
 
 ## @Mentions for Assignment
 
@@ -111,9 +111,9 @@ This guide covers user authentication.
 
 ## Next Steps
 
-1. **Learn the syntax**: [Syntax Guide](../syntax.md)
-2. **Explore conventions**: [Conventions](../conventions.md)
-3. **See examples**: [Examples](../examples.md)
+1. **Learn the syntax**: [Syntax Guide](./syntax/README.md)
+2. **Explore patterns**: [Common Patterns](./usage/patterns/common-patterns.md)
+3. **Master search**: [Search Guide](./usage/search/ripgrep-patterns.md)
 4. **Set up your team**: Create a CONVENTIONS.md file
 
 ## Example Search Commands
@@ -122,12 +122,12 @@ This guide covers user authentication.
 # Find all waymarks
 rg -n ":::"
 
-# Find by prefix
+# Find by marker
 rg -n "todo :::"
 rg -n "alert :::"
 rg -n "fix :::"
 
-# Find pure notes (no prefix)
+# Find pure notes (no marker)
 rg -n "^[[:space:]]*//[[:space:]]*:::[[:space:]]"
 
 # Find by tag
@@ -163,7 +163,7 @@ rg -c ":::" | awk -F: '{sum+=$2} END {print sum}'
 ```javascript
 // Version constraints
 // todo ::: requires:node(16,18,20) add compatibility
-// warn ::: deprecated:v3.0 use newMethod() instead
+// alert ::: deprecated:v3.0 use newMethod() instead
 // fix ::: affects:versions(1.0-2.5) security issue
 ```
 
@@ -179,7 +179,7 @@ rg -c ":::" | awk -F: '{sum+=$2} END {print sum}'
 
 ## Tips
 
-- **Space before `:::`**: Required when prefix is present
+- **Space before `:::`**: Required when marker is present
 - **Keep markers short**: Under 80-120 characters for readable grep output  
 - **Use properties for structure**: Machine-readable key:value pairs
 - **Use tags for grouping**: Cross-cutting concerns like +security

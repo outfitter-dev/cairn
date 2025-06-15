@@ -99,8 +99,8 @@ src/index.js:42:3
   Contexts: todo
   
 src/auth.js:15:5  
-  // warn ::: validate token expiry #security
-  Contexts: sec
+  // alert ::: validate token expiry +security
+  Contexts: alert
 ```
 
 ### JSON

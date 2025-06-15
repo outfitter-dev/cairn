@@ -22,18 +22,18 @@ rg -n ":::"
 rg -i ":::"
 ```
 
-#### Find by prefix
+#### Find by marker
 
 ```bash
-# Specific prefix
+# Specific marker
 rg "todo :::"
 rg "fix :::"
 rg "alert :::"
 
-# Multiple prefixes (OR)
+# Multiple markers (OR)
 rg "(todo|fix) :::"
 
-# Exclude certain prefixes
+# Exclude certain markers
 rg ":::" | rg -v "done :::"
 ```
 
@@ -42,10 +42,10 @@ rg ":::" | rg -v "done :::"
 ```bash
 # Find specific property
 rg ":::.*priority:high"
-rg ":::.*assign:@alice"
+rg ":::.*@alice"
 
 # Multiple properties (AND)
-rg ":::.*priority:high.*assign:@alice"
+rg ":::.*priority:high.*@alice"
 
 # Property with any value
 rg ":::.*priority:"
@@ -111,7 +111,7 @@ rg -o "todo :::.*@(\w+)" -r '$1' | sort | uniq -c | sort -nr
 # List all priority levels used
 rg -o "priority:(\w+)" -r '$1' | sort | uniq
 
-# Find critical items across prefixes
+# Find critical items across markers
 rg ":::.*priority:(critical|high)"
 ```
 
@@ -173,7 +173,7 @@ alias wmc='rg -C2 ":::"'
 # Find security issues
 alias wmsec='rg ":::.*\+security"'
 
-# Count waymarks by prefix
+# Count waymarks by marker
 alias wmcount='rg "^[^:]*[a-z]+ :::" -o | sed "s/ ::://" | sort | uniq -c | sort -nr'
 ```
 
@@ -226,17 +226,17 @@ The waymark CLI provides ripgrep-style ergonomics with enhanced waymark features
 # Find all waymarks
 waymark find
 
-# Find by prefix
-waymark find -p todo
-waymark find -p fix,warn  # multiple prefixes
+# Find by marker
+waymark find -m todo
+waymark find -m fix,alert  # multiple markers
 
 # Find with pattern
-waymark find "auth" -p todo
+waymark find "auth" -m todo
 
 # Find by properties
 waymark find --has priority:high
 
-# Find by hashtags
+# Find by tags
 waymark find -t security
 ```
 
@@ -275,8 +275,8 @@ waymark find -p todo --near 5
 waymark find "cache" --related
 
 # Context lines (ripgrep-compatible)
-waymark find -p warn -C2       # 2 lines before/after
-waymark find -p todo -A3 -B1    # 3 after, 1 before
+waymark find -m alert -C2       # 2 lines before/after
+waymark find -m todo -A3 -B1    # 3 after, 1 before
 ```
 
 #### Export and Integration
@@ -297,7 +297,7 @@ Configuration files provide shortcuts and aliases:
 ```json
 {
   "shortcuts": {
-    "mine": "assign:@{user}",
+    "mine": "@{user}",
     "urgent": "priority:high|priority:critical"
   },
   "aliases": {
@@ -311,7 +311,7 @@ Use shortcuts and aliases:
 
 ```bash
 # Using shortcuts
-waymark find --has mine          # Expands to assign:@yourusername
+waymark find --has mine          # Expands to @yourusername
 waymark task --has urgent        # High/critical priority
 
 # Using aliases

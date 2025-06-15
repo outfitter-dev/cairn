@@ -31,37 +31,24 @@ rg "\+security"   # Find security concerns
 
 ### Core Documentation
 
-- **[Syntax](./syntax.md)** - The `:::` sigil, markers, properties, and tags
-- **[Examples](./examples.md)** - Patterns organized by use case
-- **[Conventions](./conventions.md)** - Essential patterns and best practices
-- **[Waymarks in Documentation](./waymarks-in-documentation.md)** - Integration with JSDoc, docstrings, etc.
+- **[Syntax](./syntax/README.md)** - The `:::` sigil, markers, properties, and tags
+- **[Common Patterns](./usage/patterns/common-patterns.md)** - Essential patterns and best practices
+- **[Tooling](./tooling/README.md)** - CLI, parser, and IDE integrations
 
-### Guides
+### Internal Documentation
 
-- **[Quick Start](./guides/quick-start.md)** - 5-minute introduction
-
-### Reference
-
-- **[About Prior Art](./about/priors.md)** - Related concepts and inspiration
-- **[Tooling API](./tooling/API.md)** - Waymark parser and search APIs
-- **[CLI Reference](./tooling/CLI.md)** - Command-line interface
-
-### Project
-
-- **[Language Guide](./project/LANGUAGE.md)** - How to write about waymarks
-- **[Archive](./project/archive/)** - Historical documentation
-- **[Proposals](./project/proposals/)** - Future enhancements
+- **[Project Docs](./_project/README.md)** - Internal documentation (proposals, decisions, research)
 
 ## Key Concepts
 
 ### The `:::` Sigil
 
-The canonical waymark sigil, optionally preceded by a prefix:
+The canonical waymark sigil, optionally preceded by a marker:
 
 ```python
 # todo ::: implement error handling
 #      ^^^
-#      └── Sigil separates prefix from content
+#      └── Sigil separates marker from content
 ```
 
 ### Marker Categories
@@ -77,7 +64,7 @@ Waymarks use markers to classify code locations (~41 total in 8 categories):
 - **Security**: `sec`, `auth`, `crypto`, `a11y`
 - **Meta**: `flag`, `important`, `hack`, `legal`, `must`, `assert`
 
-Plus signals (`!todo`, `^must`), properties (`priority:high`), tags (`+security`), and @mentions (`@alice`).
+Plus signals (`!todo`, `*fix`), properties (`priority:high`), tags (`+security`), and @mentions (`@alice`).
 
 ### Search Patterns
 
@@ -111,7 +98,7 @@ rg -B3 -A3 "todo :::"      # Todos with surrounding code
    # => example.js:1:// todo ::: add input validation
    ```
 
-3. **Learn patterns** in the [Quick Start Guide](./guides/quick-start.md)
+3. **Learn patterns** in the [Quick Start Guide](./quick-start.md)
 
 ## Philosophy
 

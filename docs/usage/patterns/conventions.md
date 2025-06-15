@@ -1,7 +1,7 @@
 <!-- tldr ::: Essential patterns and best practices for waymarks -->
 # Waymark Conventions
 
-> See [Syntax Specification](../syntax.md) for complete grammar details.
+> See [Syntax Specification](../../syntax/README.md) for complete grammar details.
 
 Patterns and practices for making your codebase AI-navigable and human-friendly using waymarks.
 

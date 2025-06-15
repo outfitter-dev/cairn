@@ -5,7 +5,7 @@ The waymark context system provides structured metadata through markers, propert
 
 ## Markers
 
-Optional classifiers from a fixed namespace (~41 total) that appear before `:::`:
+Optional classifiers from a fixed namespace (42 total) that appear before `:::`:
 
 ```javascript
 // todo ::: implement validation
