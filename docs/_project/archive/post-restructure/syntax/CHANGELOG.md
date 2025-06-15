@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial waymark syntax specification
-- Core `:M:` identifier with mandatory single space
+- Core `:::` identifier with mandatory single space
 - Three delimiter types with semantic purposes:
   - Colon (`:`) for classifications
   - Parentheses `()` for parameters

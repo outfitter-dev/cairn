@@ -1,6 +1,6 @@
 # Documentation System Integration
-<!-- :M: tldr waymark compatibility with JSDoc, docstrings, and other documentation systems -->
-<!-- :M: convention Cross-language documentation integration patterns -->
+<!-- ::: tldr waymark compatibility with JSDoc, docstrings, and other documentation systems -->
+<!-- ::: convention Cross-language documentation integration patterns -->
 
 ## Table of Contents
 
@@ -59,9 +59,9 @@ Perfect compatibility in block comments:
 
 ```javascript
 /**
- * :M: tldr Core authentication utilities
- * :M: api Public interface for auth operations
- * :M: sec validate JWT signature and expiry
+ * ::: tldr Core authentication utilities
+ * ::: api Public interface for auth operations
+ * ::: sec validate JWT signature and expiry
  * 
  * @description Handles user authentication with JWT tokens
  * @param {string} token - JWT token to validate  
@@ -75,8 +75,8 @@ Perfect compatibility in block comments:
  * }
  */
 async function authenticateUser(token, options = {}) {
-  // :M: ctx assumes tokens are always Base64 encoded
-  // :M: perf consider caching decoded tokens
+  // ::: ctx assumes tokens are always Base64 encoded
+  // ::: perf consider caching decoded tokens
   return validateJWT(token, options);
 }
 ```
@@ -87,16 +87,16 @@ async function authenticateUser(token, options = {}) {
 - TypeScript tools work unchanged
 - ESDoc processes normally
 - VS Code intellisense preserved
-- Search tools find anchors: `rg ":M: api" --type js`
+- Search tools find anchors: `rg "::: api" --type js`
 
 ### Inline Comments
 
 Waymarks work in single-line comments too:
 
 ```typescript
-// :M: todo @agent implement retry logic
+// ::: todo @agent implement retry logic
 const fetchUserData = async (id: string) => {
-  // :M: ctx rate limit: 100 requests/minute
+  // ::: ctx rate limit: 100 requests/minute
   return api.get(`/users/${id}`);
 };
 ```
@@ -112,9 +112,9 @@ Waymarks work with any docstring format:
 ```python
 def authenticate_user(token: str, strict: bool = False) -> Result[User, AuthError]:
     """
-    :M: tldr Core user authentication function
-    :M: sec validate JWT signature and expiry  
-    :M: todo @agent add rate limiting
+    ::: tldr Core user authentication function
+    ::: sec validate JWT signature and expiry  
+    ::: todo @agent add rate limiting
     
     Authenticates a user based on JWT token.
     
@@ -141,9 +141,9 @@ def authenticate_user(token: str, strict: bool = False) -> Result[User, AuthErro
 ```python
 def calculate_metrics(data: np.ndarray) -> Dict[str, float]:
     """
-    :M: tldr Statistical analysis functions
-    :M: perf O(n) algorithm, efficient for large datasets
-    :M: ctx assumes input data is normalized
+    ::: tldr Statistical analysis functions
+    ::: perf O(n) algorithm, efficient for large datasets
+    ::: ctx assumes input data is normalized
     
     Calculate statistical metrics for input data.
     
@@ -169,9 +169,9 @@ def calculate_metrics(data: np.ndarray) -> Dict[str, float]:
 ```python
 def process_documents(docs: List[str]) -> ProcessedDocs:
     """
-    :M: tldr Document processing pipeline
-    :M: api Main entry point for document processing
-    :M: perf uses multiprocessing for large batches
+    ::: tldr Document processing pipeline
+    ::: api Main entry point for document processing
+    ::: perf uses multiprocessing for large batches
     
     Process a collection of documents.
     
@@ -190,7 +190,7 @@ def process_documents(docs: List[str]) -> ProcessedDocs:
 - Sphinx documentation builds normally
 - IDEs provide full intellisense
 - All docstring tools work unchanged
-- Search: `rg ":M: api" --type py`
+- Search: `rg "::: api" --type py`
 
 ## Systems Languages
 
@@ -199,9 +199,9 @@ def process_documents(docs: List[str]) -> ProcessedDocs:
 Seamless integration with Rust doc comments:
 
 ```rust
-/// :M: tldr User authentication trait definition
-/// :M: api Public trait for auth providers  
-/// :M: sec ensure constant-time comparison for tokens
+/// ::: tldr User authentication trait definition
+/// ::: api Public trait for auth providers  
+/// ::: sec ensure constant-time comparison for tokens
 /// 
 /// Provides authentication services for the application.
 /// Supports multiple authentication backends including JWT,
@@ -225,17 +225,17 @@ Seamless integration with Rust doc comments:
 /// This trait assumes that implementations use secure
 /// random number generation for token creation.
 pub trait AuthProvider {
-    /// :M: api Core validation method
+    /// ::: api Core validation method
     async fn validate_token(&self, token: &str) -> Result<User, AuthError>;
     
-    /// :M: api Token generation with expiry
+    /// ::: api Token generation with expiry
     async fn create_token(&self, user: &User) -> Result<String, AuthError>;
 }
 
 impl AuthProvider for JwtAuth {
     async fn validate_token(&self, token: &str) -> Result<User, AuthError> {
-        // :M: sec timing attack protection - constant time comparison
-        // :M: perf cache decoded tokens for repeated validation
+        // ::: sec timing attack protection - constant time comparison
+        // ::: perf cache decoded tokens for repeated validation
         self.decode_and_validate(token).await
     }
 }
@@ -246,16 +246,16 @@ impl AuthProvider for JwtAuth {
 - `cargo doc` renders normally, ignores waymarks
 - IDE integration preserved (rust-analyzer)
 - Documentation tests continue working
-- Search: `rg ":M: sec" --type rust`
+- Search: `rg "::: sec" --type rust`
 
 ### Go Documentation (Godoc)
 
 Perfect compatibility with Go doc comments:
 
 ```go
-// :M: tldr HTTP authentication middleware package
-// :M: api Public middleware for web services
-// :M: perf consider connection pooling for auth backends
+// ::: tldr HTTP authentication middleware package
+// ::: api Public middleware for web services
+// ::: perf consider connection pooling for auth backends
 //
 // Package auth provides HTTP authentication middleware for web services.
 // It supports JWT tokens, session-based auth, and OAuth2 flows.
@@ -269,9 +269,9 @@ Perfect compatibility with Go doc comments:
 // and populates request context with user information.
 package auth
 
-// :M: tldr Main authentication middleware function
-// :M: api Primary entry point for HTTP auth
-// :M: sec validate all auth headers before processing
+// ::: tldr Main authentication middleware function
+// ::: api Primary entry point for HTTP auth
+// ::: sec validate all auth headers before processing
 //
 // Middleware provides HTTP authentication for web services.
 // It checks Authorization headers and validates tokens against
@@ -286,9 +286,9 @@ package auth
 //   http.Handle("/api/", handler)
 func Middleware(next http.Handler) http.Handler {
  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-  // :M: ctx assumes Authorization header format: "Bearer <token>"
-  // :M: perf cache token validation results
-  // :M: sec prevent timing attacks during validation
+  // ::: ctx assumes Authorization header format: "Bearer <token>"
+  // ::: perf cache token validation results
+  // ::: sec prevent timing attacks during validation
   
   token := extractToken(r)
   if token == "" {
@@ -306,7 +306,7 @@ func Middleware(next http.Handler) http.Handler {
 - `godoc` displays documentation normally
 - Go tools work unchanged
 - IDE support preserved (gopls)
-- Search: `rg ":M: api" --type go`
+- Search: `rg "::: api" --type go`
 
 ### C/C++ Documentation (Doxygen)
 
@@ -314,9 +314,9 @@ Works perfectly in Doxygen comments:
 
 ```cpp
 /**
- * :M: tldr Memory pool allocation utilities  
- * :M: perf critical path - optimized for speed
- * :M: unsafe manual memory management - review carefully
+ * ::: tldr Memory pool allocation utilities  
+ * ::: perf critical path - optimized for speed
+ * ::: unsafe manual memory management - review carefully
  * 
  * @brief Allocates memory from a pre-allocated pool
  * 
@@ -342,9 +342,9 @@ Works perfectly in Doxygen comments:
  * @endcode
  */
 void* pool_alloc(size_t size, size_t alignment) {
-    // :M: ctx pool must be initialized before first call
-    // :M: perf O(1) allocation using bitmap tracking
-    // :M: unsafe no bounds checking - caller responsibility
+    // ::: ctx pool must be initialized before first call
+    // ::: perf O(1) allocation using bitmap tracking
+    // ::: unsafe no bounds checking - caller responsibility
     
     if (!is_power_of_two(alignment)) {
         return nullptr;
@@ -362,9 +362,9 @@ Perfect compatibility:
 
 ```java
 /**
- * :M: tldr User service business logic layer
- * :M: api REST controller endpoints for user management
- * :M: sec validate all inputs and check authorization
+ * ::: tldr User service business logic layer
+ * ::: api REST controller endpoints for user management
+ * ::: sec validate all inputs and check authorization
  * 
  * Provides comprehensive user management operations for the application.
  * Handles CRUD operations, validation, and business rule enforcement.
@@ -384,9 +384,9 @@ Perfect compatibility:
 public class UserService {
     
     /**
-     * :M: api Public endpoint for user retrieval
-     * :M: perf consider caching for frequently accessed users
-     * :M: ctx user IDs are UUIDs, not sequential integers
+     * ::: api Public endpoint for user retrieval
+     * ::: perf consider caching for frequently accessed users
+     * ::: ctx user IDs are UUIDs, not sequential integers
      * 
      * Retrieves a user by their unique identifier.
      * 
@@ -407,9 +407,9 @@ public class UserService {
      */
     public User getUserById(@NonNull UUID userId) 
             throws UserNotFoundException, SecurityException {
-        // :M: sec verify caller has READ_USER permission
-        // :M: ctx database queries use prepared statements
-        // :M: perf single query with JOIN to avoid N+1
+        // ::: sec verify caller has READ_USER permission
+        // ::: ctx database queries use prepared statements
+        // ::: perf single query with JOIN to avoid N+1
         
         validatePermissions(READ_USER);
         return userRepository.findByIdWithProfile(userId)
@@ -422,9 +422,9 @@ public class UserService {
 
 ```csharp
 /// <summary>
-/// :M: tldr Email notification service for user communications
-/// :M: api Public interface for sending notifications
-/// :M: config requires SMTP server configuration
+/// ::: tldr Email notification service for user communications
+/// ::: api Public interface for sending notifications
+/// ::: config requires SMTP server configuration
 /// 
 /// Provides email notification functionality for the application.
 /// Supports templated emails, attachments, and delivery tracking.
@@ -447,9 +447,9 @@ public class UserService {
 public class EmailService : IEmailService
 {
     /// <summary>
-    /// :M: api Core email sending method
-    /// :M: sec validate recipient addresses to prevent injection
-    /// :M: perf use async operations for SMTP communication
+    /// ::: api Core email sending method
+    /// ::: sec validate recipient addresses to prevent injection
+    /// ::: perf use async operations for SMTP communication
     /// 
     /// Sends an email notification to the specified recipient.
     /// </summary>
@@ -476,9 +476,9 @@ public class EmailService : IEmailService
         string body, 
         bool isHtml = false)
     {
-        // :M: sec validate email format using RFC 5322 compliance
-        // :M: ctx SMTP client is disposed after each send operation
-        // :M: perf connection pooling handled by SmtpClient internally
+        // ::: sec validate email format using RFC 5322 compliance
+        // ::: ctx SMTP client is disposed after each send operation
+        // ::: perf connection pooling handled by SmtpClient internally
         
         ValidateEmailAddress(recipient);
         
@@ -492,7 +492,7 @@ public class EmailService : IEmailService
         }
         catch (SmtpException ex)
         {
-            // :M: todo @agent add retry logic with exponential backoff
+            // ::: todo @agent add retry logic with exponential backoff
             logger.LogError(ex, "Failed to send email to {Recipient}", recipient);
             return false;
         }
@@ -506,9 +506,9 @@ public class EmailService : IEmailService
 
 ```ruby
 ##
-# :M: tldr Email notification service for user communications
-# :M: config requires ActionMailer configuration
-# :M: api Primary interface for sending emails
+# ::: tldr Email notification service for user communications
+# ::: config requires ActionMailer configuration
+# ::: api Primary interface for sending emails
 #
 # Handles email notifications for the application including
 # welcome emails, password resets, and promotional content.
@@ -525,9 +525,9 @@ public class EmailService : IEmailService
 # @version 2.0.0
 class EmailService
   ##
-  # :M: api Core email sending method
-  # :M: sec validate recipient email format
-  # :M: todo @agent add template support
+  # ::: api Core email sending method
+  # ::: sec validate recipient email format
+  # ::: todo @agent add template support
   #
   # Sends an email notification to the specified recipient.
   # Validates email format and handles delivery errors gracefully.
@@ -554,9 +554,9 @@ class EmailService
   #     attachments: ['/path/to/report.pdf']
   #   )
   def send_notification(recipient, subject, body, options = {})
-    # :M: sec validate email using RFC 5322 regex
-    # :M: ctx ActionMailer handles SMTP connection pooling
-    # :M: perf consider background job for large attachment emails
+    # ::: sec validate email using RFC 5322 regex
+    # ::: ctx ActionMailer handles SMTP connection pooling
+    # ::: perf consider background job for large attachment emails
     
     validate_email_format!(recipient)
     
@@ -570,7 +570,7 @@ class EmailService
       NotificationMailer.send_email(mail_options).deliver_now
       true
     rescue StandardError => e
-      # :M: todo @agent implement retry logic with exponential backoff
+      # ::: todo @agent implement retry logic with exponential backoff
       Rails.logger.error "Failed to send email to #{recipient}: #{e.message}"
       false
     end
@@ -578,9 +578,9 @@ class EmailService
   
   private
   
-  # :M: sec email validation using comprehensive regex
+  # ::: sec email validation using comprehensive regex
   def validate_email_format!(email)
-    # :M: ctx uses RFC 5322 compliant regex pattern
+    # ::: ctx uses RFC 5322 compliant regex pattern
     pattern = /\A[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\z/
     raise ArgumentError, "Invalid email format: #{email}" unless email.match?(pattern)
   end
@@ -592,9 +592,9 @@ end
 ```php
 <?php
 /**
- * :M: tldr Database connection management utilities
- * :M: api Primary interface for database operations
- * :M: config requires PDO extension and database credentials
+ * ::: tldr Database connection management utilities
+ * ::: api Primary interface for database operations
+ * ::: config requires PDO extension and database credentials
  * 
  * Database Connection Manager
  * 
@@ -610,9 +610,9 @@ end
 class DatabaseManager
 {
     /**
-     * :M: api Core connection creation method
-     * :M: sec ensure connection string doesn't leak in logs
-     * :M: perf implement connection pooling for production
+     * ::: api Core connection creation method
+     * ::: sec ensure connection string doesn't leak in logs
+     * ::: perf implement connection pooling for production
      * 
      * Creates a new database connection with the specified configuration.
      * 
@@ -653,9 +653,9 @@ class DatabaseManager
         string $password, 
         array $options = []
     ): PDO {
-        // :M: sec sanitize DSN for logging (remove passwords)
-        // :M: ctx default timeout is 30 seconds
-        // :M: perf reuse connections when possible
+        // ::: sec sanitize DSN for logging (remove passwords)
+        // ::: ctx default timeout is 30 seconds
+        // ::: perf reuse connections when possible
         
         $this->validateDsn($dsn);
         
@@ -672,7 +672,7 @@ class DatabaseManager
         
         while ($attempts < $maxAttempts) {
             try {
-                // :M: sec ensure password is not logged
+                // ::: sec ensure password is not logged
                 $this->logger->info('Attempting database connection', [
                     'dsn' => $this->sanitizeDsn($dsn),
                     'attempt' => $attempts + 1
@@ -680,7 +680,7 @@ class DatabaseManager
                 
                 $pdo = new PDO($dsn, $username, $password, $options);
                 
-                // :M: ctx verify connection with simple query
+                // ::: ctx verify connection with simple query
                 $pdo->query('SELECT 1');
                 
                 return $pdo;
@@ -689,7 +689,7 @@ class DatabaseManager
                 $attempts++;
                 
                 if ($attempts >= $maxAttempts) {
-                    // :M: todo @agent implement exponential backoff
+                    // ::: todo @agent implement exponential backoff
                     throw new ConnectionException(
                         "Failed to connect after {$maxAttempts} attempts: " . $e->getMessage(),
                         0,
@@ -697,7 +697,7 @@ class DatabaseManager
                     );
                 }
                 
-                // :M: perf exponential backoff: 1s, 2s, 4s...
+                // ::: perf exponential backoff: 1s, 2s, 4s...
                 sleep(pow(2, $attempts - 1));
             }
         }
@@ -712,9 +712,9 @@ class DatabaseManager
 ```swift
 import Foundation
 
-/// :M: tldr Core networking utilities for iOS/macOS applications
-/// :M: api Public interface for HTTP requests and responses
-/// :M: perf uses URLSession with connection pooling
+/// ::: tldr Core networking utilities for iOS/macOS applications
+/// ::: api Public interface for HTTP requests and responses
+/// ::: perf uses URLSession with connection pooling
 /// 
 /// Provides comprehensive HTTP networking functionality for the app.
 /// Handles authentication, request/response processing, error handling,
@@ -751,9 +751,9 @@ import Foundation
 /// - Version: 2.1.0
 public class NetworkClient {
     
-    /// :M: api Primary GET request method
-    /// :M: sec validate URL and sanitize headers
-    /// :M: perf cache responses when appropriate
+    /// ::: api Primary GET request method
+    /// ::: sec validate URL and sanitize headers
+    /// ::: perf cache responses when appropriate
     /// 
     /// Performs an HTTP GET request to the specified URL.
     /// 
@@ -786,9 +786,9 @@ public class NetworkClient {
         headers: [String: String] = [:],
         timeout: TimeInterval = 30
     ) async -> Result<Data, NetworkError> {
-        // :M: ctx URLSession handles connection pooling automatically
-        // :M: sec validate URL scheme is HTTP/HTTPS
-        // :M: perf reuse URLSession instance across requests
+        // ::: ctx URLSession handles connection pooling automatically
+        // ::: sec validate URL scheme is HTTP/HTTPS
+        // ::: perf reuse URLSession instance across requests
         
         guard url.scheme == "http" || url.scheme == "https" else {
             return .failure(.invalidURL("URL must use HTTP or HTTPS scheme"))
@@ -797,7 +797,7 @@ public class NetworkClient {
         var request = URLRequest(url: url, timeoutInterval: timeout)
         request.httpMethod = "GET"
         
-        // :M: sec sanitize headers to prevent injection
+        // ::: sec sanitize headers to prevent injection
         for (key, value) in headers {
             let sanitizedKey = sanitizeHeaderKey(key)
             let sanitizedValue = sanitizeHeaderValue(value)
@@ -807,12 +807,12 @@ public class NetworkClient {
         do {
             let (data, response) = try await urlSession.data(for: request)
             
-            // :M: ctx verify response is HTTPURLResponse
+            // ::: ctx verify response is HTTPURLResponse
             guard let httpResponse = response as? HTTPURLResponse else {
                 return .failure(.invalidResponse("Response is not HTTP"))
             }
             
-            // :M: api success range is 200-299
+            // ::: api success range is 200-299
             guard 200...299 ~= httpResponse.statusCode else {
                 return .failure(.httpError(httpResponse.statusCode, data))
             }
@@ -820,14 +820,14 @@ public class NetworkClient {
             return .success(data)
             
         } catch {
-            // :M: todo @agent add retry logic for transient failures
+            // ::: todo @agent add retry logic for transient failures
             return .failure(.networkError(error))
         }
     }
     
-    /// :M: api POST request with JSON body support
-    /// :M: sec validate and sanitize request body
-    /// :M: perf stream large request bodies
+    /// ::: api POST request with JSON body support
+    /// ::: sec validate and sanitize request body
+    /// ::: perf stream large request bodies
     /// 
     /// Performs an HTTP POST request with optional JSON body.
     /// 
@@ -842,9 +842,9 @@ public class NetworkClient {
         headers: [String: String] = [:],
         timeout: TimeInterval = 30
     ) async -> Result<Data, NetworkError> {
-        // :M: ctx automatically sets Content-Type for JSON bodies
-        // :M: sec ensure request body size limits
-        // :M: perf consider compression for large payloads
+        // ::: ctx automatically sets Content-Type for JSON bodies
+        // ::: sec ensure request body size limits
+        // ::: perf consider compression for large payloads
         
         var request = URLRequest(url: url, timeoutInterval: timeout)
         request.httpMethod = "POST"
@@ -853,7 +853,7 @@ public class NetworkClient {
         
         if let body = body {
             do {
-                // :M: sec validate body can be safely serialized
+                // ::: sec validate body can be safely serialized
                 request.httpBody = try JSONEncoder().encode(body)
                 requestHeaders["Content-Type"] = "application/json"
             } catch {
@@ -869,8 +869,8 @@ public class NetworkClient {
     }
 }
 
-/// :M: api Network error types for comprehensive error handling
-/// :M: tldr All possible network operation failures
+/// ::: api Network error types for comprehensive error handling
+/// ::: tldr All possible network operation failures
 public enum NetworkError: Error, LocalizedError {
     case invalidURL(String)
     case invalidResponse(String)
@@ -879,7 +879,7 @@ public enum NetworkError: Error, LocalizedError {
     case encodingError(String)
     case decodingError(String)
     
-    /// :M: api User-friendly error descriptions
+    /// ::: api User-friendly error descriptions
     public var errorDescription: String? {
         switch self {
         case .invalidURL(let message):
@@ -903,9 +903,9 @@ public enum NetworkError: Error, LocalizedError {
 
 ```kotlin
 /**
- * :M: tldr Android HTTP client with coroutines support
- * :M: api Primary networking interface for Android apps
- * :M: perf uses OkHttp with connection pooling and caching
+ * ::: tldr Android HTTP client with coroutines support
+ * ::: api Primary networking interface for Android apps
+ * ::: perf uses OkHttp with connection pooling and caching
  * 
  * Comprehensive HTTP client designed for Android applications.
  * Provides coroutine-based async operations, automatic retry logic,
@@ -950,9 +950,9 @@ class HttpClient(
 ) {
     
     /**
-     * :M: api Generic GET request with automatic JSON deserialization
-     * :M: sec validate URL and sanitize headers
-     * :M: perf use response caching when appropriate
+     * ::: api Generic GET request with automatic JSON deserialization
+     * ::: sec validate URL and sanitize headers
+     * ::: perf use response caching when appropriate
      * 
      * Performs an HTTP GET request and deserializes the response to the specified type.
      * 
@@ -976,9 +976,9 @@ class HttpClient(
         headers: Map<String, String> = emptyMap(),
         cachePolicy: CachePolicy = CachePolicy.Default
     ): Result<T> {
-        // :M: ctx combines baseUrl with relative URLs automatically
-        // :M: sec prevent URL injection attacks
-        // :M: perf check cache before making network request
+        // ::: ctx combines baseUrl with relative URLs automatically
+        // ::: sec prevent URL injection attacks
+        // ::: perf check cache before making network request
         
         val fullUrl = resolveUrl(url)
         validateUrl(fullUrl)
@@ -986,12 +986,12 @@ class HttpClient(
         val request = Request.Builder()
             .url(fullUrl)
             .apply {
-                // :M: sec sanitize all header values
+                // ::: sec sanitize all header values
                 headers.forEach { (key, value) ->
                     addHeader(sanitizeHeaderKey(key), sanitizeHeaderValue(value))
                 }
                 
-                // :M: ctx cache policy affects request headers
+                // ::: ctx cache policy affects request headers
                 when (cachePolicy) {
                     CachePolicy.NetworkOnly -> addHeader("Cache-Control", "no-cache")
                     CachePolicy.CacheOnly -> addHeader("Cache-Control", "only-if-cached")
@@ -1001,28 +1001,28 @@ class HttpClient(
             .build()
         
         return executeWithRetry(request) { response ->
-            // :M: perf stream large responses instead of loading to memory
+            // ::: perf stream large responses instead of loading to memory
             val responseBody = response.body?.string() 
                 ?: return@executeWithRetry Result.failure(HttpException("Empty response body"))
             
             try {
-                // :M: ctx uses Moshi for JSON serialization
+                // ::: ctx uses Moshi for JSON serialization
                 val adapter = moshi.adapter(T::class.java)
                 val result = adapter.fromJson(responseBody)
                     ?: return@executeWithRetry Result.failure(HttpException("Failed to parse JSON"))
                 
                 Result.success(result)
             } catch (e: Exception) {
-                // :M: todo @agent add more specific error types
+                // ::: todo @agent add more specific error types
                 Result.failure(HttpException("Deserialization failed: ${e.message}", e))
             }
         }
     }
     
     /**
-     * :M: api POST request with automatic JSON serialization
-     * :M: sec validate request body size and content
-     * :M: perf compress large request bodies
+     * ::: api POST request with automatic JSON serialization
+     * ::: sec validate request body size and content
+     * ::: perf compress large request bodies
      * 
      * Performs an HTTP POST request with automatic JSON serialization of the request body.
      * 
@@ -1038,22 +1038,22 @@ class HttpClient(
         body: T,
         headers: Map<String, String> = emptyMap()
     ): Result<R> {
-        // :M: ctx automatically sets Content-Type header for JSON
-        // :M: sec limit request body size to prevent DoS
-        // :M: perf consider request compression for large bodies
+        // ::: ctx automatically sets Content-Type header for JSON
+        // ::: sec limit request body size to prevent DoS
+        // ::: perf consider request compression for large bodies
         
         val fullUrl = resolveUrl(url)
         validateUrl(fullUrl)
         
         val jsonBody = try {
-            // :M: sec ensure request body doesn't contain sensitive data in logs
+            // ::: sec ensure request body doesn't contain sensitive data in logs
             val adapter = moshi.adapter(T::class.java)
             adapter.toJson(body)
         } catch (e: Exception) {
             return Result.failure(HttpException("Failed to serialize request body: ${e.message}", e))
         }
         
-        // :M: ctx check body size limits before creating request
+        // ::: ctx check body size limits before creating request
         if (jsonBody.length > MAX_REQUEST_BODY_SIZE) {
             return Result.failure(HttpException("Request body too large: ${jsonBody.length} bytes"))
         }
@@ -1087,15 +1087,15 @@ class HttpClient(
     }
     
     /**
-     * :M: perf retry logic with exponential backoff
-     * :M: ctx internal method for request execution
+     * ::: perf retry logic with exponential backoff
+     * ::: ctx internal method for request execution
      */
     private suspend fun <T> executeWithRetry(
         request: Request,
         transform: (Response) -> Result<T>
     ): Result<T> {
-        // :M: perf exponential backoff: 1s, 2s, 4s, 8s...
-        // :M: ctx only retry on transient failures (5xx, timeouts)
+        // ::: perf exponential backoff: 1s, 2s, 4s, 8s...
+        // ::: ctx only retry on transient failures (5xx, timeouts)
         
         repeat(retryCount) { attempt ->
             try {
@@ -1107,7 +1107,7 @@ class HttpClient(
                     return Result.failure(HttpException("HTTP ${response.code}: ${response.message}"))
                 }
                 
-                // :M: todo @agent make backoff configurable
+                // ::: todo @agent make backoff configurable
                 if (attempt < retryCount - 1) {
                     delay(1000L * (1 shl attempt)) // Exponential backoff
                 }
@@ -1126,21 +1126,21 @@ class HttpClient(
 }
 
 /**
- * :M: api Cache policy options for HTTP requests
- * :M: tldr Controls caching behavior for network requests
+ * ::: api Cache policy options for HTTP requests
+ * ::: tldr Controls caching behavior for network requests
  */
 enum class CachePolicy {
-    /** :M: ctx Use default HTTP caching headers */
+    /** ::: ctx Use default HTTP caching headers */
     Default,
-    /** :M: ctx Always fetch from network, ignore cache */
+    /** ::: ctx Always fetch from network, ignore cache */
     NetworkOnly,
-    /** :M: ctx Only return cached responses, no network */
+    /** ::: ctx Only return cached responses, no network */
     CacheOnly
 }
 
 /**
- * :M: api Custom exception for HTTP-related errors
- * :M: tldr Represents all HTTP operation failures
+ * ::: api Custom exception for HTTP-related errors
+ * ::: tldr Represents all HTTP operation failures
  */
 class HttpException(
     message: String,
@@ -1148,12 +1148,12 @@ class HttpException(
 ) : Exception(message, cause)
 
 /**
- * :M: ctx Sample usage for documentation
+ * ::: ctx Sample usage for documentation
  */
 private suspend fun sampleGetRequest() {
     val client = HttpClient(baseUrl = "https://api.example.com")
     
-    // :M: ctx demonstrates typical API call pattern
+    // ::: ctx demonstrates typical API call pattern
     val result = client.get<User>("/user/123")
     result.fold(
         onSuccess = { user -> 
@@ -1174,77 +1174,77 @@ Waymarks work consistently across all documentation systems with these search st
 
 ```bash
 # JavaScript/TypeScript (JSDoc, TSDoc)
-rg "\/\*\*[\s\S]*?:M:" --type js          # JSDoc blocks only
-rg ":M:" --type js                        # All anchors in JS/TS
+rg "\/\*\*[\s\S]*?:::" --type js          # JSDoc blocks only
+rg ":::" --type js                        # All anchors in JS/TS
 
 # Python (all docstring formats)
-rg '"""[\s\S]*?:M:' --type py             # Triple quote docstrings  
-rg "'''[\s\S]*?:M:" --type py             # Single quote docstrings
-rg ":M:" --type py                        # All anchors in Python
+rg '"""[\s\S]*?:::' --type py             # Triple quote docstrings  
+rg "'''[\s\S]*?:::" --type py             # Single quote docstrings
+rg ":::" --type py                        # All anchors in Python
 
 # Rust (rustdoc)
-rg "\/\/\/ :M:" --type rust               # Doc comments only
-rg ":M:" --type rust                      # All anchors in Rust
+rg "\/\/\/ :::" --type rust               # Doc comments only
+rg ":::" --type rust                      # All anchors in Rust
 
 # Go (godoc)
-rg "\/\/ :M:" --type go                   # Doc comments only
-rg ":M:" --type go                        # All anchors in Go
+rg "\/\/ :::" --type go                   # Doc comments only
+rg ":::" --type go                        # All anchors in Go
 
 # C/C++ (Doxygen)
-rg "\/\*\*[\s\S]*?:M:" --type cpp         # Doxygen blocks
-rg ":M:" --type cpp                       # All anchors in C/C++
+rg "\/\*\*[\s\S]*?:::" --type cpp         # Doxygen blocks
+rg ":::" --type cpp                       # All anchors in C/C++
 
 # Java (Javadoc)
-rg "\/\*\*[\s\S]*?:M:" --type java        # Javadoc blocks
-rg ":M:" --type java                      # All anchors in Java
+rg "\/\*\*[\s\S]*?:::" --type java        # Javadoc blocks
+rg ":::" --type java                      # All anchors in Java
 
 # C# (XML documentation)
-rg "\/\/\/ <summary>[\s\S]*?:M:" --type cs # XML doc comments
-rg ":M:" --type cs                        # All anchors in C#
+rg "\/\/\/ <summary>[\s\S]*?:::" --type cs # XML doc comments
+rg ":::" --type cs                        # All anchors in C#
 
 # Ruby (RDoc/YARD)
-rg "##[\s\S]*?:M:" --type ruby            # Block comments
-rg ":M:" --type ruby                      # All anchors in Ruby
+rg "##[\s\S]*?:::" --type ruby            # Block comments
+rg ":::" --type ruby                      # All anchors in Ruby
 
 # PHP (phpDocumentor)
-rg "\/\*\*[\s\S]*?:M:" --type php         # PHPDoc blocks
-rg ":M:" --type php                       # All anchors in PHP
+rg "\/\*\*[\s\S]*?:::" --type php         # PHPDoc blocks
+rg ":::" --type php                       # All anchors in PHP
 
 # Swift
-rg "\/\/\/ :M:" --type swift              # Swift doc comments
-rg ":M:" --type swift                     # All anchors in Swift
+rg "\/\/\/ :::" --type swift              # Swift doc comments
+rg ":::" --type swift                     # All anchors in Swift
 
 # Kotlin (KDoc)
-rg "\/\*\*[\s\S]*?:M:" --type kotlin      # KDoc blocks
-rg ":M:" --type kotlin                    # All anchors in Kotlin
+rg "\/\*\*[\s\S]*?:::" --type kotlin      # KDoc blocks
+rg ":::" --type kotlin                    # All anchors in Kotlin
 ```
 
 ### Cross-Language Searches
 
 ```bash
 # All documentation comments with anchors
-rg -U "(?:\/\*\*|\/\/\/|##|#|<!--|\"\"\")\s*[\s\S]*?:M:" --type-add 'docs:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h,hpp}' -t docs
+rg -U "(?:\/\*\*|\/\/\/|##|#|<!--|\"\"\")\s*[\s\S]*?:::" --type-add 'docs:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h,hpp}' -t docs
 
 # All API-related anchors across languages
-rg ":M:.*api" --type-add 'code:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h}' -t code
+rg ":::.*api" --type-add 'code:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h}' -t code
 
 # Security-related anchors in documentation
-rg -U "(?:\/\*\*|\/\/\/|##|#|<!--|\"\"\")\s*[\s\S]*?:M:.*sec" --type-add 'docs:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h}' -t docs
+rg -U "(?:\/\*\*|\/\/\/|##|#|<!--|\"\"\")\s*[\s\S]*?:::.*sec" --type-add 'docs:*.{js,ts,py,rs,go,java,swift,kt,rb,php,cs,cpp,h}' -t docs
 
 # Performance-related documentation anchors
-rg -B2 -A5 ":M:.*perf" --type-add 'all:*'
+rg -B2 -A5 ":::.*perf" --type-add 'all:*'
 ```
 
 ### Context-Aware Searches
 
 ```bash
 # Find anchors with surrounding documentation context
-rg -B5 -A10 ":M: api" --type-add 'code:*'    # 5 lines before, 10 after
-rg -C3 ":M: sec" --type js                    # 3 lines context for JS security
+rg -B5 -A10 "::: api" --type-add 'code:*'    # 5 lines before, 10 after
+rg -C3 "::: sec" --type js                    # 3 lines context for JS security
 
 # Documentation blocks containing specific anchor types
-rg -U "\/\*\*[\s\S]*?:M: todo[\s\S]*?\*\/" --type js    # JSDoc blocks with todos
-rg -U '"""[\s\S]*?:M: api[\s\S]*?"""' --type py         # Python docstrings with API markers
+rg -U "\/\*\*[\s\S]*?::: todo[\s\S]*?\*\/" --type js    # JSDoc blocks with todos
+rg -U '"""[\s\S]*?::: api[\s\S]*?"""' --type py         # Python docstrings with API markers
 ```
 
 ## Recommended Positioning
@@ -1253,10 +1253,10 @@ rg -U '"""[\s\S]*?:M: api[\s\S]*?"""' --type py         # Python docstrings with
 
 ```
 /* Any documentation format
- * :M: tldr Brief overview
- * :M: api Public interface marker  
- * :M: sec Security considerations
- * :M: todo @agent Tasks for AI
+ * ::: tldr Brief overview
+ * ::: api Public interface marker  
+ * ::: sec Security considerations
+ * ::: todo @agent Tasks for AI
  * 
  * Standard documentation content follows...
  * @param/@arg/@parameter documentation
@@ -1288,16 +1288,16 @@ This ensures:
 #!/bin/bash
 # Add API anchors to existing JSDoc functions
 
-# :M: temp enhancement script example
-# :M: todo @agent make this more robust for edge cases
+# ::: temp enhancement script example
+# ::: todo @agent make this more robust for edge cases
 
 find . -name "*.js" -type f | xargs sed -i '
   /\/\*\*/{
     # Look for function/class documentation
     /\* @description\|* @param\|* @returns/ {
       # Add API anchor if not already present
-      /\* :M:/ !{
-        s/\/\*\*/\/\*\*\n * :M: api/
+      /\* :::/ !{
+        s/\/\*\*/\/\*\*\n * ::: api/
       }
     }
   }
@@ -1309,7 +1309,7 @@ find . -name "*.js" -type f | xargs sed -i '
 ### Universal Guidelines
 
 1. **Waymarks come first** - Always place at beginning of documentation
-2. **One space after `:M:`** - Consistent formatting across languages
+2. **One space after `:::`** - Consistent formatting across languages
 3. **Language-appropriate comments** - Use `///` for Rust, `##` for Ruby, etc.
 4. **Separate concerns** - Use multiple lines for distinct topics
 5. **Test doc generation** - Ensure existing tools continue working
@@ -1349,12 +1349,12 @@ find . -name "*.js" -type f | xargs sed -i '
 
 ## Conclusion
 
-Waymarks provide **universal code navigation** that works seamlessly with all major documentation systems. The `:M:` pattern adds zero overhead to existing documentation workflows while enabling powerful search-based code discovery.
+Waymarks provide **universal code navigation** that works seamlessly with all major documentation systems. The `:::` pattern adds zero overhead to existing documentation workflows while enabling powerful search-based code discovery.
 
 **Key benefits:**
 
 - **Zero breaking changes** - Existing tools continue working
-- **Universal search** - `rg ":M:"` works across all languages
+- **Universal search** - `rg ":::"` works across all languages
 - **Progressive adoption** - Add anchors incrementally
 - **AI-friendly** - Enables intelligent code navigation
 - **Documentation-aware** - Respects existing doc conventions

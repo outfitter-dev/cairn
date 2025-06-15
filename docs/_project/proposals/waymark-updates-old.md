@@ -2,7 +2,7 @@
 
 ### Eliminate Dot Syntax (Except Literals)
 
-<!-- :M: todo #doc-migration -->
+<!-- ::: todo #doc-migration -->
 
 **Decision**: Remove dot syntax from structural/hierarchical markers, keeping dots only for literal values where they have established meaning.
 
@@ -37,7 +37,7 @@
 - Familiar function-call syntax for developers
 - Eliminates parser ambiguity between structural vs literal dots
 - Clear semantic distinction: colon for classification, parentheses for attachment
-- Consistent search patterns: `rg ":M:.*auth"` works reliably
+- Consistent search patterns: `rg ":::.*auth"` works reliably
 
 ### Require Colon Delimiter for All Markers
 
@@ -63,15 +63,15 @@
 
 ```javascript
 // Simple classifications
-// :M: priority:high, status:blocked
+// ::: priority:high, status:blocked
 
 // Single parameter attachment  
-// :M: blocked(issue:4), owner(@alice), due(2024-03-15)
+// ::: blocked(issue:4), owner(@alice), due(2024-03-15)
 
 // Multiple parameter attachment
-// :M: depends(auth-service,user-db,redis)
-// :M: tags(security,auth,api)
-// :M: owner(@alice,@bob)
+// ::: depends(auth-service,user-db,redis)
+// ::: tags(security,auth,api)
+// ::: owner(@alice,@bob)
 ```
 
 **Change notes:**
@@ -82,7 +82,7 @@
 
 ### Spacing and Quoting Rules
 
-<!-- :M: todo #doc-migration -->
+<!-- ::: todo #doc-migration -->
 
 **Decision**: Handle spaces and special characters consistently across all parameters.
 
@@ -105,7 +105,7 @@
 
 ### Universal Parameters and Todo Consolidation
 
-<!-- :M: todo #doc-migration -->
+<!-- ::: todo #doc-migration -->
 
 **Decision**: Recognize universal parameters that work across markers, and consolidate work-related markers into `todo`.
 
@@ -121,16 +121,16 @@
 
 ```javascript
 // Simple todos
-// :M: todo implement validation
-// :M: todo(priority:high) fix login bug
+// ::: todo implement validation
+// ::: todo(priority:high) fix login bug
 
 // Todo with work-specific parameters
-// :M: todo(blocked:[4,7],status:in-progress) waiting for API fixes
-// :M: todo(blocking:[12,15],owners:[@alice,@bob]) auth redesign
+// ::: todo(blocked:[4,7],status:in-progress) waiting for API fixes
+// ::: todo(blocking:[12,15],owners:[@alice,@bob]) auth redesign
 
 // Universal parameters work with any marker
-// :M: sec(owner:@bob,priority:critical) validate user inputs
-// :M: ctx(parent:user-stories) explains authentication flow
+// ::: sec(owner:@bob,priority:critical) validate user inputs
+// ::: ctx(parent:user-stories) explains authentication flow
 ```
 
 **Bracket usage guidelines:**
@@ -149,7 +149,7 @@
 
 ### Core Marker Groups System
 
-<!-- :M: todo #doc-migration -->
+<!-- ::: todo #doc-migration -->
 
 **Decision**: Organize markers into 6 semantic groups for flexible usage and searchability.
 
@@ -219,14 +219,14 @@
 
 ```javascript
 // Standalone work markers (ripgrep-friendly)
-// :M: bug authentication fails after timeout
-// :M: review check error handling in payment flow  
-// :M: issue(123) implement OAuth integration
+// ::: bug authentication fails after timeout
+// ::: review check error handling in payment flow  
+// ::: issue(123) implement OAuth integration
 
 // Todo container patterns (explicit work organization)
-// :M: todo(bug:auth-timeout,priority:high) fix authentication timeout
-// :M: todo(review:payment-flow,assign:@alice) check error handling
-// :M: todo(issue:123,milestone:v2.1) implement OAuth integration
+// ::: todo(bug:auth-timeout,priority:high) fix authentication timeout
+// ::: todo(review:payment-flow,assign:@alice) check error handling
+// ::: todo(issue:123,milestone:v2.1) implement OAuth integration
 
 // Tool shortcuts (grepa tools can expand these automatically)
 // issue(123) → todo(issue:123)
@@ -235,7 +235,7 @@
 
 **Benefits:**
 
-- **Flexible searching**: `rg ":M:.*notice"` finds all warnings, or `rg ":M:.*warn"` for specific types
+- **Flexible searching**: `rg ":::.*notice"` finds all warnings, or `rg ":M:.*warn"` for specific types
 - **Semantic clarity**: Write precise markers (`freeze`, `critical`) rather than generic ones
 - **Dual usage**: Work markers can be standalone or `todo` parameters for different search needs
 - **Tool compatibility**: Full forms work with ripgrep; shortcuts work with grepa tools
@@ -244,10 +244,10 @@
 
 ## Anchor Density Guidelines
 
-<!-- :M: guide subjective recommendations for appropriate anchor usage -->
+<!-- ::: guide subjective recommendations for appropriate anchor usage -->
 ### Strategic Anchor Placement
 
-<!-- :M: todo #doc-migration -->
+<!-- ::: todo #doc-migration -->
 
 **Core Principle**: Anchors exist to help AI agents quickly pinpoint important locations. Too few reduce discoverability; too many create noise.
 
@@ -271,7 +271,7 @@
 4. **Todo placement**: No specific density rules due to their ad-hoc nature
    - Place todos wherever work is needed
    - **Rule**: `todo` must be the first marker if multiple markers in one anchor
-   - Example: `// :M: todo,context,priority:high fix auth logic and document assumptions`
+   - Example: `// ::: todo,context,priority:high fix auth logic and document assumptions`
 
 **Rough Density Target**: 1 anchor per 50-100 lines of code, adjusted for:
 
@@ -287,18 +287,18 @@
 **Example Patterns:**
 
 ```javascript
-// :M: about user authentication service with OAuth and 2FA support
+// ::: about user authentication service with OAuth and 2FA support
 class AuthService {
   
-  // :M: context assumes Redis is available for session storage
-  // :M: security critical path - all validation happens here
+  // ::: context assumes Redis is available for session storage
+  // ::: security critical path - all validation happens here
   async validateUser(token) {
-    // :M: todo,flag verify token expiration logic is timezone-safe
+    // ::: todo,flag verify token expiration logic is timezone-safe
     // implementation...
   }
   
-  // :M: temp placeholder implementation until auth service v2.0
-  // :M: stub basic validation - replace with proper JWT validation
+  // ::: temp placeholder implementation until auth service v2.0
+  // ::: stub basic validation - replace with proper JWT validation
   validateLegacySession(sessionId) {
     return sessionId?.length > 0;
   }
@@ -309,16 +309,16 @@ class AuthService {
 
 ```javascript
 // Anti-pattern: Over-anchoring simple operations
-// :M: variable declare user variable  
+// ::: variable declare user variable  
 let user = getCurrentUser();
-// :M: check validate user exists
+// ::: check validate user exists
 if (!user) return;
-// :M: variable get user preferences
+// ::: variable get user preferences
 let prefs = user.preferences;
 
 // Better: Anchor the logical unit
-// :M: context assumes user is authenticated before this function
-// :M: explain loads user preferences with fallback defaults
+// ::: context assumes user is authenticated before this function
+// ::: explain loads user preferences with fallback defaults
 function setupUserEnvironment() {
   let user = getCurrentUser();
   if (!user) return;
@@ -329,10 +329,10 @@ function setupUserEnvironment() {
 
 ## Tag System and Semantic Navigation
 
-<!-- :M: spec hashtag system for cross-cutting conceptual relationships -->
+<!-- ::: spec hashtag system for cross-cutting conceptual relationships -->
 ### Hashtags for Conceptual Linking
 
-<!-- :M: todo #doc-migration -->
+<!-- ::: todo #doc-migration -->
 
 Waymarks support hashtags in prose for cross-cutting conceptual relationships that complement the structural marker system.
 
@@ -346,13 +346,13 @@ Waymarks support hashtags in prose for cross-cutting conceptual relationships th
 **Examples:**
 
 ```javascript
-// :M: todo implement OAuth for #mobile-app
-// :M: context refactoring for #v2.0-release  
-// :M: security audit required #compliance #pci-dss
+// ::: todo implement OAuth for #mobile-app
+// ::: context refactoring for #v2.0-release  
+// ::: security audit required #compliance #pci-dss
 
 // Hierarchical organization
-// :M: todo mobile OAuth flow #auth/oauth/mobile
-// :M: context legacy support #auth/session/v1
+// ::: todo mobile OAuth flow #auth/oauth/mobile
+// ::: context legacy support #auth/session/v1
 ```
 
 **Basic Usage:**
@@ -364,7 +364,7 @@ rg "#auth/oauth"           # OAuth authentication items
 rg "#v2.0-release"         # Release-related work
 
 # Combined searches
-rg ":M:.*todo.*#mobile"    # Mobile todos
+rg ":::.*todo.*#mobile"    # Mobile todos
 rg "#compliance.*#audit"   # Compliance audits
 ```
 
@@ -372,7 +372,7 @@ rg "#compliance.*#audit"   # Compliance audits
 
 ### Universal Parameter Groups
 
-<!-- :M: todo #doc-migration -->
+<!-- ::: todo #doc-migration -->
 
 **Decision**: Organize parameters into 6 semantic groups that work across all marker types.
 
@@ -424,35 +424,35 @@ rg "#compliance.*#audit"   # Compliance audits
 
 ```javascript
 // Universal parameters work with any marker
-// :M: todo(assign:@alice,priority:high,blocked:[4,7]) implement auth
-// :M: security(owner:@bob,severity:critical,url:compliance-docs) validate inputs
-// :M: context(complexity:high,since:1.2.0,path:algorithms/auth.js) recursive algorithm
+// ::: todo(assign:@alice,priority:high,blocked:[4,7]) implement auth
+// ::: security(owner:@bob,severity:critical,url:compliance-docs) validate inputs
+// ::: context(complexity:high,since:1.2.0,path:algorithms/auth.js) recursive algorithm
 
 // Specific reference types for clear context
-// :M: api(endpoint:/users,service:user-api,path:routes/users.js) user management
-// :M: deploy(depends:[auth-service],env:prod,repo:infrastructure) production setup
-// :M: bug(issue:123,commit:a1b2c3d,related:[124,125]) fix authentication flow
+// ::: api(endpoint:/users,service:user-api,path:routes/users.js) user management
+// ::: deploy(depends:[auth-service],env:prod,repo:infrastructure) production setup
+// ::: bug(issue:123,commit:a1b2c3d,related:[124,125]) fix authentication flow
 
 // @mentions are equivalent to assign parameter
-// :M: todo @alice implement auth
-// :M: review @team-leads check performance impact
+// ::: todo @alice implement auth
+// ::: review @team-leads check performance impact
 ```
 
 **Search Benefits:**
 
 ```bash
 # Group-level searches
-rg ":M:.*mention"        # All assignments/ownership
-rg ":M:.*relation"       # All connections/references
-rg ":M:.*workflow"       # All work coordination
-rg ":M:.*priority"       # All importance/urgency markers
+rg ":::.*mention"        # All assignments/ownership
+rg ":::.*relation"       # All connections/references
+rg ":::.*workflow"       # All work coordination
+rg ":::.*priority"       # All importance/urgency markers
 
 # Specific parameter searches  
-rg ":M:.*blocked"        # Just blocked items
-rg ":M:.*severity:critical"  # Critical severity items
-rg ":M:.*path:"          # All file references
-rg ":M:.*service:"       # All service references
-rg ":M:.*endpoint:"      # All API endpoint references
+rg ":::.*blocked"        # Just blocked items
+rg ":::.*severity:critical"  # Critical severity items
+rg ":::.*path:"          # All file references
+rg ":::.*service:"       # All service references
+rg ":::.*endpoint:"      # All API endpoint references
 ```
 
 **Benefits:**

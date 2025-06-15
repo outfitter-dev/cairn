@@ -1,8 +1,8 @@
 # Payload Types
-<!-- :M: tldr Payload types: bare tokens, parameters, and arrays -->
-<!-- :M: syntax Detailed payload type specifications and examples -->
+<!-- ::: tldr Payload types: bare tokens, parameters, and arrays -->
+<!-- ::: syntax Detailed payload type specifications and examples -->
 
-Payloads define what comes after the `:M:` identifier. Waymark supports three payload types.
+Payloads define what comes after the `:::` identifier. Waymark supports three payload types.
 
 ## Bare Tokens
 
@@ -15,11 +15,11 @@ Simple string identifiers. Most common and readable.
 
 ### Examples
 ```javascript
-// :M: todo
-// :M: v1.2.3
-// :M: high-priority
-// :M: @alice
-// :M: api_endpoint
+// ::: todo
+// ::: v1.2.3
+// ::: high-priority
+// ::: @alice
+// ::: api_endpoint
 
 ## Parameterised Tokens
 
@@ -31,9 +31,9 @@ Sometimes a token needs a specific *parameter* (e.g., an issue number or RFC).  
 
 ### Examples
 ```javascript
-// :M: gh(issue#4)     // links to GitHub issue 4
-// :M: rfc(9110)       // references RFC 9110
-// :M: feature(flag-x) // feature flag
+// ::: gh(issue#4)     // links to GitHub issue 4
+// ::: rfc(9110)       // references RFC 9110
+// ::: feature(flag-x) // feature flag
 ```
 
 ### When to use
@@ -53,23 +53,23 @@ Used for structured parameters and arguments associated with markers.
 
 ### Examples
 ```javascript
-// :M: blocked(issue:4)           // blocked by issue
-// :M: depends(auth-service)      // simple dependency
-// :M: config(timeout:30,retry:3) // multiple params
-// :M: todo(assign:@alice,priority:high) // task params
+// ::: blocked(issue:4)           // blocked by issue
+// ::: depends(auth-service)      // simple dependency
+// ::: config(timeout:30,retry:3) // multiple params
+// ::: todo(assign:@alice,priority:high) // task params
 ```
 
 ### Common Parameter Patterns
 ```javascript
 // Work item parameters
-// :M: todo(bug:auth-timeout)      // bug specification
-// :M: todo(epic:user-onboarding)  // epic grouping
-// :M: todo(sprint:next)           // sprint planning
+// ::: todo(bug:auth-timeout)      // bug specification
+// ::: todo(epic:user-onboarding)  // epic grouping
+// ::: todo(sprint:next)           // sprint planning
 
 // Relationship parameters  
-// :M: blocked(issue:AUTH-123)     // external blocker
-// :M: depends(service:redis)      // service dependency
-// :M: emits(event:user-created)   // event publishing
+// ::: blocked(issue:AUTH-123)     // external blocker
+// ::: depends(service:redis)      // service dependency
+// ::: emits(event:user-created)   // event publishing
 ```
 
 ## Brackets `[]` - Arrays
@@ -83,10 +83,10 @@ Used for multiple values. Optional for single values.
 
 ### Examples
 ```javascript
-// :M: blocked:[4,7,12]           // multiple blockers
-// :M: tags:[auth,api,security]   // multiple tags
-// :M: owner:[@alice,@bob]        // multiple owners
-// :M: files:['auth.js','api.js'] // quoted paths
+// ::: blocked:[4,7,12]           // multiple blockers
+// ::: tags:[auth,api,security]   // multiple tags
+// ::: owner:[@alice,@bob]        // multiple owners
+// ::: files:['auth.js','api.js'] // quoted paths
 ```
 
 ## Universal Parameter Groups
@@ -105,14 +105,14 @@ Parameters are organized into six semantic families that work with any marker:
 ### Mention Parameters
 ```javascript
 // Direct mentions
-// :M: @alice                 // standalone mention
-// :M: owner:@alice           // ownership mention
-// :M: assign:@bob            // assignment
-// :M: team:@security         // team mention
+// ::: @alice                 // standalone mention
+// ::: owner:@alice           // ownership mention
+// ::: assign:@bob            // assignment
+// ::: team:@security         // team mention
 
 // Multiple mentions
-// :M: reviewers:[@alice,@bob]
-// :M: cc:[@alice,@security-team]
+// ::: reviewers:[@alice,@bob]
+// ::: cc:[@alice,@security-team]
 ```
 
 ## Quoting Rules
@@ -121,21 +121,21 @@ Quotes are used for strings with special characters:
 
 ### Simple Values (No Quotes)
 ```javascript
-// :M: priority:high
-// :M: version(2.0.1)
-// :M: owner:@alice
+// ::: priority:high
+// ::: version(2.0.1)
+// ::: owner:@alice
 ```
 
 ### Quoted Values (Required for Special Characters)  
 ```javascript
 // Single quotes for literals
-// :M: match('user-123')              // string match
-// :M: path('src/data migration.sql') // spaces
-// :M: message('Can\'t connect')      // escaped quote
+// ::: match('user-123')              // string match
+// ::: path('src/data migration.sql') // spaces
+// ::: message('Can\'t connect')      // escaped quote
 
 // Arrays with quoted elements
-// :M: files:['auth.js','lib/utils.js']
-// :M: matches:['user-123','admin-456']
+// ::: files:['auth.js','lib/utils.js']
+// ::: matches:['user-123','admin-456']
 ```
 
 ## Marker Combinations
@@ -144,13 +144,13 @@ Multiple markers are separated by commas:
 
 ```javascript
 // Simple combination
-// :M: todo,security
+// ::: todo,security
 
 // With parameters
-// :M: todo(priority:high),security(severity:critical)
+// ::: todo(priority:high),security(severity:critical)
 
 // Mixed styles
-// :M: todo,owner:@alice,priority:high
+// ::: todo,owner:@alice,priority:high
 ```
 
 **Rule**: If `todo` appears, it must be the first marker.

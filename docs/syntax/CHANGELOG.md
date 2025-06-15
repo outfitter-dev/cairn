@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **BREAKING**: Changed canonical sigil from `:M:` to `:::`
+- **BREAKING**: Changed canonical sigil from `:::` to `:::`
 - **BREAKING**: Renamed "prefix" to "marker" throughout
 - Clarified signal ordering (position signals before intensity)
 - Updated grammar to separate position and intensity signals
@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial waymark syntax specification
-- Core `:M:` identifier with mandatory single space (later changed to `:::`)
+- Core `:::` identifier with mandatory single space (later changed to `:::`)
 - Three delimiter types with semantic purposes:
   - Colon (`:`) for classifications
   - Parentheses `()` for parameters

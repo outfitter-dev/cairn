@@ -1,6 +1,6 @@
 # Waymark Syntax
-<!-- :M: tldr Technical specification for waymark syntax -->
-<!-- :M: syntax Core syntax documentation and rules -->
+<!-- ::: tldr Technical specification for waymark syntax -->
+<!-- ::: syntax Core syntax documentation and rules -->
 
 The technical specification for waymark syntax - a lightweight marking system for code navigation.
 
@@ -8,7 +8,7 @@ The technical specification for waymark syntax - a lightweight marking system fo
 
 Waymark syntax is the **structure** for writing searchable code markers. It defines:
 
-- How to write the `:M:` marker with mandatory single space
+- How to write the `:::` marker with mandatory single space
 - Delimiter semantics (`:` for classifications, `()` for parameters, `[]` for arrays)
 - Context organization into six semantic groups
 
@@ -17,12 +17,12 @@ Think of it like learning to write musical notes - the syntax is simple and cons
 ## Core Syntax
 
 ```text
-<comment-leader> :M: <space> <context-list> <optional prose>
+<comment-leader> ::: <space> <context-list> <optional prose>
 ```
 
 The syntax consists of:
 
-1. **Identifier**: `:M:`
+1. **Identifier**: `:::`
 2. **Space**: Exactly one ASCII space (mandatory)
 3. **Contexts**: One or more contexts with optional parameters
 4. **Prose**: Optional human-readable description
@@ -30,12 +30,12 @@ The syntax consists of:
 ## Quick Examples
 
 ```javascript
-// :M: todo                      // Simple context
-// :M: sec,perf                  // Multiple contexts
-// :M: todo(priority:high)       // Context with parameter
-// :M: owner:@alice              // Classification with mention
-// :M: blocked:[4,7]             // Array of values
-// :M: todo: implement caching   // With prose description
+// ::: todo                      // Simple context
+// ::: sec,perf                  // Multiple contexts
+// ::: todo(priority:high)       // Context with parameter
+// ::: owner:@alice              // Classification with mention
+// ::: blocked:[4,7]             // Array of values
+// ::: todo: implement caching   // With prose description
 ```
 
 ## Learn More

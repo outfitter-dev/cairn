@@ -1,5 +1,5 @@
 <!-- :ga:tldr future conditional value system for environment-aware markers -->
-<!-- :M: keep: brainstorming document about conditional scopes for waymarks -->
+<!-- ::: keep: brainstorming document about conditional scopes for waymarks -->
 # Conditional Scope System
 
 <!-- :ga:meta speculative feature design for context-aware configuration -->

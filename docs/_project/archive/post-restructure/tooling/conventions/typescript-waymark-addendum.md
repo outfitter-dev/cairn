@@ -16,7 +16,7 @@ export type WaymarkErrorCode =
 
   // Parsing errors
   | 'parse.invalidContext'   // Invalid context syntax
-  | 'parse.missingSpace'     // Missing space after :M:
+  | 'parse.missingSpace'     // Missing space after :::
   | 'parse.emptyContexts'    // No contexts provided
 
   // Search errors
@@ -39,7 +39,7 @@ export type WaymarkErrorCode =
 ```typescript
 // Check if a line contains a waymark
 export function hasWaymark(line: string): boolean {
-  return line.includes(':M: ');
+  return line.includes('::: ');
 }
 
 // Type guard for valid context

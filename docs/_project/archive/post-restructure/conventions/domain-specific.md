@@ -1,251 +1,251 @@
 # Domain-Specific Patterns
-<!-- :M: tldr Specialized patterns for specific technical domains -->
-<!-- :M: convention Domain-specific waymarks for security, performance, and more -->
+<!-- ::: tldr Specialized patterns for specific technical domains -->
+<!-- ::: convention Domain-specific waymarks for security, performance, and more -->
 
 Specialized waymarks for specific technical domains and concerns.
 
 ## Security
 
-### `:M: sec`
+### `::: sec`
 
 **Purpose**: Security-critical code requiring review
 
 ```javascript
-// :M: sec validate all inputs before SQL query
-// :M: sec, p0 authentication bypass vulnerability
+// ::: sec validate all inputs before SQL query
+// ::: sec, p0 authentication bypass vulnerability
 ```
 
-### `:M: vuln`
+### `::: vuln`
 
 **Purpose**: Known vulnerability
 
 ```python
-# :M: vuln CVE-2024-1234 needs patch
+# ::: vuln CVE-2024-1234 needs patch
 ```
 
-### `:M: crypto`
+### `::: crypto`
 
 **Purpose**: Cryptographic operations
 
 ```go
-// :M: crypto constant-time comparison required
+// ::: crypto constant-time comparison required
 ```
 
-### `:M: auth`
+### `::: auth`
 
 **Purpose**: Authentication/authorization
 
 ```java
-// :M: auth check permissions before access
+// ::: auth check permissions before access
 ```
 
 ## Performance
 
-### `:M: perf`
+### `::: perf`
 
 **Purpose**: Performance-critical sections
 
 ```rust
-// :M: perf hot path - optimize carefully
-// :M: perf, p1 N+1 query problem
+// ::: perf hot path - optimize carefully
+// ::: perf, p1 N+1 query problem
 ```
 
-### `:M: bench`
+### `::: bench`
 
 **Purpose**: Needs benchmarking
 
 ```go
-// :M: bench measure before optimizing
+// ::: bench measure before optimizing
 ```
 
-### `:M: cache`
+### `::: cache`
 
 **Purpose**: Caching considerations
 
 ```python
-# :M: cache consider memoization
-# :M: cache invalidation needed
+# ::: cache consider memoization
+# ::: cache invalidation needed
 ```
 
-### `:M: async`
+### `::: async`
 
 **Purpose**: Asynchronous operations
 
 ```javascript
-// :M: async avoid blocking main thread
+// ::: async avoid blocking main thread
 ```
 
 ## Accessibility
 
-### `:M: a11y`
+### `::: a11y`
 
 **Purpose**: Accessibility requirements
 
 ```html
-<!-- :M: a11y add ARIA labels -->
-<!-- :M: a11y, wcag ensure AA compliance -->
+<!-- ::: a11y add ARIA labels -->
+<!-- ::: a11y, wcag ensure AA compliance -->
 ```
 
-### `:M: i18n`
+### `::: i18n`
 
 **Purpose**: Internationalization
 
 ```javascript
-// :M: i18n extract hardcoded strings
+// ::: i18n extract hardcoded strings
 ```
 
-### `:M: rtl`
+### `::: rtl`
 
 **Purpose**: Right-to-left support
 
 ```css
-/* :M: rtl needs directional styles */
+/* ::: rtl needs directional styles */
 ```
 
 ## Data & Storage
 
-### `:M: migration`
+### `::: migration`
 
 **Purpose**: Database migrations
 
 ```sql
--- :M: migration breaking change in v2
--- :M: migration, rollback plan needed
+-- ::: migration breaking change in v2
+-- ::: migration, rollback plan needed
 ```
 
-### `:M: index`
+### `::: index`
 
 **Purpose**: Database indexing
 
 ```sql
--- :M: index add covering index for query
+-- ::: index add covering index for query
 ```
 
-### `:M: schema`
+### `::: schema`
 
 **Purpose**: Schema changes
 
 ```graphql
-# :M: schema breaking change
-# :M: schema, deprecated remove in v3
+# ::: schema breaking change
+# ::: schema, deprecated remove in v3
 ```
 
 ## Architecture
 
-### `:M: pattern`
+### `::: pattern`
 
 **Purpose**: Design pattern implementation
 
 ```java
-// :M: pattern singleton - thread safety
-// :M: pattern, factory consider dependency injection
+// ::: pattern singleton - thread safety
+// ::: pattern, factory consider dependency injection
 ```
 
-### `:M: coupling`
+### `::: coupling`
 
 **Purpose**: Coupling concerns
 
 ```python
-# :M: coupling high - needs refactoring
-# :M: coupling, tech database-specific
+# ::: coupling high - needs refactoring
+# ::: coupling, tech database-specific
 ```
 
-### `:M: debt`
+### `::: debt`
 
 **Purpose**: Technical debt
 
 ```javascript
-// :M: debt, refactor extract to service
-// :M: debt, p2 legacy code needs update
+// ::: debt, refactor extract to service
+// ::: debt, p2 legacy code needs update
 ```
 
 ## Platform Specific
 
-### `:M: browser`
+### `::: browser`
 
 **Purpose**: Browser compatibility
 
 ```javascript
-// :M: browser, ie11 needs polyfill
-// :M: browser, safari webkit prefix required
+// ::: browser, ie11 needs polyfill
+// ::: browser, safari webkit prefix required
 ```
 
-### `:M: mobile`
+### `::: mobile`
 
 **Purpose**: Mobile considerations
 
 ```swift
-// :M: mobile, memory watch for leaks
-// :M: mobile, battery optimize polling
+// ::: mobile, memory watch for leaks
+// ::: mobile, battery optimize polling
 ```
 
-### `:M: platform`
+### `::: platform`
 
 **Purpose**: Platform-specific code
 
 ```python
-# :M: platform, windows path handling
-# :M: platform, linux permissions check
+# ::: platform, windows path handling
+# ::: platform, linux permissions check
 ```
 
 ## Testing & Quality
 
-### `:M: test`
+### `::: test`
 
 **Purpose**: Testing requirements
 
 ```javascript
-// :M: test, unit add edge cases
-// :M: test, integration mock external service
+// ::: test, unit add edge cases
+// ::: test, integration mock external service
 ```
 
-### `:M: coverage`
+### `::: coverage`
 
 **Purpose**: Code coverage gaps
 
 ```python
-# :M: coverage error path not tested
+# ::: coverage error path not tested
 ```
 
-### `:M: flaky`
+### `::: flaky`
 
 **Purpose**: Unreliable tests
 
 ```go
-// :M: flaky timing-dependent test
+// ::: flaky timing-dependent test
 ```
 
 ## API & Contracts
 
-### `:M: breaking`
+### `::: breaking`
 
 **Purpose**: Breaking changes
 
 ```typescript
-// :M: breaking, v3 parameter order changed
+// ::: breaking, v3 parameter order changed
 ```
 
-### `:M: deprecated`
+### `::: deprecated`
 
 **Purpose**: Deprecation notices
 
 ```java
-// :M: deprecated use newMethod() instead
-// :M: deprecated, remove:v4.0
+// ::: deprecated use newMethod() instead
+// ::: deprecated, remove:v4.0
 ```
 
-### `:M: experimental`
+### `::: experimental`
 
 **Purpose**: Unstable features
 
 ```rust
-// :M: experimental API may change
+// ::: experimental API may change
 ```
 
 ## Best Practices
 
-1. **Combine with Priority**: `:M: sec, p0` for critical security
+1. **Combine with Priority**: `::: sec, p0` for critical security
 2. **Add Context**: Include specific concern after waymark
-3. **Version Breaking Changes**: `:M: breaking, v2`
-4. **Link Standards**: `:M: a11y, wcag-2.1`
-5. **Specify Platforms**: `:M: browser, chrome, firefox`
+3. **Version Breaking Changes**: `::: breaking, v2`
+4. **Link Standards**: `::: a11y, wcag-2.1`
+5. **Specify Platforms**: `::: browser, chrome, firefox`

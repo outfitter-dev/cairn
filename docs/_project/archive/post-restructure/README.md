@@ -1,5 +1,5 @@
 # Post-Restructure Archive
-<!-- :M: tldr Documentation archived during 2025-01-30 restructure -->
+<!-- ::: tldr Documentation archived during 2025-01-30 restructure -->
 
 This directory contains documentation files archived during the documentation simplification effort on 2025-01-30.
 

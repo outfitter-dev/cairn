@@ -1,5 +1,5 @@
 # Plugin Architecture as Configuration Bundles
-<!-- :M: keep: brainstorming document about plugin architecture -->
+<!-- ::: keep: brainstorming document about plugin architecture -->
 <!-- :ga:tldr future plugin system design for workflow standardization -->
 <!-- :ga:meta speculative architecture document moved from implementation plan -->
 

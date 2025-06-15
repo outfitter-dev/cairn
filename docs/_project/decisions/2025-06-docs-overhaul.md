@@ -1,9 +1,9 @@
-<!-- tldr ::: Comprehensive handoff for major documentation overhaul from :M: to ::: syntax -->
+<!-- tldr ::: Comprehensive handoff for major documentation overhaul from ::: to ::: syntax -->
 # Documentation Overhaul Handoff
 
 ## Executive Summary
 
-Successfully completed a major overhaul of waymark documentation, transitioning from the old `:M:` syntax to the new `:::` sigil system as specified in `syntax-revision.md`. This represents the largest documentation update in the project's history.
+Successfully completed a major overhaul of waymark documentation, transitioning from the old `:::` syntax to the new `:::` sigil system as specified in `syntax-revision.md`. This represents the largest documentation update in the project's history.
 
 ## Scope of Changes
 
@@ -12,7 +12,7 @@ Successfully completed a major overhaul of waymark documentation, transitioning 
 #### Files Completely Rewritten
 
 1. **README.md** → Complete rewrite with `:::` syntax
-   - Updated all examples from `:M:` to `:::`
+   - Updated all examples from `:::` to `:::`
    - Replaced "context" terminology with "prefix" terminology  
    - Added support for properties, hashtags, @mentions
    - Updated search patterns and quick start guide
@@ -42,7 +42,7 @@ Successfully completed a major overhaul of waymark documentation, transitioning 
    - Advanced search commands
 
 6. **docs/syntax.md** → Complete syntax specification
-   - Full transition from `:M:` to `:::` 
+   - Full transition from `:::` to `:::` 
    - New grammar specification with prefixes
    - Properties, hashtags, @mentions documentation
    - Search patterns and examples updated
@@ -60,7 +60,7 @@ Successfully completed a major overhaul of waymark documentation, transitioning 
 
 9. **docs/about/priors.md** → Historical reference updated
    - Updated to reflect waymark evolution
-   - Changed from `:M:` to `:::` terminology
+   - Changed from `:::` to `:::` terminology
    - Modern enhancements for AI-native development
 
 10. **docs/project/LANGUAGE.md** → Writing guidelines updated
@@ -82,9 +82,9 @@ All original files archived in `/docs/project/rewrite/` with `.old` extensions:
 
 ### Key Terminology Changes
 
-| Old (`:M:`) | New (`:::`) | Description |
+| Old (`:::`) | New (`:::`) | Description |
 |-------------|-------------|-------------|
-| `:M:` identifier | `:::` sigil | Core waymark marker |
+| `:::` identifier | `:::` sigil | Core waymark marker |
 | Contexts | Prefixes | Classification system |
 | Context groups | Prefix categories | Semantic organization |
 | Magic comments | Traditional comments | Backward compatibility |
@@ -117,10 +117,10 @@ All original files archived in `/docs/project/rewrite/` with `.old` extensions:
 
 | Old Pattern | New Pattern | Description |
 |-------------|-------------|-------------|
-| `rg ":M:"` | `rg ":::"` | Find all waymarks |
-| `rg ":M: todo"` | `rg "todo :::"` | Find todos |
-| `rg ":M: sec"` | `rg "warn :::" -o rg "#security"` | Security concerns |
-| `rg ":M:.*@agent"` | `rg ":::.*@alice"` | Person assignments |
+| `rg ":::"` | `rg ":::"` | Find all waymarks |
+| `rg "::: todo"` | `rg "todo :::"` | Find todos |
+| `rg "::: sec"` | `rg "warn :::" -o rg "#security"` | Security concerns |
+| `rg ":::.*@agent"` | `rg ":::.*@alice"` | Person assignments |
 
 ## Remaining Work
 
@@ -151,7 +151,7 @@ All original files archived in `/docs/project/rewrite/` with `.old` extensions:
 #### ✅ Completed Verification
 
 - [x] All core examples use `:::` syntax
-- [x] No references to `:M:` in main documentation
+- [x] No references to `:::` in main documentation
 - [x] Search patterns updated throughout
 - [x] Terminology consistent (prefixes, not contexts)
 - [x] HTML comment examples for markdown files
@@ -171,8 +171,8 @@ All original files archived in `/docs/project/rewrite/` with `.old` extensions:
 
 1. **Syntax Verification**
    ```bash
-   # Ensure no old :M: syntax remains
-   rg ":M:" docs/ --type md
+   # Ensure no old ::: syntax remains
+   rg ":::" docs/ --type md
    
    # Check for inconsistent terminology
    rg "context.*waymark" docs/ --type md
@@ -196,7 +196,7 @@ All original files archived in `/docs/project/rewrite/` with `.old` extensions:
 
 This is a **major breaking change** for any existing waymark users:
 
-1. **Search Pattern Changes** - All existing `rg ":M:"` patterns need updating
+1. **Search Pattern Changes** - All existing `rg ":::"` patterns need updating
 2. **Syntax Changes** - All existing waymarks need migration
 3. **Tooling Changes** - Any parsers need updating for `:::` sigil
 
@@ -212,7 +212,7 @@ This is a **major breaking change** for any existing waymark users:
    - Phase 3: Pure waymarks (optional)
 
 3. **Tool Support** - CLI will support migration commands
-   - `waymark migrate --from :M: --to :::`
+   - `waymark migrate --from ::: --to :::`
    - Dry-run and interactive modes
 
 ## Success Metrics

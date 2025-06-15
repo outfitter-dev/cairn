@@ -1,6 +1,6 @@
 # AI Patterns
-<!-- :M: tldr Conventions for AI agent delegation and interaction -->
-<!-- :M: convention Patterns specifically designed for AI agent workflows -->
+<!-- ::: tldr Conventions for AI agent delegation and interaction -->
+<!-- ::: convention Patterns specifically designed for AI agent workflows -->
 
 Conventions for AI agent delegation and interaction.
 
@@ -9,132 +9,132 @@ Conventions for AI agent delegation and interaction.
 ### Direct Agent Markers
 **Purpose**: Delegate to specific AI assistants
 ```javascript
-// :M: @cursor implement unit tests
-// :M: @copilot complete this function
-// :M: @claude explain this algorithm
-// :M: @chatgpt optimize for readability
+// ::: @cursor implement unit tests
+// ::: @copilot complete this function
+// ::: @claude explain this algorithm
+// ::: @chatgpt optimize for readability
 ```
 
 ### Generic Agent Marker
 **Purpose**: Any AI agent can help
 ```javascript
-// :M: @agent generate documentation
-// :M: @ai add error handling
+// ::: @agent generate documentation
+// ::: @ai add error handling
 ```
 
 ## Task Delegation
 
-### `:M: generate`
+### `::: generate`
 **Purpose**: Generate new code
 ```python
-# :M: generate, @cursor test cases for this class
-# :M: generate rest endpoint
+# ::: generate, @cursor test cases for this class
+# ::: generate rest endpoint
 ```
 
-### `:M: complete`
+### `::: complete`
 **Purpose**: Complete partial implementation
 ```javascript
-// :M: complete TODO: implement sorting
-// :M: complete, @copilot fill in edge cases
+// ::: complete TODO: implement sorting
+// ::: complete, @copilot fill in edge cases
 ```
 
-### `:M: refactor`
+### `::: refactor`
 **Purpose**: Improve existing code
 ```go
-// :M: refactor, @claude make more idiomatic
-// :M: refactor extract common logic
+// ::: refactor, @claude make more idiomatic
+// ::: refactor extract common logic
 ```
 
-### `:M: explain`
+### `::: explain`
 **Purpose**: Add explanations or documentation
 ```rust
-// :M: explain, @agent how this macro works
-// :M: explain add inline comments
+// ::: explain, @agent how this macro works
+// ::: explain add inline comments
 ```
 
 ## Review Requests
 
-### `:M: review, @ai`
+### `::: review, @ai`
 **Purpose**: AI code review
 ```javascript
-// :M: review, @claude security implications
-// :M: review, @ai potential bugs
+// ::: review, @claude security implications
+// ::: review, @ai potential bugs
 ```
 
-### `:M: audit`
+### `::: audit`
 **Purpose**: Comprehensive analysis
 ```python
-# :M: audit, @ai performance bottlenecks
-# :M: audit check for memory leaks
+# ::: audit, @ai performance bottlenecks
+# ::: audit check for memory leaks
 ```
 
 ## Specific Improvements
 
-### `:M: optimize`
+### `::: optimize`
 **Purpose**: Performance improvements
 ```javascript
-// :M: optimize, @ai reduce complexity
-// :M: optimize memory usage
+// ::: optimize, @ai reduce complexity
+// ::: optimize memory usage
 ```
 
-### `:M: secure`
+### `::: secure`
 **Purpose**: Security hardening
 ```go
-// :M: secure, @claude input validation
-// :M: secure prevent injection
+// ::: secure, @claude input validation
+// ::: secure prevent injection
 ```
 
-### `:M: simplify`
+### `::: simplify`
 **Purpose**: Make code clearer
 ```python
-# :M: simplify, @agent reduce nesting
-# :M: simplify make more pythonic
+# ::: simplify, @agent reduce nesting
+# ::: simplify make more pythonic
 ```
 
 ## Documentation Tasks
 
-### `:M: document`
+### `::: document`
 **Purpose**: Add documentation
 ```javascript
-// :M: document, @ai add jsdoc
-// :M: document api usage examples
+// ::: document, @ai add jsdoc
+// ::: document api usage examples
 ```
 
-### `:M: summarize`
+### `::: summarize`
 **Purpose**: Create summaries
 ```python
-# :M: summarize, @claude module purpose
-# :M: tldr, @ai function overview
+# ::: summarize, @claude module purpose
+# ::: tldr, @ai function overview
 ```
 
 ## Context Patterns
 
 ### Providing Context
 ```javascript
-// :M: ctx uses Redux for state management
-// :M: note, @ai follows clean architecture
-// :M: assume, @agent typescript strict mode
+// ::: ctx uses Redux for state management
+// ::: note, @ai follows clean architecture
+// ::: assume, @agent typescript strict mode
 ```
 
 ### Constraints
 ```javascript
-// :M: constraint, @ai no external dependencies
-// :M: requirement must be backwards compatible
-// :M: limitation node 16 compatibility
+// ::: constraint, @ai no external dependencies
+// ::: requirement must be backwards compatible
+// ::: limitation node 16 compatibility
 ```
 
 ## Multi-Agent Patterns
 
 ### Sequential Tasks
 ```javascript
-// :M: @cursor generate, then @claude review
-// :M: first, @copilot implement, then @ai optimize
+// ::: @cursor generate, then @claude review
+// ::: first, @copilot implement, then @ai optimize
 ```
 
 ### Specialized Delegation
 ```javascript
-// :M: ui, @cursor, logic, @claude
-// :M: frontend, @copilot, backend, @agent
+// ::: ui, @cursor, logic, @claude
+// ::: frontend, @copilot, backend, @agent
 ```
 
 ## Working with AI Agents
@@ -149,20 +149,20 @@ Conventions for AI agent delegation and interaction.
 
 ### Complex Delegation
 ```javascript
-// :M: @claude analyze this recursive function for edge cases,
+// ::: @claude analyze this recursive function for edge cases,
 // then @cursor generate comprehensive test cases
 ```
 
 ### Contextual Generation
 ```javascript
-// :M: generate, @ai rest endpoint
-// :M: ctx follow existing patterns in /api
-// :M: requirement use zod for validation
+// ::: generate, @ai rest endpoint
+// ::: ctx follow existing patterns in /api
+// ::: requirement use zod for validation
 ```
 
 ### Review Pipeline
 ```javascript
-// :M: review, @claude security
-// :M: review, @cursor performance  
-// :M: review, @ai best practices
+// ::: review, @claude security
+// ::: review, @cursor performance  
+// ::: review, @ai best practices
 ```

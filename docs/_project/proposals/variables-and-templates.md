@@ -1,13 +1,13 @@
 # Variables, Templates, and Alias System
 
-<!-- :M: tldr future variables, templates, and alias system for advanced waymark features -->
-<!-- :M: meta speculative feature design covering interpolation, aliases, and variable systems -->
+<!-- ::: tldr future variables, templates, and alias system for advanced waymark features -->
+<!-- ::: meta speculative feature design covering interpolation, aliases, and variable systems -->
 
 > **Future Feature**: This document outlines speculative variable, template, and alias systems that may be implemented in future iterations of waymark syntax. These features are not part of the current specification and represent advanced capabilities for complex workflows.
 
 ## Overview
 
-<!-- :M: concept comprehensive system for dynamic waymark generation and reuse -->
+<!-- ::: concept comprehensive system for dynamic waymark generation and reuse -->
 ### Variables, Templates, and Aliases
 
 A comprehensive system providing three complementary features:
@@ -20,7 +20,7 @@ These systems work together to reduce repetition, ensure consistency, and suppor
 
 ## Variable System
 
-<!-- :M: spec variable definition and resolution for consistent values -->
+<!-- ::: spec variable definition and resolution for consistent values -->
 ### Variable Definition and Usage
 
 **Purpose**: Define reusable values that can be referenced across multiple waymarks for consistency and maintainability.
@@ -57,16 +57,16 @@ variables:
 
 ```javascript
 // Variable references with ${var} syntax
-// :M: todo(assign:${frontend-team}) implement user dashboard
-// :M: depends(service:${auth-service},db:${user-db}) user authentication
-// :M: ${review-process} validate input sanitization
-// :M: todo(milestone:${next-release},epic:${auth-epic}) OAuth integration
+// ::: todo(assign:${frontend-team}) implement user dashboard
+// ::: depends(service:${auth-service},db:${user-db}) user authentication
+// ::: ${review-process} validate input sanitization
+// ::: todo(milestone:${next-release},epic:${auth-epic}) OAuth integration
 
 // Variable expansion at parse time:
-// :M: todo(assign:@alice,@bob,@charlie) implement user dashboard
-// :M: depends(service:auth.api.company.com,db:postgres.users.prod) user authentication
-// :M: review,owner:@mallory,type:security validate input sanitization
-// :M: todo(milestone:v2.1.0,epic:epic-auth-redesign) OAuth integration
+// ::: todo(assign:@alice,@bob,@charlie) implement user dashboard
+// ::: depends(service:auth.api.company.com,db:postgres.users.prod) user authentication
+// ::: review,owner:@mallory,type:security validate input sanitization
+// ::: todo(milestone:v2.1.0,epic:epic-auth-redesign) OAuth integration
 ```
 
 **Array Variable Support:**
@@ -81,14 +81,14 @@ variables:
 ```
 
 ```javascript
-// :M: todo(platform:${mobile-platforms}) implement push notifications
-// :M: test(env:${test-environments}) validate payment flow
-// :M: review(assign:${full-stack-team}) architecture changes
+// ::: todo(platform:${mobile-platforms}) implement push notifications
+// ::: test(env:${test-environments}) validate payment flow
+// ::: review(assign:${full-stack-team}) architecture changes
 
 // Expands to:
-// :M: todo(platform:[ios,android,react-native]) implement push notifications
-// :M: test(env:[staging,integration,e2e]) validate payment flow
-// :M: review(assign:@alice,@bob,@charlie,@david,@eve,@frank) architecture changes
+// ::: todo(platform:[ios,android,react-native]) implement push notifications
+// ::: test(env:[staging,integration,e2e]) validate payment flow
+// ::: review(assign:@alice,@bob,@charlie,@david,@eve,@frank) architecture changes
 ```
 
 ### Variable Scope and Context
@@ -111,13 +111,13 @@ context-variables:
 
 ```javascript
 // Context variable usage
-// :M: todo(file:${current-file},owner:${file-owner}) add input validation
-// :M: context(branch:${current-branch}) temporary OAuth implementation
+// ::: todo(file:${current-file},owner:${file-owner}) add input validation
+// ::: context(branch:${current-branch}) temporary OAuth implementation
 ```
 
 ## Template System
 
-<!-- :M: spec parameterized waymark patterns for workflow standardization -->
+<!-- ::: spec parameterized waymark patterns for workflow standardization -->
 ### Template Definition and Usage
 
 **Purpose**: Create reusable waymark patterns with parameters for common organizational workflows.
@@ -154,23 +154,23 @@ templates:
 
 ```javascript
 // Simple positional parameters
-// :M: @jira(PROJ-123) → :M: issue(jira:PROJ-123)
-// :M: @github(456,frontend) → :M: issue(github:456,repo:frontend)
+// ::: @jira(PROJ-123) → :M: issue(jira:PROJ-123)
+// ::: @github(456,frontend) → :M: issue(github:456,repo:frontend)
 
 // Named parameters with defaults
-// :M: @assigned-task(owner:@alice,epic:auth-redesign)
-// → :M: todo(assign:@alice,priority:medium,epic:auth-redesign)
+// ::: @assigned-task(owner:@alice,epic:auth-redesign)
+// → ::: todo(assign:@alice,priority:medium,epic:auth-redesign)
 
-// :M: @assigned-task(owner:@bob,priority:critical,epic:user-profiles)
-// → :M: todo(assign:@bob,priority:critical,epic:user-profiles)
+// ::: @assigned-task(owner:@bob,priority:critical,epic:user-profiles)
+// → ::: todo(assign:@bob,priority:critical,epic:user-profiles)
 
 // Complex template expansion
-// :M: @feature-epic(epic:oauth,milestone:v2.1,services:[auth,user])
-// → :M: todo(epic:oauth,milestone:v2.1),context(complexity:medium),depends(services:[auth,user])
+// ::: @feature-epic(epic:oauth,milestone:v2.1,services:[auth,user])
+// → ::: todo(epic:oauth,milestone:v2.1),context(complexity:medium),depends(services:[auth,user])
 
 // Conditional template
-// :M: @production-deploy(hotfix:true,services:[auth,payment])
-// → :M: deploy(env:prod,approve:@david,@eve,@frank),critical,warn,depends(services:[auth,payment])
+// ::: @production-deploy(hotfix:true,services:[auth,payment])
+// → ::: deploy(env:prod,approve:@david,@eve,@frank),critical,warn,depends(services:[auth,payment])
 ```
 
 ### Advanced Template Features
@@ -210,7 +210,7 @@ templates:
 
 ## Alias System
 
-<!-- :M: spec shorthand syntax for frequently used marker combinations -->
+<!-- ::: spec shorthand syntax for frequently used marker combinations -->
 ### Alias Definition and Usage
 
 **Purpose**: Define shorthand syntax for frequently used marker combinations, reducing typing and ensuring consistency.
@@ -249,24 +249,24 @@ aliases:
 
 ```javascript
 // Simple aliases
-// :M: todo,p1 implement user authentication
-// → :M: todo,priority:high implement user authentication
+// ::: todo,p1 implement user authentication
+// → ::: todo,priority:high implement user authentication
 
 // Team assignment aliases
-// :M: todo,fe update component styles
-// → :M: todo,assign:@alice,@bob,@charlie update component styles
+// ::: todo,fe update component styles
+// → ::: todo,assign:@alice,@bob,@charlie update component styles
 
 // Complex combination aliases
-// :M: todo,security-critical validate all user inputs
-// → :M: todo,security,priority:critical,severity:high validate all user inputs
+// ::: todo,security-critical validate all user inputs
+// → ::: todo,security,priority:critical,severity:high validate all user inputs
 
 // Workflow state aliases
-// :M: todo,wip,fe implement OAuth flow
-// → :M: todo,status:in-progress,type:development,assign:@alice,@bob,@charlie implement OAuth flow
+// ::: todo,wip,fe implement OAuth flow
+// → ::: todo,status:in-progress,type:development,assign:@alice,@bob,@charlie implement OAuth flow
 
 // Multiple aliases in one anchor
-// :M: todo,hotfix,sec fix authentication bypass
-// → :M: todo,priority:critical,type:hotfix,env:production,alert:on,assign:@mallory fix authentication bypass
+// ::: todo,hotfix,sec fix authentication bypass
+// → ::: todo,priority:critical,type:hotfix,env:production,alert:on,assign:@mallory fix authentication bypass
 ```
 
 ### Alias Precedence and Conflicts
@@ -285,8 +285,8 @@ aliases:
 // Alias: urgent: "priority:critical,severity:high"
 // Direct: priority:medium
 
-// :M: todo,urgent,priority:medium fix bug
-// → :M: todo,priority:medium,severity:high fix bug
+// ::: todo,urgent,priority:medium fix bug
+// → ::: todo,priority:medium,severity:high fix bug
 // (direct priority:medium overrides alias priority:critical)
 ```
 
@@ -301,14 +301,14 @@ aliases:
 
 ## Configuration Integration
 
-<!-- :M: spec unified configuration system supporting all three features -->
+<!-- ::: spec unified configuration system supporting all three features -->
 ### Complete waymarkconfig.yaml Example
 
 ```yaml
 # Variables, Templates, and Aliases Configuration
 waymark:
   version: "2.0"
-  anchor: ":M:"
+  anchor: ":::"
 
 # Variable definitions
 variables:
@@ -391,22 +391,22 @@ priorities:
 ```javascript
 // Variable + Template + Alias combinations
 
-// :M: @jira-task(ticket:PROJ-123,epic:${auth-epic}),fe
-// → :M: todo(issue:https://company.atlassian.net/browse/PROJ-123,epic:epic-auth-redesign),assign:@alice,@bob,@charlie
+// ::: @jira-task(ticket:PROJ-123,epic:${auth-epic}),fe
+// → ::: todo(issue:https://company.atlassian.net/browse/PROJ-123,epic:epic-auth-redesign),assign:@alice,@bob,@charlie
 
-// :M: @security-review(urgent:true),ops
-// → :M: security,review(assign:@mallory,severity:high),critical,priority:critical,assign:@oscar,@peggy
+// ::: @security-review(urgent:true),ops
+// → ::: security,review(assign:@mallory,severity:high),critical,priority:critical,assign:@oscar,@peggy
 
-// :M: @deploy-check(env:production,services:[auth,user],dependencies:[${auth-service}]),hotfix
-// → :M: deploy(env:production,services:[auth,user]),critical,approve:@oscar,@peggy,depends(services:[auth.api.company.com]),type:hotfix,priority:critical,env:production
+// ::: @deploy-check(env:production,services:[auth,user],dependencies:[${auth-service}]),hotfix
+// → ::: deploy(env:production,services:[auth,user]),critical,approve:@oscar,@peggy,depends(services:[auth.api.company.com]),type:hotfix,priority:critical,env:production
 
-// :M: todo,p1,fe implement OAuth for ${mobile-epic}
-// → :M: todo,priority:high,assign:@alice,@bob,@charlie implement OAuth for epic-mobile-app
+// ::: todo,p1,fe implement OAuth for ${mobile-epic}
+// → ::: todo,priority:high,assign:@alice,@bob,@charlie implement OAuth for epic-mobile-app
 ```
 
 ## Implementation Considerations
 
-<!-- :M: todo future implementation requirements and technical challenges -->
+<!-- ::: todo future implementation requirements and technical challenges -->
 ### Technical Requirements
 
 **Variable System:**

@@ -1,6 +1,6 @@
 # Waymark Documentation Comment Support
-<!-- :M: tldr Proposal for enhanced waymark tooling to handle documentation comments -->
-<!-- :M: spec waymark tooling enhancements for JSDoc, docstrings, and other doc systems -->
+<!-- ::: tldr Proposal for enhanced waymark tooling to handle documentation comments -->
+<!-- ::: spec waymark tooling enhancements for JSDoc, docstrings, and other doc systems -->
 
 **Status**: Proposal  
 **Version**: 1.0  
@@ -27,10 +27,10 @@ Waymarks already work within documentation comments, since they're just comment 
 
 ```bash
 # Find anchors only in documentation comments
-waymark ":M: api" --doc-comments
+waymark "::: api" --doc-comments
 
 # Exclude documentation comments (regular comments only)
-waymark ":M: todo" --no-doc-comments
+waymark "::: todo" --no-doc-comments
 ```
 
 **Implementation**: Pattern matching for documentation comment formats:
@@ -51,13 +51,13 @@ waymark ":M: todo" --no-doc-comments
 
 ```bash
 # Show anchors with their complete documentation blocks
-waymark ":M: api" --with-docs
+waymark "::: api" --with-docs
 
 # Output example:
 # src/auth.js:23-35
 # /**
-#  * :M: api Primary authentication endpoint
-#  * :M: sec validate all inputs before processing
+#  * ::: api Primary authentication endpoint
+#  * ::: sec validate all inputs before processing
 #  * 
 #  * @description Authenticates users with JWT tokens
 #  * @param {string} token - JWT token to validate
@@ -71,13 +71,13 @@ waymark ":M: api" --with-docs
 
 ```bash
 # Find anchors only in JSDoc comments
-waymark ":M:" --doc-format=jsdoc
+waymark ":::" --doc-format=jsdoc
 
 # Find anchors in Python docstrings
-waymark ":M:" --doc-format=docstring
+waymark ":::" --doc-format=docstring
 
 # Find anchors in Rust documentation
-waymark ":M:" --doc-format=rustdoc
+waymark ":::" --doc-format=rustdoc
 ```
 
 **Supported formats**:
@@ -97,12 +97,12 @@ waymark ":M:" --doc-format=rustdoc
 
 ```bash
 # Automatically detect language and use appropriate doc comment patterns
-waymark ":M: api" --auto-doc-detect
+waymark "::: api" --auto-doc-detect
 
 # Language-specific shortcuts
-waymark ":M:" --js-docs    # JavaScript JSDoc only
-waymark ":M:" --py-docs    # Python docstrings only  
-waymark ":M:" --rust-docs  # Rust doc comments only
+waymark ":::" --js-docs    # JavaScript JSDoc only
+waymark ":::" --py-docs    # Python docstrings only  
+waymark ":::" --rust-docs  # Rust doc comments only
 ```
 
 ### 5. Documentation Quality Analysis
@@ -118,19 +118,19 @@ waymark --doc-analysis
 # ============================
 # 
 # Files with doc comments: 45/67 (67%)
-# Functions with :M: tldr: 23/89 (26%)
-# API functions with :M: api: 67/67 (100%)
+# Functions with ::: tldr: 23/89 (26%)
+# API functions with ::: api: 67/67 (100%)
 # Security anchors in docs: 12
 # 
 # Missing documentation anchors:
-# - src/utils.js:15 - function validateEmail (missing :M: tldr)
-# - src/auth.js:45 - function hashPassword (missing :M: sec)
+# - src/utils.js:15 - function validateEmail (missing ::: tldr)
+# - src/auth.js:45 - function hashPassword (missing ::: sec)
 
 # Quality checks
 waymark --doc-quality
-# - Verify :M: tldr exists for all public functions
-# - Check :M: api for exported functions/classes
-# - Ensure :M: sec for security-critical functions
+# - Verify ::: tldr exists for all public functions
+# - Check ::: api for exported functions/classes
+# - Ensure ::: sec for security-critical functions
 ```
 
 ### 6. Enhanced Output Formats
@@ -139,13 +139,13 @@ waymark --doc-quality
 
 ```bash
 # Markdown output for documentation
-waymark ":M: api" --output=markdown
+waymark "::: api" --output=markdown
 
 # JSON output for tool integration  
-waymark ":M:" --output=json --doc-comments
+waymark ":::" --output=json --doc-comments
 
 # HTML output with syntax highlighting
-waymark ":M:" --output=html --with-docs
+waymark ":::" --output=html --with-docs
 ```
 
 **Markdown output example**:
@@ -159,8 +159,8 @@ waymark ":M:" --output=html --with-docs
 
 ```javascript
 /**
- * :M: api Primary authentication endpoint
- * :M: sec validate all inputs before processing
+ * ::: api Primary authentication endpoint
+ * ::: sec validate all inputs before processing
  * 
  * @description Authenticates users with JWT tokens
  * @param {string} token - JWT token to validate
@@ -181,9 +181,9 @@ waymark --generate-template=jsdoc --function=authenticateUser
 
 # Output:
 # /**
-#  * :M: tldr [Brief description]
-#  * :M: api [Public interface description]  
-#  * :M: sec [Security considerations]
+#  * ::: tldr [Brief description]
+#  * ::: api [Public interface description]  
+#  * ::: sec [Security considerations]
 #  * 
 #  * @description [Detailed description]
 #  * @param {type} param - [Parameter description]
@@ -206,16 +206,16 @@ waymark --generate-templates --missing-docs
 waymark --validate-docs
 
 # Check for common issues:
-# - Missing space after :M:
+# - Missing space after :::
 # - Inconsistent anchor placement
 # - Missing essential anchors (tldr, api for public functions)
 # - Orphaned anchors (not in documentation context)
 
 # Validation rules configuration
 waymark --validate-docs --rules=strict
-# - All public functions must have :M: tldr
-# - All API endpoints must have :M: api
-# - All security functions must have :M: sec
+# - All public functions must have ::: tldr
+# - All API endpoints must have ::: api
+# - All security functions must have ::: sec
 ```
 
 ### 9. Documentation Search Combinations
@@ -230,10 +230,10 @@ waymark --missing-anchor="api" --doc-comments --functions
 waymark --missing-anchor="sec" --pattern="auth|password|token|security"
 
 # Find deprecated functions still in documentation
-waymark ":M: deprecated" --with-docs --show-usage
+waymark "::: deprecated" --with-docs --show-usage
 
 # Find TODO items in documentation that need AI attention
-waymark ":M: todo.*@agent" --doc-comments --priority-high
+waymark "::: todo.*@agent" --doc-comments --priority-high
 ```
 
 ### 10. Integration with Documentation Generators
@@ -246,8 +246,8 @@ waymark --export-jsdoc-metadata > anchors.json
 
 # Generate additional JSDoc tags from anchors
 waymark --convert-to-jsdoc-tags
-# Converts ":M: api" to "@api" tags
-# Converts ":M: deprecated" to "@deprecated" tags
+# Converts "::: api" to "@api" tags
+# Converts "::: deprecated" to "@deprecated" tags
 
 # Integration with other doc tools
 waymark --export-sphinx-metadata    # For Python Sphinx
@@ -384,8 +384,8 @@ documentation:
     templates:
       jsdoc: |
         /**
-         * :M: tldr [Brief description]
-         * :M: api [Interface description]
+         * ::: tldr [Brief description]
+         * ::: api [Interface description]
          * 
          * @description [Detailed description]
          * @param {type} param - [Description]
@@ -394,8 +394,8 @@ documentation:
       
       docstring: |
         """
-        :M: tldr [Brief description]
-        :M: api [Interface description]
+        ::: tldr [Brief description]
+        ::: api [Interface description]
         
         [Detailed description]
         
@@ -413,13 +413,13 @@ documentation:
 
 ```bash
 # Find all API anchors in documentation comments
-waymark ":M: api" --docs
+waymark "::: api" --docs
 
 # Find security anchors with their documentation context
-waymark ":M: sec" --docs --with-context
+waymark "::: sec" --docs --with-context
 
 # Search for specific documentation format
-waymark ":M:" --doc-format=jsdoc --language=javascript
+waymark ":::" --doc-format=jsdoc --language=javascript
 ```
 
 ### Quality Analysis
@@ -455,7 +455,7 @@ waymark docs:validate --fail-on-missing --required="tldr,api"
 waymark analyze:docs --output=json | upload-to-docs-site
 
 # IDE integration: Show documentation context for anchor
-waymark ":M: api" --line=45 --file=src/auth.js --with-docs --format=tooltip
+waymark "::: api" --line=45 --file=src/auth.js --with-docs --format=tooltip
 ```
 
 ## Benefits

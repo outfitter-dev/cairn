@@ -1,4 +1,4 @@
-<!-- :M: tldr canonical waymark syntax specification -->
+<!-- ::: tldr canonical waymark syntax specification -->
 # Waymark Syntax Specification
 
 The canonical specification for waymark syntax - a breadcrumb protocol for code navigation.
@@ -11,7 +11,7 @@ Waymarks provide a breadcrumb protocol that enables developers and AI agents to 
 
 ```ebnf
 waymark       ::= comment-leader identifier space marker-list prose?
-identifier  ::= ":M:"
+identifier  ::= ":::"
 space       ::= " "                    # exactly one ASCII space
 marker-list ::= marker ("," marker)*
 marker      ::= key delimiter?
@@ -26,20 +26,20 @@ prose       ::= text                   # everything after markers
 
 ## Basic Structure
 
-### The `:M:` Identifier
+### The `:::` Identifier
 
-The syntax uses `:M:` as the identifier.
+The syntax uses `:::` as the identifier.
 
 ```javascript
 // Standard identifier (mandatory single space after)
-// :M: todo implement authentication
+// ::: todo implement authentication
 ```
 
 **Key Rules:**
 
-- `:M:` must be followed by exactly one ASCII space
+- `:::` must be followed by exactly one ASCII space
 - Three glyphs for visual clarity and fast typing
-- Trivially matched with `':M:'` in ripgrep
+- Trivially matched with `':::'` in ripgrep
 
 ### Markers
 
@@ -47,9 +47,9 @@ Each marker classifies an anchor's purpose and is organized into one of six sema
 
 ```javascript
 // Core markers with mandatory space after identifier
-// :M: todo implement rate limiting
-// :M: bug memory leak in auth service
-// :M: sec validate all user inputs
+// ::: todo implement rate limiting
+// ::: bug memory leak in auth service
+// ::: sec validate all user inputs
 ```
 
 ## Delimiter Semantics
@@ -61,10 +61,10 @@ The syntax uses three distinct delimiters with specific semantic purposes:
 Used for type:value relationships, classifications, and states.
 
 ```javascript
-// :M: priority:high         // priority classification
-// :M: status:blocked        // status classification
-// :M: env:production        // environment type
-// :M: owner:@alice          // ownership (including mentions)
+// ::: priority:high         // priority classification
+// ::: status:blocked        // status classification
+// ::: env:production        // environment type
+// ::: owner:@alice          // ownership (including mentions)
 ```
 
 ### Parentheses (`()`) - Parameters
@@ -72,9 +72,9 @@ Used for type:value relationships, classifications, and states.
 Used for structured parameters and arguments associated with markers.
 
 ```javascript
-// :M: blocked(issue:4)           // parameter with classification
-// :M: depends(auth-service)      // simple parameter
-// :M: config(timeout:30,retry:3) // multiple parameters
+// ::: blocked(issue:4)           // parameter with classification
+// ::: depends(auth-service)      // simple parameter
+// ::: config(timeout:30,retry:3) // multiple parameters
 ```
 
 ### Brackets (`[]`) - Arrays
@@ -82,10 +82,10 @@ Used for structured parameters and arguments associated with markers.
 Used for multiple values, optional for single values.
 
 ```javascript
-// :M: blocked:[4,7]              // multiple blockers
-// :M: tags:[auth,api,security]   // multiple tags
-// :M: owner:[@alice,@bob]        // multiple owners
-// :M: blocked:4                  // single value (brackets optional)
+// ::: blocked:[4,7]              // multiple blockers
+// ::: tags:[auth,api,security]   // multiple tags
+// ::: owner:[@alice,@bob]        // multiple owners
+// ::: blocked:4                  // single value (brackets optional)
 ```
 
 ## Core Marker Groups
@@ -103,7 +103,7 @@ Markers are organized into six semantic groups for discoverability:
 
 **Usage Rules:**
 
-1. Multiple markers can be combined with commas: `:M: todo,bug,priority:high`
+1. Multiple markers can be combined with commas: `::: todo,bug,priority:high`
 2. If `todo` appears, it must be the first marker
 3. Work markers can appear standalone OR as parameters to `todo`
 
@@ -113,18 +113,18 @@ Relationships are expressed directly through dedicated markers without redundant
 
 ```javascript
 // Dependency relationships
-// :M: depends(auth-service)       // requires auth service
-// :M: requires(api:v2-login)      // needs specific API
-// :M: needs(config:redis)         // requires configuration
+// ::: depends(auth-service)       // requires auth service
+// ::: requires(api:v2-login)      // needs specific API
+// ::: needs(config:redis)         // requires configuration
 
 // Blocking relationships
-// :M: blocked(issue:AUTH-123)     // blocked by issue
-// :M: blocking:[PAY-45,UI-77]     // blocks multiple tasks
+// ::: blocked(issue:AUTH-123)     // blocked by issue
+// ::: blocking:[PAY-45,UI-77]     // blocks multiple tasks
 
 // Event relationships
-// :M: emits(event:user-created)   // publishes event
-// :M: listens(payment-completed)  // subscribes to event
-// :M: triggers(workflow:deploy)   // initiates process
+// ::: emits(event:user-created)   // publishes event
+// ::: listens(payment-completed)  // subscribes to event
+// ::: triggers(workflow:deploy)   // initiates process
 ```
 
 ## Multi-line Anchors
@@ -133,17 +133,17 @@ The syntax strongly recommends single-line anchors to maintain grep-ability:
 
 ```javascript
 // Single-line waymarks (preferred)
-// :M: todo(assign:@alice,priority:high) implement OAuth integration
+// ::: todo(assign:@alice,priority:high) implement OAuth integration
 
 // Multiple related waymark lines for complex context
-// :M: todo(assign:@alice,priority:high) implement OAuth integration  
-// :M: context OAuth flow requires PKCE for security compliance
-// :M: depends(service:session-api) user sessions must exist first
+// ::: todo(assign:@alice,priority:high) implement OAuth integration  
+// ::: context OAuth flow requires PKCE for security compliance
+// ::: depends(service:session-api) user sessions must exist first
 ```
 
 **Benefits:**
 
-- `rg ":M: todo"` always finds todo items
+- `rg "::: todo"` always finds todo items
 - Simple, consistent search patterns
 - No complex multi-line parsing required
 
@@ -153,15 +153,15 @@ Prose follows markers, separated by space. Optional formatting for clarity:
 
 ```javascript
 // Basic prose
-// :M: todo implement rate limiting
+// ::: todo implement rate limiting
 
 // Colon prefix (recommended for clarity)
-// :M: todo: implement rate limiting before launch
-// :M: context: this function assumes Redis is available
+// ::: todo: implement rate limiting before launch
+// ::: context: this function assumes Redis is available
 
 // Quoted prose (for complex text)
-// :M: todo(priority:high): "fix race condition in auth service"
-// :M: warn: "this function modifies global state"
+// ::: todo(priority:high): "fix race condition in auth service"
+// ::: warn: "this function modifies global state"
 ```
 
 ## Quoting and Escaping
@@ -171,18 +171,18 @@ The syntax uses quotes for strings with special characters:
 **Simple values** (no quotes needed):
 
 ```javascript
-// :M: user(alice)
-// :M: version(2.0.1)  
-// :M: priority:high
+// ::: user(alice)
+// ::: version(2.0.1)  
+// ::: priority:high
 ```
 
 **Complex values** (quotes required):
 
 ```javascript
-// :M: match('user-123')              // literal string
-// :M: path('src/data migration.sql') // spaces in path
-// :M: message('Can\'t connect')      // escaped quote
-// :M: files:['auth.js','lib/utils.js'] // array of paths
+// ::: match('user-123')              // literal string
+// ::: path('src/data migration.sql') // spaces in path
+// ::: message('Can\'t connect')      // escaped quote
+// ::: files:['auth.js','lib/utils.js'] // array of paths
 ```
 
 **No structural dots** - Use dots only for literals (versions, URLs, file paths)
@@ -197,9 +197,9 @@ Teams can configure their preferred syntax patterns:
 priorities:
   scheme: "numeric"  # or "named"
   numeric:
-    p0: "critical"   # :M: p0 → :M: priority:critical
-    p1: "high"       # :M: p1 → :M: priority:high
-    p2: "medium"     # :M: p2 → :M: priority:medium
+    p0: "critical"   # ::: p0 → :M: priority:critical
+    p1: "high"       # ::: p1 → :M: priority:high
+    p2: "medium"     # ::: p2 → :M: priority:medium
 ```
 
 ### Version Styles
@@ -249,17 +249,17 @@ See [waymark documentation](../waymark/) for tooling-specific requirements.
 
 ```bash
 # Find all waymarks
-rg ":M:"
+rg ":::"
 
 # Find by marker group
-rg ":M:.*todo"      # All work items
-rg ":M:.*notice"    # All warnings/alerts
-rg ":M:.*domain"    # All domain-specific markers
+rg ":::.*todo"      # All work items
+rg ":::.*notice"    # All warnings/alerts
+rg ":::.*domain"    # All domain-specific markers
 
 # Find with context
-rg -C2 ":M: security"  # 2 lines context
-rg -B3 -A3 ":M: todo"  # 3 lines before/after
+rg -C2 "::: security"  # 2 lines context
+rg -B3 -A3 "::: todo"  # 3 lines before/after
 
 # Find in markdown (including HTML comments)
-rg "<!-- :M:" --type md
+rg "<!-- :::" --type md
 ```

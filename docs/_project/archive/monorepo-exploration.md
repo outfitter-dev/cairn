@@ -1,6 +1,6 @@
 <!-- :ga:tldr monorepo organization patterns and strategies for grep-anchors -->
 # Monorepo Organization Patterns for Grep-Anchors
-<!-- :M: keep: brainstorming document about monorepo organization patterns -->
+<!-- ::: keep: brainstorming document about monorepo organization patterns -->
 <!-- :ga:ctx exploration of different approaches to organizing anchors in monorepos -->
 
 ## Core Problem

@@ -1,4 +1,4 @@
-<!-- :M: tldr: Automated release process using changesets and GitHub Actions -->
+<!-- ::: tldr: Automated release process using changesets and GitHub Actions -->
 
 # Release Process
 

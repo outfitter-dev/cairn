@@ -241,7 +241,7 @@ rg "\+security"            # Security-related items
 Better to use multiple waymarks than cramming everything into one:
 
 ```javascript
-// ❌ Too much in one waymark (old :M: style)
+// ❌ Too much in one waymark (old ::: style)
 // fix ::: priority:critical validate inputs add caching check permissions
 
 // ✅ Clear and searchable
@@ -306,16 +306,16 @@ For markdown files, use HTML comments to make waymarks searchable but not render
 
 ## Migration from Old Syntax
 
-If migrating from `:M:` syntax:
+If migrating from `:::` syntax:
 
 ```bash
 # Find old waymarks
-rg ":M:"
+rg ":::"
 
 # Convert basic patterns
-sed -i 's/:M: todo/todo :::/g' **/*.js
-sed -i 's/:M: sec/alert :::/g' **/*.js
-sed -i 's/:M: ctx/:::g' **/*.js
+sed -i 's/::: todo/todo :::/g' **/*.js
+sed -i 's/::: sec/alert :::/g' **/*.js
+sed -i 's/::: ctx/:::g' **/*.js
 ```
 
 ## Remember

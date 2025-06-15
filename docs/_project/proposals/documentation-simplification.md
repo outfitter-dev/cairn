@@ -1,5 +1,5 @@
 # Documentation Simplification Proposal
-<!-- :M: tldr Restructure docs from 30+ files to ~5 focused documents -->
+<!-- ::: tldr Restructure docs from 30+ files to ~5 focused documents -->
 
 ## Summary
 
@@ -48,7 +48,7 @@ Structure:
 [Brief introduction]
 
 ## Basic Syntax
-- The :M: identifier
+- The ::: identifier
 - Required single space
 - Context types
 

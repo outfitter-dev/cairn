@@ -1,5 +1,5 @@
 <!-- :ga:tldr future AI agent trigger system for automated task execution -->
-<!-- :M: keep: brainstorming document about agent triggers based on waymarks -->
+<!-- ::: keep: brainstorming document about agent triggers based on waymarks -->
 # AI Agent Integration Patterns
 
 <!-- :ga:meta speculative feature design for agent interaction patterns -->

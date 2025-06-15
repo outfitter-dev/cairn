@@ -1,4 +1,4 @@
-<!-- :M: keep: brainstorming document about UUIDs for waymarks -->
+<!-- ::: keep: brainstorming document about UUIDs for waymarks -->
 <!-- :ga:tldr future UUID system for automatic ID assignment and cross-references -->
 # UUID ID System and Cross-Referencing
 

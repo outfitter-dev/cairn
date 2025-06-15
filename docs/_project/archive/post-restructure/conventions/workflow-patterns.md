@@ -1,59 +1,59 @@
 # Workflow Patterns
-<!-- :M: tldr waymarks for managing work, collaboration, and process flow -->
-<!-- :M: convention Patterns for team workflows and collaboration -->
+<!-- ::: tldr waymarks for managing work, collaboration, and process flow -->
+<!-- ::: convention Patterns for team workflows and collaboration -->
 
 Waymarks for managing work, collaboration, and process flow.
 
 ## Work Tracking
 
-### `:M: todo`
+### `::: todo`
 
 **Purpose**: Mark future work items
 
 ```javascript
-// :M: todo implement caching layer
+// ::: todo implement caching layer
 ```
 
-### `:M: fixme`
+### `::: fixme`
 
 **Purpose**: Broken code needing immediate attention
 
 ```python
-# :M: fixme race condition in auth flow
+# ::: fixme race condition in auth flow
 ```
 
-### `:M: hack`
+### `::: hack`
 
 **Purpose**: Temporary workarounds
 
 ```go
-// :M: hack workaround for upstream bug #123
+// ::: hack workaround for upstream bug #123
 ```
 
 ## Review & Collaboration
 
-### `:M: review`
+### `::: review`
 
 **Purpose**: Code needing review
 
 ```javascript
-// :M: review security implications unclear
+// ::: review security implications unclear
 ```
 
-### `:M: question`
+### `::: question`
 
 **Purpose**: Clarification needed
 
 ```python
-# :M: question is this the right approach?
+# ::: question is this the right approach?
 ```
 
-### `:M: discuss`
+### `::: discuss`
 
 **Purpose**: Needs team discussion
 
 ```java
-// :M: discuss architecture decision needed
+// ::: discuss architecture decision needed
 ```
 
 ## Mention Patterns
@@ -63,9 +63,9 @@ Waymarks for managing work, collaboration, and process flow.
 **Purpose**: Tag specific people or teams
 
 ```javascript
-// :M: @alice please review
-// :M: @backend-team optimization needed
-// :M: @security audit required
+// ::: @alice please review
+// ::: @backend-team optimization needed
+// ::: @security audit required
 ```
 
 ### Attention Mentions
@@ -73,9 +73,9 @@ Waymarks for managing work, collaboration, and process flow.
 **Purpose**: Request someone's attention
 
 ```javascript
-// :M: attn, @alice broken in production
-// :M: attn, @devops deployment issue
-// :M: attn, owner:[@alice,@bob] coordination needed
+// ::: attn, @alice broken in production
+// ::: attn, @devops deployment issue
+// ::: attn, owner:[@alice,@bob] coordination needed
 ```
 
 ### Owner Mentions
@@ -83,9 +83,9 @@ Waymarks for managing work, collaboration, and process flow.
 **Purpose**: Designate ownership/responsibility
 
 ```javascript
-// :M: owner:@alice payment module
-// :M: owner:@frontend-team UI components
-// :M: owner:[@alice,@bob] shared ownership
+// ::: owner:@alice payment module
+// ::: owner:@frontend-team UI components
+// ::: owner:[@alice,@bob] shared ownership
 ```
 
 ### Reviewer Mentions
@@ -93,37 +93,37 @@ Waymarks for managing work, collaboration, and process flow.
 **Purpose**: Assign reviewers
 
 ```javascript
-// :M: reviewer:@senior needs approval
-// :M: reviewers:[@alice,@bob]
-// :M: reviewer:[@security,@performance]
+// ::: reviewer:@senior needs approval
+// ::: reviewers:[@alice,@bob]
+// ::: reviewer:[@security,@performance]
 ```
 
 ## Status Tracking
 
-### `:M: wip`
+### `::: wip`
 
 **Purpose**: Work in progress
 
 ```python
-# :M: wip do not merge
+# ::: wip do not merge
 ```
 
-### `:M: blocked`
+### `::: blocked`
 
 **Purpose**: Blocked by dependency
 
 ```go
-// :M: blocked waiting on API update
-// :M: blocked, @alice need input
+// ::: blocked waiting on API update
+// ::: blocked, @alice need input
 ```
 
-### `:M: ready`
+### `::: ready`
 
 **Purpose**: Ready for next step
 
 ```javascript
-// :M: ready for review
-// :M: ready, @qa for testing
+// ::: ready for review
+// ::: ready, @qa for testing
 ```
 
 ## Priority Patterns
@@ -131,44 +131,44 @@ Waymarks for managing work, collaboration, and process flow.
 ### Priority Levels
 
 ```javascript
-// :M: p0 system down
-// :M: p1 major feature broken
-// :M: p2 important bug
-// :M: p3 nice to have
+// ::: p0 system down
+// ::: p1 major feature broken
+// ::: p2 important bug
+// ::: p3 nice to have
 ```
 
 ### Urgency Indicators
 
 ```javascript
-// :M: urgent, @ops production issue
-// :M: asap, owner:@alice customer blocker
-// :M: whenever low priority cleanup
+// ::: urgent, @ops production issue
+// ::: asap, owner:@alice customer blocker
+// ::: whenever low priority cleanup
 ```
 
 ## Lifecycle Management
 
-### `:M: draft`
+### `::: draft`
 
 **Purpose**: Not finalized
 
 ```python
-# :M: draft api design subject to change
+# ::: draft api design subject to change
 ```
 
-### `:M: approved`
+### `::: approved`
 
 **Purpose**: Formally approved
 
 ```java
-// :M: approved, @architect design reviewed
+// ::: approved, @architect design reviewed
 ```
 
-### `:M: shipped`
+### `::: shipped`
 
 **Purpose**: Deployed to production
 
 ```javascript
-// :M: shipped:v2.1 feature released
+// ::: shipped:v2.1 feature released
 ```
 
 ## Integration Patterns
@@ -176,17 +176,17 @@ Waymarks for managing work, collaboration, and process flow.
 ### Issue Tracking
 
 ```javascript
-// :M: issue(1234) related ticket
-// :M: fixes(#456) closes issue
-// :M: see:[#123,#456] related issues
+// ::: issue(1234) related ticket
+// ::: fixes(#456) closes issue
+// ::: see:[#123,#456] related issues
 ```
 
 ### External References
 
 ```javascript
-// :M: rfc(7231) follows HTTP spec
-// :M: spec:section-4.2
-// :M: doc:wiki/AuthFlow
+// ::: rfc(7231) follows HTTP spec
+// ::: spec:section-4.2
+// ::: doc:wiki/AuthFlow
 ```
 
 ## Best Practices

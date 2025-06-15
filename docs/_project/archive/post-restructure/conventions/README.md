@@ -1,6 +1,6 @@
 # Waymark Conventions
-<!-- :M: tldr Standard patterns and practices for waymarks -->
-<!-- :M: convention Central hub for all waymark conventions -->
+<!-- ::: tldr Standard patterns and practices for waymarks -->
+<!-- ::: convention Central hub for all waymark conventions -->
 
 Patterns and practices for making your codebase AI-navigable and human-friendly using waymarks.
 
@@ -8,13 +8,13 @@ Patterns and practices for making your codebase AI-navigable and human-friendly 
 
 Begin with these five essential patterns:
 
-1. `:M: todo` - Work that needs doing
-2. `:M: context` - Important assumptions or constraints
-3. `:M: sec` - Security-critical code
-4. `:M: @agent` - AI agent instructions
-5. `:M: temp` - Temporary code to remove
+1. `::: todo` - Work that needs doing
+2. `::: context` - Important assumptions or constraints
+3. `::: sec` - Security-critical code
+4. `::: @agent` - AI agent instructions
+5. `::: temp` - Temporary code to remove
 
-That's it! You can search all of these with `rg ":M:"`.
+That's it! You can search all of these with `rg ":::"`.
 
 ## Convention Categories
 
@@ -53,19 +53,19 @@ Patterns for code review, deployment, and team processes.
 ## Adoption Path
 
 ```text
-Level 0: Try one pattern (:M: todo)
+Level 0: Try one pattern (::: todo)
    ↓
-Level 1: Enhance existing TODOs (TODO :M:)
+Level 1: Enhance existing TODOs (TODO :::)
    ↓
-Level 2: Add context (:M: context)
+Level 2: Add context (::: context)
    ↓
-Level 3: Delegate to AI (:M: @agent)
+Level 3: Delegate to AI (::: @agent)
    ↓
-Level 4: Link to issues (:M: issue(123))
+Level 4: Link to issues (::: issue(123))
    ↓
 Level 5: Team-specific patterns
 ```
 
 ## Remember
 
-The goal is **discoverability**, not perfection. Even one `:M:` waymark makes your codebase more navigable than none.
+The goal is **discoverability**, not perfection. Even one `:::` waymark makes your codebase more navigable than none.
