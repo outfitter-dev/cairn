@@ -1,4 +1,4 @@
-// ::: tldr Factory for creating appropriate formatters based on format type
+// tldr ::: Factory for creating appropriate formatters based on format type
 import type {
   ISearchResultFormatter,
   IWaymarkFormatter,

@@ -1,43 +1,43 @@
 # Workflow Patterns
-<!-- ::: tldr waymarks for managing work, collaboration, and process flow -->
+<!-- tldr ::: waymarks for managing work, collaboration, and process flow -->
 <!-- ::: convention Patterns for team workflows and collaboration -->
 
 Waymarks for managing work, collaboration, and process flow.
 
 ## Work Tracking
 
-### `::: todo`
+### `todo :::`
 
 **Purpose**: Mark future work items
 
 ```javascript
-// ::: todo implement caching layer
+// todo ::: implement caching layer
 ```
 
-### `::: fixme`
+### `fix :::`
 
 **Purpose**: Broken code needing immediate attention
 
 ```python
-# ::: fixme race condition in auth flow
+# fix ::: race condition in auth flow
 ```
 
-### `::: hack`
+### `hack :::`
 
 **Purpose**: Temporary workarounds
 
 ```go
-// ::: hack workaround for upstream bug #123
+// hack ::: workaround for upstream bug #123
 ```
 
 ## Review & Collaboration
 
-### `::: review`
+### `review :::`
 
 **Purpose**: Code needing review
 
 ```javascript
-// ::: review security implications unclear
+// review ::: security implications unclear
 ```
 
 ### `::: question`
@@ -100,21 +100,21 @@ Waymarks for managing work, collaboration, and process flow.
 
 ## Status Tracking
 
-### `::: wip`
+### `draft :::`
 
 **Purpose**: Work in progress
 
 ```python
-# ::: wip do not merge
+# draft ::: do not merge
 ```
 
-### `::: blocked`
+### `blocked :::`
 
 **Purpose**: Blocked by dependency
 
 ```go
-// ::: blocked waiting on API update
-// ::: blocked, @alice need input
+// blocked ::: waiting on API update
+// blocked :::, @alice need input
 ```
 
 ### `::: ready`
@@ -147,12 +147,12 @@ Waymarks for managing work, collaboration, and process flow.
 
 ## Lifecycle Management
 
-### `::: draft`
+### `draft :::`
 
 **Purpose**: Not finalized
 
 ```python
-# ::: draft api design subject to change
+# draft ::: api design subject to change
 ```
 
 ### `::: approved`

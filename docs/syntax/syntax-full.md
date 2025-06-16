@@ -222,7 +222,7 @@ Examples:
 // *fix ::: resolve edge case found in review     // Must fix before PR merge
 // *!todo ::: critical bug blocking PR merge      // Urgent branch work
 // !todo ::: migrate to new hashing algo          // Important task
-// !!todo ::: fix data loss bug                   // Critical blocker
+// !!todo fix ::: data loss bug                   // Critical blocker
 // ?note ::: does pagination handle zero items?   // Unclear assumption
 // !tldr ::: core event-loop entry point          // Important summary
 // !!tldr ::: main application entry point        // Most critical/canonical
@@ -386,7 +386,7 @@ rg -n ":::.*closes:#\d+"                   # What closes issues/PRs
 6. **Start simple**: Begin with basic markers, add properties and tags as needed.
 7. **Keep it searchable**: Simple patterns are easier to grep.
 8. **Line length**: Keep under ~80-120 characters for readable output.
-9. **Use HTML comments in markdown**: `<!-- note ::: summary -->` for non-rendered waymarks.
+9. **Use HTML comments in markdown**: `<!-- note summary ::: -->` for non-rendered waymarks.
 10. **Pure prose**: Use waymarks without markers for general context: `// ::: this explains why`.
 
 ## Philosophy

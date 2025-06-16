@@ -129,7 +129,7 @@ rg -U "(?:\/\*\*|\"\"\"|\#\#)[\s\S]*?todo :::"
  * @returns {number} Risk score 0-1
  */
 function calculateRisk(amount) {
-    // note ::: risk tolerance is 0.05 #business-rule
+    // note risk ::: tolerance is 0.05 #business-rule
     // note ::: cache calculation results #performance
     return Math.min(amount / 10000, 1.0);
 }
@@ -157,7 +157,7 @@ class PaymentProcessor {
   // todo ::: add edge case tests
   // ::: mock external payment gateway in tests
   processTransaction(data) {
-    // todo ::: test with different currencies
+    // todo test ::: with different currencies
     return this.gateway.charge(data);
   }
 }
@@ -213,7 +213,7 @@ rg "TODO(?!.*:::)" --type js
 
 1. **Use HTML comments in markdown**:
    ```markdown
-   <!-- tldr ::: summary of this document -->
+   <!-- tldr summary ::: of this document -->
    <!-- todo ::: @author add more examples -->
    ```
 
@@ -226,7 +226,7 @@ rg "TODO(?!.*:::)" --type js
 3. **Add properties for metadata**:
    ```javascript
    // todo ::: priority:high implement validation
-   // ::: deprecated:v2.0 use newMethod() instead
+   // deprecated ::::v2.0 use newMethod() instead
    ```
 
 4. **Use hashtags for classification**:

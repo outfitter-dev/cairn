@@ -1,5 +1,5 @@
 # Waymark Syntax
-<!-- ::: tldr Technical specification for waymark syntax -->
+<!-- tldr ::: Technical specification for waymark syntax -->
 <!-- ::: syntax Core syntax documentation and rules -->
 
 The technical specification for waymark syntax - a lightweight marking system for code navigation.
@@ -30,12 +30,12 @@ The syntax consists of:
 ## Quick Examples
 
 ```javascript
-// ::: todo                      // Simple context
-// ::: sec,perf                  // Multiple contexts
-// ::: todo(priority:high)       // Context with parameter
+// todo :::                      // Simple context
+// sec :::,perf                  // Multiple contexts
+// todo :::(priority:high)       // Context with parameter
 // ::: owner:@alice              // Classification with mention
-// ::: blocked:[4,7]             // Array of values
-// ::: todo: implement caching   // With prose description
+// blocked ::::[4,7]             // Array of values
+// todo :::: implement caching   // With prose description
 ```
 
 ## Learn More

@@ -1,4 +1,4 @@
-// ::: tldr Zod error adapter following TypeScript conventions
+// tldr ::: Zod error adapter following TypeScript conventions
 import { ZodError } from 'zod';
 import { makeError } from './error.js';
 import type { AppError } from './error.js';

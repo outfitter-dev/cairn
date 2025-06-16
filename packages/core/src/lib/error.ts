@@ -1,4 +1,4 @@
-// ::: tldr Error handling types following TypeScript conventions
+// tldr ::: Error handling types following TypeScript conventions
 
 export type ErrorCode =
   // Parse errors

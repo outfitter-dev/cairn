@@ -1,4 +1,4 @@
-// ::: tldr CSV formatter for waymark outputs
+// tldr ::: CSV formatter for waymark outputs
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
 import type { SearchResult, Waymark } from '@waymark/types';
 
@@ -97,7 +97,7 @@ export class CSVFormatter implements IFormatter {
 
   // ::: api escape CSV field values and prevent formula injection
   private escapeCsvField(field: string): string {
-    // ::: sec neutralize potential formula-injection payloads (CVE-2014-3524)
+    // sec ::: neutralize potential formula-injection payloads (CVE-2014-3524)
     if (/^[=+\-@]/.test(field)) {
       field = `'${field}`;
     }

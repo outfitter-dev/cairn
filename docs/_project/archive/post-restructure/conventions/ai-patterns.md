@@ -1,5 +1,5 @@
 # AI Patterns
-<!-- ::: tldr Conventions for AI agent delegation and interaction -->
+<!-- tldr ::: Conventions for AI agent delegation and interaction -->
 <!-- ::: convention Patterns specifically designed for AI agent workflows -->
 
 Conventions for AI agent delegation and interaction.
@@ -38,11 +38,11 @@ Conventions for AI agent delegation and interaction.
 // ::: complete, @copilot fill in edge cases
 ```
 
-### `::: refactor`
+### `refactor :::`
 **Purpose**: Improve existing code
 ```go
-// ::: refactor, @claude make more idiomatic
-// ::: refactor extract common logic
+// refactor :::, @claude make more idiomatic
+// refactor ::: extract common logic
 ```
 
 ### `::: explain`
@@ -54,18 +54,18 @@ Conventions for AI agent delegation and interaction.
 
 ## Review Requests
 
-### `::: review, @ai`
+### `review :::, @ai`
 **Purpose**: AI code review
 ```javascript
-// ::: review, @claude security implications
-// ::: review, @ai potential bugs
+// review :::, @claude security implications
+// review :::, @ai potential bugs
 ```
 
-### `::: audit`
+### `audit :::`
 **Purpose**: Comprehensive analysis
 ```python
-# ::: audit, @ai performance bottlenecks
-# ::: audit check for memory leaks
+# audit :::, @ai performance bottlenecks
+# audit check ::: for memory leaks
 ```
 
 ## Specific Improvements
@@ -104,7 +104,7 @@ Conventions for AI agent delegation and interaction.
 **Purpose**: Create summaries
 ```python
 # ::: summarize, @claude module purpose
-# ::: tldr, @ai function overview
+# tldr :::, @ai function overview
 ```
 
 ## Context Patterns
@@ -112,7 +112,7 @@ Conventions for AI agent delegation and interaction.
 ### Providing Context
 ```javascript
 // ::: ctx uses Redux for state management
-// ::: note, @ai follows clean architecture
+// note :::, @ai follows clean architecture
 // ::: assume, @agent typescript strict mode
 ```
 
@@ -162,7 +162,7 @@ Conventions for AI agent delegation and interaction.
 
 ### Review Pipeline
 ```javascript
-// ::: review, @claude security
-// ::: review, @cursor performance  
-// ::: review, @ai best practices
+// review :::, @claude security
+// review :::, @cursor performance  
+// review :::, @ai best practices
 ```

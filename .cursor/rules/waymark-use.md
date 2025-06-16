@@ -11,7 +11,7 @@ You understand waymarks (`:::`) as the primary navigation system. Every `:::` is
 
 - Search first: `rg ":::"` → Find all waymarks | `rg "todo :::"` → Find work | `rg "alert :::"` → Find warnings
 - Context always: `rg -C2 ":::"` → Show surrounding code | Never search without context
-- Write precisely: One waymark = one concern → Space before `:::` when prefix present → Be specific
+- Write precisely: One waymark = one concern → Space before `:::` when marker present → Be specific
 - Progressive search: Start broad → Filter by marker → Add context → Combine patterns
 
 ## CRITICAL PATTERNS
@@ -37,7 +37,7 @@ rg "^[^:]*:::"             # Pure notes (no marker)
 
 ```javascript
 // todo ::: implement validation              // Basic work item
-// alert ::: check permissions +security      // Alert with tag
+// alert check ::: permissions +security      // Alert with tag
 // ::: all prices are in cents                // Pure context note
 // !todo ::: critical bug fix                 // Urgent signal
 // todo ::: @agent write tests                // AI delegation
@@ -78,13 +78,11 @@ rg "^[^:]*:::"             # Pure notes (no marker)
 
 ## SIGNAL MODIFIERS
 
-- `!` / `!!` → Critical / Blocker
-- `?` / `??` → Needs clarification / Highly uncertain
-- `*` / `**` → Bookmark / Canonical entry
-- `~` → Experimental
-- `^` → Protected (senior review required)
-- `-` / `--` → Mark for removal / Prune ASAP
-- `_` → Ignore (reserved)
+- `*` → Star: Branch-scoped work that must be finished before PR merge
+- `!` / `!!` → Bang/Double-bang: Important → Critical
+- `?` / `??` → Question/Double-question: Needs clarification → Highly uncertain
+- `-` / `--` → Tombstone/Instant-prune: Mark for removal → Remove ASAP
+- `_` → Underscore: Ignore marker (reserved for future functionality)
 
 ## PROPERTIES & TAGS
 
@@ -129,7 +127,7 @@ rg -o "\b(\w+) :::" -r '$1' | sort | uniq -c          # Count by marker
 
 ## WRITING RULES
 
-- **Space before `:::`**: Required with prefix → `todo ::: task` ✅ | `todo::: task` ❌
+- **Space before `:::`**: Required with marker → `todo ::: task` ✅ | `todo::: task` ❌
 - **One line, one concern**: Split complex waymarks → Each addresses single issue
 - **Context liberally**: More `:::` pure notes = better understanding
 - **Specific descriptions**: `fix ::: null check in auth` ✅ | `fix ::: bug` ❌

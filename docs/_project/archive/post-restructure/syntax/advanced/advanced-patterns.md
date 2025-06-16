@@ -1,5 +1,5 @@
 # Advanced Waymark Patterns
-<!-- ::: tldr Advanced patterns using arrays, parameters, and sophisticated workflows -->
+<!-- tldr ::: Advanced patterns using arrays, parameters, and sophisticated workflows -->
 <!-- ::: guide Advanced usage patterns and sophisticated techniques -->
 
 This document covers advanced usage patterns for waymarks, including arrays, parameters, and sophisticated workflows.
@@ -11,7 +11,7 @@ Use brackets for listing multiple values:
 ```javascript
 // ::: reviewers:[@alice,@bob,@charlie]
 // ::: affects:[api,cli,sdk]
-// ::: blocked:[123,456,789]
+// blocked ::::[123,456,789]
 ```
 
 ### Arrays in Parameters
@@ -42,9 +42,9 @@ Use brackets for listing multiple values:
 ### Nested Parameters
 
 ```javascript
-// ::: blocked(issue:4) reason:security
+// blocked :::(issue:4) reason:security
 // ::: depends(auth-service) version:2.1
-// ::: deprecated(since:v1.8) replacement:newAPI
+// deprecated :::(since:v1.8) replacement:newAPI
 ```
 
 ## Workflow Patterns
@@ -52,17 +52,17 @@ Use brackets for listing multiple values:
 ### Task Management
 
 ```python
-# ::: todo priority:high assignee:@alice
-# ::: todo(bug:auth-timeout) deadline:2024-03-15
-# ::: done(issue:123) completed:2024-03-01
+# todo ::: priority:high assignee:@alice
+# todo :::(bug:auth-timeout) deadline:2024-03-15
+# done :::(issue:123) completed:2024-03-01
 ```
 
 ### Code Lifecycle
 
 ```javascript
-// ::: deprecated since:v1.8 replacement:newMethod
+// deprecated ::: since:v1.8 replacement:newMethod
 // ::: freeze until:v2.0 reason:api-stability
-// ::: temp remove:2024-06-01 reason:chrome-bug
+// temp -todo ::::2024-06-01 reason:chrome-bug
 ```
 
 ### Dependencies and Relationships
@@ -107,8 +107,8 @@ rg ":::.*blocked" -A 1 -B 1
 
 ```javascript
 // In auth service
-// ::: auth, todo implement OAuth flow
-// ::: auth, security validate JWT expiry
+// auth :::, todo implement OAuth flow
+// auth :::, security validate JWT expiry
 
 // In payment service
 // ::: payment, todo add Stripe webhook
@@ -134,7 +134,7 @@ rg ":::.*blocked" -A 1 -B 1
 rg ":::.*todo"
 
 # Just auth service markers
-rg "::: auth,"
+rg "auth :::,"
 
 # Security issues in payment
 rg "::: payment,.*security"
@@ -150,23 +150,23 @@ rg ":::.*breaking"
 ```javascript
 // Phase 1: Add waymarks to existing
 // TODO: implement validation
-// TODO ::: todo implement validation
+// TODO todo ::: implement validation
 
 // Phase 2: Add metadata
-// ::: todo priority:high implement validation
+// todo ::: priority:high implement validation
 
 // Phase 3: Full context
-// ::: todo priority:high assignee:@dev deadline:2024-03-01
+// todo ::: priority:high assignee:@dev deadline:2024-03-01
 ```
 
 ### Bulk Conversion
 
 ```bash
 # Convert TODO to waymarks
-find . -name "*.js" -exec sed -i 's/\/\/ TODO:/\/\/ ::: todo/g' {} +
+find . -name "*.js" -exec sed -i 's/\/\/ TODO:/\/\/ todo :::/g' {} +
 
 # Add waymarks to FIXMEs
-find . -name "*.py" -exec sed -i 's/# FIXME:/# ::: fix/g' {} +
+find . -name "*.py" -exec sed -i 's/# FIXME:/# fix :::/g' {} +
 ```
 
 ## Integration Patterns
@@ -182,7 +182,7 @@ find . -name "*.py" -exec sed -i 's/# FIXME:/# ::: fix/g' {} +
 ### Documentation Links
 
 ```javascript
-// ::: docs(api-guide.md#auth) update:needed
+// docs :::(api-guide.md#auth) update:needed
 // ::: spec(RFC-7231) section:6.5.1
 // ::: adr(003) status:approved
 ```

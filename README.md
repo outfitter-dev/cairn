@@ -143,7 +143,7 @@ waymark list src/ --contexts
 - Add structured data and classification
   ```typescript
   // todo ::: priority:high fix rate limiting +performance
-  // temp ::: remove after Redis upgrade
+  // temp -todo ::: after Redis upgrade
   ```
 
 ## 🎯 Core Patterns
@@ -155,7 +155,7 @@ waymark list src/ --contexts
 | `:::` | Important context (pure note) | `// ::: expects UTC timestamps` |
 | `@mentions` | AI agent tasks | `// todo ::: @agent implement this function` |
 | `alert :::` | Security/safety concerns | `// alert ::: validate all inputs +security` |
-| `temp :::` | Temporary code | `// temp ::: remove after v2.0` |
+| `temp :::` | Temporary code | `// temp -todo ::: after v2.0` |
 
 ## 📈 Getting Started
 

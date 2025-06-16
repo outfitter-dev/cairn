@@ -1,5 +1,5 @@
 # Waymark Conventions
-<!-- ::: tldr Standard patterns and practices for waymarks -->
+<!-- tldr ::: Standard patterns and practices for waymarks -->
 <!-- ::: convention Central hub for all waymark conventions -->
 
 Patterns and practices for making your codebase AI-navigable and human-friendly using waymarks.
@@ -8,11 +8,11 @@ Patterns and practices for making your codebase AI-navigable and human-friendly 
 
 Begin with these five essential patterns:
 
-1. `::: todo` - Work that needs doing
+1. `todo :::` - Work that needs doing
 2. `::: context` - Important assumptions or constraints
-3. `::: sec` - Security-critical code
+3. `sec :::` - Security-critical code
 4. `::: @agent` - AI agent instructions
-5. `::: temp` - Temporary code to remove
+5. `temp :::` - Temporary code to remove
 
 That's it! You can search all of these with `rg ":::"`.
 
@@ -53,7 +53,7 @@ Patterns for code review, deployment, and team processes.
 ## Adoption Path
 
 ```text
-Level 0: Try one pattern (::: todo)
+Level 0: Try one pattern (todo :::)
    ↓
 Level 1: Enhance existing TODOs (TODO :::)
    ↓

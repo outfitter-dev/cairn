@@ -1,4 +1,4 @@
-// ::: tldr Tests for WaymarkSearch functionality
+// tldr ::: Tests for WaymarkSearch functionality
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeFileSync, unlinkSync, mkdirSync, rmdirSync } from 'fs';
 import { resolve } from 'path';
@@ -14,10 +14,10 @@ describe('WaymarkSearch', () => {
     mkdirSync(testDir, { recursive: true });
     
     writeFileSync(testFile1, `
-// ::: tldr Test file for search functionality
+// tldr Test ::: file for search functionality
 export function test() {
-  // ::: todo implement this function
-  // ::: sec validate all inputs
+  // todo ::: implement this function
+  // sec ::: validate all inputs
   return 42;
 }
     `.trim());
@@ -26,7 +26,7 @@ export function test() {
 <!-- ::: guide Test markdown file -->
 # Test Document
 
-<!-- ::: todo add more content -->
+<!-- todo ::: add more content -->
 <!-- ::: api document the API -->
 Some content here.
     `.trim());

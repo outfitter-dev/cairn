@@ -1,2 +1,2 @@
-// ::: tldr Export all formatter interfaces
+// tldr ::: Export all formatter interfaces
 export * from './formatter.interface.js';

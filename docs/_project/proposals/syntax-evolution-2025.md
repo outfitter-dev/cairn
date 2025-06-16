@@ -170,7 +170,7 @@ Placed *immediately* before the marker with **no space** (double symbol = strong
 // *fix ::: resolve edge case found in review     // Must fix before PR merge
 // *!todo ::: critical bug blocking PR merge      // Urgent branch work
 // !todo ::: migrate to new hashing algo          // Important task
-// !!todo ::: fix data loss bug                   // Critical blocker
+// !!todo fix ::: data loss bug                   // Critical blocker
 // ?note ::: does pagination handle zero items?   // Unclear assumption
 // !tldr ::: core event-loop entry point          // Important summary
 // !!tldr ::: main application entry point        // Most critical/canonical
@@ -181,7 +181,7 @@ Placed *immediately* before the marker with **no space** (double symbol = strong
 // !!assert ::: user_id never null                // Critical invariant
 // _note ::: ignored by tooling                   // Reserved for future
 // -todo ::: obsolete after migrating to v5 SDK   // Remove later
-// --note ::: remove legacy explanation now       // Remove immediately
+// --note -todo ::: legacy explanation now       // Remove immediately
 ```
 
 ### 4.1 Updated Grammar Snippet (EBNF)
@@ -512,7 +512,7 @@ The `tldr` marker is the single most valuable waymark for AI navigation and huma
 
 ```javascript
 // tldr ::: Development seed data with 100 users and sample orders
-// tldr ::: Test fixtures for integration tests with edge cases
+// tldr Test ::: fixtures for integration tests with edge cases
 // tldr ::: Production data anonymization script for dev environments
 ```
 
@@ -748,22 +748,22 @@ rg -n "!{1,2}[A-Za-z0-9_-]*(hotpath|mem|io|perf)[[:space:]]+:::"
 
 ```bash
 # Replace all synonyms with canonical forms
-find . -type f -exec sed -i '' 's/fixme :::/fix :::/g' {} +
-find . -type f -exec sed -i '' 's/temporary :::/temp :::/g' {} +
-find . -type f -exec sed -i '' 's/info :::/note :::/g' {} +
-find . -type f -exec sed -i '' 's/wip :::/draft :::/g' {} +
+find . -type f -exec sed -i '' 's/fix :::/fix :::/g' {} +
+find . -type f -exec sed -i '' 's/temp :::/temp :::/g' {} +
+find . -type f -exec sed -i '' 's/note :::/note :::/g' {} +
+find . -type f -exec sed -i '' 's/draft :::/draft :::/g' {} +
 ```
 
 #### 1.2 Convert Removed Markers
 
 ```bash
 # Convert removed markers to appropriate replacements
-find . -type f -exec sed -i '' 's/good :::/note ::: status:approved/g' {} +
-find . -type f -exec sed -i '' 's/bad :::/note ::: status:rejected/g' {} +
-find . -type f -exec sed -i '' 's/remove :::/temp :::/g' {} +
-find . -type f -exec sed -i '' 's/caution :::/!alert :::/g' {} +
-find . -type f -exec sed -i '' 's/pin :::/\*note :::/g' {} +
-find . -type f -exec sed -i '' 's/broken :::/note ::: status:broken/g' {} +
+find . -type f -exec sed -i '' 's/note ::: status:approved/note ::: status:approved/g' {} +
+find . -type f -exec sed -i '' 's/note ::: status:rejected/note ::: status:rejected/g' {} +
+find . -type f -exec sed -i '' 's/-todo :::/temp :::/g' {} +
+find . -type f -exec sed -i '' 's/!alert :::/!alert :::/g' {} +
+find . -type f -exec sed -i '' 's/*note :::/\*note :::/g' {} +
+find . -type f -exec sed -i '' 's/note ::: status:broken/note ::: status:broken/g' {} +
 ```
 
 #### 1.3 Update Property Names
@@ -777,10 +777,10 @@ find . -type f -exec sed -i '' 's/lifecycle:/status:/g' {} +
 
 ```bash
 # Convert why markers to reason properties
-find . -type f -exec sed -i '' 's/why :::\([^:]*\)$/note ::: reason:\1/g' {} +
+find . -type f -exec sed -i '' 's/note ::: reason:\([^:]*\)$/note ::: reason:\1/g' {} +
 
 # Convert mustread to double-bang signals
-find . -type f -exec sed -i '' 's/mustread :::/!!note :::/g' {} +
+find . -type f -exec sed -i '' 's/!!note :::/!!note :::/g' {} +
 
 # Update any old reference patterns to blessed key pattern (if any exist)
 find . -type f -exec sed -i '' 's/#\([0-9]\+\):fixes/fixes:#\1/g' {} +

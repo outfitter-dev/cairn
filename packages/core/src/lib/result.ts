@@ -1,4 +1,4 @@
-// ::: tldr Result pattern implementation for error handling
+// tldr ::: Result pattern implementation for error handling
 import type { AppError, ErrorCode } from './error.js';
 import { makeError } from './error.js';
 

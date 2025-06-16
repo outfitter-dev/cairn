@@ -1,5 +1,5 @@
 # Documentation Simplification Proposal
-<!-- ::: tldr Restructure docs from 30+ files to ~5 focused documents -->
+<!-- tldr ::: Restructure docs from 30+ files to ~5 focused documents -->
 
 ## Summary
 

@@ -1,18 +1,18 @@
 # Domain-Specific Patterns
-<!-- ::: tldr Specialized patterns for specific technical domains -->
+<!-- tldr ::: Specialized patterns for specific technical domains -->
 <!-- ::: convention Domain-specific waymarks for security, performance, and more -->
 
 Specialized waymarks for specific technical domains and concerns.
 
 ## Security
 
-### `::: sec`
+### `sec :::`
 
 **Purpose**: Security-critical code requiring review
 
 ```javascript
-// ::: sec validate all inputs before SQL query
-// ::: sec, p0 authentication bypass vulnerability
+// sec ::: validate all inputs before SQL query
+// sec :::, p0 authentication bypass vulnerability
 ```
 
 ### `::: vuln`
@@ -23,31 +23,31 @@ Specialized waymarks for specific technical domains and concerns.
 # ::: vuln CVE-2024-1234 needs patch
 ```
 
-### `::: crypto`
+### `crypto :::`
 
 **Purpose**: Cryptographic operations
 
 ```go
-// ::: crypto constant-time comparison required
+// crypto ::: constant-time comparison required
 ```
 
-### `::: auth`
+### `auth :::`
 
 **Purpose**: Authentication/authorization
 
 ```java
-// ::: auth check permissions before access
+// auth check ::: permissions before access
 ```
 
 ## Performance
 
-### `::: perf`
+### `perf :::`
 
 **Purpose**: Performance-critical sections
 
 ```rust
-// ::: perf hot path - optimize carefully
-// ::: perf, p1 N+1 query problem
+// perf ::: hot path - optimize carefully
+// perf :::, p1 N+1 query problem
 ```
 
 ### `::: bench`
@@ -77,13 +77,13 @@ Specialized waymarks for specific technical domains and concerns.
 
 ## Accessibility
 
-### `::: a11y`
+### `a11y :::`
 
 **Purpose**: Accessibility requirements
 
 ```html
-<!-- ::: a11y add ARIA labels -->
-<!-- ::: a11y, wcag ensure AA compliance -->
+<!-- a11y ::: add ARIA labels -->
+<!-- a11y :::, wcag ensure AA compliance -->
 ```
 
 ### `::: i18n`
@@ -190,13 +190,13 @@ Specialized waymarks for specific technical domains and concerns.
 
 ## Testing & Quality
 
-### `::: test`
+### `test :::`
 
 **Purpose**: Testing requirements
 
 ```javascript
-// ::: test, unit add edge cases
-// ::: test, integration mock external service
+// test :::, unit add edge cases
+// test :::, integration mock external service
 ```
 
 ### `::: coverage`
@@ -225,13 +225,13 @@ Specialized waymarks for specific technical domains and concerns.
 // ::: breaking, v3 parameter order changed
 ```
 
-### `::: deprecated`
+### `deprecated :::`
 
 **Purpose**: Deprecation notices
 
 ```java
-// ::: deprecated use newMethod() instead
-// ::: deprecated, remove:v4.0
+// deprecated ::: use newMethod() instead
+// deprecated :::, remove:v4.0
 ```
 
 ### `::: experimental`
@@ -244,8 +244,8 @@ Specialized waymarks for specific technical domains and concerns.
 
 ## Best Practices
 
-1. **Combine with Priority**: `::: sec, p0` for critical security
+1. **Combine with Priority**: `sec :::, p0` for critical security
 2. **Add Context**: Include specific concern after waymark
 3. **Version Breaking Changes**: `::: breaking, v2`
-4. **Link Standards**: `::: a11y, wcag-2.1`
+4. **Link Standards**: `a11y :::, wcag-2.1`
 5. **Specify Platforms**: `::: browser, chrome, firefox`

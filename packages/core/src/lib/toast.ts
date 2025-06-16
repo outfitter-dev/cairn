@@ -1,4 +1,4 @@
-// ::: tldr Toast wrapper utilities for future UI integration
+// tldr ::: Toast wrapper utilities for future UI integration
 import type { Result } from './result.js';
 import type { AppError, ErrorCode } from './error.js';
 

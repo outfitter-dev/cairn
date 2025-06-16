@@ -1,4 +1,4 @@
-<!-- ::: tldr canonical waymark syntax specification -->
+<!-- tldr ::: canonical waymark syntax specification -->
 # Waymark Syntax Specification
 
 The canonical specification for waymark syntax - a breadcrumb protocol for code navigation.
@@ -10,46 +10,44 @@ Waymarks provide a breadcrumb protocol that enables developers and AI agents to 
 ## Core Grammar
 
 ```ebnf
-waymark       ::= comment-leader identifier space marker-list prose?
-identifier  ::= ":::"
+waymark     ::= comment-leader marker? space sigil space prose?
+sigil       ::= ":::"
 space       ::= " "                    # exactly one ASCII space
-marker-list ::= marker ("," marker)*
-marker      ::= key delimiter?
-key         ::= identifier | "@" identifier
-delimiter   ::= ":" value | "(" params ")" | "[" array "]"
-value       ::= identifier | quoted-string
-params      ::= param ("," param)*
-param       ::= key ":" value
-array       ::= value ("," value)*
-prose       ::= text                   # everything after markers
+marker      ::= signal? marker_name
+signal      ::= position_signal? intensity_signal?
+position_signal ::= "*" | "_"
+intensity_signal ::= "!!" | "!" | "??" | "?" | "--" | "-"
+marker_name ::= [a-z]+
+prose       ::= .+                     # free-form text
 ```
 
 ## Basic Structure
 
-### The `:::` Identifier
+### The `:::` Sigil
 
-The syntax uses `:::` as the identifier.
+The syntax uses `:::` as the sigil (separator between marker and content).
 
 ```javascript
-// Standard identifier (mandatory single space after)
-// ::: todo implement authentication
+// Standard waymark (marker before sigil)
+// todo ::: implement authentication
 ```
 
 **Key Rules:**
 
+- Marker comes before `:::` with exactly one space
 - `:::` must be followed by exactly one ASCII space
-- Three glyphs for visual clarity and fast typing
+- Three colons for visual clarity and fast typing
 - Trivially matched with `':::'` in ripgrep
 
 ### Markers
 
-Each marker classifies an anchor's purpose and is organized into one of six semantic groups for discoverability.
+Each marker classifies a waymark's purpose. Markers appear before the sigil and are organized into semantic groups for discoverability.
 
 ```javascript
-// Core markers with mandatory space after identifier
-// ::: todo implement rate limiting
-// ::: fix memory leak in auth service
-// ::: sec validate all user inputs
+// Core markers with mandatory space before and after sigil
+// todo ::: implement rate limiting
+// fix ::: memory leak in auth service  
+// sec ::: validate all user inputs
 ```
 
 ## Signal System
@@ -70,7 +68,7 @@ Signals act as intensity modifiers and position markers that can be prefixed to 
 // Position signals come first, then intensity
 // *todo ::: finish error handling before merge     // Branch-scoped work
 // *!todo ::: critical issue blocking PR            // Urgent branch work
-// !todo ::: important migration task               // Important (not branch-scoped)
+// !todo important ::: migration task               // Important (not branch-scoped)
 // !!alert ::: critical security vulnerability      // Critical alert
 // ?note ::: unclear if this handles edge case      // Needs clarification
 // -todo ::: obsolete after v5 migration            // Mark for removal
@@ -82,34 +80,34 @@ The syntax uses three distinct delimiters with specific semantic purposes:
 
 ### Colon (`:`) - Classifications
 
-Used for type:value relationships, classifications, and states.
+Used for type:value relationships, classifications, and states. These appear in the prose section after the sigil.
 
 ```javascript
-// ::: priority:high         // priority classification
-// ::: status:blocked        // status classification
-// ::: env:production        // environment type
-// ::: owner:@alice          // ownership (including mentions)
+// todo ::: implement feature priority:high         // priority classification
+// fix ::: bug in payment status:blocked           // status classification
+// alert check ::: config env:production           // environment type
+// review ::: security audit owner:@alice          // ownership (including mentions)
 ```
 
 ### Parentheses (`()`) - Parameters
 
-Used for structured parameters and arguments associated with markers.
+Used for structured parameters and arguments. These appear in the prose section after the sigil.
 
 ```javascript
-// ::: blocked(issue:4)           // parameter with classification
-// ::: depends(auth-service)      // simple parameter
-// ::: config(timeout:30,retry:3) // multiple parameters
+// blocked ::: waiting for resolution blocked(issue:4)     // parameter with classification
+// needs auth ::: service integration depends(auth-service) // simple parameter  
+// todo ::: add retry logic config(timeout:30,retry:3)     // multiple parameters
 ```
 
 ### Brackets (`[]`) - Arrays
 
-Used for multiple values, optional for single values.
+Used for multiple values, optional for single values. These appear in the prose section after the sigil.
 
 ```javascript
-// ::: blocked:[4,7]              // multiple blockers
-// ::: tags:[auth,api,security]   // multiple tags
-// ::: owner:[@alice,@bob]        // multiple owners
-// ::: blocked:4                  // single value (brackets optional)
+// blocked ::: by multiple issues blocked:[4,7]           // multiple blockers
+// todo ::: implement auth tags:[auth,api,security]       // multiple tags
+// review ::: needed from team owner:[@alice,@bob]        // multiple owners
+// blocked ::: by deployment blocked:4                    // single value (brackets optional)
 ```
 
 ## Core Marker Groups
@@ -129,47 +127,47 @@ Markers are organized into eight semantic groups for discoverability (42 total m
 
 **Usage Rules:**
 
-1. Multiple markers can be combined with commas: `::: todo,priority:high`
+1. One marker per waymark - never combine multiple markers
 2. Markers from the same category should not be combined
 3. Properties provide additional context and metadata
 
 ## Relational Patterns
 
-Relationships are expressed directly through dedicated markers without redundant prepositions:
+Relationships are expressed through properties in the prose section after the sigil:
 
 ```javascript
 // Dependency relationships
-// ::: depends(auth-service)       // requires auth service
-// ::: requires(api:v2-login)      // needs specific API
-// ::: needs(config:redis)         // requires configuration
+// needs auth ::: service depends(auth-service)       // requires auth service
+// todo ::: implement login requires(api:v2-login)    // needs specific API
+// fix ::: connection issue needs(config:redis)       // requires configuration
 
 // Blocking relationships
-// ::: blocked(issue:AUTH-123)     // blocked by issue
-// ::: blocking:[PAY-45,UI-77]     // blocks multiple tasks
+// blocked ::: by auth issue blocked(issue:AUTH-123)  // blocked by issue
+// todo ::: payment update blocking:[PAY-45,UI-77]    // blocks multiple tasks
 
 // Event relationships
-// ::: emits(event:user-created)   // publishes event
-// ::: listens(payment-completed)  // subscribes to event
-// ::: triggers(workflow:deploy)   // initiates process
+// note ::: user creation emits(event:user-created)   // publishes event
+// todo ::: handle payments listens(payment-completed) // subscribes to event
+// alert ::: deployment triggers(workflow:deploy)      // initiates process
 ```
 
-## Multi-line Anchors
+## Multi-line Waymarks
 
-The syntax strongly recommends single-line anchors to maintain grep-ability:
+The syntax strongly recommends single-line waymarks to maintain grep-ability:
 
 ```javascript
 // Single-line waymarks (preferred)
-// ::: todo(assign:@alice,priority:high) implement OAuth integration
+// todo ::: implement OAuth integration assign:@alice priority:high
 
 // Multiple related waymark lines for complex context
-// ::: todo(assign:@alice,priority:high) implement OAuth integration  
-// ::: context OAuth flow requires PKCE for security compliance
-// ::: depends(service:session-api) user sessions must exist first
+// todo ::: implement OAuth integration assign:@alice priority:high
+// note ::: OAuth flow requires PKCE for security compliance
+// needs ::: user sessions must exist first depends(service:session-api)
 ```
 
 **Benefits:**
 
-- `rg "::: todo"` always finds todo items
+- `rg "todo :::"` always finds todo items
 - Simple, consistent search patterns
 - No complex multi-line parsing required
 
@@ -179,15 +177,15 @@ Prose follows markers, separated by space. Optional formatting for clarity:
 
 ```javascript
 // Basic prose
-// ::: todo implement rate limiting
+// todo ::: implement rate limiting
 
-// Colon prefix (recommended for clarity)
-// ::: todo: implement rate limiting before launch
-// ::: context: this function assumes Redis is available
+// Additional context in prose
+// todo ::: implement rate limiting before launch
+// note ::: this function assumes Redis is available
 
-// Quoted prose (for complex text)
-// ::: todo(priority:high): "fix race condition in auth service"
-// ::: alert: "this function modifies global state"
+// Properties mixed with prose
+// todo fix ::: race condition in auth service priority:high
+// alert ::: this function modifies global state
 ```
 
 ## Quoting and Escaping
@@ -197,18 +195,18 @@ The syntax uses quotes for strings with special characters:
 **Simple values** (no quotes needed):
 
 ```javascript
-// ::: user(alice)
-// ::: version(2.0.1)  
-// ::: priority:high
+// todo ::: assign user alice
+// note ::: compatible with version:2.0.1  
+// fix ::: critical bug priority:high
 ```
 
 **Complex values** (quotes required):
 
 ```javascript
-// ::: match('user-123')              // literal string
-// ::: path('src/data migration.sql') // spaces in path
-// ::: message('Can\'t connect')      // escaped quote
-// ::: files:['auth.js','lib/utils.js'] // array of paths
+// todo ::: handle user match('user-123')              // literal string
+// fix ::: migration at path('src/data migration.sql') // spaces in path
+// alert ::: connection error message('Can\'t connect') // escaped quote
+// review check ::: files:['auth.js','lib/utils.js']   // array of paths
 ```
 
 **No structural dots** - Use dots only for literals (versions, URLs, file paths)
@@ -223,9 +221,9 @@ Teams can configure their preferred syntax patterns:
 priorities:
   scheme: "numeric"  # or "named"
   numeric:
-    p0: "critical"   # ::: p0 → ::: priority:critical
-    p1: "high"       # ::: p1 → ::: priority:high
-    p2: "medium"     # ::: p2 → ::: priority:medium
+    p0: "critical"   # todo ::: task priority:p0 → todo ::: task priority:critical
+    p1: "high"       # todo ::: task priority:p1 → todo ::: task priority:high
+    p2: "medium"     # todo ::: task priority:p2 → todo ::: task priority:medium
 ```
 
 ### Version Styles
@@ -300,15 +298,19 @@ See [waymark documentation](../waymark/) for tooling-specific requirements.
 # Find all waymarks
 rg ":::"
 
-# Find by marker group
-rg ":::.*todo"      # All work items
-rg ":::.*notice"    # All warnings/alerts
-rg ":::.*domain"    # All domain-specific markers
+# Find by marker
+rg "todo :::"        # All todo items
+rg "alert :::"       # All alerts
+rg "fix :::"         # All bugs to fix
 
 # Find with context
-rg -C2 "::: security"  # 2 lines context
-rg -B3 -A3 "::: todo"  # 3 lines before/after
+rg -C2 "sec :::"     # 2 lines context
+rg -B3 -A3 "todo :::" # 3 lines before/after
+
+# Find with signals
+rg "!todo :::"       # Important todos
+rg "\*todo :::"      # Branch-scoped todos
 
 # Find in markdown (including HTML comments)
-rg "<!-- :::" --type md
+rg "<!-- .* :::" --type md
 ```

@@ -1,4 +1,4 @@
-// ::: tldr Core parser for waymark syntax (::: marker prose)
+// tldr ::: Core parser for waymark syntax (::: marker prose)
 import type { Waymark, ParseResult, ParseError } from '@waymark/types';
 import { type Result, success, failure } from '../lib/result.js';
 import { makeError } from '../lib/error.js';
@@ -72,7 +72,7 @@ export class WaymarkParser {
     // ::: ctx extract everything after ::: (including the space)
     const afterAnchor = line.substring(anchorIndex + 3);
     
-    // ::: sec validate required space after :::
+    // sec ::: validate required space after :::
     if (!afterAnchor.startsWith(' ')) {
       return {
         error: {

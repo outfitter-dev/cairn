@@ -1,5 +1,5 @@
 # Waymark Documentation Comment Support
-<!-- ::: tldr Proposal for enhanced waymark tooling to handle documentation comments -->
+<!-- tldr ::: Proposal for enhanced waymark tooling to handle documentation comments -->
 <!-- ::: spec waymark tooling enhancements for JSDoc, docstrings, and other doc systems -->
 
 **Status**: Proposal  
@@ -30,7 +30,7 @@ Waymarks already work within documentation comments, since they're just comment 
 waymark "::: api" --doc-comments
 
 # Exclude documentation comments (regular comments only)
-waymark "::: todo" --no-doc-comments
+waymark "todo :::" --no-doc-comments
 ```
 
 **Implementation**: Pattern matching for documentation comment formats:
@@ -57,7 +57,7 @@ waymark "::: api" --with-docs
 # src/auth.js:23-35
 # /**
 #  * ::: api Primary authentication endpoint
-#  * ::: sec validate all inputs before processing
+#  * sec ::: validate all inputs before processing
 #  * 
 #  * @description Authenticates users with JWT tokens
 #  * @param {string} token - JWT token to validate
@@ -118,19 +118,19 @@ waymark --doc-analysis
 # ============================
 # 
 # Files with doc comments: 45/67 (67%)
-# Functions with ::: tldr: 23/89 (26%)
+# Functions with tldr :::: 23/89 (26%)
 # API functions with ::: api: 67/67 (100%)
 # Security anchors in docs: 12
 # 
 # Missing documentation anchors:
-# - src/utils.js:15 - function validateEmail (missing ::: tldr)
-# - src/auth.js:45 - function hashPassword (missing ::: sec)
+# - src/utils.js:15 - function validateEmail (missing tldr :::)
+# - src/auth.js:45 - function hashPassword (missing sec :::)
 
 # Quality checks
 waymark --doc-quality
-# - Verify ::: tldr exists for all public functions
+# - Verify tldr ::: exists for all public functions
 # - Check ::: api for exported functions/classes
-# - Ensure ::: sec for security-critical functions
+# - Ensure sec ::: for security-critical functions
 ```
 
 ### 6. Enhanced Output Formats
@@ -160,7 +160,7 @@ waymark ":::" --output=html --with-docs
 ```javascript
 /**
  * ::: api Primary authentication endpoint
- * ::: sec validate all inputs before processing
+ * sec ::: validate all inputs before processing
  * 
  * @description Authenticates users with JWT tokens
  * @param {string} token - JWT token to validate
@@ -181,9 +181,9 @@ waymark --generate-template=jsdoc --function=authenticateUser
 
 # Output:
 # /**
-#  * ::: tldr [Brief description]
+#  * tldr ::: [Brief description]
 #  * ::: api [Public interface description]  
-#  * ::: sec [Security considerations]
+#  * sec ::: [Security considerations]
 #  * 
 #  * @description [Detailed description]
 #  * @param {type} param - [Parameter description]
@@ -213,9 +213,9 @@ waymark --validate-docs
 
 # Validation rules configuration
 waymark --validate-docs --rules=strict
-# - All public functions must have ::: tldr
+# - All public functions must have tldr :::
 # - All API endpoints must have ::: api
-# - All security functions must have ::: sec
+# - All security functions must have sec :::
 ```
 
 ### 9. Documentation Search Combinations
@@ -230,10 +230,10 @@ waymark --missing-anchor="api" --doc-comments --functions
 waymark --missing-anchor="sec" --pattern="auth|password|token|security"
 
 # Find deprecated functions still in documentation
-waymark "::: deprecated" --with-docs --show-usage
+waymark "deprecated :::" --with-docs --show-usage
 
 # Find TODO items in documentation that need AI attention
-waymark "::: todo.*@agent" --doc-comments --priority-high
+waymark "todo :::.*@agent" --doc-comments --priority-high
 ```
 
 ### 10. Integration with Documentation Generators
@@ -247,7 +247,7 @@ waymark --export-jsdoc-metadata > anchors.json
 # Generate additional JSDoc tags from anchors
 waymark --convert-to-jsdoc-tags
 # Converts "::: api" to "@api" tags
-# Converts "::: deprecated" to "@deprecated" tags
+# Converts "deprecated :::" to "@deprecated" tags
 
 # Integration with other doc tools
 waymark --export-sphinx-metadata    # For Python Sphinx
@@ -384,7 +384,7 @@ documentation:
     templates:
       jsdoc: |
         /**
-         * ::: tldr [Brief description]
+         * tldr ::: [Brief description]
          * ::: api [Interface description]
          * 
          * @description [Detailed description]
@@ -394,7 +394,7 @@ documentation:
       
       docstring: |
         """
-        ::: tldr [Brief description]
+        tldr ::: [Brief description]
         ::: api [Interface description]
         
         [Detailed description]
@@ -416,7 +416,7 @@ documentation:
 waymark "::: api" --docs
 
 # Find security anchors with their documentation context
-waymark "::: sec" --docs --with-context
+waymark "sec :::" --docs --with-context
 
 # Search for specific documentation format
 waymark ":::" --doc-format=jsdoc --language=javascript

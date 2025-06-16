@@ -1,4 +1,4 @@
-<!-- ::: fixme, refactor this uses old patterns -->
+<!-- fix :::, refactor this uses old patterns -->
 <!-- :ga:tldr marker semantic typing system for 5W+H framework -->
 # Marker Semantic Types (Future Idea)
 

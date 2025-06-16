@@ -80,14 +80,14 @@ That's it! You can search all of these with `rg ":::"`.
 
 **`temp :::`** - Temporary code to remove
 ```javascript
-// temp ::: remove after Chrome 120 fix ships
+// temp -todo ::: after Chrome 120 fix ships
 // temp ::: workaround for Redis bug
 ```
 
 **`cleanup :::`** - Code that needs refactoring
 ```java
 // cleanup ::: tightly coupled to database
-// cleanup ::: needs proper error handling
+// cleanup needs ::: proper error handling
 ```
 
 **`hack :::`** - Quick fixes that need proper solutions
@@ -116,7 +116,7 @@ That's it! You can search all of these with `rg ":::"`.
 ```javascript
 // ::: uses Redux for state management
 // ::: no external dependencies allowed
-// ::: must be backwards compatible
+// must ::: be backwards compatible
 ```
 
 ### Review Requests
@@ -148,7 +148,7 @@ That's it! You can search all of these with `rg ":::"`.
 **Status Tracking**
 ```javascript
 // draft ::: do not merge yet
-// hold ::: blocked waiting on API update
+// hold blocked ::: waiting on API update
 // review ::: ready for review
 ```
 
@@ -176,7 +176,7 @@ That's it! You can search all of these with `rg ":::"`.
 
 ```javascript
 // todo ::: @alice priority:high implement auth
-// alert ::: deprecated:v3.0 use newMethod() instead +breaking
+// alert deprecated ::::v3.0 use newMethod() instead +breaking
 // fix ::: affects:auth,api,frontend security vulnerability
 // todo ::: requires:node(16,18,20) supports multiple versions
 ```
@@ -313,8 +313,8 @@ If migrating from `:::` syntax:
 rg ":::"
 
 # Convert basic patterns
-sed -i 's/::: todo/todo :::/g' **/*.js
-sed -i 's/::: sec/alert :::/g' **/*.js
+sed -i 's/todo :::/todo :::/g' **/*.js
+sed -i 's/sec :::/alert :::/g' **/*.js
 sed -i 's/::: ctx/:::g' **/*.js
 ```
 

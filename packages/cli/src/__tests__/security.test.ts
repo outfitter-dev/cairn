@@ -1,4 +1,4 @@
-// ::: tldr Comprehensive security tests for CLI features
+// tldr ::: Comprehensive security tests for CLI features
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { writeFileSync, unlinkSync, mkdirSync, rmSync, existsSync } from 'fs';
 import { resolve, join } from 'path';
@@ -39,7 +39,7 @@ describe('CLI Security Features', () => {
 
   describe('Path Traversal Protection', () => {
     it('should block directory traversal attacks', async () => {
-      // ::: sec test attempts to access files outside working directory
+      // sec test ::: attempts to access files outside working directory
       const maliciousPaths = [
         '../../../etc/passwd',
         '..\\..\\..\\windows\\system32\\drivers\\etc\\hosts',
@@ -47,14 +47,14 @@ describe('CLI Security Features', () => {
         'C:\\Windows\\System32\\drivers\\etc\\hosts'
       ];
 
-      // ::: sec test that malicious paths are detected
+      // sec test ::: that malicious paths are detected
       expect(maliciousPaths.length).toBeGreaterThan(0);
       expect(maliciousPaths.some(path => path.includes('..'))).toBe(true);
       expect(maliciousPaths.some(path => path.startsWith('/'))).toBe(true);
     });
 
     it('should allow valid paths within working directory', async () => {
-      writeFileSync(testFile, '// ::: test valid file');
+      writeFileSync(testFile, '// test ::: valid file');
       
       // ::: ctx test that valid paths are accepted
       const validPaths = [
@@ -68,7 +68,7 @@ describe('CLI Security Features', () => {
     });
 
     it('should resolve symlinks and block if they escape working directory', async () => {
-      // ::: sec test symlink attack prevention
+      // sec test ::: symlink attack prevention
       const symlinkPath = join(testDir, 'symlink-test');
       const targetPath = '/tmp/outside-target';
       
@@ -110,7 +110,7 @@ describe('CLI Security Features', () => {
       const maliciousContent = 'some content\0hidden content';
       writeFileSync(maliciousFile, maliciousContent);
       
-      // ::: sec test null byte detection
+      // sec test ::: null byte detection
       expect(maliciousContent.includes('\0')).toBe(true);
     });
 
@@ -141,7 +141,7 @@ describe('CLI Security Features', () => {
     });
 
     it('should handle large file content safely', () => {
-      // ::: perf test large content validation
+      // perf test ::: large content validation
       const largeContent = 'x'.repeat(60 * 1024 * 1024); // 60MB
       const contentSize = Buffer.byteLength(largeContent, 'utf8');
       
@@ -151,7 +151,7 @@ describe('CLI Security Features', () => {
 
   describe('Rate Limiting', () => {
     it('should track operation counts correctly', () => {
-      // ::: sec test rate limiting logic
+      // sec test ::: rate limiting logic
       const rateLimiter = new Map();
       const operation = 'test';
       const key = `${operation}-${process.cwd()}`;
@@ -184,7 +184,7 @@ describe('CLI Security Features', () => {
     });
 
     it('should reset rate limit after window expires', () => {
-      // ::: sec test rate limit window reset
+      // sec test ::: rate limit window reset
       const windowMs = 100; // Short window for testing
       const now = Date.now();
       const futureTime = now + windowMs + 1;
@@ -193,7 +193,7 @@ describe('CLI Security Features', () => {
     });
 
     it('should apply rate limiting per operation type', () => {
-      // ::: sec test operation-specific rate limiting
+      // sec test ::: operation-specific rate limiting
       const operations = ['parse', 'search', 'list'];
       const rateLimiter = new Map();
       
@@ -208,7 +208,7 @@ describe('CLI Security Features', () => {
 
   describe('Streaming Security', () => {
     it('should handle large files safely with streaming', () => {
-      // ::: perf test streaming for large files
+      // perf test ::: streaming for large files
       const maxFileSize = 10 * 1024 * 1024; // 10MB
       const largeFileSize = 50 * 1024 * 1024; // 50MB
       
@@ -216,8 +216,8 @@ describe('CLI Security Features', () => {
     });
 
     it('should validate anchors in streaming mode', () => {
-      // ::: sec test anchor validation during streaming
-      const line = '// ::: todo implement security feature';
+      // sec test ::: anchor validation during streaming
+      const line = '// todo ::: implement security feature';
       const anchorIndex = line.indexOf(':::');
       const afterAnchor = line.substring(anchorIndex + 3);
       
@@ -244,7 +244,7 @@ describe('CLI Security Features', () => {
 
   describe('Error Handling Security', () => {
     it('should sanitize error messages', () => {
-      // ::: sec test error message sanitization
+      // sec test ::: error message sanitization
       const sensitiveData = {
         password: 'secret123',
         token: 'bearer xyz',
@@ -266,7 +266,7 @@ describe('CLI Security Features', () => {
     });
 
     it('should handle circular references in JSON output', () => {
-      // ::: sec test circular reference handling
+      // sec test ::: circular reference handling
       const obj: any = { name: 'test' };
       obj.self = obj; // Create circular reference
       
@@ -293,7 +293,7 @@ describe('CLI Security Features', () => {
 
   describe('Security Integration', () => {
     it('should apply all security measures in correct order', () => {
-      // ::: sec test security pipeline
+      // sec test ::: security pipeline
       const securityChecks = [
         'rate-limit',
         'path-validation', 
@@ -308,7 +308,7 @@ describe('CLI Security Features', () => {
     });
 
     it('should provide security audit logs when enabled', () => {
-      // ::: sec test security logging capability
+      // sec test ::: security logging capability
       const originalEnv = process.env['WAYMARK_SECURITY_LOG'];
       process.env['WAYMARK_SECURITY_LOG'] = 'true';
       

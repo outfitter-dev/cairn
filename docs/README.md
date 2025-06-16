@@ -16,7 +16,7 @@ Waymarks are searchable markers in code comments using the `:::` sigil:
 
 ```javascript
 // todo ::: implement validation
-// alert ::: check user permissions +security
+// alert check ::: user permissions +security
 // ::: assumes UTC timestamps
 ```
 

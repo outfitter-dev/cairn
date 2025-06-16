@@ -1,10 +1,10 @@
-// ::: tldr Tests for waymark parser functionality
+// tldr ::: Tests for waymark parser functionality
 import { describe, it, expect } from 'vitest';
 import { WaymarkParser } from '../parser/waymark-parser.js';
 
 describe('WaymarkParser', () => {
   it('should parse basic waymark with single marker', () => {
-    const content = '// ::: todo implement validation';
+    const content = '// todo ::: implement validation';
     const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
@@ -21,7 +21,7 @@ describe('WaymarkParser', () => {
   });
   
   it('should parse waymark with multiple markers', () => {
-    const content = '// ::: sec, todo validate inputs';
+    const content = '// sec :::, todo validate inputs';
     const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
@@ -35,7 +35,7 @@ describe('WaymarkParser', () => {
   });
   
   it('should parse waymark without prose', () => {
-    const content = '// ::: tldr';
+    const content = '// tldr :::';
     const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
@@ -74,9 +74,9 @@ describe('WaymarkParser', () => {
   
   it('should find waymarks by marker', () => {
     const content = `
-      // ::: todo implement
-      // ::: sec validate
-      // ::: todo, perf optimize
+      // todo ::: implement
+      // sec ::: validate
+      // todo :::, perf optimize
     `;
     const result = WaymarkParser.parseWithResult(content);
     
@@ -112,7 +112,7 @@ describe('WaymarkParser', () => {
   });
 
   it('should handle complex nested parentheses and brackets in markers', () => {
-    const content = '// ::: todo(priority:high,tags:[ui,backend]), blocked:[4,7], owner:@alice test complex parsing';
+    const content = '// todo :::(priority:high,tags:[ui,backend]), blocked:[4,7], owner:@alice test complex parsing';
     const result = WaymarkParser.parseWithResult(content);
     
     expect(result.ok).toBe(true);
@@ -128,7 +128,7 @@ describe('WaymarkParser', () => {
     const testCases = [
       { content: '// ::: priority:high', expectedContexts: ['priority:high'] },
       { content: '// ::: owner:@alice', expectedContexts: ['owner:@alice'] },
-      { content: '// ::: blocked:[123,456]', expectedContexts: ['blocked:[123,456]'] },
+      { content: '// blocked ::::[123,456]', expectedContexts: ['blocked:[123,456]'] },
       { content: '// ::: tags:[ui,backend,api]', expectedContexts: ['tags:[ui,backend,api]'] },
       { content: '// ::: status:in-progress', expectedContexts: ['status:in-progress'] },
     ];

@@ -104,7 +104,7 @@ All original files archived in `/docs/project/rewrite/` with `.old` extensions:
 
 4. **Pure Notes** - Waymarks without prefixes
    - `::: this explains the context`
-   - `::: deprecated:v2.0 moving to new API`
+   - `deprecated ::::v2.0 moving to new API`
 
 5. **Fixed Prefix Namespace** - Consistent categories
    - Tasks: `todo`, `fix`, `done`, `review`
@@ -118,8 +118,8 @@ All original files archived in `/docs/project/rewrite/` with `.old` extensions:
 | Old Pattern | New Pattern | Description |
 |-------------|-------------|-------------|
 | `rg ":::"` | `rg ":::"` | Find all waymarks |
-| `rg "::: todo"` | `rg "todo :::"` | Find todos |
-| `rg "::: sec"` | `rg "warn :::" -o rg "#security"` | Security concerns |
+| `rg "todo :::"` | `rg "todo :::"` | Find todos |
+| `rg "sec :::"` | `rg "warn :::" -o rg "#security"` | Security concerns |
 | `rg ":::.*@agent"` | `rg ":::.*@alice"` | Person assignments |
 
 ## Remaining Work

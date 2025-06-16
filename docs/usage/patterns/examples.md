@@ -102,7 +102,7 @@ def process_order(order_data: dict) -> Order:
  */
 public class AuthService {
     // alert ::: security critical component +security
-    // review ::: check OWASP compliance
+    // review check ::: OWASP compliance
     
     /**
      * Validates user credentials
@@ -147,11 +147,11 @@ interface LegacyUser {
 
 ```javascript
 describe('PaymentProcessor', () => {
-  // test ::: needs more edge cases
+  // test needs ::: more edge cases
   // ::: mock external payment gateway
   
   it('should handle successful payments', () => {
-    // todo ::: test with different currencies
+    // todo test ::: with different currencies
     // todo ::: @agent add assertion for audit log
   });
   
@@ -225,7 +225,7 @@ function updateProfile(userId, data) {
   // alert ::: prevent SQL injection +security
   // todo ::: add rate limiting +security
   
-  // alert ::: check user owns this profile +security
+  // alert check ::: user owns this profile +security
   if (!userOwnsProfile(userId, profileId)) {
     // audit ::: log unauthorized access attempt +security
     throw new ForbiddenError();
@@ -360,7 +360,7 @@ Group waymarks that describe the same concern:
 
 ```python
 # alert ::: validate inputs +security
-# alert ::: check permissions +security
+# alert check ::: permissions +security
 # ::: admin users bypass some checks
 ```
 
@@ -370,7 +370,7 @@ Clear context helps AI agents:
 ```javascript
 // todo ::: @agent implement using React hooks
 // todo ::: @agent include error boundaries
-// ::: must support React 16.8+
+// must ::: support React 16.8+
 ```
 
 ### 4. Use consistent patterns
@@ -379,7 +379,7 @@ Establish team conventions:
 ```ruby
 # Team patterns:
 # shipped ::: ready for production
-# hold ::: needs review first
+# hold needs review ::: first
 # alert ::: proceed with caution
 ```
 

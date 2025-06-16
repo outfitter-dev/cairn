@@ -1,6 +1,6 @@
 # Variables, Templates, and Alias System
 
-<!-- ::: tldr future variables, templates, and alias system for advanced waymark features -->
+<!-- tldr ::: future variables, templates, and alias system for advanced waymark features -->
 <!-- ::: meta speculative feature design covering interpolation, aliases, and variable systems -->
 
 > **Future Feature**: This document outlines speculative variable, template, and alias systems that may be implemented in future iterations of waymark syntax. These features are not part of the current specification and represent advanced capabilities for complex workflows.
@@ -57,16 +57,16 @@ variables:
 
 ```javascript
 // Variable references with ${var} syntax
-// ::: todo(assign:${frontend-team}) implement user dashboard
+// todo :::(assign:${frontend-team}) implement user dashboard
 // ::: depends(service:${auth-service},db:${user-db}) user authentication
 // ::: ${review-process} validate input sanitization
-// ::: todo(milestone:${next-release},epic:${auth-epic}) OAuth integration
+// todo :::(milestone:${next-release},epic:${auth-epic}) OAuth integration
 
 // Variable expansion at parse time:
-// ::: todo(assign:@alice,@bob,@charlie) implement user dashboard
+// todo :::(assign:@alice,@bob,@charlie) implement user dashboard
 // ::: depends(service:auth.api.company.com,db:postgres.users.prod) user authentication
-// ::: review,owner:@mallory,type:security validate input sanitization
-// ::: todo(milestone:v2.1.0,epic:epic-auth-redesign) OAuth integration
+// review :::,owner:@mallory,type:security validate input sanitization
+// todo :::(milestone:v2.1.0,epic:epic-auth-redesign) OAuth integration
 ```
 
 **Array Variable Support:**
@@ -81,14 +81,14 @@ variables:
 ```
 
 ```javascript
-// ::: todo(platform:${mobile-platforms}) implement push notifications
-// ::: test(env:${test-environments}) validate payment flow
-// ::: review(assign:${full-stack-team}) architecture changes
+// todo :::(platform:${mobile-platforms}) implement push notifications
+// test :::(env:${test-environments}) validate payment flow
+// review :::(assign:${full-stack-team}) architecture changes
 
 // Expands to:
-// ::: todo(platform:[ios,android,react-native]) implement push notifications
-// ::: test(env:[staging,integration,e2e]) validate payment flow
-// ::: review(assign:@alice,@bob,@charlie,@david,@eve,@frank) architecture changes
+// todo :::(platform:[ios,android,react-native]) implement push notifications
+// test :::(env:[staging,integration,e2e]) validate payment flow
+// review :::(assign:@alice,@bob,@charlie,@david,@eve,@frank) architecture changes
 ```
 
 ### Variable Scope and Context
@@ -111,7 +111,7 @@ context-variables:
 
 ```javascript
 // Context variable usage
-// ::: todo(file:${current-file},owner:${file-owner}) add input validation
+// todo :::(file:${current-file},owner:${file-owner}) add input validation
 // ::: context(branch:${current-branch}) temporary OAuth implementation
 ```
 
@@ -159,14 +159,14 @@ templates:
 
 // Named parameters with defaults
 // ::: @assigned-task(owner:@alice,epic:auth-redesign)
-// → ::: todo(assign:@alice,priority:medium,epic:auth-redesign)
+// → todo :::(assign:@alice,priority:medium,epic:auth-redesign)
 
 // ::: @assigned-task(owner:@bob,priority:critical,epic:user-profiles)
-// → ::: todo(assign:@bob,priority:critical,epic:user-profiles)
+// → todo :::(assign:@bob,priority:critical,epic:user-profiles)
 
 // Complex template expansion
 // ::: @feature-epic(epic:oauth,milestone:v2.1,services:[auth,user])
-// → ::: todo(epic:oauth,milestone:v2.1),context(complexity:medium),depends(services:[auth,user])
+// → todo :::(epic:oauth,milestone:v2.1),context(complexity:medium),depends(services:[auth,user])
 
 // Conditional template
 // ::: @production-deploy(hotfix:true,services:[auth,payment])
@@ -249,24 +249,24 @@ aliases:
 
 ```javascript
 // Simple aliases
-// ::: todo,p1 implement user authentication
-// → ::: todo,priority:high implement user authentication
+// todo :::,p1 implement user authentication
+// → todo :::,priority:high implement user authentication
 
 // Team assignment aliases
-// ::: todo,fe update component styles
-// → ::: todo,assign:@alice,@bob,@charlie update component styles
+// todo :::,fe update component styles
+// → todo :::,assign:@alice,@bob,@charlie update component styles
 
 // Complex combination aliases
-// ::: todo,security-critical validate all user inputs
-// → ::: todo,security,priority:critical,severity:high validate all user inputs
+// todo :::,security-critical validate all user inputs
+// → todo :::,security,priority:critical,severity:high validate all user inputs
 
 // Workflow state aliases
-// ::: todo,wip,fe implement OAuth flow
-// → ::: todo,status:in-progress,type:development,assign:@alice,@bob,@charlie implement OAuth flow
+// todo :::,wip,fe implement OAuth flow
+// → todo :::,status:in-progress,type:development,assign:@alice,@bob,@charlie implement OAuth flow
 
 // Multiple aliases in one anchor
-// ::: todo,hotfix,sec fix authentication bypass
-// → ::: todo,priority:critical,type:hotfix,env:production,alert:on,assign:@mallory fix authentication bypass
+// todo :::,hotfix,sec fix authentication bypass
+// → todo :::,priority:critical,type:hotfix,env:production,alert:on,assign:@mallory fix authentication bypass
 ```
 
 ### Alias Precedence and Conflicts
@@ -285,8 +285,8 @@ aliases:
 // Alias: urgent: "priority:critical,severity:high"
 // Direct: priority:medium
 
-// ::: todo,urgent,priority:medium fix bug
-// → ::: todo,priority:medium,severity:high fix bug
+// todo :::,urgent,priority:medium fix bug
+// → todo :::,priority:medium,severity:high fix bug
 // (direct priority:medium overrides alias priority:critical)
 ```
 
@@ -392,7 +392,7 @@ priorities:
 // Variable + Template + Alias combinations
 
 // ::: @jira-task(ticket:PROJ-123,epic:${auth-epic}),fe
-// → ::: todo(issue:https://company.atlassian.net/browse/PROJ-123,epic:epic-auth-redesign),assign:@alice,@bob,@charlie
+// → todo :::(issue:https://company.atlassian.net/browse/PROJ-123,epic:epic-auth-redesign),assign:@alice,@bob,@charlie
 
 // ::: @security-review(urgent:true),ops
 // → ::: security,review(assign:@mallory,severity:high),critical,priority:critical,assign:@oscar,@peggy
@@ -400,13 +400,13 @@ priorities:
 // ::: @deploy-check(env:production,services:[auth,user],dependencies:[${auth-service}]),hotfix
 // → ::: deploy(env:production,services:[auth,user]),critical,approve:@oscar,@peggy,depends(services:[auth.api.company.com]),type:hotfix,priority:critical,env:production
 
-// ::: todo,p1,fe implement OAuth for ${mobile-epic}
-// → ::: todo,priority:high,assign:@alice,@bob,@charlie implement OAuth for epic-mobile-app
+// todo :::,p1,fe implement OAuth for ${mobile-epic}
+// → todo :::,priority:high,assign:@alice,@bob,@charlie implement OAuth for epic-mobile-app
 ```
 
 ## Implementation Considerations
 
-<!-- ::: todo future implementation requirements and technical challenges -->
+<!-- todo ::: future implementation requirements and technical challenges -->
 ### Technical Requirements
 
 **Variable System:**

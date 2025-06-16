@@ -1,5 +1,5 @@
 # Waymark Examples
-<!-- ::: tldr Pure syntax examples showing waymark patterns in various contexts -->
+<!-- tldr ::: Pure syntax examples showing waymark patterns in various contexts -->
 <!-- ::: syntax Examples of waymark syntax across languages -->
 
 Pure syntax examples showing waymark patterns in various contexts.
@@ -9,8 +9,8 @@ Pure syntax examples showing waymark patterns in various contexts.
 ### Simple Markers
 
 ```javascript
-// ::: todo
-// ::: fix
+// todo :::
+// fix :::
 // ::: security
 // ::: @alice
 ```
@@ -18,9 +18,9 @@ Pure syntax examples showing waymark patterns in various contexts.
 ### Multiple Markers
 
 ```python
-# ::: fix,sec                    # Good: closely related
-# ::: todo(priority:critical)    # Priority parameter
-# ::: todo,refactor,perf         # Consider splitting for clarity
+# fix :::,sec                    # Good: closely related
+# todo :::(priority:critical)    # Priority parameter
+# todo :::,refactor,perf         # Consider splitting for clarity
 ```
 
 ### Parameters with Colons
@@ -36,7 +36,7 @@ Pure syntax examples showing waymark patterns in various contexts.
 ```ruby
 # ::: tags:[frontend,backend,api]
 # ::: reviewers:[@alice,@bob]
-# ::: blocked:[4,7,12]
+# blocked ::::[4,7,12]
 ```
 
 ## Language Examples
@@ -44,8 +44,8 @@ Pure syntax examples showing waymark patterns in various contexts.
 ### JavaScript/TypeScript
 
 ```javascript
-// ::: todo implement error handling
-/* ::: perf(priority:medium) optimize render loop */
+// todo ::: implement error handling
+/* perf :::(priority:medium) optimize render loop */
 /** 
  * ::: api public interface
  */
@@ -54,17 +54,17 @@ Pure syntax examples showing waymark patterns in various contexts.
 ### Python
 
 ```python
-# ::: fix handle None case
+# fix ::: handle None case
 """
 ::: module authentication system
 """
-# ::: test,assign:@qa needs integration tests
+# test :::,assign:@qa needs integration tests
 ```
 
 ### Go
 
 ```go
-// ::: todo add context support
+// todo ::: add context support
 /* ::: breaking api change in v2 */
 // ::: config(goroutine:true,poolSize:10)
 ```
@@ -73,22 +73,22 @@ Pure syntax examples showing waymark patterns in various contexts.
 
 ```rust
 // ::: unsafe review needed
-/* ::: perf,todo optimize allocations */
+/* perf :::,todo optimize allocations */
 /// ::: api public trait
 ```
 
 ### Java
 
 ```java
-// ::: deprecated use newMethod() instead
-/* ::: todo(sync:required) thread safety */
+// deprecated ::: use newMethod() instead
+/* todo :::(sync:required) thread safety */
 /** ::: since:v1.5 */
 ```
 
 ### HTML/XML
 
 ```html
-<!-- ::: todo(a11y:required) add aria labels -->
+<!-- todo :::(a11y:required) add aria labels -->
 <!-- ::: seo,priority:high meta tags missing -->
 <!-- ::: responsive breakpoint -->
 ```
@@ -97,24 +97,24 @@ Pure syntax examples showing waymark patterns in various contexts.
 
 ```css
 /* ::: theme dark mode support */
-/* ::: todo(browser:ie11) fallback needed */
-/* ::: refactor use CSS vars */
+/* todo :::(browser:ie11) fallback needed */
+/* refactor ::: use CSS vars */
 ```
 
 ### SQL
 
 ```sql
--- ::: todo(index:covering) add covering index
--- ::: perf,todo slow join optimization
+-- todo :::(index:covering) add covering index
+-- perf :::,todo slow join optimization
 /* ::: migration required for v2 */
 ```
 
 ### Bash/Shell
 
 ```bash
-# ::: todo(posix:required) ensure compatibility
+# todo :::(posix:required) ensure compatibility
 # ::: error needs error handling
-# ::: todo add getopts parsing
+# todo ::: add getopts parsing
 ```
 
 ### YAML
@@ -122,15 +122,15 @@ Pure syntax examples showing waymark patterns in various contexts.
 ```yaml
 # ::: config production values
 # ::: security needs encryption
-# ::: todo validate schema check
+# todo ::: validate schema check
 ```
 
 ### Markdown
 
 ```markdown
-<!-- ::: draft needs review -->
-<!-- ::: todo update sections -->
-<!-- ::: example add code sample -->
+<!-- draft needs ::: review -->
+<!-- todo ::: update sections -->
+<!-- example ::: add code sample -->
 ```
 
 ## Mention Patterns
@@ -170,8 +170,8 @@ Pure syntax examples showing waymark patterns in various contexts.
 // Better:
 // ::: bug(priority:critical) payment processing error
 // ::: owner:@alice assigned for immediate fix
-// ::: blocked(issue:AUTH-123) waiting on auth service
-// ::: todo(sprint:2025-Q1) scheduled for next sprint
+// blocked :::(issue:AUTH-123) waiting on auth service
+// todo :::(sprint:2025-Q1) scheduled for next sprint
 ```
 
 ### Version Tracking
@@ -182,7 +182,7 @@ Pure syntax examples showing waymark patterns in various contexts.
 
 // Better:
 // ::: since:v2.0
-// ::: deprecated:v3.0 use newMethod() instead  
+// deprecated ::::v3.0 use newMethod() instead  
 // ::: until:v4.0
 ```
 
@@ -190,11 +190,11 @@ Pure syntax examples showing waymark patterns in various contexts.
 
 ```javascript
 // Instead of:
-// ::: draft,review,assign:@senior,deadline:2025-01-30
+// draft :::,review,assign:@senior,deadline:2025-01-30
 
 // Better:
-// ::: draft API design document
-// ::: review architecture decisions needed
+// draft ::: API design document
+// review ::: architecture decisions needed
 // ::: assign:@senior security implications
 // ::: deadline:2025-01-30
 ```

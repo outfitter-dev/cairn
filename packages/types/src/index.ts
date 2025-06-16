@@ -1,4 +1,4 @@
-// ::: tldr Type definitions for waymark parsing and processing
+// tldr ::: Type definitions for waymark parsing and processing
 
 export interface Waymark {
   // ::: api core anchor properties

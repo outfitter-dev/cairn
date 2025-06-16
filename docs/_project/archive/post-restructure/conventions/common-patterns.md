@@ -1,5 +1,5 @@
 # Common Patterns
-<!-- ::: tldr Essential waymark patterns for any project -->
+<!-- tldr ::: Essential waymark patterns for any project -->
 <!-- ::: convention Core patterns that work universally across codebases -->
 
 Core waymark patterns that work across all projects.
@@ -8,7 +8,7 @@ Core waymark patterns that work across all projects.
 
 **Consider using shorter markers.** They're quicker to type and easier to search:
 
-<!-- ::: fixme: We shouldn't encourage `ctx` or `tmp`. `context` and `temp` is fine -->
+<!-- fix :::: We shouldn't encourage `ctx` or `tmp`. `context` and `temp` is fine -->
 
 - `sec` rather than `security`
 - `perf` rather than `performance`
@@ -19,24 +19,24 @@ Shorter markers can be helpful when you're using them frequently.
 
 ## Essential Patterns
 
-### `::: tldr`
+### `tldr :::`
 
 **Purpose**: Brief summary or overview ("Too Long; Didn't Read")
 **Usage**: Document key takeaways, function purposes, or section summaries
 
 ```javascript
-// ::: tldr validates user input and returns sanitized data
-// ::: tldr handles all authentication flows for the app
+// tldr ::: validates user input and returns sanitized data
+// tldr ::: handles all authentication flows for the app
 ```
 
-### `::: todo`
+### `todo :::`
 
 **Purpose**: Work that needs to be done
 **Replaces**: Traditional TODO comments
 
 ```javascript
-// ::: todo implement error handling
-// ::: todo add unit tests
+// todo ::: implement error handling
+// todo ::: add unit tests
 ```
 
 ### `::: context`
@@ -50,14 +50,14 @@ Shorter markers can be helpful when you're using them frequently.
 # ::: context this runs in a Lambda with 256MB RAM limit
 ```
 
-### `::: sec`
+### `sec :::`
 
 **Purpose**: Security-critical code that needs careful attention
 **Usage**: Mark authentication, authorization, input validation, crypto
 
 ```go
-// ::: sec validate all inputs before SQL query
-// ::: sec ensure constant-time comparison
+// sec ::: validate all inputs before SQL query
+// sec ::: ensure constant-time comparison
 ```
 
 ### `::: @agent`
@@ -70,26 +70,26 @@ Shorter markers can be helpful when you're using them frequently.
 // ::: @cursor write unit tests for edge cases
 ```
 
-### `::: temp`
+### `temp :::`
 
 **Purpose**: Temporary code that should be removed
 **Usage**: Workarounds, quick fixes, migration code
 
 ```ruby
-# ::: temp remove after v2.0 ships
-# ::: temp workaround for Redis bug
+# temp -todo ::: after v2.0 ships
+# temp ::: workaround for Redis bug
 ```
 
 ## Quality & Maintenance
 
-### `::: perf`
+### `perf :::`
 
 **Purpose**: Performance-sensitive code
 **Usage**: Mark bottlenecks, optimization opportunities
 
 ```javascript
-// ::: perf N+1 query issue
-// ::: perf consider caching this result
+// perf ::: N+1 query issue
+// perf ::: consider caching this result
 ```
 
 ### `::: bug`
@@ -112,14 +112,14 @@ Shorter markers can be helpful when you're using them frequently.
 // ::: debt needs proper error handling
 ```
 
-### `::: fix` / `:M: fixme`
+### `fix :::` / `:M: fixme`
 
 **Purpose**: Broken code needing immediate attention
 **Usage**: More urgent than bug or todo - this is actively broken
 
 ```python
-# ::: fix null pointer exception here
-# ::: fixme race condition in auth flow
+# fix ::: null pointer exception here
+# fix ::: race condition in auth flow
 ```
 
 ### `::: breaking`
@@ -142,14 +142,14 @@ Shorter markers can be helpful when you're using them frequently.
 // ::: freeze external API contract - must match exactly
 ```
 
-### `::: review`
+### `review :::`
 
 **Purpose**: Code needing human review before shipping
 **Usage**: Complex logic, security-sensitive, architectural decisions
 
 ```rust
-// ::: review ensure this handles all edge cases
-// ::: review security team must approve this approach
+// review ::: ensure this handles all edge cases
+// review ::: security team must approve this approach
 ```
 
 ### `::: config`
@@ -216,14 +216,14 @@ Shorter markers can be helpful when you're using them frequently.
 // ::: api REST endpoint: POST /users
 ```
 
-### `::: docs`
+### `docs :::`
 
 **Purpose**: Documentation needed or important notes
 **Usage**: Complex algorithms, public APIs, business logic
 
 ```go
-// ::: docs explain rate limiting algorithm
-// ::: docs add usage examples
+// docs ::: explain rate limiting algorithm
+// docs ::: add usage examples
 ```
 
 ### `::: meta`
@@ -255,7 +255,7 @@ Shorter markers can be helpful when you're using them frequently.
 **Usage**: Mark who should handle something
 
 ```python
-# ::: todo, owner:@alice implement authentication
+# todo :::, owner:@alice implement authentication
 # ::: owner:@backend-team optimize query
 ```
 
@@ -265,17 +265,17 @@ Combine markers judiciously for closely related concerns:
 
 ```typescript
 // Good: closely related markers
-// ::: sec, todo validate inputs
-// ::: perf, debt refactor this loop
+// sec :::, todo validate inputs
+// perf :::, debt refactor this loop
 
 // Better: separate lines for clarity
-// ::: sec check for SQL injection
-// ::: todo add input validation for email format
-// ::: perf this loop processes 10k items inefficiently
+// sec check ::: for SQL injection
+// todo ::: add input validation for email format
+// perf ::: this loop processes 10k items inefficiently
 // ::: debt extract into separate service
 
 // Good: issue tracking with description
-// ::: temp, issue(#123) workaround until fixed upstream
+// temp :::, issue(#123) workaround until fixed upstream
 
 // Avoid: too many markers, hard to grep
 // ::: api, docs, breaking, v2, urgent v2 changes signature
@@ -283,7 +283,7 @@ Combine markers judiciously for closely related concerns:
 
 ## Suggestions
 
-- **Start with tldr** - `::: tldr` for summaries can be widely useful
+- **Start with tldr** - `tldr :::` for summaries can be widely useful
 - **Add to-do and context** - These three patterns cover many use cases
 - **Be consistent** - Picking a style and sticking to it helps
 - **Keep it searchable** - Grep-ability is a key benefit

@@ -1,4 +1,4 @@
-// ::: tldr Tests for large file streaming functionality
+// tldr ::: Tests for large file streaming functionality
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeFileSync, unlinkSync, existsSync, mkdirSync, rmSync } from 'fs';
 import { WaymarkSearch } from '../search/waymark-search.js';
@@ -14,7 +14,7 @@ describe('Large File Streaming', () => {
     }
     
     // ::: ctx create a large test file with anchors
-    let content = '// ::: tldr Large test file for streaming\n';
+    let content = '// tldr ::: Large test file for streaming\n';
     
     // Add 100,000 lines to make it large enough to trigger streaming
     for (let i = 0; i < 100000; i++) {
@@ -95,7 +95,7 @@ describe('Large File Streaming', () => {
   });
 
   it('should maintain memory efficiency with large files', async () => {
-    // ::: perf test memory usage doesn't explode with large files
+    // perf test ::: memory usage doesn't explode with large files
     // Force garbage collection if available for more reliable baseline
     if (global.gc) {
       global.gc();
@@ -145,7 +145,7 @@ describe('Large File Streaming', () => {
     // Create a second large file for concurrent processing test
     const largeTestFile2 = `${testDir}/large-test-file-2.ts`;
     
-    let content = '// ::: tldr Second large test file\n';
+    let content = '// tldr ::: Second large test file\n';
     for (let i = 0; i < 50000; i++) {
       if (i % 2000 === 0) {
         content += `// ::: concurrent processing line ${i}\n`;
@@ -192,7 +192,7 @@ describe('Large File Streaming', () => {
   });
 
   it('should validate anchor format in streaming mode', () => {
-    // ::: sec test anchor validation during streaming
+    // sec test ::: anchor validation during streaming
     const testLines = [
       '// ::: valid anchor',
       '// :::invalid no space',

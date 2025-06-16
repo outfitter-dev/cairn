@@ -1,4 +1,4 @@
-<!-- ::: tldr canonical waymark syntax specification -->
+<!-- tldr ::: canonical waymark syntax specification -->
 # Waymark Syntax Specification
 
 The canonical specification for waymark syntax - a breadcrumb protocol for code navigation.
@@ -32,7 +32,7 @@ The syntax uses `:::` as the identifier.
 
 ```javascript
 // Standard identifier (mandatory single space after)
-// ::: todo implement authentication
+// todo ::: implement authentication
 ```
 
 **Key Rules:**
@@ -47,9 +47,9 @@ Each marker classifies an anchor's purpose and is organized into one of six sema
 
 ```javascript
 // Core markers with mandatory space after identifier
-// ::: todo implement rate limiting
+// todo ::: implement rate limiting
 // ::: bug memory leak in auth service
-// ::: sec validate all user inputs
+// sec ::: validate all user inputs
 ```
 
 ## Delimiter Semantics
@@ -72,7 +72,7 @@ Used for type:value relationships, classifications, and states.
 Used for structured parameters and arguments associated with markers.
 
 ```javascript
-// ::: blocked(issue:4)           // parameter with classification
+// blocked :::(issue:4)           // parameter with classification
 // ::: depends(auth-service)      // simple parameter
 // ::: config(timeout:30,retry:3) // multiple parameters
 ```
@@ -82,10 +82,10 @@ Used for structured parameters and arguments associated with markers.
 Used for multiple values, optional for single values.
 
 ```javascript
-// ::: blocked:[4,7]              // multiple blockers
+// blocked ::::[4,7]              // multiple blockers
 // ::: tags:[auth,api,security]   // multiple tags
 // ::: owner:[@alice,@bob]        // multiple owners
-// ::: blocked:4                  // single value (brackets optional)
+// blocked ::::4                  // single value (brackets optional)
 ```
 
 ## Core Marker Groups
@@ -103,7 +103,7 @@ Markers are organized into six semantic groups for discoverability:
 
 **Usage Rules:**
 
-1. Multiple markers can be combined with commas: `::: todo,bug,priority:high`
+1. Multiple markers can be combined with commas: `todo :::,bug,priority:high`
 2. If `todo` appears, it must be the first marker
 3. Work markers can appear standalone OR as parameters to `todo`
 
@@ -115,10 +115,10 @@ Relationships are expressed directly through dedicated markers without redundant
 // Dependency relationships
 // ::: depends(auth-service)       // requires auth service
 // ::: requires(api:v2-login)      // needs specific API
-// ::: needs(config:redis)         // requires configuration
+// needs :::(config:redis)         // requires configuration
 
 // Blocking relationships
-// ::: blocked(issue:AUTH-123)     // blocked by issue
+// blocked :::(issue:AUTH-123)     // blocked by issue
 // ::: blocking:[PAY-45,UI-77]     // blocks multiple tasks
 
 // Event relationships
@@ -133,17 +133,17 @@ The syntax strongly recommends single-line anchors to maintain grep-ability:
 
 ```javascript
 // Single-line waymarks (preferred)
-// ::: todo(assign:@alice,priority:high) implement OAuth integration
+// todo :::(assign:@alice,priority:high) implement OAuth integration
 
 // Multiple related waymark lines for complex context
-// ::: todo(assign:@alice,priority:high) implement OAuth integration  
+// todo :::(assign:@alice,priority:high) implement OAuth integration  
 // ::: context OAuth flow requires PKCE for security compliance
 // ::: depends(service:session-api) user sessions must exist first
 ```
 
 **Benefits:**
 
-- `rg "::: todo"` always finds todo items
+- `rg "todo :::"` always finds todo items
 - Simple, consistent search patterns
 - No complex multi-line parsing required
 
@@ -153,14 +153,14 @@ Prose follows markers, separated by space. Optional formatting for clarity:
 
 ```javascript
 // Basic prose
-// ::: todo implement rate limiting
+// todo ::: implement rate limiting
 
 // Colon prefix (recommended for clarity)
-// ::: todo: implement rate limiting before launch
+// todo :::: implement rate limiting before launch
 // ::: context: this function assumes Redis is available
 
 // Quoted prose (for complex text)
-// ::: todo(priority:high): "fix race condition in auth service"
+// todo :::(priority:high): "fix race condition in auth service"
 // ::: warn: "this function modifies global state"
 ```
 
@@ -258,7 +258,7 @@ rg ":::.*domain"    # All domain-specific markers
 
 # Find with context
 rg -C2 "::: security"  # 2 lines context
-rg -B3 -A3 "::: todo"  # 3 lines before/after
+rg -B3 -A3 "todo :::"  # 3 lines before/after
 
 # Find in markdown (including HTML comments)
 rg "<!-- :::" --type md

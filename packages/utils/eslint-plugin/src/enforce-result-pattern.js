@@ -1,4 +1,4 @@
-// ::: tldr Custom ESLint rule to enforce Result pattern usage
+// tldr ::: Custom ESLint rule to enforce Result pattern usage
 module.exports = {
   meta: {
     type: 'problem',

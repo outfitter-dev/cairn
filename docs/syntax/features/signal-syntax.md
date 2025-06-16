@@ -45,7 +45,7 @@ The `!` and `!!` signals have different meanings based on the marker:
 ### Intensity Signals
 ```javascript
 // !todo ::: migrate to new hashing algo          // Important task
-// !!todo ::: fix data loss bug                   // Critical blocker
+// !!todo fix ::: data loss bug                   // Critical blocker
 // ?note ::: does pagination handle zero items?   // Unclear assumption
 // !tldr ::: core event-loop entry point          // Important summary
 // !!tldr ::: main application entry point        // Most critical/canonical

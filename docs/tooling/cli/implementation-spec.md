@@ -1,6 +1,6 @@
 # Waymark CLI Implementation Specification
 
-<!-- ::: tldr Technical specification for implementing the waymark CLI with ripgrep integration -->
+<!-- tldr ::: Technical specification for implementing the waymark CLI with ripgrep integration -->
 
 This document provides the technical specification for implementing the waymark CLI as designed in [cli-design.md](./cli-design.md).
 

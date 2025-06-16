@@ -1,4 +1,4 @@
-// ::: tldr Unified formatter interface for all output types
+// tldr ::: Unified formatter interface for all output types
 import type { SearchResult, ParseResult } from '@waymark/types';
 
 // ::: api input types for formatter

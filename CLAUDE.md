@@ -40,10 +40,10 @@ The Waymark CLI provides tooling for **waymarks** - a standardized way to mark i
 // *!todo ::: critical bug blocking PR     // Urgent branch work
 // todo ::: implement feature              // Work to do
 // fix ::: bug description                 // Bugs to fix
-// ::: important context here              // Pure notes (no marker)
+// important ::: context here              // Pure notes (no marker)
 // alert ::: security issue +security      // Alerts with tags (+ not #)
 // todo ::: @agent write tests             // AI delegation
-// temp ::: remove after deploy            // Temporary code
+// temp -todo ::: after deploy            // Temporary code
 // !todo ::: critical bug fix              // Signal for urgency
 // deprecated ::: use newMethod() instead  // Lifecycle marker
 ```

@@ -1,4 +1,4 @@
-// ::: tldr Linter for waymark syntax validation and migration
+// tldr ::: Linter for waymark syntax validation and migration
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { type Result, success, failure } from '../lib/result.js';

@@ -1,4 +1,4 @@
-// ::: tldr Search functionality for waymarks across files
+// tldr ::: Search functionality for waymarks across files
 import { readFile, stat } from 'fs/promises';
 import { createReadStream } from 'fs';
 import { extname } from 'path';
@@ -159,7 +159,7 @@ export class WaymarkSearch {
       return statResult;
     }
 
-    // ::: perf handle large files with streaming
+    // perf ::: handle large files with streaming
     if (statResult.data.size > WaymarkSearch.MAX_FILE_SIZE) {
       return WaymarkSearch.processLargeFile(file, options);
     }

@@ -51,7 +51,7 @@ waymark_multiline ::= comment_leader marker? ":::" prose newline
 ### 3. Structured TODOs
 
 ```rust
-// todo ::: refactor authentication system
+// todo refactor ::: authentication system
 //   - Extract JWT validation to separate module
 //   - Add refresh token support with rotation
 //   - Implement token revocation list in Redis

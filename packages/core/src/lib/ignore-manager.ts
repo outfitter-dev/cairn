@@ -1,4 +1,4 @@
-// ::: tldr Centralized ignore file management for waymark
+// tldr ::: Centralized ignore file management for waymark
 import { readFileSync, existsSync } from 'fs';
 import { join, relative, dirname } from 'path';
 import ignore from 'ignore';

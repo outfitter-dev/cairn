@@ -1,5 +1,5 @@
 # Progressive Enhancement Guide
-<!-- ::: tldr How to adopt waymarks incrementally from simple to advanced -->
+<!-- tldr ::: How to adopt waymarks incrementally from simple to advanced -->
 <!-- ::: guide Step-by-step adoption guide for individuals and teams -->
 
 Start simple, grow as needed. This guide shows how to adopt waymarks incrementally.
@@ -9,7 +9,7 @@ Start simple, grow as needed. This guide shows how to adopt waymarks incremental
 Start with just one pattern to get comfortable:
 
 ```javascript
-// ::: todo implement validation
+// todo ::: implement validation
 function saveUser(data) {
     // Save to database
 }
@@ -35,7 +35,7 @@ If you already use TODO comments, enhance them gradually:
 
 ```javascript
 // TODO ::: add error handling
-// FIXME ::: memory leak here
+// fix ::: memory leak here
 // NOTE ::: this assumes UTC timezone
 ```
 
@@ -48,9 +48,9 @@ rg ":::"  # Find all enhanced comments
 ### Phase 2: Start using pure waymarks
 
 ```javascript
-// ::: todo add error handling
-// ::: fixme memory leak here  
-// ::: note assumes UTC timezone
+// todo ::: add error handling
+// fix ::: memory leak here  
+// note ::: assumes UTC timezone
 ```
 
 ## Level 2: Add Context
@@ -58,14 +58,14 @@ rg ":::"  # Find all enhanced comments
 Once comfortable with basic waymarks, add context for clarity:
 
 ```python
-# ::: todo implement retry logic
+# todo ::: implement retry logic
 # becomes:
-# ::: todo implement retry logic
+# todo ::: implement retry logic
 # ::: ctx max 3 attempts with exponential backoff
 
-# ::: sec validate input
+# sec ::: validate input
 # becomes:
-# ::: sec validate input
+# sec ::: validate input
 # ::: ctx prevent SQL injection and XSS
 ```
 
@@ -117,7 +117,7 @@ Define patterns that make sense for your team:
 
 # Your team's workflow
 # ::: ready-for-review
-# ::: needs-qa
+# needs :::-qa
 # ::: ship-it
 
 # Your team's domains
@@ -138,7 +138,7 @@ grep "TODO" --exclude-dir=.git src/auth.js
 
 # Enhance them
 sed -i 's/TODO/TODO ::: /g' src/auth.js
-sed -i 's/FIXME/FIXME ::: /g' src/auth.js
+sed -i 's/FIXME/fix ::: /g' src/auth.js
 
 # Verify
 rg "::: " src/auth.js
@@ -150,20 +150,20 @@ Adopt in one area first:
 
 ```bash
 # Start with security-critical code
-# Add ::: sec markers
+# Add sec ::: markers
 
 # Then move to performance
-# Add ::: perf markers
+# Add perf ::: markers
 
 # Then documentation
-# Add ::: docs markers
+# Add docs ::: markers
 ```
 
 ### During Code Reviews
 
 Add waymarks as you review:
 - See missing error handling? Add `::: error handle timeout`
-- Spot performance issue? Add `::: perf optimize query`
+- Spot performance issue? Add `perf ::: optimize query`
 - Notice assumption? Add `::: ctx assumes sorted input`
 
 ## Measuring Adoption
@@ -186,8 +186,8 @@ rg -o "::: (\w+)" -r '$1' | sort | uniq -c | sort -nr
 ## Common Progression Paths
 
 ### For Solo Developers
-1. Start with `::: todo`
-2. Add `::: fixme` for bugs
+1. Start with `todo :::`
+2. Add `fix :::` for bugs
 3. Add `::: @agent` for AI help
 4. Add `::: ctx` for clarity
 
@@ -199,7 +199,7 @@ rg -o "::: (\w+)" -r '$1' | sort | uniq -c | sort -nr
 
 ### For Open Source
 1. Start with `::: help-wanted`
-2. Add `::: good-first-issue`
+2. Add `note ::: status:approved-first-issue`
 3. Add `::: breaking-change`
 4. Document in CONTRIBUTING.md
 
@@ -228,7 +228,7 @@ function processPayment(amount) {
 
 ```javascript
 function processPayment(amount) {
-    // ::: todo add validation
+    // todo ::: add validation
     chargeCard(amount);
 }
 ```
@@ -237,7 +237,7 @@ function processPayment(amount) {
 
 ```javascript
 function processPayment(amount) {
-    // ::: todo add validation
+    // todo ::: add validation
     // ::: ctx amount must be positive, max 10000
     chargeCard(amount);
 }
@@ -249,7 +249,7 @@ function processPayment(amount) {
 function processPayment(amount) {
     // ::: @agent add validation
     // ::: ctx amount must be positive, max 10000
-    // ::: sec prevent negative charges
+    // sec ::: prevent negative charges
     chargeCard(amount);
 }
 ```
@@ -260,7 +260,7 @@ function processPayment(amount) {
 function processPayment(amount) {
     // ::: issue(PAY-456) add validation
     // ::: ctx amount must be positive, max 10000
-    // ::: sec prevent negative charges
+    // sec ::: prevent negative charges
     chargeCard(amount);
 }
 ```

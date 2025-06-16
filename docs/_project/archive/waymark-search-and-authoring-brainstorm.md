@@ -1,5 +1,5 @@
 # Grepa Brainstorm – Search & Authoring Ergonomics
-<!-- ::: fixme, refactor this uses old patterns -->
+<!-- fix :::, refactor this uses old patterns -->
 This document is a free-form brain-dump generated during an interactive brainstorming session.  It captures **every** idea that arose while imagining life inside a large codebase saturated with Grepa anchors.
 
 > Goal: identify tweaks or additions that make writing **and** querying anchors faster, more predictable, and more semantic.

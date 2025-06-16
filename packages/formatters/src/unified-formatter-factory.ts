@@ -1,4 +1,4 @@
-// ::: tldr Factory for creating unified formatters
+// tldr ::: Factory for creating unified formatters
 import type { IFormatter } from './interfaces/unified-formatter.interface.js';
 import { TerminalFormatter } from './formatters/unified-terminal.formatter.js';
 import { JsonFormatter } from './formatters/unified-json.formatter.js';

@@ -1,5 +1,5 @@
 # Payload Types
-<!-- ::: tldr Payload types: bare tokens, parameters, and arrays -->
+<!-- tldr ::: Payload types: bare tokens, parameters, and arrays -->
 <!-- ::: syntax Detailed payload type specifications and examples -->
 
 Payloads define what comes after the `:::` identifier. Waymark supports three payload types.
@@ -15,7 +15,7 @@ Simple string identifiers. Most common and readable.
 
 ### Examples
 ```javascript
-// ::: todo
+// todo :::
 // ::: v1.2.3
 // ::: high-priority
 // ::: @alice
@@ -53,21 +53,21 @@ Used for structured parameters and arguments associated with markers.
 
 ### Examples
 ```javascript
-// ::: blocked(issue:4)           // blocked by issue
+// blocked :::(issue:4)           // blocked by issue
 // ::: depends(auth-service)      // simple dependency
 // ::: config(timeout:30,retry:3) // multiple params
-// ::: todo(assign:@alice,priority:high) // task params
+// todo :::(assign:@alice,priority:high) // task params
 ```
 
 ### Common Parameter Patterns
 ```javascript
 // Work item parameters
-// ::: todo(bug:auth-timeout)      // bug specification
-// ::: todo(epic:user-onboarding)  // epic grouping
-// ::: todo(sprint:next)           // sprint planning
+// todo :::(bug:auth-timeout)      // bug specification
+// todo :::(epic:user-onboarding)  // epic grouping
+// todo :::(sprint:next)           // sprint planning
 
 // Relationship parameters  
-// ::: blocked(issue:AUTH-123)     // external blocker
+// blocked :::(issue:AUTH-123)     // external blocker
 // ::: depends(service:redis)      // service dependency
 // ::: emits(event:user-created)   // event publishing
 ```
@@ -83,7 +83,7 @@ Used for multiple values. Optional for single values.
 
 ### Examples
 ```javascript
-// ::: blocked:[4,7,12]           // multiple blockers
+// blocked ::::[4,7,12]           // multiple blockers
 // ::: tags:[auth,api,security]   // multiple tags
 // ::: owner:[@alice,@bob]        // multiple owners
 // ::: files:['auth.js','api.js'] // quoted paths
@@ -144,13 +144,13 @@ Multiple markers are separated by commas:
 
 ```javascript
 // Simple combination
-// ::: todo,security
+// todo :::,security
 
 // With parameters
-// ::: todo(priority:high),security(severity:critical)
+// todo :::(priority:high),security(severity:critical)
 
 // Mixed styles
-// ::: todo,owner:@alice,priority:high
+// todo :::,owner:@alice,priority:high
 ```
 
 **Rule**: If `todo` appears, it must be the first marker.

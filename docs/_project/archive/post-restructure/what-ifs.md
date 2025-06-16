@@ -1,6 +1,6 @@
 # What If... A Vision for AI-Native Development with
 
-<!-- ::: tldr Explores future possibilities for waymark including AI-maintained consistency, IDE integration, and architectural intelligence -->
+<!-- tldr ::: Explores future possibilities for waymark including AI-maintained consistency, IDE integration, and architectural intelligence -->
 <!-- ::: vision Conceptual guide for what waymark could become as an AI-native development platform -->
 
 *What if waymarks could transform from simple comments into a living knowledge graph that makes your codebase AI-native?*
@@ -21,17 +21,17 @@ What if your pre-commit hooks could enforce semantic patterns?
   hooks:
     - id: waymark-security-gate
       name: Security waymarks required
-      entry: rg -l "::: sec" | xargs -I {} test -f {} || exit 1
+      entry: rg -l "sec :::" | xargs -I {} test -f {} || exit 1
       language: system
       files: '(auth|payment|admin).*\.(js|py|go)'
 ```
 
 **Auto-enforced patterns:**
 
-- Security-sensitive files MUST have `::: sec` waymarks
+- Security-sensitive files MUST have `sec :::` waymarks
 - TODO comments require `::: issue(123)` links
 - API changes need `::: breaking` or `:M: compatible` waymarks
-- Performance-critical paths require `::: perf` documentation
+- Performance-critical paths require `perf :::` documentation
 
 ### GitHub Actions That Think
 
@@ -52,7 +52,7 @@ jobs:
           
       - name: AI Security Audit
         run: |
-          # AI agent reviews new ::: sec waymarks
+          # AI agent reviews new sec ::: waymarks
           # Validates they're in appropriate locations
           
       - name: Suggest Missing waymarks
@@ -67,7 +67,7 @@ jobs:
 
 Imagine these features in your editor:
 
-- **Hover Intelligence:** Hover over `::: sec` to see security docs, threat models
+- **Hover Intelligence:** Hover over `sec :::` to see security docs, threat models
 - **Quick Navigation:** `Cmd+Shift+G` opens fuzzy waymark search
 - **Context Panels:** See all related waymarks when viewing a file
 - **Smart Completion:** AI suggests appropriate tags based on code context
@@ -90,7 +90,7 @@ What if AI could detect missing waymarks?
 ```python
 # AI agent scans for unmarked patterns
 def detect_missing_waymarks(codebase):
-    # Find security-sensitive functions without ::: sec
+    # Find security-sensitive functions without sec :::
     security_patterns = [
         r'def.*auth.*\(',
         r'password.*=',
@@ -98,7 +98,7 @@ def detect_missing_waymarks(codebase):
         r'@require_permission'
     ]
     
-    # Find performance bottlenecks without ::: perf
+    # Find performance bottlenecks without perf :::
     perf_patterns = [
         r'for.*in.*range\(.*\d{4,}',  # Large loops
         r'\.join\(',                   # String concatenation
@@ -144,10 +144,10 @@ What if waymarks cleaned themselves up?
 ```bash
 # AI-driven marker maintenance
 waymark clean --strategy=smart
-# - Remove ::: temp waymarks for shipped features
+# - Remove temp ::: waymarks for shipped features
 # - Archive ::: issue(123) for closed issues  
 # - Update ::: deadline dates from sprint planning
-# - Consolidate duplicate ::: sec waymarks
+# - Consolidate duplicate sec ::: waymarks
 ```
 
 ### Lifecycle Stages
@@ -182,7 +182,7 @@ def build_architecture_map():
 What if you could instantly answer:
 
 - "What breaks if we change the auth service?" → Follow `::: depends(auth)` waymarks
-- "Which components are performance-critical?" → Map `::: perf` marker density
+- "Which components are performance-critical?" → Map `perf :::` marker density
 - "What security assumptions exist?" → Aggregate `::: ctx,sec` content
 
 ## What If... AI Could Plan Your Migrations?
@@ -264,7 +264,7 @@ def review_pull_request(diff):
 
 ```bash
 # Instant security landscape
-rg "::: sec" | rg "auth"
+rg "sec :::" | rg "auth"
 rg "::: ctx.*sec"
 rg "::: assumes.*trust"
 
@@ -278,7 +278,7 @@ rg "::: assumes.*trust"
 
 **AI Agent Workflow:**
 
-1. `rg "::: perf"` → Find all performance issues
+1. `rg "perf :::"` → Find all performance issues
 2. Read context waymarks to understand constraints
 3. Prioritize by `::: critical` and `:M: p0` tags
 4. Check `::: depends()` to understand order

@@ -1,4 +1,4 @@
-<!-- tldr ::: TLDR marker guide - the most critical waymark for AI navigation and human understanding -->
+<!-- tldr TLDR ::: marker guide - the most critical waymark for AI navigation and human understanding -->
 
 # TLDR: The Most Critical Marker
 
@@ -206,7 +206,7 @@ The `tldr` marker is the single most valuable waymark for AI navigation and huma
 
 ```javascript
 // tldr ::: Development seed data with 100 users and sample orders
-// tldr ::: Test fixtures for integration tests with edge cases
+// tldr Test ::: fixtures for integration tests with edge cases
 // tldr ::: Production data anonymization script for dev environments
 ```
 

@@ -1,4 +1,4 @@
-// ::: tldr Zod schemas for runtime validation
+// tldr ::: Zod schemas for runtime validation
 import { z } from 'zod';
 
 // ::: api Base schemas for reusability

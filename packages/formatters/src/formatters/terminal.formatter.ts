@@ -1,4 +1,4 @@
-// ::: tldr Terminal formatters with color support for human-readable output
+// tldr ::: Terminal formatters with color support for human-readable output
 import chalk from 'chalk';
 import type { SearchResult, ParseResult, Waymark } from '@waymark/types';
 import type {

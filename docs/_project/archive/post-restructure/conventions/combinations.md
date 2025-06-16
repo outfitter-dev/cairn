@@ -1,5 +1,5 @@
 # Waymark Combinations
-<!-- ::: tldr How to effectively combine multiple waymark contexts -->
+<!-- tldr ::: How to effectively combine multiple waymark contexts -->
 <!-- ::: convention Guidelines for combining contexts and multi-context patterns -->
 
 How to combine multiple waymark contexts effectively.
@@ -26,7 +26,7 @@ Contexts can be combined using comma-space separation when they form a cohesive 
 ### Security + Performance
 
 ```rust
-// ::: sec, perf Crypto operations need constant-time implementation
+// sec :::, perf Crypto operations need constant-time implementation
 fn compare_hashes(a: &[u8], b: &[u8]) -> bool {
     // ...
 }
@@ -60,22 +60,22 @@ def process_payment(amount):
 ### Good: Related contexts, concise
 
 ```javascript
-// ::: sec, todo validate user input
-// ::: perf, p0 optimize this query
+// sec :::, todo validate user input
+// perf :::, p0 optimize this query
 ```
 
 ### Better: Separate lines for clarity
 
 ```javascript
-// ::: sec sanitize HTML to prevent XSS
-// ::: todo add rate limiting to this endpoint
+// sec ::: sanitize HTML to prevent XSS
+// todo ::: add rate limiting to this endpoint
 // ::: ctx max 100 requests per minute per user
 ```
 
 ### Avoid: Multiple contexts with descriptions
 
 ```javascript
-// ::: sec, todo, perf validate inputs, add caching, check permissions
+// sec :::, todo, perf validate inputs, add caching, check permissions
 // ❌ Too long, hard to grep, mixed concerns
 ```
 
@@ -85,15 +85,15 @@ When contexts are split across lines, use context flags:
 
 ```bash
 # Find security contexts with 2 lines context
-rg -C2 "::: sec"
+rg -C2 "sec :::"
 
 # Find files with both security and todo contexts
-for f in $(rg -l "::: sec"); do 
-  rg -l "::: todo" "$f" && echo "$f has both"
+for f in $(rg -l "sec :::"); do 
+  rg -l "todo :::" "$f" && echo "$f has both"
 done
 
 # Find security/todo within 3 lines of each other
-rg -B3 -A3 "::: sec" | rg -B3 -A3 ":M: todo"
+rg -B3 -A3 "sec :::" | rg -B3 -A3 ":M: todo"
 ```
 
 ## TODO: Expand this documentation

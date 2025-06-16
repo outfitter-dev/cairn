@@ -2,7 +2,7 @@
 
 ### Eliminate Dot Syntax (Except Literals)
 
-<!-- ::: todo #doc-migration -->
+<!-- todo ::: #doc-migration -->
 
 **Decision**: Remove dot syntax from structural/hierarchical markers, keeping dots only for literal values where they have established meaning.
 
@@ -66,7 +66,7 @@
 // ::: priority:high, status:blocked
 
 // Single parameter attachment  
-// ::: blocked(issue:4), owner(@alice), due(2024-03-15)
+// blocked :::(issue:4), owner(@alice), due(2024-03-15)
 
 // Multiple parameter attachment
 // ::: depends(auth-service,user-db,redis)
@@ -82,7 +82,7 @@
 
 ### Spacing and Quoting Rules
 
-<!-- ::: todo #doc-migration -->
+<!-- todo ::: #doc-migration -->
 
 **Decision**: Handle spaces and special characters consistently across all parameters.
 
@@ -105,7 +105,7 @@
 
 ### Universal Parameters and Todo Consolidation
 
-<!-- ::: todo #doc-migration -->
+<!-- todo ::: #doc-migration -->
 
 **Decision**: Recognize universal parameters that work across markers, and consolidate work-related markers into `todo`.
 
@@ -121,15 +121,15 @@
 
 ```javascript
 // Simple todos
-// ::: todo implement validation
-// ::: todo(priority:high) fix login bug
+// todo ::: implement validation
+// todo :::(priority:high) fix login bug
 
 // Todo with work-specific parameters
-// ::: todo(blocked:[4,7],status:in-progress) waiting for API fixes
-// ::: todo(blocking:[12,15],owners:[@alice,@bob]) auth redesign
+// todo :::(blocked:[4,7],status:in-progress) waiting for API fixes
+// todo :::(blocking:[12,15],owners:[@alice,@bob]) auth redesign
 
 // Universal parameters work with any marker
-// ::: sec(owner:@bob,priority:critical) validate user inputs
+// sec :::(owner:@bob,priority:critical) validate user inputs
 // ::: ctx(parent:user-stories) explains authentication flow
 ```
 
@@ -149,7 +149,7 @@
 
 ### Core Marker Groups System
 
-<!-- ::: todo #doc-migration -->
+<!-- todo ::: #doc-migration -->
 
 **Decision**: Organize markers into 6 semantic groups for flexible usage and searchability.
 
@@ -220,13 +220,13 @@
 ```javascript
 // Standalone work markers (ripgrep-friendly)
 // ::: bug authentication fails after timeout
-// ::: review check error handling in payment flow  
+// review check ::: error handling in payment flow  
 // ::: issue(123) implement OAuth integration
 
 // Todo container patterns (explicit work organization)
-// ::: todo(bug:auth-timeout,priority:high) fix authentication timeout
-// ::: todo(review:payment-flow,assign:@alice) check error handling
-// ::: todo(issue:123,milestone:v2.1) implement OAuth integration
+// todo :::(bug:auth-timeout,priority:high) fix authentication timeout
+// todo :::(review:payment-flow,assign:@alice) check error handling
+// todo :::(issue:123,milestone:v2.1) implement OAuth integration
 
 // Tool shortcuts (grepa tools can expand these automatically)
 // issue(123) → todo(issue:123)
@@ -247,7 +247,7 @@
 <!-- ::: guide subjective recommendations for appropriate anchor usage -->
 ### Strategic Anchor Placement
 
-<!-- ::: todo #doc-migration -->
+<!-- todo ::: #doc-migration -->
 
 **Core Principle**: Anchors exist to help AI agents quickly pinpoint important locations. Too few reduce discoverability; too many create noise.
 
@@ -271,7 +271,7 @@
 4. **Todo placement**: No specific density rules due to their ad-hoc nature
    - Place todos wherever work is needed
    - **Rule**: `todo` must be the first marker if multiple markers in one anchor
-   - Example: `// ::: todo,context,priority:high fix auth logic and document assumptions`
+   - Example: `// todo :::,context,priority:high fix auth logic and document assumptions`
 
 **Rough Density Target**: 1 anchor per 50-100 lines of code, adjusted for:
 
@@ -287,18 +287,18 @@
 **Example Patterns:**
 
 ```javascript
-// ::: about user authentication service with OAuth and 2FA support
+// about ::: user authentication service with OAuth and 2FA support
 class AuthService {
   
   // ::: context assumes Redis is available for session storage
   // ::: security critical path - all validation happens here
   async validateUser(token) {
-    // ::: todo,flag verify token expiration logic is timezone-safe
+    // todo :::,flag verify token expiration logic is timezone-safe
     // implementation...
   }
   
-  // ::: temp placeholder implementation until auth service v2.0
-  // ::: stub basic validation - replace with proper JWT validation
+  // temp ::: placeholder implementation until auth service v2.0
+  // stub ::: basic validation - replace with proper JWT validation
   validateLegacySession(sessionId) {
     return sessionId?.length > 0;
   }
@@ -311,7 +311,7 @@ class AuthService {
 // Anti-pattern: Over-anchoring simple operations
 // ::: variable declare user variable  
 let user = getCurrentUser();
-// ::: check validate user exists
+// check ::: validate user exists
 if (!user) return;
 // ::: variable get user preferences
 let prefs = user.preferences;
@@ -332,7 +332,7 @@ function setupUserEnvironment() {
 <!-- ::: spec hashtag system for cross-cutting conceptual relationships -->
 ### Hashtags for Conceptual Linking
 
-<!-- ::: todo #doc-migration -->
+<!-- todo ::: #doc-migration -->
 
 Waymarks support hashtags in prose for cross-cutting conceptual relationships that complement the structural marker system.
 
@@ -346,12 +346,12 @@ Waymarks support hashtags in prose for cross-cutting conceptual relationships th
 **Examples:**
 
 ```javascript
-// ::: todo implement OAuth for #mobile-app
+// todo ::: implement OAuth for #mobile-app
 // ::: context refactoring for #v2.0-release  
 // ::: security audit required #compliance #pci-dss
 
 // Hierarchical organization
-// ::: todo mobile OAuth flow #auth/oauth/mobile
+// todo ::: mobile OAuth flow #auth/oauth/mobile
 // ::: context legacy support #auth/session/v1
 ```
 
@@ -372,7 +372,7 @@ rg "#compliance.*#audit"   # Compliance audits
 
 ### Universal Parameter Groups
 
-<!-- ::: todo #doc-migration -->
+<!-- todo ::: #doc-migration -->
 
 **Decision**: Organize parameters into 6 semantic groups that work across all marker types.
 
@@ -424,7 +424,7 @@ rg "#compliance.*#audit"   # Compliance audits
 
 ```javascript
 // Universal parameters work with any marker
-// ::: todo(assign:@alice,priority:high,blocked:[4,7]) implement auth
+// todo :::(assign:@alice,priority:high,blocked:[4,7]) implement auth
 // ::: security(owner:@bob,severity:critical,url:compliance-docs) validate inputs
 // ::: context(complexity:high,since:1.2.0,path:algorithms/auth.js) recursive algorithm
 
@@ -434,8 +434,8 @@ rg "#compliance.*#audit"   # Compliance audits
 // ::: bug(issue:123,commit:a1b2c3d,related:[124,125]) fix authentication flow
 
 // @mentions are equivalent to assign parameter
-// ::: todo @alice implement auth
-// ::: review @team-leads check performance impact
+// todo ::: @alice implement auth
+// review ::: @team-leads check performance impact
 ```
 
 **Search Benefits:**

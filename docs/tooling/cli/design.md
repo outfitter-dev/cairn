@@ -1,6 +1,6 @@
 # Waymark CLI Design
 
-<!-- ::: tldr Waymark CLI design focused on ripgrep-style ergonomics with special category commands -->
+<!-- tldr ::: Waymark CLI design focused on ripgrep-style ergonomics with special category commands -->
 
 This document defines the user-facing design of the waymark CLI, emphasizing familiarity for ripgrep users and powerful search capabilities.
 

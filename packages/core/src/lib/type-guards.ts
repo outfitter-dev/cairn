@@ -1,4 +1,4 @@
-// ::: tldr Type guards and assertion functions
+// tldr ::: Type guards and assertion functions
 import type { ParseError, Waymark } from '@waymark/types';
 
 // ::: api Basic type guards

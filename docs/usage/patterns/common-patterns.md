@@ -70,12 +70,12 @@ That's it! You can search all of these with `rg ":::"`.
 // Temporary code
 // temp ::: hardcoded values for demo
 // deprecated ::: use newMethod() instead until:v2.0
-// cleanup ::: remove debug logging before release
+// cleanup -todo ::: debug logging before release
 
 // Work in progress
 // stub ::: basic implementation, needs error handling
 // draft ::: work in progress, not production ready
-// wip ::: refactoring in progress
+// draft ::: refactoring in progress
 ```
 
 ### AI Agent Instructions
@@ -138,7 +138,7 @@ That's it! You can search all of these with `rg ":::"`.
 // mem ::: potential memory leak, monitor usage
 
 // Quality assurance
-// test ::: needs integration tests for edge cases
+// test needs ::: integration tests for edge cases
 // audit ::: security review required before deployment
 // lint ::: suppress false positive warning
 ```
@@ -218,7 +218,7 @@ rg -n "cleanup.*:::"
 
 ```javascript
 // Too vague
-// todo ::: fix this
+// todo fix ::: this
 
 // No context
 // bug :::

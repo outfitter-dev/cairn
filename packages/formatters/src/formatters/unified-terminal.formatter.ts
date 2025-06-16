@@ -1,4 +1,4 @@
-// ::: tldr Unified terminal formatter with color support
+// tldr ::: Unified terminal formatter with color support
 import chalk from 'chalk';
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
 import type { SearchResult, Waymark } from '@waymark/types';

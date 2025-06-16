@@ -163,7 +163,7 @@ rg -c ":::" | awk -F: '{sum+=$2} END {print sum}'
 ```javascript
 // Version constraints
 // todo ::: requires:node(16,18,20) add compatibility
-// alert ::: deprecated:v3.0 use newMethod() instead
+// alert deprecated ::::v3.0 use newMethod() instead
 // fix ::: affects:versions(1.0-2.5) security issue
 ```
 
@@ -174,7 +174,7 @@ rg -c ":::" | awk -F: '{sum+=$2} END {print sum}'
 // draft ::: work in progress, do not merge
 // review ::: ready for code review
 // shipped ::: deployed to production
-// hold ::: blocked waiting on API update
+// hold blocked ::: waiting on API update
 ```
 
 ## Tips
