@@ -16,7 +16,7 @@ Waymarks are searchable markers in code comments using the `:::` sigil:
 
 ```javascript
 // todo ::: implement validation
-// alert check ::: user permissions +security
+// alert ::: check user permissions +security
 // ::: assumes UTC timestamps
 ```
 
@@ -88,7 +88,7 @@ rg -B3 -A3 "todo :::"      # Todos with surrounding code
    ```javascript
    // todo ::: add input validation
    function processUser(data) {
-     return data; 
+     return data;
    }
    ```
 

@@ -25,13 +25,13 @@ export class CSVFormatter implements IFormatter {
     const rows = [headers];
 
     for (const result of results) {
-      const anchor = result.anchor;
+      const waymark = result.waymark;
       rows.push([
-        this.escapeCsvField(anchor.file || ''),
-        anchor.line.toString(),
-        anchor.column.toString(),
-        this.escapeCsvField(anchor.contexts.join(', ')),
-        this.escapeCsvField(anchor.prose || '')
+        this.escapeCsvField(waymark.file || ''),
+        waymark.line.toString(),
+        waymark.column.toString(),
+        this.escapeCsvField(waymark.contexts.join(', ')),
+        this.escapeCsvField(waymark.prose || '')
       ]);
     }
 
@@ -45,18 +45,18 @@ export class CSVFormatter implements IFormatter {
   }
 
   // ::: api format parse results as CSV
-  private formatParseResults(data: { file: string; result: { anchors: Waymark[]; errors: any[] } }): string {
+  private formatParseResults(data: { file: string; result: { waymarks: Waymark[]; errors: any[] } }): string {
     const headers = ['File', 'Line', 'Column', 'Contexts', 'Prose', 'Status'];
     const rows = [headers];
 
-    // ::: ctx add anchors
-    for (const anchor of data.result.anchors) {
+    // ::: ctx add waymarks
+    for (const waymark of data.result.waymarks) {
       rows.push([
         this.escapeCsvField(data.file),
-        anchor.line.toString(),
-        anchor.column.toString(),
-        this.escapeCsvField(anchor.contexts.join(', ')),
-        this.escapeCsvField(anchor.prose || ''),
+        waymark.line.toString(),
+        waymark.column.toString(),
+        this.escapeCsvField(waymark.contexts.join(', ')),
+        this.escapeCsvField(waymark.prose || ''),
         'OK'
       ]);
     }

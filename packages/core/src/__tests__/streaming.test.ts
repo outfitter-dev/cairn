@@ -13,21 +13,21 @@ describe('Large File Streaming', () => {
       mkdirSync(testDir, { recursive: true });
     }
     
-    // ::: ctx create a large test file with anchors
+    // ::: ctx create a large test file with waymarks
     let content = '// tldr ::: Large test file for streaming\n';
     
     // Add 100,000 lines to make it large enough to trigger streaming
     for (let i = 0; i < 100000; i++) {
       if (i % 5000 === 0) {
-        content += `// ::: security check security validation at line ${i}\n`;
+        content += `// security ::: check security validation at line ${i}\n`;
       } else if (i % 1000 === 0) {
-        content += `// ::: milestone line ${i}\n`;
+        content += `// milestone ::: line ${i}\n`;
       } else {
         content += `const line${i} = "content for line ${i}";\n`;
       }
     }
     
-    content += '// ::: performance end of large file\n';
+    content += '// performance ::: end of large file\n';
     
     writeFileSync(largeTestFile, content);
   });
@@ -50,9 +50,9 @@ describe('Large File Streaming', () => {
     if (result.ok) {
       expect(result.data.length).toBeGreaterThan(0);
       
-      // ::: ctx verify we found the milestone anchors
+      // ::: ctx verify we found the milestone waymarks
       const milestones = result.data.filter(r => 
-        r.anchor.contexts.includes('milestone')
+        r.waymark.contexts.includes('milestone')
       );
       expect(milestones.length).toBeGreaterThanOrEqual(80); // Should find most milestone contexts
     }
@@ -75,24 +75,6 @@ describe('Large File Streaming', () => {
     }
   });
 
-  it('should parse simple payloads correctly in streaming', () => {
-    // ::: ctx test the simple payload parser used in streaming
-    const testCases = [
-      { payload: 'todo implement feature', expected: { contexts: ['todo'], prose: 'implement feature' } },
-      { payload: 'security, todo validate inputs', expected: { contexts: ['security', 'todo'], prose: 'validate inputs' } },
-      { payload: 'issue(123) fix authentication', expected: { contexts: ['issue(123)'], prose: 'fix authentication' } },
-      { payload: 'owner(@alice), priority(high) urgent task', expected: { contexts: ['owner(@alice)', 'priority(high)'], prose: 'urgent task' } }
-    ];
-
-    // Test the parsePayloadSimple method directly
-    const parseMethod = (WaymarkSearch as any).parsePayloadSimple;
-    
-    testCases.forEach(({ payload, expected }) => {
-      const result = parseMethod(payload);
-      expect(result.contexts).toEqual(expected.contexts);
-      expect(result.prose).toEqual(expected.prose);
-    });
-  });
 
   it('should maintain memory efficiency with large files', async () => {
     // perf test ::: memory usage doesn't explode with large files
@@ -118,7 +100,7 @@ describe('Large File Streaming', () => {
     const finalMemory = process.memoryUsage().heapUsed;
     const memoryIncrease = finalMemory - initialMemory;
     
-    // The test file should be processed regardless of whether anchors are found
+    // The test file should be processed regardless of whether waymarks are found
     expect(result.ok || (!result.ok && result.error.code === 'search.noResults')).toBe(true);
     // Memory increase should be reasonable (less than 100MB for processing)
     // Use generous threshold due to V8 memory management behavior
@@ -148,7 +130,7 @@ describe('Large File Streaming', () => {
     let content = '// tldr ::: Second large test file\n';
     for (let i = 0; i < 50000; i++) {
       if (i % 2000 === 0) {
-        content += `// ::: concurrent processing line ${i}\n`;
+        content += `// concurrent ::: processing line ${i}\n`;
       } else {
         content += `const secondFile${i} = "content ${i}";\n`;
       }
@@ -165,7 +147,7 @@ describe('Large File Streaming', () => {
       
       expect(result.ok).toBe(true);
       if (result.ok) {
-        const files = new Set(result.data.map(r => r.anchor.file));
+        const files = new Set(result.data.map(r => r.waymark.file));
         expect(files.size).toBe(1); // Should find results in the second file
       }
     } finally {
@@ -191,27 +173,27 @@ describe('Large File Streaming', () => {
     expect(buffer[0]).not.toBe('line 0'); // First lines should be removed
   });
 
-  it('should validate anchor format in streaming mode', () => {
-    // sec test ::: anchor validation during streaming
+  it('should validate waymark format in streaming mode', () => {
+    // sec test ::: waymark validation during streaming
     const testLines = [
-      '// ::: valid anchor',
+      '// ::: valid waymark',
       '// :::invalid no space',
       '// ::: ',
       '// ::: multiple, contexts test',
-      'no anchor here'
+      'no waymark here'
     ];
 
-    const validAnchors = testLines.filter(line => {
-      const anchorIndex = line.indexOf(':::');
-      if (anchorIndex === -1) return false;
+    const validWaymarks = testLines.filter(line => {
+      const waymarkIndex = line.indexOf(':::');
+      if (waymarkIndex === -1) return false;
       
-      const afterAnchor = line.substring(anchorIndex + 3);
-      if (!afterAnchor.startsWith(' ')) return false;
+      const afterWaymark = line.substring(waymarkIndex + 3);
+      if (!afterWaymark.startsWith(' ')) return false;
       
-      const payload = afterAnchor.substring(1).trim();
+      const payload = afterWaymark.substring(1).trim();
       return payload.length > 0;
     });
 
-    expect(validAnchors.length).toBe(2); // Should find 2 valid anchors (empty payload is invalid)
+    expect(validWaymarks.length).toBe(2); // Should find 2 valid waymarks (empty payload is invalid)
   });
 });

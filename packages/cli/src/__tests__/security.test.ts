@@ -215,14 +215,14 @@ describe('CLI Security Features', () => {
       expect(largeFileSize).toBeGreaterThan(maxFileSize);
     });
 
-    it('should validate anchors in streaming mode', () => {
-      // sec test ::: anchor validation during streaming
+    it('should validate waymarks in streaming mode', () => {
+      // sec test ::: waymark validation during streaming
       const line = '// todo ::: implement security feature';
-      const anchorIndex = line.indexOf(':::');
-      const afterAnchor = line.substring(anchorIndex + 3);
+      const waymarkIndex = line.indexOf(':::');
+      const afterWaymark = line.substring(waymarkIndex + 3);
       
-      expect(anchorIndex).toBeGreaterThan(-1);
-      expect(afterAnchor.startsWith(' ')).toBe(true);
+      expect(waymarkIndex).toBeGreaterThan(-1);
+      expect(afterWaymark.startsWith(' ')).toBe(true);
     });
 
     it('should maintain context buffer correctly', () => {

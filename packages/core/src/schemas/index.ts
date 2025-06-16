@@ -39,7 +39,7 @@ export type ParseErrorValidated = z.infer<typeof parseErrorSchema>;
 
 // ::: api Parse Result schema
 export const parseResultSchema = z.object({
-  anchors: z.array(waymarkSchema),
+  waymarks: z.array(waymarkSchema),
   errors: z.array(parseErrorSchema),
 });
 
@@ -92,13 +92,13 @@ export const filePathSchema = z.string()
   .min(1, 'File path cannot be empty')
   .refine((path: string) => !path.includes('\0'), 'File path cannot contain null bytes');
 
-// ::: api Anchor payload validation
-export const anchorPayloadSchema = z.string()
-  .min(1, 'Anchor payload cannot be empty')
+// ::: api Waymark payload validation
+export const waymarkPayloadSchema = z.string()
+  .min(1, 'Waymark payload cannot be empty')
   .refine((payload: string) => {
     // Must have at least one non-whitespace character
     return payload.trim().length > 0;
-  }, 'Anchor payload must contain non-whitespace characters');
+  }, 'Waymark payload must contain non-whitespace characters');
 
 // ::: api Create validated parse input
 export const parseInputSchema = z.object({

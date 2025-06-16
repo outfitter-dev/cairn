@@ -14,7 +14,7 @@ describe('WaymarkSearch', () => {
     mkdirSync(testDir, { recursive: true });
     
     writeFileSync(testFile1, `
-// tldr Test ::: file for search functionality
+// tldr ::: Test file for search functionality
 export function test() {
   // todo ::: implement this function
   // sec ::: validate all inputs
@@ -23,11 +23,11 @@ export function test() {
     `.trim());
     
     writeFileSync(testFile2, `
-<!-- ::: guide Test markdown file -->
+<!-- guide ::: Test markdown file -->
 # Test Document
 
 <!-- todo ::: add more content -->
-<!-- ::: api document the API -->
+<!-- api ::: document the API -->
 Some content here.
     `.trim());
   });
@@ -39,7 +39,7 @@ Some content here.
     rmdirSync(testDir);
   });
 
-  it('should search for anchors by context', async () => {
+  it('should search for waymarks by context', async () => {
     const result = await WaymarkSearch.search([testFile1], { contexts: ['todo'] });
     
     expect(result.ok).toBe(true);
@@ -47,8 +47,8 @@ Some content here.
       expect(result.data).toHaveLength(1);
       const firstResult = result.data[0];
       expect(firstResult).toBeDefined();
-      expect(firstResult!.anchor.contexts).toContain('todo');
-      expect(firstResult!.anchor.prose).toBe('implement this function');
+      expect(firstResult!.waymark.contexts).toContain('todo');
+      expect(firstResult!.waymark.prose).toBe('implement this function');
     }
   });
 
@@ -58,7 +58,7 @@ Some content here.
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data).toHaveLength(2);
-      const files = result.data.map((r: any) => r.anchor.file);
+      const files = result.data.map((r: any) => r.waymark.file);
       // ::: ctx globby returns absolute paths
       expect(files).toContain(resolve(testFile1));
       expect(files).toContain(resolve(testFile2));
@@ -90,7 +90,7 @@ Some content here.
       expect(result.data).toHaveLength(1);
       const firstResult = result.data[0];
       expect(firstResult).toBeDefined();
-      expect(firstResult!.anchor.file).toContain('test1.ts');
+      expect(firstResult!.waymark.file).toContain('test1.ts');
     }
   });
 
@@ -150,7 +150,7 @@ Some content here.
     if (result.ok) {
       // ::: ctx should find both .ts and .md files
       expect(result.data.length).toBeGreaterThan(0);
-      const files = result.data.map((r: any) => r.anchor.file);
+      const files = result.data.map((r: any) => r.waymark.file);
       expect(files.some((f: string) => f.endsWith('.ts'))).toBe(true);
       expect(files.some((f: string) => f.endsWith('.md'))).toBe(true);
     }

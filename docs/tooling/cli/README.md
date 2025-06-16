@@ -7,7 +7,7 @@ The waymark CLI provides commands for searching and managing waymarks in your co
 <!-- fix ::: @claude this should actually just be `npm install -g waymark` -->
 ```bash
 # Global installation
-npm install -g @waymark/cli
+npm install -g waymark
 
 # Or use directly with npx
 npx @waymark/cli

@@ -32,8 +32,8 @@ interface RateLimitConfig {
  * 
  * Features:
  * - Parse files for waymarks with comprehensive validation
- * - Search for specific anchors across multiple files and patterns
- * - List all anchors with filtering and formatting options
+ * - Search for specific waymarks across multiple files and patterns
+ * - List all waymarks with filtering and formatting options
  * - Advanced security: path validation, content scanning, rate limiting
  * - Multiple output formats: terminal, JSON, CSV
  * - Large file support with streaming
@@ -335,7 +335,7 @@ export class CLI {
     }
 
     const formatter = FormatterFactory.create(validOptions.format || 'terminal');
-    const results: Array<{ file: string; anchors: any[]; errors: any[] }> = [];
+    const results: Array<{ file: string; waymarks: any[]; errors: any[] }> = [];
     const errors: AppError[] = [];
 
     for (const file of pathValidation.data) {

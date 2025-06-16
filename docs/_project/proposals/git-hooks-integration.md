@@ -6,7 +6,7 @@
 
 | Date       | State | Owner |
 |------------|-------|-------|
-| 2025-01-30 | Draft | @mg   |
+| 2025-06-16 | Draft | @mg   |
 
 ## Context
 

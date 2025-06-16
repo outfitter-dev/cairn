@@ -14,24 +14,24 @@ export class TerminalSearchResultFormatter implements ISearchResultFormatter {
 
   format(results: SearchResult[]): string {
     if (results.length === 0) {
-      return chalk.yellow('No anchors found');
+      return chalk.yellow('No waymarks found');
     }
 
     const output: string[] = [];
 
     results.forEach(result => {
-      output.push(this.formatWaymark(result.anchor));
+      output.push(this.formatWaymark(result.waymark));
       
       if (this.options.context && this.options.context > 0 && result.context !== undefined) {
         // ::: ctx show context lines before
         result.context.before.forEach((line: string, index: number) => {
-          const lineNum = Math.max(1, result.anchor.line - (this.options.context ?? 0) + index);
+          const lineNum = Math.max(1, result.waymark.line - (this.options.context ?? 0) + index);
           output.push(chalk.dim(`    ${lineNum}: ${line}`));
         });
         
         // ::: ctx show context lines after  
         result.context.after.forEach((line: string, index: number) => {
-          const lineNum = result.anchor.line + index + 1;
+          const lineNum = result.waymark.line + index + 1;
           output.push(chalk.dim(`    ${lineNum}: ${line}`));
         });
         
@@ -67,7 +67,7 @@ export class TerminalParseResultFormatter implements IParseResultFormatter {
   format(result: ParseResult): string {
     const output: string[] = [];
     
-    output.push(chalk.green(`✓ ${result.anchors.length} anchors found`));
+    output.push(chalk.green(`✓ ${result.waymarks.length} waymarks found`));
     
     if (result.errors.length > 0) {
       output.push(chalk.red(`⚠ ${result.errors.length} errors:`));
@@ -76,7 +76,7 @@ export class TerminalParseResultFormatter implements IParseResultFormatter {
       });
     }
 
-    result.anchors.forEach((waymark: Waymark) => {
+    result.waymarks.forEach((waymark: Waymark) => {
       output.push(this.waymarkFormatter.format(waymark));
     });
 
@@ -92,11 +92,11 @@ export class TerminalWaymarkListFormatter implements IWaymarkListFormatter {
 
   format(waymarks: Waymark[]): string {
     if (waymarks.length === 0) {
-      return chalk.yellow('No anchors found');
+      return chalk.yellow('No waymarks found');
     }
 
     const output: string[] = [
-      chalk.green(`Found ${waymarks.length} anchor(s):\n`)
+      chalk.green(`Found ${waymarks.length} waymark(s):\n`)
     ];
     
     if (this.options.contextsOnly) {

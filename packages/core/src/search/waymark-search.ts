@@ -190,12 +190,12 @@ export class WaymarkSearch {
 
     // ::: ctx filter waymarks based on search criteria
     const results: SearchResult[] = [];
-    for (const anchor of parseResult.data.anchors) {
-      if (WaymarkSearch.matchesSearch(anchor, options)) {
+    for (const waymark of parseResult.data.waymarks) {
+      if (WaymarkSearch.matchesSearch(waymark, options)) {
         const result: SearchResult = {
-          anchor,
+          waymark,
           ...(options.context && options.context > 0
-            ? { context: WaymarkSearch.getContext(contentResult.data, anchor.line, options.context) }
+            ? { context: WaymarkSearch.getContext(contentResult.data, waymark.line, options.context) }
             : {})
         };
         results.push(result);
@@ -206,14 +206,14 @@ export class WaymarkSearch {
   }
 
   // ::: api check if waymark matches search criteria
-  private static matchesSearch(anchor: Waymark, options: SearchOptions): boolean {
+  private static matchesSearch(waymark: Waymark, options: SearchOptions): boolean {
     if (!options.contexts || options.contexts.length === 0) {
       return true;
     }
 
     return options.contexts.some((context: string) => 
-      anchor.contexts.some((anchorContext: string) => 
-        anchorContext === context || anchorContext.startsWith(`${context}(`)
+      waymark.contexts.some((waymarkContext: string) => 
+        waymarkContext === context || waymarkContext.startsWith(`${context}(`)
       )
     );
   }
@@ -244,7 +244,7 @@ export class WaymarkSearch {
   static getUniqueContexts(results: SearchResult[]): string[] {
     const contexts = new Set<string>();
     results.forEach(result => {
-      result.anchor.contexts.forEach(context => contexts.add(context));
+      result.waymark.contexts.forEach(context => contexts.add(context));
     });
     return Array.from(contexts).sort();
   }
@@ -254,7 +254,7 @@ export class WaymarkSearch {
     const grouped: Record<string, SearchResult[]> = {};
     
     results.forEach(result => {
-      result.anchor.contexts.forEach(context => {
+      result.waymark.contexts.forEach(context => {
         if (!grouped[context]) {
           grouped[context] = [];
         }
@@ -270,7 +270,7 @@ export class WaymarkSearch {
     const grouped: Record<string, SearchResult[]> = {};
     
     results.forEach(result => {
-      const file = result.anchor.file || 'unknown';
+      const file = result.waymark.file || 'unknown';
       if (!grouped[file]) {
         grouped[file] = [];
       }
@@ -309,28 +309,32 @@ export class WaymarkSearch {
         }
 
         // ::: ctx check for waymark in current line
-        const anchorMatch = line.indexOf(':::');
-        if (anchorMatch !== -1) {
+        const waymarkMatch = line.indexOf(':::');
+        if (waymarkMatch !== -1) {
           // ::: ctx parse the line for a valid waymark
-          const afterAnchor = line.substring(anchorMatch + 3);
+          const beforeWaymark = line.substring(0, waymarkMatch);
+          const afterWaymark = line.substring(waymarkMatch + 3);
           
-          if (afterAnchor.startsWith(' ')) {
-            const payload = afterAnchor.substring(1).trim();
-            if (payload) {
-              const { contexts, prose } = WaymarkSearch.parsePayloadSimple(payload);
+          if (afterWaymark.startsWith(' ')) {
+            const prose = afterWaymark.substring(1).trim();
+            
+            // Extract markers from before the :::
+            const commentContent = beforeWaymark.replace(/^\s*\/\/\s*|\s*<!--\s*|\s*#\s*|\s*\/\*\s*/, '').trim();
+            if (commentContent) {
+              const contexts = commentContent.split(',').map(c => c.trim()).filter(c => c);
               
-              const anchor: Waymark = {
+              const waymark: Waymark = {
                 line: lineNumber,
-                column: anchorMatch + 1,
+                column: waymarkMatch + 1,
                 raw: line,
                 contexts,
                 file,
                 ...(prose ? { prose } : {})
               };
 
-              if (WaymarkSearch.matchesSearch(anchor, options)) {
+              if (WaymarkSearch.matchesSearch(waymark, options)) {
                 const result: SearchResult = {
-                  anchor,
+                  waymark,
                   ...(contextSize > 0
                     ? { context: WaymarkSearch.getContextFromBuffer(contextBuffer, lineNumber, contextSize) }
                     : {})
@@ -360,39 +364,6 @@ export class WaymarkSearch {
     });
   }
 
-  // ::: api simple payload parser for streaming (avoids full parser overhead)
-  private static parsePayloadSimple(payload: string): { contexts: string[]; prose?: string } {
-    // ::: ctx find first space not in parentheses for marker/prose split
-    let parenDepth = 0;
-    let spaceIndex = -1;
-    
-    for (let i = 0; i < payload.length; i++) {
-      const char = payload[i];
-      if (char === '(') parenDepth++;
-      else if (char === ')') parenDepth--;
-      else if (char === ' ' && parenDepth === 0) {
-        // Check if this might be prose separator
-        const beforeSpace = payload.substring(0, i);
-        if (!beforeSpace.endsWith(',')) {
-          spaceIndex = i;
-          break;
-        }
-      }
-    }
-    
-    if (spaceIndex > 0) {
-      const contextsStr = payload.substring(0, spaceIndex);
-      const prose = payload.substring(spaceIndex + 1).trim();
-      return {
-        contexts: contextsStr.split(',').map(c => c.trim()).filter(c => c),
-        ...(prose ? { prose } : {})
-      };
-    }
-    
-    return {
-      contexts: payload.split(',').map(c => c.trim()).filter(c => c)
-    };
-  }
 
   // ::: api get context from buffer for streaming
   private static getContextFromBuffer(
