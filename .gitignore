@@ -37,6 +37,9 @@ coverage/
 *.temp
 .turbo/
 
+# Project files
+docs-legacy/
+
 # OS files
 Thumbs.db
 
