@@ -86,7 +86,7 @@
 
 <!-- important ::: Project docs are in GitHub repo but not on public docs website -->
 
-- **Place project material under `docs/_project/`**
+- **Place project material under `project/`**
   - Visible in GitHub repository for transparency
   - Excluded from documentation website build
   - Clear separation of user docs vs project management
@@ -163,11 +163,11 @@ All new files should be created as drafts with this structure:
   ```yaml
   # mkdocs.yml or docusaurus.config.js
   exclude:
-    - 'docs/_project/**'
+    - 'project/**'
   ```
 - Add CODEOWNERS entry:
   ```
-  docs/_project/** @waymark-maintainers
+  project/** @waymark-maintainers
   ```
 
 ### Phase 2: Content migration

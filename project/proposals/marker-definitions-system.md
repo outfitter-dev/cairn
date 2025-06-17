@@ -290,7 +290,7 @@ async function generate() {
   // Generate migration guide
   const migration = generateMigrationGuide(markers);
   await fs.writeFile(
-    'docs/_project/unified-hash-migration-guide.md',
+    'project/unified-hash-migration-guide.md',
     migration
   );
   

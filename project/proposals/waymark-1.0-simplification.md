@@ -430,14 +430,14 @@ waymark find --all #api:endpoint #async     # Find async endpoints
 
 These attribute tags create a semantic map that helps both humans and AI agents understand code characteristics at a glance.
 
-## Anchor System
+## Canonical Anchors
 
-A new pattern for stable reference points in code:
+A pattern for stable reference points in code using canonical anchors:
 
 ### Definition (uses `##`)
 
 ```javascript
-// Only place ## is used - defining an anchor
+// Only place ## is used - defining a canonical anchor
 // about ::: ##auth/oauth/google Google OAuth implementation #auth #security
 // about ::: ##billing/tax-engine Tax calculation system #billing #critical
 // example ::: ##patterns/retry Exponential backoff pattern #resilience
@@ -447,7 +447,7 @@ A new pattern for stable reference points in code:
 ### Reference (uses normal `#`)
 
 ```javascript
-// Reference anchors like any other tag
+// Reference canonical anchors like any other tag
 // todo ::: implement refresh tokens #refs:#auth/oauth/google
 // fixme ::: race condition #see:#api/webhooks
 // test ::: tax calculation accuracy #for:#billing/tax-engine
@@ -455,19 +455,19 @@ A new pattern for stable reference points in code:
 
 **Rules:**
 
-1. Each `##name` must be unique in the codebase
-2. Anchor name comes immediately after `:::` (like actors)
-3. Hierarchy IS allowed for anchors (unlike regular tags)
-4. Anchors fit best with the `about`, `example`, `tldr`, and `important` markers
+1. Each canonical anchor `##name` must be unique in the codebase
+2. Canonical anchor name comes immediately after `:::` (like actors)
+3. Hierarchy IS allowed for canonical anchors
+4. Canonical anchors fit best with the `about`, `example`, `tldr`, and `important` markers
 
 **Rationale:**
 
 - Creates stable reference points better than file:line
 - Hierarchies make sense here - you're creating a namespace
-- Double `##` visually indicates "this is special"
+- Double `##` visually indicates "this is a canonical anchor"
 - Still greppable:
-  - `rg "##auth/oauth/google"` finds specific anchor
-  - `rg "#auth/oauth/google"` finds anchor and all references
+  - `rg "##auth/oauth/google"` finds specific canonical anchor
+  - `rg "#auth/oauth/google"` finds canonical anchor and all references
 
 ## Updated Core Markers
 
@@ -502,7 +502,7 @@ These simplifications mean:
 // Work with clear relationships
 // *!todo ::: @alice critical auth fix #blocks:#456,#789 #needs:@security #pr:#234
 
-// Stable reference point
+// Canonical anchor for stable reference point
 // about ::: ##payment/stripe-webhook Stripe webhook handler #payments #critical
 
 // Test with context
