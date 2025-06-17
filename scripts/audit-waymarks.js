@@ -13,30 +13,42 @@ const __dirname = path.dirname(__filename);
 const args = process.argv.slice(2);
 const verbose = args.includes('--verbose');
 
-// Official markers from syntax evolution doc (v1.0)
+// Parse include/exclude filters
+let includeFilters = [];
+let excludeFilters = [];
+
+const includeIndex = args.indexOf('--include');
+if (includeIndex !== -1 && args[includeIndex + 1]) {
+  includeFilters = args[includeIndex + 1].split(',');
+}
+
+const excludeIndex = args.indexOf('--exclude');
+if (excludeIndex !== -1 && args[excludeIndex + 1]) {
+  excludeFilters = args[excludeIndex + 1].split(',');
+}
+
+// Official markers from waymark v1.0 spec
 const OFFICIAL_MARKERS = new Set([
+  // Top-level
+  'tldr',
   // Work
-  'todo', 'fix', 'done', 'review', 'refactor', 'needs', 'blocked',
-  // Alert
-  'alert', 'risk', 'notice', 'always',
-  // State
-  'temp', 'deprecated', 'draft', 'stub', 'cleanup',
+  'todo', 'fixme', 'refactor', 'review', 'wip', 'stub', 'temp', 'done', 'deprecated', 'test',
   // Info
-  'tldr', 'note', 'summary', 'example', 'idea', 'about', 'docs',
-  // Quality
-  'test', 'audit', 'check', 'lint', 'ci',
-  // Performance
-  'perf', 'hotpath', 'mem', 'io',
-  // Security
-  'sec', 'auth', 'crypto', 'a11y',
-  // Meta
-  'flag', 'important', 'hack', 'legal', 'must', 'assert'
+  'note', 'idea', 'about', 'example',
+  // Attention
+  'notice', 'risk', 'important'
 ]);
 
-// Known deprecated markers
+// Known deprecated markers (from unified hash migration guide)
 const DEPRECATED_MARKERS = new Set([
-  'fixme', 'temporary', 'info', 'wip', 'good', 'bad', 'remove',
-  'caution', 'pin', 'broken', 'why', 'mustread'
+  // From original deprecated list
+  'temporary', 'info', 'good', 'bad', 'remove', 'caution', 'pin', 'broken', 'why', 'mustread',
+  // From migration guide
+  'alert', 'always', 'fix', 'check', 'must', 'ci', 'needs', 'blocked',
+  'sec', 'audit', 'warn', 'draft', 'new', 'hold', 'shipped', 'perf', 'cleanup', 'hack',
+  // From old official markers not in v1.0
+  'summary', 'docs', 'lint', 'hotpath', 'mem', 'io', 'auth', 'crypto', 'a11y',
+  'flag', 'legal', 'assert'
 ]);
 
 // Blessed properties (things that might appear after ::: but aren't markers)
@@ -79,12 +91,8 @@ function extractWaymarks() {
       for (const file of relevantFiles) {
         try {
           const fullPath = path.join(__dirname, '..', file);
-          const hasWaymarks = execSync(`grep -l ":::" "${fullPath}" 2>/dev/null || true`, {
-            encoding: 'utf8',
-            cwd: path.resolve(__dirname, '..')
-          }).trim();
-          
-          if (hasWaymarks) {
+          const content = fs.readFileSync(fullPath, 'utf8');
+          if (content.includes(':::')) {
             files.push(file);
           }
         } catch (err) {
@@ -93,22 +101,48 @@ function extractWaymarks() {
       }
     } catch (err) {
       console.error('Error getting file list:', err.message);
-      // Fallback to find command if git ls-files fails
+      // Fallback to reading files directly if git ls-files fails
       const directories = ['docs', 'src', 'scripts', '.', 'packages'];
-      for (const dir of directories) {
-        try {
-          const dirFiles = execSync(`find ${dir} -type f \\( -name "*.md" -o -name "*.js" -o -name "*.ts" -o -name "*.json" -o -name "*.yaml" \\) -not -path "*/node_modules/*" -not -path "*/.pnpm-store/*" -exec grep -l ":::" {} \\; 2>/dev/null || true`, {
-            encoding: 'utf8',
-            cwd: path.resolve(__dirname, '..'),
-            maxBuffer: 10 * 1024 * 1024
-          }).trim().split('\n').filter(Boolean);
-          files = files.concat(dirFiles);
-        } catch (err) {
-          // Skip directories that don't exist
+      const fileExtensions = ['.md', '.js', '.ts', '.jsx', '.tsx', '.json', '.yaml', '.yml', '.py', '.go', '.rs', '.java', '.cpp', '.c', '.h', '.hpp', '.rb', '.php', '.swift', '.kt', '.scala', '.clj'];
+      
+      const searchDirectory = (dir) => {
+        const fullDir = path.join(__dirname, '..', dir);
+        if (!fs.existsSync(fullDir)) return;
+        
+        const items = fs.readdirSync(fullDir, { withFileTypes: true });
+        for (const item of items) {
+          const itemPath = path.join(dir, item.name);
+          const fullPath = path.join(__dirname, '..', itemPath);
+          
+          if (item.isDirectory()) {
+            // Skip ignored directories
+            if (item.name === 'node_modules' || item.name === '.pnpm-store' || item.name.startsWith('.')) continue;
+            searchDirectory(itemPath);
+          } else if (item.isFile()) {
+            // Check file extension
+            const ext = path.extname(item.name).toLowerCase();
+            if (!fileExtensions.includes(ext)) continue;
+            
+            // Check ignore patterns
+            if (ignorePatterns.shouldIgnoreFile(fullPath)) continue;
+            
+            // Check if file contains :::
+            try {
+              const content = fs.readFileSync(fullPath, 'utf8');
+              if (content.includes(':::')) {
+                files.push(itemPath);
+              }
+            } catch (err) {
+              // Skip files that can't be read
+            }
+          }
         }
+      };
+      
+      for (const dir of directories) {
+        searchDirectory(dir);
       }
       files = [...new Set(files)];
-      files = files.filter(file => !ignorePatterns.shouldIgnoreFile(path.join(__dirname, '..', file)));
     }
     
     console.log(`Found ${files.length} files containing waymarks (after applying ignore patterns)`);
@@ -268,38 +302,82 @@ function extractWaymarks() {
       }
     });
     
-    // Print results by category
-    console.log('📗 OFFICIAL MARKERS:');
-    categories.official.forEach(({ token, count }) => {
-      console.log(`  ${token.padEnd(20)} ${count}`);
-    });
-    
-    console.log('\n📕 DEPRECATED MARKERS (need updating):');
-    categories.deprecated.forEach(({ token, count, cleanToken }) => {
-      const replacement = getReplacementForDeprecated(cleanToken);
-      console.log(`  ${token.padEnd(20)} ${count} → should be: ${replacement}`);
-    });
-    
-    console.log('\n📘 PROPERTIES/METADATA:');
-    categories.properties.forEach(({ token, count }) => {
-      console.log(`  ${token.padEnd(20)} ${count}`);
-    });
-    
-    console.log('\n📙 SPECIAL TOKENS:');
-    categories.special.forEach(({ token, count }) => {
-      console.log(`  ${token.padEnd(20)} ${count}`);
-    });
-    
-    console.log('\n📓 UNKNOWN/POTENTIAL MARKERS:');
-    categories.unknown.forEach(({ token, count }) => {
-      console.log(`  ${token.padEnd(20)} ${count}`);
-      // Show examples for unknown tokens
-      const examples = waymarkExamples.get(token);
-      if (examples && examples.length > 0) {
-        console.log(`    Example: ${examples[0].content}`);
-        console.log(`    File: ${examples[0].file}:${examples[0].line}`);
+    // Apply filters if requested
+    const shouldShowCategory = (category) => {
+      // If no filters specified, show all
+      if (includeFilters.length === 0 && excludeFilters.length === 0) {
+        return true;
       }
-    });
+      
+      // Check excludes first
+      if (excludeFilters.length > 0 && excludeFilters.includes(category)) {
+        return false;
+      }
+      
+      // If includes specified, must be in the list
+      if (includeFilters.length > 0) {
+        return includeFilters.includes(category);
+      }
+      
+      // No includes specified, not excluded, so show it
+      return true;
+    };
+    
+    // Filter support
+    if (includeFilters.length > 0 || excludeFilters.length > 0) {
+      console.log('🔍 Applying filters...');
+      if (includeFilters.length > 0) console.log(`  Include: ${includeFilters.join(', ')}`);
+      if (excludeFilters.length > 0) console.log(`  Exclude: ${excludeFilters.join(', ')}`);
+      console.log();
+    }
+    
+    // Print results by category (respecting filters)
+    if (shouldShowCategory('core') || shouldShowCategory('official')) {
+      console.log('📗 OFFICIAL MARKERS (v1.0 core):');
+      categories.official.forEach(({ token, count }) => {
+        console.log(`  ${token.padEnd(20)} ${count}`);
+      });
+      console.log();
+    }
+    
+    if (shouldShowCategory('deprecated')) {
+      console.log('📕 DEPRECATED MARKERS (need updating):');
+      categories.deprecated.forEach(({ token, count, cleanToken }) => {
+        const replacement = getReplacementForDeprecated(cleanToken);
+        console.log(`  ${token.padEnd(20)} ${count} → should be: ${replacement}`);
+      });
+      console.log();
+    }
+    
+    if (shouldShowCategory('properties') || shouldShowCategory('metadata')) {
+      console.log('📘 PROPERTIES/METADATA:');
+      categories.properties.forEach(({ token, count }) => {
+        console.log(`  ${token.padEnd(20)} ${count}`);
+      });
+      console.log();
+    }
+    
+    if (shouldShowCategory('special')) {
+      console.log('📙 SPECIAL TOKENS:');
+      categories.special.forEach(({ token, count }) => {
+        console.log(`  ${token.padEnd(20)} ${count}`);
+      });
+      console.log();
+    }
+    
+    if (shouldShowCategory('unknown')) {
+      console.log('📓 UNKNOWN/POTENTIAL MARKERS:');
+      categories.unknown.forEach(({ token, count }) => {
+        console.log(`  ${token.padEnd(20)} ${count}`);
+        // Show examples for unknown tokens
+        const examples = waymarkExamples.get(token);
+        if (examples && examples.length > 0) {
+          console.log(`    Example: ${examples[0].content}`);
+          console.log(`    File: ${examples[0].file}:${examples[0].line}`);
+        }
+      });
+      console.log();
+    }
     
     // Summary statistics
     console.log('\n=== SUMMARY ===');
@@ -331,18 +409,51 @@ function extractWaymarks() {
 
 function getReplacementForDeprecated(marker) {
   const replacements = {
-    'fixme': 'fix',
+    // Original deprecated markers
     'temporary': 'temp',
     'info': 'note',
-    'wip': 'draft',
-    'good': 'note ::: status:approved',
-    'bad': 'note ::: status:rejected',
-    'remove': '-todo or -note',
-    'caution': '!alert',
+    'good': 'note ::: #approved',
+    'bad': 'note ::: #rejected',
+    'remove': '-todo or -temp',
+    'caution': '!notice',
     'pin': '*note',
-    'broken': 'note ::: status:broken',
-    'why': 'note ::: reason:...',
-    'mustread': '!!note or !!tldr'
+    'broken': 'note ::: #broken',
+    'why': 'note ::: #reason:...',
+    'mustread': '!!important',
+    
+    // From migration guide
+    'alert': 'notice',
+    'always': 'important',
+    'fix': 'fixme',
+    'check': 'todo ::: #verify',
+    'must': '!notice ::: #required',
+    'ci': '[appropriate type] ::: #ci',
+    'needs': 'todo',
+    'blocked': 'todo ::: #blocked',
+    'sec': '[!!,!]risk ::: #security',
+    'audit': 'important ::: #audit',
+    'warn': '!notice ::: #warning',
+    'draft': 'wip ::: #draft',
+    'new': 'todo ::: #enhancement',
+    'hold': 'note ::: #hold',
+    'shipped': 'note ::: #shipped',
+    'perf': 'todo ::: #perf',
+    'cleanup': 'temp ::: #cleanup',
+    'hack': 'temp ::: #hack',
+    
+    // From old official markers not in v1.0
+    'summary': 'tldr',
+    'docs': 'note ::: #docs',
+    'lint': 'todo ::: #lint',
+    'hotpath': 'todo ::: #hotpath #perf',
+    'mem': 'todo ::: #memory #perf',
+    'io': 'todo ::: #io #perf',
+    'auth': 'todo ::: #auth #security',
+    'crypto': 'todo ::: #crypto #security',
+    'a11y': 'todo ::: #a11y',
+    'flag': 'todo ::: #feature-flag',
+    'legal': 'important ::: #legal',
+    'assert': 'important ::: #assert'
   };
   return replacements[marker] || marker;
 }

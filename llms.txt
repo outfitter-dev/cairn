@@ -4,12 +4,12 @@
 
 ## Core Concept
 
-Waymarks are unique, searchable markers placed in code comments using the pattern `prefix ::: content`. The canonical waymark uses the `:::` sigil (three colons) preceded by a space when a prefix is present. Waymarks can contain prefixes, properties, notes, hashtags, and @mentions.
+Waymarks are unique, searchable markers placed in code comments using the pattern `marker ::: content`. The canonical waymark uses the `:::` sign (three colons) preceded by a space when a marker is present. Waymarks can contain markers, tags, actors (@mentions), and anchors.
 
 Key principles:
-- **One sigil per project** - Maintain consistency with `:::` across your codebase
-- **Visual clarity** - The `:::` sigil clearly separates prefix from content
-- **Progressive adoption** - Start with simple prefixes, expand as needed
+- **One sign per project** - Maintain consistency with `:::` across your codebase
+- **Visual clarity** - The `:::` sign clearly separates marker from content
+- **Progressive adoption** - Start with simple markers, expand as needed
 - **AI-first design** - Optimized for LLM navigation and understanding
 
 ## Essential Patterns
@@ -17,97 +17,69 @@ Key principles:
 ### Basic Usage
 ```javascript
 // todo ::: implement validation
-// warn ::: check user permissions #security
-// ::: assumes UTC timestamps
+// notice ::: check user permissions #security
+// note ::: assumes UTC timestamps
 // todo ::: @agent write unit tests
-// temp ::: remove after v2.0
+// -temp ::: remove after v2.0
 ```
 
-### With Properties and Hashtags
+### With Signals and Tags
 ```python
-# todo ::: priority:high validate inputs #security
-# fix ::: @alice memory leak #critical
+# !todo ::: validate inputs #security          # High priority via signal
+# fixme ::: @alice memory leak #critical       # fix → fixme in v1.0
 ```
 
-### Pure Notes (no prefix)
+### Pure Notes (no marker)
 ```python
-# ::: all user emails must be unique in database
-# ::: this code is performance-critical
-# ::: deprecated:v2.0 use newMethod() instead
+# note ::: all user emails must be unique in database
+# important ::: this code is performance-critical #hotpath
+# deprecated ::: use newMethod() instead #until:v2.0
 ```
 
 ### Searching
 ```bash
 rg ":::"              # All waymarks
-rg "warn :::"         # Security/warning concerns
+rg "notice :::"       # Notices (replaces warn)
 rg ":::.*@agent"      # AI tasks
 
 # Context searching (find related waymarks)
-rg -B1 -A1 "warn :::"      # Show 1 line before/after
+rg -B1 -A1 "notice :::"    # Show 1 line before/after
 rg -C2 "todo :::"          # Show 2 lines context
-rg -B2 -A2 "fix :::"
+rg -B2 -A2 "fixme :::"     # fix → fixme in v1.0
 ```
 
-## Prefix Reference
+## Marker Reference (v1.0 Core)
 
-### Work Prefixes
+### Work Markers
 - `todo` - work to be done
-- `fix` - bugs to fix (synonym: `fixme`)
-- `done` - completed work
-- `ask` - questions needing answers
+- `fixme` - bugs to fix (replaces `fix`)
+- `refactor` - code that needs restructuring
 - `review` - needs review
-- `needs` - dependencies (synonyms: `depends`, `requires`)
-- `chore` - routine maintenance tasks
-- `hotfix` - urgent production patch
-- `spike` - exploratory proof-of-concept work
-
-### Lifecycle/Maturity Prefixes
+- `wip` - work in progress
 - `stub` - skeleton/basic implementation
-- `draft` - work in progress (synonym: `wip`)
-- `stable` - mature/solid code
-- `shipped` - deployed to production
-- `good` - approved (synonyms: `lgtm`, `approved`)
-- `bad` - not approved
-- `hold` - work intentionally paused
-- `stale` - work that has stagnated
-- `cleanup` - code cleanup needed
-- `remove` - scheduled deletion
-
-### Alerts/Warnings Prefixes
-- `warn` - warning
-- `crit` - critical issue (synonym: `critical`)
-- `unsafe` - dangerous code
-- `caution` - proceed carefully
-- `broken` - non-functional code
-- `locked` - do not modify (synonym: `freeze`)
+- `temp` - temporary code
+- `done` - completed work
 - `deprecated` - scheduled for removal
-- `audit` - requires audit review
-- `legal` - legal obligations
-- `temp` - temporary code (synonym: `temporary`)
-- `revisit` - flag for future reconsideration
+- `test` - test-specific marker
 
-### Information Prefixes
-- `tldr` - brief summary (one per file at top)
-- `summary` - code section summary
-- `note` - general note (synonym: `info`)
-- `thought` - thinking out loud
-- `docs` - documentation reference
-- `why` - explains reasoning
-- `see` - cross-reference (synonyms: `ref`, `xref`)
+### Information Markers
+- `note` - general note
+- `idea` - future possibility
+- `about` - explains purpose or context
 - `example` - usage example
 
-### Meta Prefixes
-- `important` - important information
-- `hack` - hacky solution
-- `flag` - generic marker
-- `pin` - pinned item
-- `idea` - future possibility
-- `test` - test-specific marker
+### Attention Markers
+- `notice` - important information (replaces `alert`, `warn`)
+- `risk` - potential issue
+- `important` - critical context (replaces `always`)
+
+### Top-level Marker
+- `tldr` - brief summary (one per file at top)
 
 ## Why `:::`?
 
-The `:::` sigil was chosen for:
-- **Visual clarity**: Clearly separates prefix from content
+The `:::` sign was chosen for:
+- **Visual clarity**: Clearly separates marker from content
 - **Uniqueness**: Unlikely to conflict with existing code
 - **Consistency**: One standard across all projects
 - **Searchability**: Easy to grep and parse
@@ -117,10 +89,10 @@ The `:::` sigil was chosen for:
 ### 1. Human marks location
 ```python
 class UserService:
-    # ::: all emails must be unique
+    # note ::: all emails must be unique
     def create_user(self, email: str):
         # todo ::: @agent implement with validation
-        # warn ::: prevent duplicates #security
+        # notice ::: prevent duplicates #security
         pass
 ```
 
@@ -133,8 +105,8 @@ rg ":::.*@agent"
 ### 3. AI reads context
 ```bash
 rg ":::" user_service.py
-# user_service.py:2: # ::: all emails must be unique
-# user_service.py:5: # warn ::: prevent duplicates #security
+# user_service.py:2: # note ::: all emails must be unique
+# user_service.py:5: # notice ::: prevent duplicates #security
 ```
 
 ### 4. AI implements with understanding
@@ -158,10 +130,10 @@ sed -i 's/TODO :::/todo :::/g' **/*.js
 
 ## Monorepo Patterns
 
-Use hashtags for service namespacing:
+Use tags for service namespacing:
 ```javascript
 // todo ::: implement OAuth #auth-service
-// fix ::: validate amounts #payment #security
+// fixme ::: validate amounts #payment #security
 // note ::: maintain compatibility #shared-api
 ```
 
@@ -173,23 +145,23 @@ rg ":::.*#security"    # All security issues
 
 ## Advanced Patterns
 
-### Properties
+### Relational Tags and Signals
 ```javascript
-// todo ::: fixes:#123 deadline:2024-03-01 implement auth
-// todo ::: @alice priority:high fix memory leak
+// todo ::: implement auth #fixes:#123 #deadline:2024-03-01
+// !todo ::: @alice fix memory leak    // High priority via signal
 ```
 
-### Multiple Values
+### Arrays (comma-separated, no spaces)
 ```javascript
-// todo ::: requires:node(16,18,20) supports multiple versions
-// fix ::: affects:auth,api,frontend security vulnerability
+// todo ::: update Node.js #requires:#node-16,#node-18,#node-20
+// fixme ::: security vulnerability #affects:#auth,#api,#frontend
 ```
 
-### Issue Linking
+### Issue Linking (always include # in references)
 ```python
-# todo ::: fixes:#123 implement feature
-# fix ::: closes:#456 security patch
-# done ::: relates-to:AUTH-789 completed OAuth
+# todo ::: implement feature #fixes:#123
+# fixme ::: security patch #closes:#456  
+# done ::: completed OAuth #relates:#AUTH-789
 ```
 
 ### HTML Comments (for markdown)
@@ -201,11 +173,13 @@ rg ":::.*#security"    # All security issues
 
 ## Best Practices
 
-1. **Space before `:::`**: Required when prefix is present
-2. **Line limits**: Keep under ~80-120 chars for readable grep output
-3. **Be specific**: Use properties for machine-readable data, notes for descriptions
-4. **Use HTML comments in markdown**: `<!-- tldr ::: summary -->` for non-rendered waymarks
-5. **Progressive enhancement**: Start simple, add complexity as needed
+1. **Space before `:::`**: Required when marker is present
+2. **Always include `#` in references**: `#fixes:#123` not `#fixes:123`
+3. **Use signals for priority**: `!todo` not `#priority:high`
+4. **Line limits**: Keep under ~80-120 chars for readable grep output
+5. **Be specific**: Clear, actionable descriptions
+6. **Use HTML comments in markdown**: `<!-- tldr ::: summary -->` for non-rendered waymarks
+7. **Progressive enhancement**: Start simple, add complexity as needed
 
 ## Implementation
 
@@ -231,13 +205,15 @@ Check for critical issues in pull requests.
 ## Grammar
 
 ```ebnf
-waymark  ::= [prefix space] ":::" space content
-prefix   ::= [A-Za-z0-9_-]+
+waymark  ::= [signal] [marker space] ":::" space content
+signal   ::= "*" | "!" | "!!" | "?" | "??" | "-" | "--" | "_"
+marker   ::= [A-Za-z0-9_-]+
 space    ::= " "  # exactly one ASCII space
-content  ::= (property | hashtag | mention | note)*
-property ::= key ":" value ["(" params ")"]
-hashtag  ::= "#" [A-Za-z0-9/_-]+
-mention  ::= "@" [A-Za-z0-9_-]+
+content  ::= (actor | anchor | tag | note)*
+actor    ::= "@" [A-Za-z0-9_-]+  # if first token
+anchor   ::= "##" [A-Za-z0-9/_-]+  # if first token
+tag      ::= "#" [A-Za-z0-9/_-]+ [":" value]
+value    ::= [^#@:,]+ | "@" [A-Za-z0-9_-]+ | "#" [A-Za-z0-9/_-]+
 note     ::= [^#@:]+  # any text without special chars
 ```
 
