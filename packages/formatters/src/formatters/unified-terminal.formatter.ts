@@ -97,7 +97,7 @@ export class TerminalFormatter implements IFormatter {
   private formatWaymark(waymark: Waymark): string {
     const contexts = waymark.contexts.map(c => chalk.cyan(c)).join(', ');
     const prose = waymark.prose ? ` ${waymark.prose}` : '';
-    return `${chalk.yellow(`${waymark.line}:${waymark.column}`)}: ${contexts}${prose};
+    return `${chalk.yellow(`${waymark.line}:${waymark.column}`)}: ${contexts}${prose}`;
   }
 
   // ::: api format context lines
