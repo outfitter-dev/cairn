@@ -253,11 +253,11 @@ node scripts/blaze.js --yes
 node scripts/blaze.js --tag-prefix custom --yes
 
 # Remove tags with different patterns
-node scripts/blaze.js --reset              # Remove all #wm:* tags (not #wmi:)
+node scripts/blaze.js --reset              # Remove all tags (not #wmi:)
 node scripts/blaze.js --reset all          # Remove ALL tags (#anything)
 node scripts/blaze.js --reset wm           # Same as --reset (default)
-node scripts/blaze.js --reset wm:fix       # Remove only #wm:fix/* tags
-node scripts/blaze.js --reset wm:warn      # Remove only #wm:warn/* tags
+node scripts/blaze.js --reset wm:fix       # Remove only tags
+node scripts/blaze.js --reset wm:warn      # Remove only tags
 node scripts/blaze.js --reset custom       # Remove #custom:* tags
 
 # Combine with file targeting
@@ -295,9 +295,9 @@ Blaze applies tags based on violation severity:
 Found 25 problems to tag.
 
 📁 src/auth.js (3 problem-lines)
-  L15: // todo ::: priority:high fix auth #wm:fix/property-priority
-  L22: // alert ::: validate input #wm:fix/deprecated-marker
-  L35: // note ::: discouraged #auth/oauth #wm:warn/hierarchical-tag
+  L15: // todo ::: priority:high fix auth
+  L22: // alert ::: validate input
+  L35: // note ::: discouraged #auth/oauth
 
 🔥 Blaze completed.
 ```

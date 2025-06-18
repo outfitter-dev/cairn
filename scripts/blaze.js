@@ -130,10 +130,10 @@ Blaze Options:
   --tag-prefix PREFIX   Custom tag prefix (default: wm)
   --report [PATH]       Generate report (can use with --dry-run)
   --reset [PATTERN]     Remove tags matching pattern:
-                        - --reset         Remove all #wm:* tags (not #wmi:)
+                        - --reset         Remove all tags (not #wmi:)
                         - --reset all     Remove ALL tags (#anything)
-                        - --reset wm      Remove all #wm:* tags (not #wmi:)
-                        - --reset wm:fix  Remove #wm:fix/* tags
+                        - --reset wm      Remove all tags (not #wmi:)
+                        - --reset wm:fix  Remove tags
                         - --reset custom  Remove #custom:* tags
 
 File Targeting:
@@ -370,8 +370,8 @@ async function resetTags() {
     regexPattern = / #[^\s#]+/g;
     description = 'ALL tags';
   } else if (resetPattern === 'wm' || resetPattern === true) {
-    // Default behavior: remove #wm:* except #wmi:*
-    regexPattern = / #wm:(?!i:)[^\s#]*/g;
+    // Default behavior: remove except #wmi:*
+    regexPattern = /#]*/g;
     description = '#wm:* tags (excluding #wmi:)';
   } else if (resetPattern.includes(':')) {
     // Pattern like "wm:fix" - remove specific prefix
