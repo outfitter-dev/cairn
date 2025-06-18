@@ -2,7 +2,7 @@
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
 
 export class JsonFormatter implements IFormatter {
-  // sec ::: track visited objects to detect circular references without mutation
+  // notice ::: track visited objects to detect circular references without mutation #security
   private visited = new WeakSet<any>();
 
   // ::: api format any input as JSON with improved security and type safety
@@ -11,13 +11,13 @@ export class JsonFormatter implements IFormatter {
     this.visited = new WeakSet<any>();
     
     try {
-      // sec ::: handle all known types consistently and securely
+      // notice ::: handle all known types consistently and securely #security
       if (input.type === 'search' || input.type === 'list' || 
           input.type === 'parse' || input.type === 'contexts') {
         return JSON.stringify(input.data, this.jsonReplacer, 2);
       }
       
-      // sec ::: for unknown types, only serialize safe data to avoid exposing internal structure
+      // notice ::: for unknown types, only serialize safe data to avoid exposing internal structure #security
       return JSON.stringify({ 
         type: 'unknown', 
         data: null 
@@ -32,15 +32,15 @@ export class JsonFormatter implements IFormatter {
     }
   }
 
-  // sec ::: JSON replacer to sanitize sensitive data - arrow function to maintain 'this' context
+  // notice ::: JSON replacer to sanitize sensitive data - arrow function to maintain 'this' context #security
   private jsonReplacer = (key: string, value: any): any => {
-    // sec ::: enhanced sensitive field detection with case-insensitive substring matching
+    // notice ::: enhanced sensitive field detection with case-insensitive substring matching #security
     const sensitiveFields = ['password', 'token', 'secret', 'key', 'auth', 'credential', 'apikey', 'accesstoken'];
     if (sensitiveFields.some(field => key.toLowerCase().includes(field))) {
       return '[REDACTED]';
     }
     
-    // sec ::: handle circular references without mutating original objects
+    // notice ::: handle circular references without mutating original objects #security
     if (typeof value === 'object' && value !== null) {
       if (this.visited.has(value)) {
         return '[Circular]';

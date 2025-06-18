@@ -5,19 +5,21 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import WaymarkSpec from './lib/spec-loader.js';
+import { FlagParser } from './lib/flag-parser.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const args = process.argv.slice(2);
-const dryRun = args.includes('--dry-run');
+// Parse command line arguments with new system
+const flags = new FlagParser();
 
-// By default, blaze will add. This can be customized.
-let tag = 'wm:problem';
-const tagIndex = args.indexOf('--tag');
-if (tagIndex !== -1 && args[tagIndex + 1]) {
-  tag = args[tagIndex + 1];
-}
+// Standard flags
+const dryRun = flags.has('dry-run');
+const verbose = flags.has('verbose');
+const help = flags.has('help');
+
+// Blaze-specific flags
+const tagPrefix = flags.get('tag-prefix', 'wm');
 
 function getTagForIssue(issue) {
   const spec = new WaymarkSpec();
@@ -27,22 +29,49 @@ function getTagForIssue(issue) {
     const tags = spec.spec.blaze_tags[type];
     for (const [suffix, description] of Object.entries(tags)) {
       if (issue.toLowerCase().includes(description)) {
-        return `wm:${type}/${suffix}`;
+        return `${tagPrefix}:${type}/${suffix}`;
       }
     }
   }
   
   // Fallback - check specific issue text patterns
   if (issue.includes('Discouraged hierarchical tag') || issue.includes('All-caps marker') || issue.includes('Misplaced @actor')) {
-    return 'wm:warn/unknown';
+    return `${tagPrefix}:warn/unknown`;
   }
   
-  return 'wm:fix/unknown'; // Final fallback
+  return `${tagPrefix}:fix/unknown`; // Final fallback
 }
 
 
+// Show help if requested
+if (help) {
+  console.log(`
+blaze - Automated waymark violation tagging system
+
+Usage: node scripts/blaze.js [options]
+
+Standard Options:
+  --help, -h            Show this help message
+  --verbose, -v         Show detailed output
+  --dry-run, -n         Preview mode (no file changes)
+
+Blaze Options:
+  --tag-prefix PREFIX   Custom tag prefix (default: wm)
+
+Examples:
+  node scripts/blaze.js --dry-run
+  node scripts/blaze.js --tag-prefix custom
+  node scripts/blaze.js --verbose
+`);
+  process.exit(0);
+}
+
 async function blazeProblems() {
-  console.log('🔥 Starting blaze to tag problems...');
+  if (dryRun) {
+    console.log('🔥 [DRY RUN] Starting blaze preview...');
+  } else {
+    console.log('🔥 Starting blaze to tag problems...');
+  }
   
   // 1. Run the audit script to get the list of problems
   const auditOutput = execSync('node scripts/audit-waymarks.js --legacy', {
@@ -93,6 +122,9 @@ async function blazeProblems() {
       fileProblems.forEach(p => {
         const tagsToAdd = p.issues.map(getTagForIssue).join(' #');
         console.log(`  L${p.line}: ${p.content.trim()} #${tagsToAdd}`);
+        if (verbose) {
+          console.log(`    Issues: ${p.issues.join(', ')}`);
+        }
       });
     } else {
       try {

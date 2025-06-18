@@ -21,7 +21,7 @@ import {
 import type { Result, AppError } from '@waymark/core';
 import { FormatterFactory } from '@waymark/formatters';
 
-// sec ::: rate limiting configuration
+// notice ::: rate limiting configuration #security #security
 interface RateLimitConfig {
   maxRequests: number;
   windowMs: number;
@@ -161,7 +161,7 @@ export class CLI {
    * }
    * ```
    */
-  // sec check ::: rate limit for operations
+  // notice ::: rate limit for operations #security
   private checkRateLimit(operation: string): Result<void> {
     const now = Date.now();
     const key = `${operation}-${process.cwd()}`;
@@ -209,7 +209,7 @@ export class CLI {
     const cwd = process.cwd();
     
     for (const file of files) {
-      // sec ::: validate file path format
+      // notice ::: validate file path format #security
       const validation = filePathSchema.safeParse(file);
       if (!validation.success) {
         return failure(makeError(
@@ -218,13 +218,13 @@ export class CLI {
         ));
       }
       
-      // sec ::: prevent directory traversal attacks
+      // notice ::: prevent directory traversal attacks #security
       const absolutePath = isAbsolute(file) ? file : resolve(cwd, file);
       const normalizedPath = resolve(absolutePath);
       
       // ::: critical remove the vulnerability that allowed any absolute path starting with '/'
       // Only allow paths within the current working directory
-      // sec ::: handle Windows case-insensitive drive letters
+      // notice ::: handle Windows case-insensitive drive letters #security
       const withinCwd = process.platform === 'win32'
         ? normalizedPath.toLowerCase().startsWith(cwd.toLowerCase())
         : normalizedPath.startsWith(cwd);
@@ -236,7 +236,7 @@ export class CLI {
         ));
       }
       
-      // sec ::: resolve symlinks to prevent bypass attacks
+      // notice ::: resolve symlinks to prevent bypass attacks #security
       try {
         // Check if file exists before trying to resolve real path
         if (existsSync(normalizedPath)) {
@@ -266,9 +266,9 @@ export class CLI {
     return success(validatedPaths);
   }
 
-  // sec ::: validate file content for security threats
+  // notice ::: validate file content for security threats #security
   private validateFileContent(content: string, filename: string): Result<void> {
-    // sec check ::: for null bytes (common attack vector)
+    // notice ::: for null bytes (common attack vector) #security
     if (content.includes('\0')) {
       return failure(makeError(
         'security.maliciousContent',
@@ -276,7 +276,7 @@ export class CLI {
       ));
     }
 
-    // sec check ::: for excessive file size in memory
+    // notice ::: for excessive file size in memory #security
     const contentSize = Buffer.byteLength(content, 'utf8');
     if (contentSize > 50 * 1024 * 1024) { // 50MB limit for in-memory processing
       return failure(makeError(
@@ -285,7 +285,7 @@ export class CLI {
       ));
     }
 
-    // sec check ::: for suspicious patterns (no global flag to avoid state issues)
+    // notice ::: for suspicious patterns (no global flag to avoid state issues) #security
     const suspiciousPatterns = [
       /eval\s*\(/i,                    // eval() calls
       /Function\s*\(/i,                // Function constructor
@@ -314,7 +314,7 @@ export class CLI {
     files: string[],
     options: unknown
   ): Promise<Result<void>> {
-    // sec check ::: rate limit
+    // notice ::: rate limit #security
     const rateLimitCheck = this.checkRateLimit('parse');
     if (!rateLimitCheck.ok) {
       return rateLimitCheck;
@@ -348,7 +348,7 @@ export class CLI {
         // ::: ctx use async file reading
         const content = await readFile(file, 'utf-8');
         
-        // sec ::: validate content before processing
+        // notice ::: validate content before processing #security
         const contentValidation = this.validateFileContent(content, file);
         if (!contentValidation.ok) {
           errors.push(contentValidation.error);
@@ -399,7 +399,7 @@ export class CLI {
     patterns: string[],
     options: Record<string, unknown>
   ): Promise<Result<void>> {
-    // sec check ::: rate limit
+    // notice ::: rate limit #security
     const rateLimitCheck = this.checkRateLimit('search');
     if (!rateLimitCheck.ok) {
       return rateLimitCheck;
@@ -461,7 +461,7 @@ export class CLI {
     patterns: string[],
     options: Record<string, unknown>
   ): Promise<Result<void>> {
-    // sec check ::: rate limit
+    // notice ::: rate limit #security
     const rateLimitCheck = this.checkRateLimit('list');
     if (!rateLimitCheck.ok) {
       return rateLimitCheck;
@@ -520,7 +520,7 @@ export class CLI {
     patterns: string[],
     options: Record<string, unknown>
   ): Promise<Result<void>> {
-    // sec check ::: rate limit
+    // notice ::: rate limit #security
     const rateLimitCheck = this.checkRateLimit('lint');
     if (!rateLimitCheck.ok) {
       return rateLimitCheck;

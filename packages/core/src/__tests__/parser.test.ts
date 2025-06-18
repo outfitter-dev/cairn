@@ -75,7 +75,7 @@ describe('WaymarkParser', () => {
   it('should find waymarks by marker', () => {
     const content = `
       // todo ::: implement
-      // sec ::: validate
+      // notice ::: validate #security
       // todo, perf ::: optimize
     `;
     const result = WaymarkParser.parseWithResult(content);

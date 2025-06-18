@@ -39,14 +39,34 @@ node scripts/audit-waymarks.js --verbose
 
 ### Command Line Options
 
+#### Standard Options
 | Flag | Description | Example |
 |------|-------------|---------|
+| `--help, -h` | Show help message | `--help` |
+| `--verbose, -v` | Show detailed output with waymark content | `--verbose` |
+| `--json` | Output as JSON for tooling | `--json` |
 | `--legacy` | Show only v1.0 syntax violations | `--legacy` |
 | `--test` | Scan only `scripts/tests/` files | `--test` |
-| `--json` | Output violations as JSON | `--json` |
-| `--verbose` | Show waymark content in output | `--verbose` |
-| `--include` | Filter categories to include | `--include official,deprecated` |
-| `--exclude` | Filter categories to exclude | `--exclude unknown` |
+| `--dry-run, -n` | Preview mode (no file changes) | `--dry-run` |
+
+#### Content Filtering
+| Flag | Description | Example |
+|------|-------------|---------|
+| `--filter TYPE1 TYPE2 !TYPE3` | Filter content types with negation | `--filter official deprecated !unknown` |
+
+**Available filter types:** `official`, `deprecated`, `unknown`, `examples`
+
+#### File Targeting
+| Flag | Description | Example |
+|------|-------------|---------|
+| `--pattern "*.md" "src/**"` | File glob patterns | `--pattern "docs/**/*.md"` |
+| `--file path1 path2` | Specific file paths | `--file src/main.js docs/README.md` |
+
+#### Input Methods
+| Flag | Description | Example |
+|------|-------------|---------|
+| `--input "content"` | Analyze direct content input | `--input "// todo ::: test"` |
+| `--stdin` | Read content from stdin | `echo "code" \| node audit-waymarks.js --stdin` |
 
 ### Output Modes
 
@@ -63,6 +83,32 @@ Shows only v1.0 syntax violations with file and line numbers. Used by blaze.js f
 
 #### Test Mode
 Scans only files in `scripts/tests/` directory for isolated testing of violation detection.
+
+#### Comment Detection
+The audit script includes enhanced comment detection that:
+- **Filters by file type**: Only processes waymarks in actual comments based on file extension
+- **Handles code blocks**: Detects waymarks in markdown code blocks using language-specific comment patterns
+- **Avoids false positives**: Ignores `:::` in strings, backticks, and documentation prose
+- **Supports wm:example**: Special handling for documentation examples
+
+#### WM Example Pattern
+Documentation can use `wm:example` to mark code blocks that contain example waymarks:
+
+```markdown
+```javascript wm:example
+// alert ::: this is an example (ignored by default)
+```
+
+```javascript wm:example,deprecated,v0.9
+// +security ::: old syntax examples (ignored by default)
+```
+
+```javascript
+// todo ::: real waymark (always detected)
+```
+```
+
+Use `--include-examples` to process `wm:example` blocks for documentation validation.
 
 ### Violation Types Detected
 
@@ -97,10 +143,13 @@ Dedicated tool for analyzing TLDR waymarks and ensuring documentation quality st
 node scripts/tldr-check.js
 
 # Require tags in all tldrs
-node scripts/tldr-check.js --require-tags
+node scripts/tldr-check.js --require tags
 
 # Require canonical anchors
-node scripts/tldr-check.js --require-anchors
+node scripts/tldr-check.js --require anchors
+
+# Require both tags and anchors
+node scripts/tldr-check.js --require tags anchors
 
 # Minimum tag count
 node scripts/tldr-check.js --min-tags 2
@@ -119,12 +168,16 @@ node scripts/tldr-check.js --verbose
 
 | Flag | Description | Example |
 |------|-------------|---------|
-| `--require-tags` | Require at least one #tag in tldr | `--require-tags` |
-| `--require-anchors` | Require ##canonical-anchor | `--require-anchors` |
+| `--require [items]` | Require specific elements | `--require tags anchors` |
 | `--min-tags N` | Require minimum N tags | `--min-tags 2` |
 | `--strict` | Enable all quality checks | `--strict` |
 | `--verbose` | Show detailed suggestions | `--verbose` |
 | `--json` | Output as JSON for tooling | `--json` |
+
+#### --require Options
+- `tags` or `tag` - Require at least one #tag
+- `anchors` or `anchor` - Require ##canonical-anchor
+- Can combine: `--require tags anchors`
 
 ### Quality Checks
 
@@ -172,6 +225,10 @@ git diff --cached --name-only | xargs node scripts/tldr-check.js --files
 # CI/CD integration
 - name: Check TLDR Quality
   run: node scripts/tldr-check.js --strict --json
+
+# Specific requirements
+- name: Ensure all docs have tagged TLDRs
+  run: node scripts/tldr-check.js --require tags --include docs/
 ```
 
 ## blaze.js
@@ -288,15 +345,36 @@ const officialMarkers = spec.spec.markers.official;
 ### Test Files
 
 Located in `scripts/tests/`:
-- **`test_new_patterns.md`**: Basic v1.0 violations
-- **`test_additional_patterns.md`**: Actor placement and reference issues  
-- **`legacy_patterns.md`**: Comprehensive legacy pattern examples
+- **`legacy_patterns.md`**: Comprehensive legacy pattern examples (25 violations)
+- **`test_additional_patterns.md`**: Actor placement and reference issues (12 violations)  
+- **`test_new_patterns.md`**: Basic v1.0 violations (13 violations)
+- **`test_wm_examples.md`**: WM example pattern testing and code block detection (31 waymarks, 41 with examples)
+
+#### Test File Coverage
+
+The test files provide comprehensive coverage of violation detection:
+
+```bash
+# Check current test coverage
+node scripts/audit-waymarks.js --test
+# Expected: ~31 waymarks detected (excluding wm:example blocks)
+
+node scripts/audit-waymarks.js --test --filter examples
+# Expected: ~41 waymarks (including wm:example blocks)
+
+# Legacy violations only
+node scripts/audit-waymarks.js --test --legacy
+# Expected: Various v1.0 syntax violations
+```
 
 ### Running Tests
 
 ```bash
-# Test only the test files
+# Test only the test files (excludes wm:example blocks)
 node scripts/audit-waymarks.js --test
+
+# Test including documentation examples
+node scripts/audit-waymarks.js --test --filter examples
 
 # Test with verbose output
 node scripts/audit-waymarks.js --test --verbose
@@ -304,8 +382,17 @@ node scripts/audit-waymarks.js --test --verbose
 # Test JSON output
 node scripts/audit-waymarks.js --test --json
 
-# Test blaze on test files only
-node scripts/blaze.js --dry-run  # (blaze automatically uses audit --legacy)
+# Test legacy violations only
+node scripts/audit-waymarks.js --test --legacy
+
+# Test blaze on test files (shows what would be tagged)
+node scripts/blaze.js --dry-run --verbose
+
+# Test specific test file
+node scripts/audit-waymarks.js --file scripts/tests/test_new_patterns.md --verbose
+
+# Test direct content
+node scripts/audit-waymarks.js --input "// todo ::: test syntax" --verbose
 ```
 
 ### Adding New Test Patterns
@@ -331,6 +418,10 @@ pnpm check:all
 pnpm lint
 pnpm typecheck
 pnpm test
+
+# Waymark-specific checks
+node scripts/audit-waymarks.js --legacy  # Check for violations
+node scripts/tldr-check.js --strict      # Check TLDR quality
 ```
 
 ### Pre-push Hooks
@@ -340,6 +431,54 @@ Automatically run quality checks before push:
 - No temporary markers (`*temp`, `*!temp`)
 - TypeScript compilation
 - Linting passes
+
+## Standardized Flag System
+
+### Overview
+
+All waymark scripts now use a consistent flag system for better usability and maintainability:
+
+- **Boolean flags**: `--verbose`, `--help`, `--dry-run`
+- **Space-separated arrays**: `--filter official deprecated !unknown`
+- **Single values**: `--tag-prefix custom`
+- **Negation support**: Use `!` prefix to exclude items
+
+### Common Flags Across Scripts
+
+| Flag | Available In | Description |
+|------|-------------|-------------|
+| `--help, -h` | All scripts | Show help message |
+| `--verbose, -v` | All scripts | Show detailed output |
+| `--dry-run, -n` | audit, blaze | Preview mode (no changes) |
+| `--json` | audit, tldr | Output as JSON |
+| `--test` | audit, tldr | Test mode (scripts/tests/ only) |
+| `--filter TYPE1 !TYPE2` | audit | Filter content types |
+| `--pattern "glob"` | audit, tldr | File glob patterns |
+| `--file path1 path2` | audit, tldr | Specific files |
+| `--input "content"` | audit | Analyze direct content |
+| `--stdin` | audit | Read from stdin |
+
+### Examples
+
+```bash
+# Filter with negation
+node scripts/audit-waymarks.js --filter official deprecated !unknown
+
+# Multiple file patterns
+node scripts/audit-waymarks.js --pattern "docs/**/*.md" "src/**/*.js"
+
+# Custom tag prefix
+node scripts/blaze.js --tag-prefix custom --dry-run
+
+# Require specific elements
+node scripts/tldr-check.js --require tags anchors --min-tags 2
+
+# Direct content analysis
+node scripts/audit-waymarks.js --input "// todo ::: test syntax"
+
+# Test mode with verbose output
+node scripts/audit-waymarks.js --test --verbose
+```
 
 ## Development Workflow Integration
 
@@ -373,6 +512,11 @@ node scripts/audit-waymarks.js --legacy
 
 # Check for temp markers
 pnpm check:all
+
+# Test all scripts work correctly
+node scripts/audit-waymarks.js --test
+node scripts/tldr-check.js --test
+node scripts/blaze.js --dry-run
 ```
 
 ## Performance Considerations
@@ -389,7 +533,9 @@ The audit script handles large codebases efficiently:
 
 - Use `--test` mode during development
 - Use `--json` mode for programmatic processing  
-- Filter output with `--include`/`--exclude` for focused analysis
+- Filter output with `--filter` for focused analysis
+- Use `--pattern` to target specific file types
+- Use `--dry-run` to preview changes before applying
 - Run audit before blaze to avoid processing unchanged files
 
 ## Troubleshooting
@@ -400,8 +546,14 @@ The audit script handles large codebases efficiently:
 
 **No violations found but expecting some:**
 - Check file is tracked by git (`git ls-files | grep filename`)
-- Verify file contains `:::` pattern
+- Verify file contains `:::` pattern in actual comments (not strings/prose)
 - Check ignore patterns aren't excluding the file
+- For markdown: ensure `:::` is in comments or code blocks (not inline backticks)
+- For code blocks: verify they don't use `wm:example` pattern
+
+**False positives in documentation:**
+- Use `wm:example` pattern for code blocks containing example syntax
+- Ensure documentation examples are in code blocks, not inline text
 
 **Script fails with permission error:**
 - Ensure scripts are executable: `chmod +x scripts/*.js`
@@ -425,6 +577,18 @@ node scripts/audit-waymarks.js --json | jq '.'
 
 # Test specific patterns
 node scripts/audit-waymarks.js --test --verbose
+
+# Analyze specific files
+node scripts/audit-waymarks.js --file src/main.js --verbose
+
+# Direct content analysis
+node scripts/audit-waymarks.js --input "// todo ::: test syntax" --verbose
+
+# Filter to specific types
+node scripts/audit-waymarks.js --filter deprecated --verbose
+
+# Test blaze with detailed output
+node scripts/blaze.js --dry-run --verbose
 ```
 
 ---

@@ -17,7 +17,7 @@ describe('WaymarkSearch', () => {
 // tldr ::: Test file for search functionality
 export function test() {
   // todo ::: implement this function
-  // sec ::: validate all inputs
+  // notice ::: validate all inputs #security
   return 42;
 }
     `.trim());

@@ -8,32 +8,68 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { IgnorePatterns } from './lib/ignore-patterns.js';
 import WaymarkSpec from './lib/spec-loader.js';
+import { FlagParser } from './lib/flag-parser.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Parse command line arguments
-const args = process.argv.slice(2);
-const requireTags = args.includes('--require-tags');
-const requireAnchors = args.includes('--require-anchors');
-const strict = args.includes('--strict'); // Enables all checks
-const verbose = args.includes('--verbose');
-const jsonOutput = args.includes('--json');
-const fixMode = args.includes('--fix');
+// Parse command line arguments with new system
+const flags = new FlagParser();
 
-// Parse min-tags flag
-let minTags = 0;
-const minTagsIndex = args.indexOf('--min-tags');
-if (minTagsIndex !== -1 && args[minTagsIndex + 1]) {
-  minTags = parseInt(args[minTagsIndex + 1], 10);
+// Standard flags
+const help = flags.has('help');
+const strict = flags.has('strict');
+const verbose = flags.has('verbose');
+const jsonOutput = flags.has('json');
+const testMode = flags.has('test');
+
+// TLDR-specific flags
+const minTags = parseInt(flags.get('min-tags', '0'));
+const requireItems = flags.getArray('require');
+const filePatterns = flags.getArray('pattern');
+const specificFiles = flags.getArray('file');
+
+// Show help if requested
+if (help) {
+  console.log(`
+tldr-check - Analyze TLDR waymark quality
+
+Usage: node scripts/tldr-check.js [options]
+
+Standard Options:
+  --help, -h          Show this help message
+  --verbose, -v       Show detailed suggestions
+  --json              Output as JSON for tooling
+  --strict            Enable all quality checks
+  --test              Scan only scripts/tests/ files
+
+Quality Requirements:
+  --require tags anchors    Require specific elements
+                           Available: tags, anchors
+  --min-tags N             Require minimum N tags
+
+File Targeting:
+  --pattern "*.md" "docs/**"  File glob patterns
+  --file path1 path2        Specific file paths
+
+Examples:
+  node scripts/tldr-check.js
+  node scripts/tldr-check.js --require tags
+  node scripts/tldr-check.js --require tags anchors
+  node scripts/tldr-check.js --min-tags 2 --strict
+  node scripts/tldr-check.js --pattern "docs/**/*.md"
+`);
+  process.exit(0);
 }
 
-// If strict mode, enable all checks
-const checks = {
-  requireTags: strict || requireTags,
-  requireAnchors: strict || requireAnchors,
-  minTags: strict ? Math.max(minTags, 1) : minTags
-};
+// Process require items
+const requireTags = requireItems.includes('tags') || requireItems.includes('tag');
+const requireAnchors = requireItems.includes('anchors') || requireItems.includes('anchor');
+
+// Apply strict mode defaults
+const finalMinTags = strict ? Math.max(minTags, 1) : minTags;
+const finalRequireTags = strict || requireTags;
+const finalRequireAnchors = strict || requireAnchors;
 
 function findFiles() {
   const ignorePatterns = new IgnorePatterns(path.resolve(__dirname, '..'));
@@ -232,13 +268,13 @@ function generateReport(results) {
   }
   
   // Summary statistics
-  if (checks.requireTags || checks.requireAnchors) {
+  if (finalRequireTags || finalRequireAnchors) {
     console.log('=== Check Summary ===');
-    if (checks.requireTags) {
+    if (finalRequireTags) {
       const withTags = results.filter(r => r.tldr && r.tldr.tags.length > 0).length;
       console.log(`Files with tags: ${withTags}/${filesWithTLDR}`);
     }
-    if (checks.requireAnchors) {
+    if (finalRequireAnchors) {
       const withAnchors = results.filter(r => r.tldr && r.tldr.anchor).length;
       console.log(`Files with anchors: ${withAnchors}/${filesWithTLDR}`);
     }

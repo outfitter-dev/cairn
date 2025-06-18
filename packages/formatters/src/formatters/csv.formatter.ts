@@ -97,7 +97,7 @@ export class CSVFormatter implements IFormatter {
 
   // ::: api escape CSV field values and prevent formula injection
   private escapeCsvField(field: string): string {
-    // sec ::: neutralize potential formula-injection payloads (CVE-2014-3524)
+    // notice ::: neutralize potential formula-injection payloads (CVE-2014-3524) #security
     if (/^[=+\-@]/.test(field)) {
       field = `'${field}`;
     }

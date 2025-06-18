@@ -10,31 +10,208 @@ import WaymarkSpec from './lib/spec-loader.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Parse command line arguments
-const args = process.argv.slice(2);
-const verbose = args.includes('--verbose');
-const legacyMode = args.includes('--legacy');
-const noPrefixMode = args.includes('--no-prefix');
-const saveLog = args.includes('--save');
-const testMode = args.includes('--test');
-const jsonOutput = args.includes('--json');
+import { FlagParser } from './lib/flag-parser.js';
 
-// Parse include/exclude filters
-let includeFilters = [];
-let excludeFilters = [];
+// Parse command line arguments with new system
+const flags = new FlagParser();
 
-const includeIndex = args.indexOf('--include');
-if (includeIndex !== -1 && args[includeIndex + 1]) {
-  includeFilters = args[includeIndex + 1].split(',');
+// Standard flags
+const verbose = flags.has('verbose');
+const legacyMode = flags.has('legacy');
+const testMode = flags.has('test');
+const jsonOutput = flags.has('json');
+const help = flags.has('help');
+const dryRun = flags.has('dry-run');
+
+// Content filtering
+const includeExamples = flags.getArray('filter').includes('examples');
+const filterTypes = flags.getArray('filter');
+const excludeTypes = flags.getExcluded('filter');
+
+// File targeting
+const filePatterns = flags.getArray('pattern');
+const specificFiles = flags.getArray('file');
+
+// Input methods
+const directInput = flags.get('input');
+const useStdin = flags.has('stdin');
+
+// Show help if requested
+if (help) {
+  console.log(`
+audit-waymarks - Waymark analysis and v1.0 compliance checking
+
+Usage: node scripts/audit-waymarks.js [options]
+
+Standard Options:
+  --help, -h          Show this help message
+  --verbose, -v       Show detailed output with waymark content
+  --json              Output as JSON for tooling
+  --legacy            Show only v1.0 syntax violations
+  --test              Scan only scripts/tests/ files
+  --dry-run, -n       Preview mode (no file changes)
+
+Filtering Options:
+Content Filtering:
+  --filter TYPE1 TYPE2 !TYPE3    Filter content types
+                                 Types: official, deprecated, unknown, examples
+                                 Use !TYPE to exclude
+                                 
+File Targeting:
+  --pattern "*.md" "src/**"      File glob patterns  
+  --file path1 path2 path3       Specific file paths
+
+Input Methods:
+  --input "content"   Analyze direct content input
+  --stdin             Read content from stdin
+
+Examples:
+  node scripts/audit-waymarks.js --legacy
+  node scripts/audit-waymarks.js --filter official deprecated !unknown
+  node scripts/audit-waymarks.js --test --filter examples
+  node scripts/audit-waymarks.js --pattern "docs/**/*.md"
+  node scripts/audit-waymarks.js --input "// TODO ::: test syntax"
+`);
+  process.exit(0);
 }
 
-const excludeIndex = args.indexOf('--exclude');
-if (excludeIndex !== -1 && args[excludeIndex + 1]) {
-  excludeFilters = args[excludeIndex + 1].split(',');
+// Comment patterns by file extension
+const COMMENT_PATTERNS = {
+  // JavaScript/TypeScript family
+  '.js': /^\s*(\/\/|\/\*|\*)/,
+  '.ts': /^\s*(\/\/|\/\*|\*)/,
+  '.jsx': /^\s*(\/\/|\/\*|\*)/,
+  '.tsx': /^\s*(\/\/|\/\*|\*)/,
+  '.mjs': /^\s*(\/\/|\/\*|\*)/,
+  '.cjs': /^\s*(\/\/|\/\*|\*)/,
+  // C-style languages
+  '.java': /^\s*(\/\/|\/\*|\*)/,
+  '.c': /^\s*(\/\/|\/\*|\*)/,
+  '.cpp': /^\s*(\/\/|\/\*|\*)/,
+  '.cc': /^\s*(\/\/|\/\*|\*)/,
+  '.cxx': /^\s*(\/\/|\/\*|\*)/,
+  '.h': /^\s*(\/\/|\/\*|\*)/,
+  '.hpp': /^\s*(\/\/|\/\*|\*)/,
+  '.go': /^\s*(\/\/|\/\*|\*)/,
+  '.rs': /^\s*(\/\/|\/\*|\*)/,
+  '.swift': /^\s*(\/\/|\/\*|\*)/,
+  '.kt': /^\s*(\/\/|\/\*|\*)/,
+  '.scala': /^\s*(\/\/|\/\*|\*)/,
+  '.cs': /^\s*(\/\/|\/\*|\*)/,
+  '.php': /^\s*(\/\/|\/\*|\*|#)/,
+  // Hash-style comments
+  '.py': /^\s*(#|""".*"""$|'''.*'''$)/,
+  '.rb': /^\s*(#)/,
+  '.sh': /^\s*(#)/,
+  '.bash': /^\s*(#)/,
+  '.zsh': /^\s*(#)/,
+  '.fish': /^\s*(#)/,
+  '.yaml': /^\s*(#)/,
+  '.yml': /^\s*(#)/,
+  '.toml': /^\s*(#)/,
+  '.ini': /^\s*(;|#)/,
+  '.conf': /^\s*(;|#)/,
+  '.cfg': /^\s*(;|#)/,
+  '.env': /^\s*(#)/,
+  '.gitignore': /^\s*(#)/,
+  '.dockerignore': /^\s*(#)/,
+  // Markup languages
+  '.md': /^\s*(<!--|\[\/\/\]:)/,
+  '.html': /^\s*(<!--)/,
+  '.htm': /^\s*(<!--)/,
+  '.xml': /^\s*(<!--)/,
+  '.vue': /^\s*(\/\/|\/\*|\*|<!--)/,
+  '.svelte': /^\s*(\/\/|\/\*|\*|<!--)/,
+  // SQL
+  '.sql': /^\s*(--|\/\*|\*)/,
+  // CSS
+  '.css': /^\s*(\/\*|\*)/,
+  '.scss': /^\s*(\/\/|\/\*|\*)/,
+  '.sass': /^\s*(\/\/)/,
+  '.less': /^\s*(\/\/|\/\*|\*)/,
+};
+
+function isCommentLine(line, fileExtension) {
+  const pattern = COMMENT_PATTERNS[fileExtension];
+  if (!pattern) {
+    // Unknown file type - be conservative and allow all lines
+    // This maintains backward compatibility for files we don't recognize
+    return true;
+  }
+  return pattern.test(line);
+}
+
+function isInBackticks(line, matchIndex) {
+  const beforeMatch = line.substring(0, matchIndex);
+  const backtickCount = (beforeMatch.match(/`/g) || []).length;
+  return backtickCount % 2 === 1; // Odd number means we're inside backticks
+}
+
+function getLanguageFromFence(line) {
+  // Extract language from fence like ```javascript or ~~~python  
+  const fenceMatch = line.match(/^[\s]*```([^`]*)|^[\s]*~~~([^~]*)/);
+  const fullLangString = fenceMatch ? (fenceMatch[1] || fenceMatch[2]) : null;
+  
+  if (!fullLangString) return { language: null, isWmExample: false, wmTags: [] };
+  
+  // Check for wm: patterns (comma-separated)
+  const parts = fullLangString.split(/[\s,]+/).filter(p => p.length > 0);
+  const hasWmPattern = parts.some(part => part.startsWith('wm:'));
+  const language = parts.find(part => !part.startsWith('wm:')) || null;
+  
+  return { 
+    language, 
+    isWmExample: hasWmPattern,
+    wmTags: parts.filter(part => part.startsWith('wm:'))
+  };
+}
+
+function getFileExtensionForLanguage(language) {
+  // Map common language names to file extensions
+  const languageMap = {
+    'javascript': '.js',
+    'js': '.js',
+    'typescript': '.ts',
+    'ts': '.ts',
+    'python': '.py',
+    'py': '.py',
+    'java': '.java',
+    'c': '.c',
+    'cpp': '.cpp',
+    'cxx': '.cpp',
+    'c++': '.cpp',
+    'go': '.go',
+    'rust': '.rs',
+    'rs': '.rs',
+    'php': '.php',
+    'ruby': '.rb',
+    'rb': '.rb',
+    'shell': '.sh',
+    'bash': '.sh',
+    'sh': '.sh',
+    'yaml': '.yaml',
+    'yml': '.yaml',
+    'json': '.json',
+    'html': '.html',
+    'css': '.css',
+    'scss': '.scss',
+    'sql': '.sql',
+  };
+  return languageMap[language?.toLowerCase()] || null;
+}
+
+function isCommentLineInLanguage(line, language) {
+  const ext = getFileExtensionForLanguage(language);
+  if (!ext) return true; // Unknown language, be permissive
+  
+  const pattern = COMMENT_PATTERNS[ext];
+  return pattern ? pattern.test(line) : true;
 }
 
 function extractWaymarks() {
-  if (testMode) {
+  if (dryRun && !jsonOutput) {
+    console.log('🔍 [DRY RUN] Preview mode - analyzing waymarks without changes...\n');
+  } else if (testMode) {
     console.log('🧪 Running in test mode - scanning only test files...\n');
   } else if (!jsonOutput) {
     console.log('🔍 Searching for all waymarks in the codebase...\n');
@@ -57,16 +234,38 @@ function extractWaymarks() {
     // Initialize ignore patterns
     const ignorePatterns = new IgnorePatterns(path.resolve(__dirname, '..'));
     
+    // Handle different input methods
+    if (directInput) {
+      return analyzeDirectContent(directInput);
+    }
+    
+    if (useStdin) {
+      return analyzeStdinContent();
+    }
+    
     // Find all files containing :::
     let files = [];
     
-    try {
-      // Use git ls-files to respect .gitignore, then filter further
-      const gitFiles = execSync('git ls-files', {
-        encoding: 'utf8',
-        cwd: path.resolve(__dirname, '..'),
-        maxBuffer: 10 * 1024 * 1024
-      }).trim().split('\n').filter(Boolean);
+    // Handle specific files if provided
+    if (specificFiles.length > 0) {
+      files = specificFiles.filter(file => {
+        try {
+          const fullPath = path.resolve(__dirname, '..', file);
+          const content = fs.readFileSync(fullPath, 'utf8');
+          return content.includes(':::');
+        } catch (err) {
+          console.error(`Error reading ${file}: ${err.message}`);
+          return false;
+        }
+      });
+    } else {
+      try {
+        // Use git ls-files to respect .gitignore, then filter further
+        const gitFiles = execSync('git ls-files', {
+          encoding: 'utf8',
+          cwd: path.resolve(__dirname, '..'),
+          maxBuffer: 10 * 1024 * 1024
+        }).trim().split('\n').filter(Boolean);
       
       // Filter for files that might contain waymarks and aren't ignored
       const relevantFiles = gitFiles.filter(file => {
@@ -134,8 +333,23 @@ function extractWaymarks() {
       
       for (const dir of directories) {
         searchDirectory(dir);
+        }
+        files = [...new Set(files)];
       }
-      files = [...new Set(files)];
+    }
+    
+    // Apply file patterns if specified
+    if (filePatterns.length > 0) {
+      files = files.filter(file => 
+        filePatterns.some(pattern => {
+          // Simple glob matching (basic patterns)
+          const regex = pattern
+            .replace(/\./g, '\\.')
+            .replace(/\*/g, '.*')
+            .replace(/\?/g, '.');
+          return new RegExp(`^${regex}$`).test(file);
+        })
+      );
     }
 
     // In test mode, override with test files only
@@ -183,12 +397,59 @@ function extractWaymarks() {
       try {
         const content = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
         const lines = content.split('\n');
+        const fileExtension = path.extname(file);
+        
+        // State tracking for markdown code blocks
+        let inCodeBlock = false;
+        let codeBlockInfo = null;
         
         lines.forEach((line, index) => {
+          // For markdown files, track code block state
+          if (fileExtension === '.md') {
+            // Check for code block fences (``` or ~~~)
+            if (line.match(/^[\s]*```|^[\s]*~~~/)) {
+              if (!inCodeBlock) {
+                // Starting a code block
+                inCodeBlock = true;
+                codeBlockInfo = getLanguageFromFence(line);
+              } else {
+                // Ending a code block
+                inCodeBlock = false;
+                codeBlockInfo = null;
+              }
+              // Don't process fence lines themselves for waymarks
+              return;
+            }
+          }
+          
           // Match ::: followed by any content
           const matches = line.matchAll(/:::\s*(.*)$/g);
           
           for (const match of matches) {
+            let shouldProcess = false;
+            
+            if (fileExtension === '.md') {
+              if (inCodeBlock) {
+                // Skip if this is a wm:example block (unless --include-examples is set)
+                if (codeBlockInfo && codeBlockInfo.isWmExample && !includeExamples) {
+                  shouldProcess = false;
+                } else {
+                  // Inside a code block - use language-specific comment detection
+                  shouldProcess = isCommentLineInLanguage(line, codeBlockInfo ? codeBlockInfo.language : null);
+                }
+              } else {
+                // Regular markdown - check for HTML comments and avoid backticks
+                shouldProcess = isCommentLine(line, fileExtension) && !isInBackticks(line, match.index);
+              }
+            } else {
+              // Non-markdown files - use standard comment detection
+              shouldProcess = isCommentLine(line, fileExtension);
+            }
+            
+            if (!shouldProcess) {
+              continue;
+            }
+            
             totalWaymarks++;
             const fullMatch = match[0];
             const beforeSigil = line.substring(0, match.index).trim();
@@ -498,18 +759,18 @@ function extractWaymarks() {
     // Apply filters if requested
     const shouldShowCategory = (category) => {
       // If no filters specified, show all
-      if (includeFilters.length === 0 && excludeFilters.length === 0) {
+      if (filterTypes.length === 0 && excludeTypes.length === 0) {
         return true;
       }
       
       // Check excludes first
-      if (excludeFilters.length > 0 && excludeFilters.includes(category)) {
+      if (excludeTypes.length > 0 && excludeTypes.includes(category)) {
         return false;
       }
       
       // If includes specified, must be in the list
-      if (includeFilters.length > 0) {
-        return includeFilters.includes(category);
+      if (filterTypes.length > 0) {
+        return filterTypes.includes(category);
       }
       
       // No includes specified, not excluded, so show it
@@ -517,10 +778,10 @@ function extractWaymarks() {
     };
     
     // Filter support
-    if (includeFilters.length > 0 || excludeFilters.length > 0) {
+    if (filterTypes.length > 0 || excludeTypes.length > 0) {
       console.log('🔍 Applying filters...');
-      if (includeFilters.length > 0) console.log(`  Include: ${includeFilters.join(', ')}`);
-      if (excludeFilters.length > 0) console.log(`  Exclude: ${excludeFilters.join(', ')}`);
+      if (filterTypes.length > 0) console.log(`  Include: ${filterTypes.join(', ')}`);
+      if (excludeTypes.length > 0) console.log(`  Exclude: ${excludeTypes.join(', ')}`);
       console.log();
     }
     
@@ -597,6 +858,47 @@ function extractWaymarks() {
   } catch (err) {
     console.error('Error:', err.message);
   }
+}
+
+// Helper functions for new input methods
+function analyzeDirectContent(content) {
+  console.log('📄 Analyzing direct content input...\n');
+  
+  const lines = content.split('\n');
+  let totalWaymarks = 0;
+  
+  lines.forEach((line, index) => {
+    const matches = line.matchAll(/:::\s*(.*)$/g);
+    
+    for (const match of matches) {
+      totalWaymarks++;
+      const afterSigil = match[1].trim();
+      
+      if (verbose) {
+        console.log(`Line ${index + 1}: ${line.trim()}`);
+        console.log(`  Content: ${afterSigil}\n`);
+      }
+    }
+  });
+  
+  console.log(`📊 Found ${totalWaymarks} waymarks in direct input`);
+}
+
+function analyzeStdinContent() {
+  console.log('📥 Reading from stdin...\n');
+  
+  let stdinData = '';
+  process.stdin.setEncoding('utf8');
+  
+  process.stdin.on('data', (chunk) => {
+    stdinData += chunk;
+  });
+  
+  process.stdin.on('end', () => {
+    analyzeDirectContent(stdinData);
+  });
+  
+  process.stdin.resume();
 }
 
 // Run the audit

@@ -75,7 +75,7 @@ export class WaymarkParser {
     // ::: ctx extract everything after ::: (including the space)
     const afterWaymark = line.substring(waymarkIndex + 3);
     
-    // sec ::: validate required space after :::
+    // notice ::: validate required space after ::: #security
     if (!afterWaymark.startsWith(' ')) {
       return {
         error: {
