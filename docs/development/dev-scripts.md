@@ -243,11 +243,27 @@ Automated system for tagging waymark violations in the codebase. Reads violation
 # Preview what would be tagged (recommended first)
 node scripts/blaze.js --dry-run
 
-# Actually apply tags to files
-node scripts/blaze.js
+# Preview AND generate a report of what would be done
+node scripts/blaze.js --dry-run --report
+
+# Actually apply tags to files (requires --yes)
+node scripts/blaze.js --yes
 
 # Use custom tag prefix
-node scripts/blaze.js --tag wm:custom
+node scripts/blaze.js --tag-prefix custom --yes
+
+# Remove tags with different patterns
+node scripts/blaze.js --reset              # Remove all #wm:* tags (not #wmi:)
+node scripts/blaze.js --reset all          # Remove ALL tags (#anything)
+node scripts/blaze.js --reset wm           # Same as --reset (default)
+node scripts/blaze.js --reset wm:fix       # Remove only #wm:fix/* tags
+node scripts/blaze.js --reset wm:warn      # Remove only #wm:warn/* tags
+node scripts/blaze.js --reset custom       # Remove #custom:* tags
+
+# Combine with file targeting
+node scripts/blaze.js --reset --pattern "docs/**/*.md"
+node scripts/blaze.js --reset wm:fix --file src/main.js
+node scripts/blaze.js --reset all --dry-run
 ```
 
 ### Tag Categories
@@ -285,6 +301,71 @@ Found 25 problems to tag.
 
 🔥 Blaze completed.
 ```
+
+### Safety Features
+
+**--yes Flag Requirement**: Blaze now requires explicit confirmation to modify files:
+```bash
+# This will error without --yes
+node scripts/blaze.js
+# Error: --yes flag is required to modify files.
+
+# Correct usage
+node scripts/blaze.js --yes
+```
+
+### Blaze Reports
+
+Reports are saved to `.waymark/logs/` with timestamped filenames:
+
+- **Automatic**: When tags are applied with `--yes`
+- **On-demand**: Use `--dry-run --report` to generate a report without modifying files
+
+Example filename: `.waymark/logs/202506181030-blaze-report.json`
+
+The timestamp format is `YYYYMMDDhhmm` for easy sorting and consistency across all waymark logs.
+
+```json
+{
+  "metadata": {
+    "version": "1.0",
+    "timestamp": "2025-06-18T10:30:00Z",
+    "mode": "blaze",
+    "tagPrefix": "wm",
+    "gitBranch": "feature/v1-prep",
+    "dryRun": true      // Present only for dry-run reports
+  },
+  "summary": {
+    "totalFiles": 23,
+    "totalTags": 67,
+    "byType": {
+      "deprecated-marker": 23,
+      "property-priority": 15,
+      "all-caps-marker": 19,
+      "unknown": 10
+    }
+  },
+  "files": [
+    {
+      "path": "src/auth.js",
+      "totalTags": 3,
+      "tags": [
+        {
+          "line": 15,
+          "tag": "wm:fix/property-priority",
+          "issue": "Property-based priority",
+          "original": "// todo ::: priority:high fix auth"
+        }
+      ]
+    }
+  ]
+}
+```
+
+This report enables:
+- **Tracking**: Know exactly what was changed
+- **Auditing**: Review applied tags
+- **Future Undo**: Foundation for `--undo` functionality
 
 ## Specification System
 
@@ -453,10 +534,14 @@ All waymark scripts now use a consistent flag system for better usability and ma
 | `--json` | audit, tldr | Output as JSON |
 | `--test` | audit, tldr | Test mode (scripts/tests/ only) |
 | `--filter TYPE1 !TYPE2` | audit | Filter content types |
-| `--pattern "glob"` | audit, tldr | File glob patterns |
-| `--file path1 path2` | audit, tldr | Specific files |
+| `--pattern "glob"` | audit, tldr, blaze | File glob patterns |
+| `--file path1 path2` | audit, tldr, blaze | Specific files |
 | `--input "content"` | audit | Analyze direct content |
 | `--stdin` | audit | Read from stdin |
+| `--tag-prefix PREFIX` | blaze | Custom tag prefix (default: wm) |
+| `--yes, -y` | blaze | Confirm file modifications (required for non-dry-run) |
+| `--report [PATH]` | blaze | Generate report (can use with --dry-run) |
+| `--reset [PATTERN]` | blaze | Remove tags matching pattern (default: wm) |
 
 ### Examples
 
@@ -469,6 +554,12 @@ node scripts/audit-waymarks.js --pattern "docs/**/*.md" "src/**/*.js"
 
 # Custom tag prefix
 node scripts/blaze.js --tag-prefix custom --dry-run
+
+# Reset tags from documentation files
+node scripts/blaze.js --reset --pattern "docs/**/*.md" --dry-run
+
+# Reset all wm: tags project-wide
+node scripts/blaze.js --reset
 
 # Require specific elements
 node scripts/tldr-check.js --require tags anchors --min-tags 2

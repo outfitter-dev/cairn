@@ -10,7 +10,7 @@ describe('WaymarkSearch', () => {
   const testFile2 = `${testDir}/test2.md`;
 
   beforeAll(() => {
-    // ::: ctx create test directory and files
+    // ::: ctx create test directory and files #wm:warn/all-caps-marker
     mkdirSync(testDir, { recursive: true });
     
     writeFileSync(testFile1, `
@@ -33,7 +33,7 @@ Some content here.
   });
 
   afterAll(() => {
-    // ::: ctx cleanup test files
+    // ::: ctx cleanup test files #wm:warn/all-caps-marker
     unlinkSync(testFile1);
     unlinkSync(testFile2);
     rmdirSync(testDir);
@@ -59,7 +59,7 @@ Some content here.
     if (result.ok) {
       expect(result.data).toHaveLength(2);
       const files = result.data.map((r: any) => r.waymark.file);
-      // ::: ctx globby returns absolute paths
+      // ::: ctx globby returns absolute paths #wm:warn/all-caps-marker
       expect(files).toContain(resolve(testFile1));
       expect(files).toContain(resolve(testFile2));
     }
@@ -102,7 +102,7 @@ Some content here.
       const contexts = WaymarkSearch.getUniqueContexts(result.data);
       expect(contexts).toContain('tldr');
       expect(contexts).toContain('todo');
-      expect(contexts).toContain('sec');
+      expect(contexts).toContain('notice');
       expect(contexts).toContain('guide');
       expect(contexts).toContain('api');
     }
@@ -126,7 +126,7 @@ Some content here.
     expect(result.ok).toBe(true);
     if (result.ok) {
       const grouped = WaymarkSearch.groupByFile(result.data);
-      // ::: ctx use absolute paths for lookup
+      // ::: ctx use absolute paths for lookup #wm:warn/all-caps-marker
       const absFile1 = resolve(testFile1);
       const absFile2 = resolve(testFile2);
       expect(grouped[absFile1]).toHaveLength(3); // tldr, todo, sec
@@ -148,7 +148,7 @@ Some content here.
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      // ::: ctx should find both .ts and .md files
+      // ::: ctx should find both .ts and .md files #wm:warn/all-caps-marker
       expect(result.data.length).toBeGreaterThan(0);
       const files = result.data.map((r: any) => r.waymark.file);
       expect(files.some((f: string) => f.endsWith('.ts'))).toBe(true);
