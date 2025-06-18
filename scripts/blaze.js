@@ -257,7 +257,15 @@ async function blazeProblems() {
             let lineContent = lines[lineIndex];
             tagsToAdd.forEach(tag => {
               if (!lineContent.includes(`#${tag}`)) {
-                lineContent = `${lineContent} #${tag}`;
+                // Check if this is an HTML/XML comment
+                const htmlCommentMatch = lineContent.match(/^(\s*<!--.*?)(\s*-->)(\s*)$/);
+                if (htmlCommentMatch) {
+                  // Insert tag before the closing -->
+                  lineContent = `${htmlCommentMatch[1]} #${tag}${htmlCommentMatch[2]}${htmlCommentMatch[3]}`;
+                } else {
+                  // Normal line - append at end
+                  lineContent = `${lineContent} #${tag}`;
+                }
                 modifiedCount++;
                 
                 // Track applied tag for report
@@ -370,8 +378,8 @@ async function resetTags() {
     regexPattern = / #[^\s#]+/g;
     description = 'ALL tags';
   } else if (resetPattern === 'wm' || resetPattern === true) {
-    // Default behavior: remove except #wmi:*
-    regexPattern = /#]*/g;
+    // Default behavior: remove #wm:* except #wmi:*
+    regexPattern = / #wm:(?!i:)[^\s#]*/g;
     description = '#wm:* tags (excluding #wmi:)';
   } else if (resetPattern.includes(':')) {
     // Pattern like "wm:fix" - remove specific prefix
