@@ -1,10 +1,10 @@
-// :M: tldr Unified terminal formatter with color support
+// tldr ::: Unified terminal formatter with color support
 import chalk from 'chalk';
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
 import type { SearchResult, Waymark } from '@waymark/types';
 
 export class TerminalFormatter implements IFormatter {
-  // :M: api format data for terminal display
+  // ::: api format data for terminal display
   format(input: FormatterInput): string {
     switch (input.type) {
       case 'search':
@@ -20,30 +20,30 @@ export class TerminalFormatter implements IFormatter {
     }
   }
 
-  // :M: api format search results for terminal
+  // ::: api format search results for terminal
   private formatSearchResults(results: SearchResult[]): string {
     if (results.length === 0) {
-      return chalk.yellow('No anchors found');
+      return chalk.yellow('No waymarks found');
     }
 
     const output: string[] = [];
-    output.push(chalk.green(`Found ${results.length} anchor(s):\n`));
+    output.push(chalk.green(`Found ${results.length} waymark(s):\n`));
 
-    // :M: ctx group by file
+    // ::: ctx group by file
     const byFile = new Map<string, SearchResult[]>();
     for (const result of results) {
-      const file = result.anchor.file || 'unknown';
+      const file = result.waymark.file || 'unknown';
       if (!byFile.has(file)) {
         byFile.set(file, []);
       }
       byFile.get(file)!.push(result);
     }
 
-    // :M: ctx display each file
+    // ::: ctx display each file
     for (const [file, fileResults] of byFile) {
       output.push(chalk.blue(file));
       for (const result of fileResults) {
-        output.push(this.formatAnchor(result.anchor));
+        output.push(this.formatWaymark(result.waymark));
         if (result.context) {
           output.push(this.formatContext(result));
         }
@@ -54,18 +54,18 @@ export class TerminalFormatter implements IFormatter {
     return output.join('\n');
   }
 
-  // :M: api format list results
+  // ::: api format list results
   private formatListResults(results: SearchResult[]): string {
-    // :M: ctx same format as search results
+    // ::: ctx same format as search results
     return this.formatSearchResults(results);
   }
 
-  // :M: api format parse results
-  private formatParseResults(data: { file: string; result: { anchors: Waymark[]; errors: any[] } }): string {
+  // ::: api format parse results
+  private formatParseResults(data: { file: string; result: { waymarks: Waymark[]; errors: any[] } }): string {
     const output: string[] = [];
     
     output.push(chalk.blue(`\n📁 ${data.file}`));
-    output.push(chalk.green(`✓ ${data.result.anchors.length} anchors found`));
+    output.push(chalk.green(`✓ ${data.result.waymarks.length} waymarks found`));
     
     if (data.result.errors.length > 0) {
       output.push(chalk.red(`⚠ ${data.result.errors.length} errors:`));
@@ -74,14 +74,14 @@ export class TerminalFormatter implements IFormatter {
       }
     }
 
-    for (const anchor of data.result.anchors) {
-      output.push(this.formatAnchor(anchor));
+    for (const waymark of data.result.waymarks) {
+      output.push(this.formatWaymark(waymark));
     }
 
     return output.join('\n');
   }
 
-  // :M: api format unique contexts
+  // ::: api format unique contexts
   private formatContexts(contexts: string[]): string {
     const output: string[] = [];
     output.push(chalk.green(`Found ${contexts.length} unique context(s):\n`));
@@ -93,27 +93,27 @@ export class TerminalFormatter implements IFormatter {
     return output.join('\n');
   }
 
-  // :M: api format single anchor with line and column number
-  private formatAnchor(anchor: Waymark): string {
-    const contexts = anchor.contexts.map(c => chalk.cyan(c)).join(', ');
-    const prose = anchor.prose ? ` ${anchor.prose}` : '';
-    return `${chalk.yellow(`${anchor.line}:${anchor.column}`)}: ${contexts}${prose}`;
+  // ::: api format single waymark with line and column number
+  private formatWaymark(waymark: Waymark): string {
+    const contexts = waymark.contexts.map(c => chalk.cyan(c)).join(', ');
+    const prose = waymark.prose ? ` ${waymark.prose}` : '';
+    return `${chalk.yellow(`${waymark.line}:${waymark.column}`)}: ${contexts}${prose}`;
   }
 
-  // :M: api format context lines
+  // ::: api format context lines
   private formatContext(result: SearchResult): string {
     const output: string[] = [];
     
     if (result.context?.before) {
       result.context.before.forEach((line, idx) => {
-        const lineNum = Math.max(1, result.anchor.line - result.context!.before.length + idx);
+        const lineNum = Math.max(1, result.waymark.line - result.context!.before.length + idx);
         output.push(chalk.dim(`    ${lineNum}: ${line}`));
       });
     }
 
     if (result.context?.after) {
       result.context.after.forEach((line, idx) => {
-        const lineNum = result.anchor.line + idx + 1;
+        const lineNum = result.waymark.line + idx + 1;
         output.push(chalk.dim(`    ${lineNum}: ${line}`));
       });
     }

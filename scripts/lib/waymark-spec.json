@@ -1,0 +1,67 @@
+{
+    "version": "1.0.0",
+    "markers": {
+      "official": {
+        "top-level": ["tldr"],
+        "work": ["todo", "fixme", "refactor", "review", "wip", "stub", "temp", "done", "deprecated", "test"],
+        "info": ["note", "idea", "about", "example"],
+        "attention": ["notice", "risk", "important"]
+      },
+      "deprecated": {
+        "legacy": ["temporary", "info", "good", "bad", "remove", "caution", "pin", "broken", "why", "mustread"],
+        "migration": ["alert", "always", "fix", "check", "must", "ci", "needs", "blocked", "sec", "audit", "warn", "draft", "new", "hold", "shipped", "perf", "cleanup", "hack"],
+        "old-official": ["summary", "docs", "lint", "hotpath", "mem", "io", "auth", "crypto", "a11y", "flag", "legal", "assert"]
+      }
+    },
+    "signals": {
+      "position": ["*", "_"],
+      "intensity": ["!", "!!", "?", "??", "-", "--"]
+    },
+    "relational_tags": {
+      "work": ["fixes", "closes", "blocks", "blocked", "depends", "issue", "ticket", "followup"],
+      "references": ["for", "needs", "relates", "see", "refs", "replaces", "link"],
+      "specific": ["pr", "commit", "branch", "test", "feat", "docs"],
+      "context": ["affects", "owner", "cc"],
+      "arrays_allowed": ["owner", "cc", "affects", "depends", "blocks", "needs"]
+    },
+    "legacy_properties": {
+      "deprecated": ["reason", "since", "until", "version", "affects"],
+      "priority_patterns": ["priority:high", "priority:critical", "priority:low", "priority:medium", "priority:p0", "priority:p1", "priority:p2", "priority:p3"]
+    },
+    "validation_rules": {
+      "require_hash_prefix": {
+        "relational_values": true,
+        "non_blessed_properties": true
+      },
+      "forbidden_patterns": {
+        "plus_tag_syntax": true,
+        "hierarchical_tags": true,
+        "spaces_in_arrays": true,
+        "multiple_same_tags": ["owner", "cc"]
+      },
+      "actor_placement": {
+        "valid_positions": ["first_token", "relational_values"],
+        "relational_tags_with_actors": ["owner", "cc", "for", "relates", "see", "needs", "affects"]
+      }
+    },
+    "blaze_tags": {
+      "fix": {
+        "deprecated-marker": "deprecated marker found",
+        "marker-misplaced": "marker in wrong position",
+        "missing-ref-hash": "missing # in reference value",
+        "legacy-plus-tag": "legacy +tag syntax",
+        "property-priority": "property-based priority",
+        "legacy-blessed-property": "legacy blessed property",
+        "non-blessed-property": "non-blessed property without #",
+        "array-with-spaces": "array with spaces",
+        "multiple-ownership-tags": "multiple ownership tags",
+        "multiple-cc-tags": "multiple cc tags",
+        "blessed-missing-hash": "blessed relational missing # in value"
+      },
+      "warn": {
+        "hierarchical-tag": "discouraged hierarchical tag",
+        "all-caps-marker": "all-caps marker",
+        "misplaced-actor": "misplaced @actor"
+      }
+    }
+} 

@@ -1,0 +1,14 @@
+# Waymark-specific ignore patterns
+# These are applied in addition to patterns from .waymark/config.json
+
+# Temporary: ignore old documentation while migrating syntax
+docs/_project/archive/
+docs/_project/proposals/
+
+# Ignore waymarks in quoted examples
+**/examples/**
+**/fixtures/**
+
+# Ignore specific files with many false positives
+packages/core/dist/
+scripts/audit-waymarks.js

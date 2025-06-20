@@ -1,301 +1,195 @@
-<!-- ::: tldr Claude Code configuration and development guidelines -->
+<!-- tldr ::: Claude Code configuration and development guidelines -->
 
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-About you: @.ai/prompts/MAX.md
+About you: @.agents/prompts/MAX.md
 
 ## Project Overview
 
-The Waymark CLI provides tooling for **waymarks** - a standardized way to mark important code locations using the `:::` sigil in comments. This allows both humans and AI agents to quickly find relevant code sections using simple grep commands.
+The Waymark CLI provides tooling for **waymarks** - a standardized way to mark important code locations using the `:::` sign in comments. This allows both humans and AI agents to quickly find relevant code sections using simple grep commands.
 
-## Important Notes
+**Core Value**: Waymarks make codebases AI-navigable and grep-friendly, enabling instant navigation to the right spot in any codebase.
 
-- This repository uses waymarks with the `:::` sigil. Use @llms.txt for how to use.
-- The project is transitioning from `:M:` to `:::` syntax
+## Waymark Syntax
 
-## Core Concept
+This project uses **waymarks** for code annotation. The complete and authoritative syntax guide can be found here: @.agents/partials/waymark-usage.md
 
-The waymark pattern: `[comment-leader] [prefix] ::: [properties] [note] [#hashtags]`
+Please refer to that document for all rules regarding reading, writing, and searching for waymarks. It is the single source of truth for:
 
-- **`:::`** - the sigil that defines a waymark (preceded by space when prefix is present)
-- **prefix** - optional classifier before the sigil (e.g., `todo`, `fix`, `tldr`)
-- **properties** - key:value pairs for structured metadata (e.g., `priority:high`)
-- **note** - human-readable description
-- **#hashtags** - open-namespace tags for classification
+- Syntax specification (v1.0)
+- Core markers and signals
+- Tag system and relational tags
+- Search patterns
+- Best practices
 
-## Waymark Terminology
-
-- **Waymark**: The entire comment structure containing the `:::` sigil
-- **Sigil**: The `:::` separator that defines a waymark
-- **Prefix**: Optional classifier before `:::` (limited namespace)
-- **Properties**: Machine-readable key:value pairs after `:::`
-- **Note**: Human-readable description (waymarks without prefix are pure notes)
-- **Hashtags**: Classification tags prefixed with `#`
-
-## Common Waymark Prefixes
-
-### Work Prefixes
-
-- `todo :::` - work to be done
-- `fix :::` - bugs to fix (synonym: `fixme`)
-- `done :::` - completed work
-- `ask :::` - questions needing answers
-- `review :::` - needs review
-- `needs :::` - dependencies (synonyms: `depends on`, `requires`)
-- `chore :::` - routine maintenance tasks
-- `hotfix :::` - urgent production patch
-- `spike :::` - exploratory proof-of-concept work
-
-### Lifecycle/Maturity Prefixes
-
-- `stub :::` - skeleton/basic implementation
-- `draft :::` - work in progress (synonym: `wip`)
-- `stable :::` - mature/solid code
-- `shipped :::` - deployed to production
-- `good :::` - approved (synonyms: `lgtm`, `approved`)
-- `bad :::` - not approved
-- `hold :::` - work intentionally paused
-- `stale :::` - work that has stagnated
-- `cleanup :::` - code cleanup needed
-- `remove :::` - scheduled deletion
-
-### Alerts/Warnings Prefixes
-
-- `warn :::` - warning
-- `crit :::` - critical issue (synonym: `critical`)
-- `unsafe :::` - dangerous code
-- `caution :::` - proceed carefully
-- `broken :::` - non-functional code
-- `locked :::` - do not modify (synonym: `freeze`)
-- `deprecated :::` - scheduled for removal
-- `audit :::` - requires audit review
-- `legal :::` - legal obligations
-- `temp :::` - temporary code (synonym: `temporary`)
-- `revisit :::` - flag for future reconsideration
-
-### Information Prefixes
-
-- `tldr :::` - brief summary (one per file at top)
-- `summary :::` - code section summary
-- `note :::` - general note (synonym: `info`)
-- `thought :::` - thinking out loud
-- `docs :::` - documentation reference
-- `why :::` - explains reasoning
-- `see :::` - cross-reference (synonyms: `ref`, `xref`)
-- `example :::` - usage example
-
-### Meta Prefixes
-
-- `important :::` - important information
-- `hack :::` - hacky solution
-- `flag :::` - generic marker
-- `pin :::` - pinned item
-- `idea :::` - future possibility
-- `test :::` - test-specific marker
-
-## Property Keys and Patterns
-
-### Core Property Keys
-
-- **Assignment**: `assign:@person` or `attn:@person`
-- **Priority**: `priority:high`, `priority:critical`
-- **Dependencies**: `requires:package(version)`, `depends:service`
-- **Issue tracking**: `fixes:#123`, `closes:#123`, `blocks:#123`
-- **Lifecycle**: `deprecated:v2.0`, `since:v1.0`, `until:v3.0`
-- **Files/paths**: `path:filename`, `affects:files`
-- **Messages**: `message:"error text"`
-
-### @Mentions
-
-- Direct mentions in notes: `// ::: @alice please review`
-- Assignment in todos: `// todo ::: @bob implement caching`
-- Explicit assignment: `// todo ::: assign:@carol fix bug`
-
-### Hashtags
-
-- Open namespace for classification
-- Can appear anywhere (prefer at end)
-- Examples: `#security`, `#performance`, `#frontend`
-- Hierarchical: `#auth/oauth`, `#security/a11y`
-- **Note**: Numeric-only hashtags prohibited (conflicts with issue refs)
-
-## Search Commands
-
-Using ripgrep (rg) is the primary way to work with waymarks:
-
-```bash
-# Find all waymarks
-rg ":::"
-
-# Find by prefix
-rg "todo :::"
-rg "fix :::"
-rg "warn :::"
-
-# Find by properties
-rg ":::.*priority:high"
-rg ":::.*assign:@alice"
-
-# Find by hashtags
-rg "#security"
-rg ":::.*#security"
-
-# Find with context
-rg -C2 "todo :::"  # 2 lines before/after
-
-# Find in markdown (HTML comments)
-rg "<!-- .*:::" --type md
-
-# Extract assignees
-rg -o "todo ::: .*@(\w+)" -r '$1' | sort | uniq -c
-
-# Find high priority items
-rg ".*::: .* priority:high"
-```
-
-## Current Repository Structure
+## Repository Structure
 
 ```text
 waymark/
 ├── docs/                 # Documentation
+│   ├── _project/        # Project management docs
+│   │   ├── proposals/   # Enhancement proposals
+│   │   └── *.md        # Conversion guides, etc.
 │   ├── about/           # Prior art and history
-│   │   └── priors.md    # Related concepts and inspiration
-│   ├── conventions/     # Context conventions and patterns
-│   │   ├── README.md    # Convention overview
-│   │   ├── common-patterns.md     # Essential contexts
-│   │   ├── ai-patterns.md         # AI agent patterns
-│   │   ├── workflow-patterns.md   # Task tracking
-│   │   ├── domain-specific.md     # Framework patterns
-│   │   └── combinations.md        # Multiple context usage
-│   ├── guides/          # User guides and tutorials
-│   │   ├── quick-start.md         # 5-minute intro
-│   │   ├── progressive-enhancement.md  # Adoption levels
+│   ├── conventions/     # Context conventions
+│   ├── guides/          # User guides
 │   ├── syntax/          # Waymark syntax specification
-│   │   ├── README.md    # Syntax overview
-│   │   ├── SPEC.md      # Syntax specification
-│   │   ├── CHANGELOG.md # Syntax version history
-│   │   └── advanced/    # Deep-dive topics (delimiter semantics, etc.)
-│   ├── tooling/         # Waymark tooling documentation
-│   │   ├── ROADMAP.md   # Future tooling plans
-│   │   └── CHANGELOG.md # Tooling version history
-│   ├── project/         # Project specifications
-│   │   ├── LANGUAGE.md  # Language guidelines for writing about waymark
-│   │   └── specs/       # Version specifications
-│   ├── examples.md      # Real-world usage
-│   ├── syntax/advanced/advanced-patterns.md  # Complex scenarios
-│   └── what-ifs.md      # AI-native vision
-├── README.md            # Main documentation with links
-├── CLAUDE.md            # AI agent instructions (this file)
-└── llms.txt             # LLM-readable quick reference
+│   └── tooling/         # Waymark tooling docs
+├── scripts/             # Utility scripts
+│   ├── audit-waymarks.js    # Waymark inventory tool
+│   └── lib/                 # Script libraries
+├── src/                 # Source code (future)
+├── README.md           # Main documentation
+├── CLAUDE.md          # AI agent instructions (this file)
+├── llms.txt           # LLM-readable quick reference
+└── .agents/           # AI agent configuration
+    ├── prompts/       # Agent prompts (MAX.md)
+    └── partials/      # Reusable documentation
 ```
-
-### Additional Files
-
-- `docs/project/syntax-revision.md` - Complete `:::` syntax specification
-- `docs/project/syntax-emoji.md` - Future emoji support (not in v0.1)
-- `docs/guides/search-patterns.md` - Comprehensive search guide
 
 ## Development Guidelines
 
-1. **Incremental Approach**: We're building from documentation first, then simple ripgrep usage, before any complex tooling
-2. **Preserve History**: The `archive/pre-rebuild-2025-01` branch contains all previous implementation work
-3. **Focus on Clarity**: Documentation should clearly explain the waymark concept and its benefits
-4. **Syntax Evolution**: Project is transitioning from `:M:` to `:::` sigil
+### 1. Waymark Usage
 
-## Future Tooling (Currently Archived)
+When working in this codebase:
 
-The following packages exist in the archive branch and may be reintroduced:
+- Use v1.0 syntax as specified in @.agents/partials/waymark-usage.md
+- Prefer signals (`!`, `!!`) over properties for priority
+- Use `#` prefix for all tags (not `+`)
+- Always include `#` in reference values: `#fixes:#123`
+- Use `fixme` not `fix` for bug markers
 
-- @waymark/core - Parser and validation library
-- @waymark/cli - Command-line interface
-- Additional integrations (ESLint, VS Code, etc.)
-
-## Compatibility Notes
-
-### Traditional Magic Comments
-Waymarks work alongside existing TODO/FIXME patterns:
-
+Common patterns:
 ```javascript
-// TODO ::: implement caching
-// FIXME ::: memory leak here
-// HACK ::: temporary workaround
+// *todo ::: finish before merge          // Branch-scoped work
+// !todo ::: high priority task           // P1 priority
+// !!fixme ::: critical security bug      // P0 critical
+// todo ::: implement feature #backend    // Simple tags
+// notice ::: deployment #affects:#api,#billing  // Arrays
+// todo ::: @alice review this #owner:@alice     // Actors
 ```
 
-### Progressive Adoption
-1. Start with simple prefixes: `todo :::`, `fix :::`
-2. Add properties as needed: `priority:high`, `assign:@alice`
-3. Use hashtags for grouping: `#security`, `#frontend`
-4. Pure notes for context: `// ::: this explains why`
+### 2. Search First Development
 
-## Best Practices for This Repository
+Before implementing anything, search for existing patterns:
+```bash
+# Find all todos
+rg "todo\s+:::"
 
-### Using Waymarks
+# Find work by priority
+rg "!!todo"              # Critical
+rg "!todo"               # High priority
 
-1. **Space before `:::`**: Required when prefix is present
-2. **Delimiter rules**:
-   - `:::` - the sigil that marks a waymark
-   - `:` - creates key:value pairs
-   - `()` - parameterizes a property
-   - `[]` - groups multiple parameterized values
-   - `#` - creates hashtags
-   - `@` - creates mentions
-3. **Line limits**: Keep under ~80-120 chars for readable grep output
-4. **Be specific**: Use properties for machine-readable data, notes for descriptions
-5. **Use HTML comments in markdown**: `<!-- tldr ::: summary -->` for non-rendered waymarks
+# Find by tags
+rg "#security"           # Security-related
+rg "#(perf:)?hotpath"    # Performance hotspots
 
-### Contributing
+# Find by issue
+rg "#123\b"              # Issue references
+rg "#fixes:#\d+"         # All fixes
+```
 
-When working on this project:
+### 3. Git Workflow
 
-1. Always use conventional commits
-2. Work on feature branches off main
-3. Use waymarks with `:::` syntax in any new code
-4. Focus on simplicity and grep-ability
-5. Use ripgrep to verify waymark patterns before commits
-6. Follow the `:::` sigil syntax (space before when prefix present)
+- Always use conventional commits
+- Work on feature branches off main
+- The main branch is `main` (not master)
+- Current feature branch pattern: `feature/[description]`
 
-### Pre-Push Quality Checks
+### 4. Pre-Push Quality Checks
 
 **CRITICAL**: Before pushing any code:
 
-1. **Run CI locally**: `pnpm ci:local` - This simulates the full CI pipeline
-2. **Comprehensive check**: `pnpm check:all` - Includes temporary context detection
-3. **Quick validation**: `pnpm ci:validate` - Tests, types, and build only
-4. **Check for temp code**: `pnpm check:waymarks` - Ensures no `temp :::` or `tmp :::` waymarks
+1. **Run CI locally**: `pnpm ci:local` - Simulates the full CI pipeline
+2. **Comprehensive check**: `pnpm check:all` - Includes temporary code detection
+3. **Check for temp code**: Ensure no `*temp` or `*!temp` waymarks (branch-scoped temporary code)
+4. **Audit waymarks**: `node scripts/audit-waymarks.js` - Check for deprecated markers
 
 The pre-push hook will automatically run these checks, but running them manually first saves time.
 
-### Documentation Standards
+### 5. Documentation Standards
 
-- All markdown files should have `<!-- tldr ::: <short description> -->` at the top
-- Use contextual waymarks like `<!-- note ::: <description> -->` or `<!-- summary ::: <description> -->`
-- Keep documentation focused and scannable
-- Link related docs for navigation
-- No prefix = pure note (e.g., `<!-- ::: this explains the context -->`)
+All documentation files should include waymarks:
 
-### Examples
+- **Markdown files**: Use HTML comments `<!-- marker ::: description -->`
+- **Top of file**: Always include `<!-- tldr ::: brief summary -->`
+- **Key sections**: Use `<!-- important ::: key concept -->` for critical information
+- **Cross-references**: Use anchors `<!-- about ::: ##doc/section description -->`
 
-```javascript
-// Basic waymarks
-// todo ::: implement validation
-// fix ::: memory leak in auth handler
-// tldr ::: handles user authentication
-
-// With properties and hashtags
-// todo ::: priority:high implement caching #performance
-// warn ::: validates all inputs #security
-
-// Pure notes (no prefix)
-// ::: this is a performance hotpath
-// ::: assumes UTC timestamps
-
-// With mentions
-// todo ::: @alice implement OAuth flow
-// ::: @bob please review this approach
-
-// Issue references
-// todo ::: fixes:#234 implement auth flow
-// done ::: closes:#456 added validation
+Example:
+```markdown
+<!-- tldr ::: comprehensive guide to waymark syntax v1.0 -->
+<!-- important ::: this supersedes all previous syntax versions -->
+<!-- about ::: ##syntax/signals signal system explanation -->
 ```
+
+### 6. Contributing Best Practices
+
+1. **Search before adding**: Check if similar waymarks exist
+2. **Be specific**: Clear, actionable descriptions
+3. **Use appropriate markers**: Choose the right marker from v1.0 core set
+4. **Tag consistently**: Reuse existing tags when possible
+5. **Clean up**: Remove completed waymarks, don't leave them as `done`
+6. **Test locally**: Always run `pnpm ci:local` before pushing
+
+## AI Agent Integration
+
+This repository is designed for AI-first development:
+
+1. **Waymarks guide navigation**: Use waymarks to mark important locations
+2. **Grep-first discovery**: All patterns are optimized for ripgrep
+3. **Progressive enhancement**: Start simple, add complexity as needed
+4. **Clear delegation**: Use `@agent` for AI-specific tasks
+
+Example AI workflow:
+```javascript
+// todo ::: @agent implement validation for user input
+// important ::: must validate email format and uniqueness
+// test ::: email validation edge cases #for:#auth/signup
+```
+
+## Current Project Status
+
+- **Syntax Version**: v1.0 (finalized 2025-06)
+- **Migration**: Recently migrated from early syntax to v1.0
+- **Tooling**: Basic CLI tools, VS Code integration planned
+- **Documentation**: Comprehensive guides available
+
+## Important Context
+
+1. **This is the waymark reference implementation** - Set the standard
+2. **Documentation-first approach** - Docs drive implementation
+3. **Simplicity is key** - Avoid over-engineering
+4. **Grep is the primary tool** - Optimize for searchability
+5. **AI agents are first-class users** - Design for both humans and AI
+
+## Quick Command Reference
+
+```bash
+# Development
+pnpm dev              # Start development
+pnpm test             # Run tests
+pnpm build            # Build project
+
+# Quality checks
+pnpm ci:local         # Full CI simulation
+pnpm check:all        # All checks
+pnpm lint             # Lint code
+pnpm typecheck        # Type checking
+
+# Waymark tools
+node scripts/audit-waymarks.js              # Audit all waymarks
+node scripts/audit-waymarks.js --verbose    # Detailed audit
+rg ":::" | wc -l                           # Count waymarks
+```
+
+## Resources
+
+- Waymark syntax guide: @.agents/partials/waymark-usage.md
+- Project proposals: docs/_project/proposals/
+- Quick reference: llms.txt
+- Main documentation: README.md
+
+Remember: The goal is to make codebases navigable. Use waymarks to leave a trail that both humans and AI can follow.

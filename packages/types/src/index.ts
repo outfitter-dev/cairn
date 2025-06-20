@@ -1,7 +1,7 @@
-// :M: tldr Type definitions for waymark parsing and processing
+// tldr ::: Type definitions for waymark parsing and processing
 
 export interface Waymark {
-  // :M: api core anchor properties
+  // ::: api core waymark properties
   line: number;
   column: number;
   raw: string;
@@ -11,13 +11,13 @@ export interface Waymark {
 }
 
 export interface ParseResult {
-  // :M: api parser output structure
-  anchors: Waymark[];
+  // ::: api parser output structure
+  waymarks: Waymark[];
   errors: ParseError[];
 }
 
 export interface ParseError {
-  // :M: api parsing error information
+  // ::: api parsing error information
   line: number;
   column: number;
   message: string;
@@ -25,7 +25,7 @@ export interface ParseError {
 }
 
 export interface SearchOptions {
-  // :M: api search configuration
+  // ::: api search configuration
   contexts?: string[];
   files?: string[];
   exclude?: string[];
@@ -35,8 +35,8 @@ export interface SearchOptions {
 }
 
 export interface SearchResult {
-  // :M: api search result structure
-  anchor: Waymark;
+  // ::: api search result structure
+  waymark: Waymark;
   context?: {
     before: string[];
     after: string[];

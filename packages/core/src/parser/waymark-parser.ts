@@ -1,4 +1,4 @@
-// :M: tldr Core parser for waymark syntax (:M: context prose)
+// tldr ::: Core parser for waymark syntax (::: marker prose)
 import type { Waymark, ParseResult, ParseError } from '@waymark/types';
 import { type Result, success, failure } from '../lib/result.js';
 import { makeError } from '../lib/error.js';
@@ -6,11 +6,11 @@ import { parseInputSchema } from '../schemas/index.js';
 import { fromZod } from '../lib/zod-adapter.js';
 
 /**
- * Parser for waymark syntax (`:M: context prose`).
+ * Parser for waymark syntax (`::: marker prose`).
  * Handles both sync and async parsing with Result pattern support.
  */
 export class WaymarkParser {
-  // :M: api parser configuration constants
+  // ::: api parser configuration constants
   private static readonly MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
   
   /**
@@ -19,15 +19,15 @@ export class WaymarkParser {
    * @param filename - Optional filename for context
    * @returns Result containing parsed anchors or error
    */
-  // :M: api main parsing method with Result pattern
+  // ::: api main parsing method with Result pattern
   static parseWithResult(content: string, filename?: string): Result<ParseResult> {
-    // :M: ctx validate input with Zod
+    // ::: ctx validate input with Zod
     const inputValidation = parseInputSchema.safeParse({ content, filename });
     if (!inputValidation.success) {
       return failure(fromZod(inputValidation.error));
     }
 
-    // :M: ctx check file size limit using byte length to prevent multi-byte character bypass
+    // ::: ctx check file size limit using byte length to prevent multi-byte character bypass
     const contentByteLength = Buffer.byteLength(content, 'utf8');
     if (contentByteLength > WaymarkParser.MAX_FILE_SIZE) {
       return failure(makeError(
@@ -36,74 +36,82 @@ export class WaymarkParser {
       ));
     }
 
-    const anchors: Waymark[] = [];
+    const waymarks: Waymark[] = [];
     const errors: ParseError[] = [];
     const lines = content.split('\n');
     
     lines.forEach((line, lineIndex) => {
-      const anchorMatch = WaymarkParser.findAnchorInLine(line, lineIndex + 1);
-      if (anchorMatch) {
-        if (anchorMatch.error) {
-          errors.push(anchorMatch.error);
-        } else if (anchorMatch.anchor) {
+      const waymarkMatch = WaymarkParser.findWaymarkInLine(line, lineIndex + 1);
+      if (waymarkMatch) {
+        if (waymarkMatch.error) {
+          errors.push(waymarkMatch.error);
+        } else if (waymarkMatch.waymark) {
           if (filename) {
-            anchorMatch.anchor.file = filename;
+            waymarkMatch.waymark.file = filename;
           }
-          anchors.push(anchorMatch.anchor);
+          waymarks.push(waymarkMatch.waymark);
         }
       }
     });
     
-    return success({ anchors, errors });
+    return success({ waymarks, errors });
   }
   
   
-  // :M: api parse single line for anchor content
-  private static findAnchorInLine(line: string, lineNumber: number): {
-    anchor?: Waymark;
+  // ::: api parse single line for waymark content
+  private static findWaymarkInLine(line: string, lineNumber: number): {
+    waymark?: Waymark;
     error?: ParseError;
   } | null {
-    // :M: ctx look for :M: pattern anywhere in the line
-    const anchorIndex = line.indexOf(':M:');
-    if (anchorIndex === -1) {
+    // ::: ctx look for ::: pattern anywhere in the line
+    const waymarkIndex = line.indexOf(':::');
+    if (waymarkIndex === -1) {
       return null;
     }
     
-    // :M: ctx extract everything after :M: (including the space)
-    const afterAnchor = line.substring(anchorIndex + 3);
+    // ::: ctx extract everything before ::: to find markers
+    const beforeWaymark = line.substring(0, waymarkIndex);
     
-    // :M: sec validate required space after :M:
-    if (!afterAnchor.startsWith(' ')) {
+    // ::: ctx extract everything after ::: (including the space)
+    const afterWaymark = line.substring(waymarkIndex + 3);
+    
+    // notice ::: validate required space after ::: #security
+    if (!afterWaymark.startsWith(' ')) {
       return {
         error: {
           line: lineNumber,
-          column: anchorIndex + 3, // Point to where the space should be
-          message: 'Missing required space after :M:',
+          column: waymarkIndex + 3, // Point to where the space should be
+          message: 'Missing required space after :::',
           raw: line
         }
       };
     }
     
-    // :M: ctx extract payload (everything after the space)
-    const payload = afterAnchor.substring(1).trim();
-    if (!payload) {
+    // ::: ctx extract prose (everything after the space)
+    const prose = afterWaymark.substring(1).trim();
+    
+    // ::: ctx extract markers from before the :::
+    // Remove comment syntax to get just the content
+    const commentContent = beforeWaymark.replace(/^\s*\/\/\s*|\s*<!--\s*|\s*#\s*|\s*\/\*\s*/, '').trim();
+    
+    if (!commentContent) {
       return {
         error: {
           line: lineNumber,
-          column: anchorIndex + 4,
-          message: 'Empty anchor payload',
+          column: waymarkIndex,
+          message: 'No marker found before :::',
           raw: line
         }
       };
     }
     
-    // :M: ctx parse contexts and prose from payload
-    const { contexts, prose } = WaymarkParser.parsePayload(payload);
+    // Parse the comment content as markers
+    const contexts = WaymarkParser.parseContexts(commentContent);
     
     return {
-      anchor: {
+      waymark: {
         line: lineNumber,
-        column: anchorIndex + 1,
+        column: waymarkIndex + 1,
         raw: line,
         contexts,
         ...(prose ? { prose } : {})
@@ -111,77 +119,8 @@ export class WaymarkParser {
     };
   }
   
-  // :M: api extract contexts and prose from payload string
-  private static parsePayload(payload: string): { contexts: string[]; prose?: string } {
-    // :M: ctx safer string-based parsing to avoid ReDoS vulnerability
-    // :M: ctx find first space that isn't inside parentheses or after a comma
-    let parenDepth = 0;
-    let spaceIndex = -1;
-    
-    for (let i = 0; i < payload.length; i++) {
-      const char = payload[i];
-      if (char === '(') {
-        parenDepth++;
-      } else if (char === ')') {
-        if (parenDepth > 0) parenDepth--; // Prevent negative depth on unmatched parentheses
-      } else if (char === ' ' && parenDepth === 0) {
-        // :M: ctx check if this space is after a comma (still in marker list)
-        let j = i - 1;
-        while (j >= 0 && payload[j] === ' ') {
-          j--;
-        }
-        
-        if (j >= 0 && payload[j] === ',') {
-          // :M: ctx space after comma, still in marker list
-          continue;
-        }
-        
-        // :M: ctx check if the next non-space character could be a marker
-        let k = i + 1;
-        while (k < payload.length && payload[k] === ' ') {
-          k++;
-        }
-        
-        if (k < payload.length) {
-          // :M: ctx simple heuristic: if next word contains only marker-like characters, skip
-          const nextChar = payload[k];
-          if (nextChar && /^[a-zA-Z0-9_@-]$/.test(nextChar)) {
-            // :M: ctx might still be in markers, look for a better separator
-            const restOfLine = payload.substring(k);
-            // :M: ctx if we find a comma soon, we're still in markers
-            const commaIndex = restOfLine.indexOf(',');
-            const nextSpaceIndex = restOfLine.indexOf(' ');
-            
-            if (commaIndex !== -1 && (nextSpaceIndex === -1 || commaIndex < nextSpaceIndex)) {
-              continue;
-            }
-          }
-        }
-        
-        // :M: ctx this looks like a real separator between markers and prose
-        spaceIndex = i;
-        break;
-      }
-    }
-    
-    if (spaceIndex > 0) {
-      // :M: ctx split at the separator
-      const markersStr = payload.substring(0, spaceIndex);
-      const prose = payload.substring(spaceIndex + 1).trim();
-      
-      return {
-        contexts: WaymarkParser.parseContexts(markersStr),
-        ...(prose ? { prose } : {})
-      };
-    }
-    
-    // :M: ctx no prose found, entire payload is contexts
-    return {
-      contexts: WaymarkParser.parseContexts(payload)
-    };
-  }
   
-  // :M: api split comma-separated contexts handling nested parentheses
+  // ::: api split comma-separated markers handling nested parentheses
   private static parseContexts(contextsStr: string): string[] {
     const contexts: string[] = [];
     let current = '';
@@ -200,7 +139,7 @@ export class WaymarkParser {
       } else if (char === ']') {
         if (bracketDepth > 0) bracketDepth--;
       } else if (char === ',' && parenDepth === 0 && bracketDepth === 0) {
-        // :M: ctx top-level comma, split here
+        // ::: ctx top-level comma, split here
         const trimmed = current.trim();
         if (trimmed.length > 0) {
           contexts.push(trimmed);
@@ -212,7 +151,7 @@ export class WaymarkParser {
       current += char;
     }
     
-    // :M: ctx add final context if any
+    // ::: ctx add final marker if any
     const trimmed = current.trim();
     if (trimmed.length > 0) {
       contexts.push(trimmed);
@@ -221,18 +160,18 @@ export class WaymarkParser {
     return contexts;
   }
   
-  // :M: api convenience method to find anchors by context
-  static findByContext(anchors: Waymark[], context: string): Waymark[] {
-    return anchors.filter(anchor => 
-      anchor.contexts.some((c: string) => c === context || c.startsWith(`${context}(`))
+  // ::: api convenience method to find waymarks by marker
+  static findByContext(waymarks: Waymark[], context: string): Waymark[] {
+    return waymarks.filter(waymark => 
+      waymark.contexts.some((c: string) => c === context || c.startsWith(`${context}(`))
     );
   }
   
-  // :M: api convenience method to find anchors by pattern
-  static findByPattern(anchors: Waymark[], pattern: RegExp): Waymark[] {
-    return anchors.filter(anchor =>
-      anchor.contexts.some((context: string) => pattern.test(context)) ||
-      (anchor.prose && pattern.test(anchor.prose))
+  // ::: api convenience method to find waymarks by pattern
+  static findByPattern(waymarks: Waymark[], pattern: RegExp): Waymark[] {
+    return waymarks.filter(waymark =>
+      waymark.contexts.some((context: string) => pattern.test(context)) ||
+      (waymark.prose && pattern.test(waymark.prose))
     );
   }
 }

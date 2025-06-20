@@ -1,0 +1,277 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Waymark Usage for Cursor
+
+Waymarks are standardized code annotations using `:::` that make code discoverable by humans and AI agents.
+
+## Premise
+
+Waymarks are breadcrumbs written into codebases with inline comments, identified by the `:::` sign. This pattern is unlikely to exist naturally in codebases, especially within comments. Once waymarks are written into the codebase, a simple `rg "tldr :::"` can return a descriptive list of every file and its purpose. The rest of the waymark syntax is a set of conventions that enable powerful codebase labeling and searching, designed to be easy to read and write.
+
+## Quick Reference
+
+| Component      | Syntax                                       | Example                                                  |
+|----------------|----------------------------------------------|----------------------------------------------------------|
+| **Anatomy**    | `[signal][marker] ::: [@actor|##anchor]...`   | `*!todo ::: @alice fix bug #critical #refs:##anchor-name`  |
+| **Signal**     | `*`, `!`, `!!`, `?`, `??`, `-`, `--`           | `!todo` (important), `*fixme` (branch work)              |
+| **Marker**     | `todo`, `fixme`, `notice`, `tldr`, etc.      | `tldr ::: file summary`                                  |
+| **Actor**      | `@name` (if first token)                     | `review ::: @security-team check this`                   |
+| **Anchor Def** | `##name` (if first token)                    | `about ::: ##auth/login Main entry for user authentication` |
+| **Tag**        | `#tag-name`                                  | `#backend`, `#security`                                  |
+| **Relational** | `#key:value`, `#key:#ref`, `#key:@actor`     | `#fixes:#123`, `#owner:@alice`                           |
+| **Attribute**  | `#category:value`, `#standalone`             | `#perf:hotpath`, `#hotpath`                              |
+| **Array**      | `#key:val1,val2` (no spaces)                 | `#cc:@bob,@charlie`                                      |
+
+## Core Syntax
+
+```text
+<comment> [signal][marker] ::: ([@actor]|[##anchor]) [prose] [#tags]
+```
+
+The first token after `:::` defines the waymark's primary subject: either an **`@actor`** (an assignment) or a **`##anchor`** (a definition). They are mutually exclusive.
+
+Examples:
+
+```javascript
+// Assignment to an actor
+// !todo ::: @alice implement caching #backend
+
+// Definition of a stable anchor
+// about ::: ##auth/login Main entry for user authentication #security
+
+// Reference to an anchor
+// fixme ::: refresh token logic is buggy #refs:#auth/login
+```
+
+## Signals (Optional Prefixes)
+
+### Position Signals (must be first)
+
+- `*` - Branch work that MUST be done before PR merge
+- `_` - Ignore marker (reserved)
+
+### Intensity Signals  
+
+- `!` - High priority/important
+- `!!` - Critical/urgent
+- `?` - Needs clarification
+- `??` - Highly uncertain
+- `-` - Mark for removal
+- `--` - Remove ASAP
+
+Combinations: `*!todo` (critical branch work), `*?note` (uncertain branch note)
+
+## Core Markers
+
+### Top-level
+
+- `tldr` - Brief file/module overview (put at top)
+
+### Work Items
+
+- `todo` - Task to complete
+- `fixme` - Bug to fix
+- `refactor` - Code to improve
+- `review` - Needs review
+- `wip` - Work in progress
+- `stub` - Placeholder implementation
+- `temp` - Temporary code
+- `done` - Completed work
+- `deprecated` - Old code to phase out
+- `test` - Test-related work
+
+### Information
+
+- `note` - General note
+- `idea` - Future possibility
+- `about` - Description/context
+- `example` - Usage example
+
+### Attention
+
+- `notice` - Important information
+- `risk` - Potential issue
+- `important` - Critical context
+
+## Tag System
+
+### Simple Tags
+`#backend`, `#security`, `#auth`, `#perf`
+
+### Relational Tags
+
+- Work: `#fixes:#123`, `#blocks:#456`, `#depends:#789`
+- People: `#owner:@alice`, `#cc:@bob,@charlie`
+- Context: `#for:#auth/login`, `#affects:#billing,#payments`
+- References: `#pr:#234`, `#commit:abc123`, `#docs:/path/to/file.md`
+
+### Anchors (Stable References)
+
+- **Define**: `// about ::: ##auth/oauth Google OAuth handler` (must be first token)
+- **Reference**: `// todo ::: update logic #refs:#auth/oauth` (can be anywhere)
+
+## Priority via Signals (NOT tags)
+
+- `!!todo` = P0 (critical)
+- `!todo` = P1 (high)  
+- `todo` = P2 (normal)
+- `todo ... #p3` = P3 (low, rare)
+
+Never use `#priority:high` - use signals instead!
+
+## Agent Workflow & Philosophy
+
+### Core Principles
+- **Search First**: Before acting, use `rg ":::"` to understand the landscape. Start broad, then narrow your search.
+- **Context is King**: Never search without context. Use `rg -C3` to understand the code surrounding a waymark.
+- **Write with Precision**: One waymark, one concern. Be specific in your descriptions. The goal is to provide instant clarity.
+
+### Navigation Workflow
+1.  **Find Entry Points**: `rg "tldr :::" path/to/dir` to get a high-level overview of files.
+2.  **Gather Local Context**: `rg ":::" path/to/file.ts` to see all waymarks in a specific file.
+3.  **Verify Assumptions**: `rg "#(sec:)?boundary" path/to/file.ts` to find all security boundaries before modifying auth logic.
+4.  **Check for Related Work**: `rg "#fixes:#123"` to see if an issue is already being worked on.
+
+### AI Delegation
+Use `@agent` or specific agent handles (`@claude`, `@max`) to delegate tasks. Provide clear constraints.
+```javascript
+// todo ::: @agent implement with error handling #needs:#errors/handler
+// review ::: @claude check for performance bottlenecks #perf
+// refactor ::: @max convert this to use the new service pattern #arch:pattern
+```
+
+## Search Patterns
+
+```bash
+# Core searches
+rg ":::"                    # All waymarks
+rg "todo\s+:::"            # All todos
+rg "\*\w+\s+:::"           # Branch work
+rg "!!\w+\s+:::"           # Critical items
+rg ":::.*@alice"           # Assigned to alice
+
+# Issue references (always include #)
+rg "#123\b"                # Find issue 123
+rg "#fixes:#\d+"           # All fixes
+rg "#blocked:#\d+"         # Blocked items
+
+# Performance/hotpaths
+rg "#(perf:)?hotpath"      # Both #hotpath and #perf:hotpath
+
+# Advanced: Data Extraction
+# Count waymarks by marker type
+rg -o "\b(\w+)\s+:::" | sed 's/\s*::://' | sort | uniq -c | sort -nr
+
+# Count todos by assignee
+rg -o "todo :::.*(@\w+|#owner:@w+)" | rg -o "(@\w+)" | sort | uniq -c | sort -nr
+```
+
+## Best Practices
+
+1. **One marker per line** - Never combine markers
+2. **Use tldr at file tops** - Quick file overview
+3. **Keep descriptions concise** - Context is in the code
+4. **Always include `:::` in searches** - Avoids false positives
+5. **Include # in references** - `#fixes:#123` not `#fixes:123`
+6. **Use HTML comments in markdown** - `<!-- todo ::: task -->`
+7. **Signal order matters** - Position signals first: `*!todo`
+8. **Remove completed waymarks** - Don't leave as `done`
+9. **Use actors for assignment** - `@alice` or `#owner:@alice`
+10. **Arrays have no spaces** - `#cc:@alice,@bob` not `@alice, @bob`
+
+## Attribute Tags
+
+Describe code characteristics, not relationships. Answer "what kind of code is this?"
+
+### Common Patterns
+
+- Standalone for quick marking: `#hotpath`, `#boundary`, `#async`
+- Category form for precision: `#perf:hotpath`, `#sec:boundary`
+- Both forms are searchable with `rg "#(perf:)?hotpath"`
+
+### Categories
+
+**Performance** (`#perf:`): `hotpath`, `critical-path`, `bottleneck`, `optimized`
+**Architecture** (`#arch:`): `entrypoint`, `boundary`, `singleton`, `state`
+**Security** (`#sec:`): `boundary`, `input`, `sanitize`, `auth`, `authz`, `crypto`
+**Code** (`#code:`): `pure`, `sideeffect`, `async`, `callback`, `recursive`
+**Data** (`#data:`): `source`, `transform`, `sink`, `sensitive`
+**API** (`#api:`): `endpoint`, `internal`, `external`, `deprecated`
+**Status** (`#status:`): `experimental`, `stable`, `legacy`, `migration`
+**Error** (`#error:`): `handler`, `boundary`, `recovery`
+
+### Examples
+
+```javascript
+// Performance critical
+// todo ::: optimize parser #hotpath
+// todo ::: fix bottleneck #perf:critical,bottleneck
+
+// Security boundaries
+// important ::: validate input #sec:boundary,input
+
+// Architecture points
+// about ::: ##app/init entry point #entrypoint
+// note ::: state store #arch:state,singleton
+
+// Data flow
+// note ::: transform user data #data:transform #api:internal
+```
+
+## Common Patterns
+
+```javascript
+// Branch work that blocks PR
+// *!todo ::: @alice fix critical auth bug #blocks:#456
+
+// Stable reference point with attributes
+// about ::: ##payment/stripe Stripe integration #payments #api:external
+
+// Test with context
+// test ::: flaky webhook test #for:#payment/stripe #flaky
+
+// Multi-owner task
+// todo ::: implement RBAC #owner:@security,@alice
+
+// Monorepo: Tagging a service-specific task
+// fixme ::: bug in checkout flow #service:web #team:frontend
+
+// System impact notice
+// !!notice ::: breaking API change #affects:#frontend,#mobile
+
+// Performance hotspot
+// todo ::: optimize JSON parser #hotpath #perf
+
+// External references
+// note ::: see guide #docs:/docs/auth.md #link:https://docs.api.com
+
+// Security boundary
+// important ::: input validation #boundary #sec:input
+
+// Experimental code
+// wip ::: new algorithm #experimental #status:migration
+```
+
+## Migration from Old Syntax
+
+- `+tag` → `#tag`
+- `alert` → `notice`  
+- `fix` → `fixme`
+- `priority:high` → `!marker` (use signals)
+- `fixes:123` → `#fixes:#123` (add # prefix)
+
+## Writing Waymarks
+
+When adding waymarks:
+
+1. Ask "Why is this line interesting?"
+2. Use the right marker for the job
+3. Add actor if action needed
+4. Include relevant tags
+5. Keep it grep-friendly
+
+Good: `// todo ::: @alice implement rate limiting #api #security`
+Bad: `// todo ::: do the thing` (too vague, no context)

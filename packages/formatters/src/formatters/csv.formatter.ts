@@ -1,9 +1,9 @@
-// :M: tldr CSV formatter for waymark outputs
+// tldr ::: CSV formatter for waymark outputs
 import type { IFormatter, FormatterInput } from '../interfaces/unified-formatter.interface.js';
 import type { SearchResult, Waymark } from '@waymark/types';
 
 export class CSVFormatter implements IFormatter {
-  // :M: api format data as CSV
+  // ::: api format data as CSV
   format(input: FormatterInput): string {
     switch (input.type) {
       case 'search':
@@ -19,49 +19,49 @@ export class CSVFormatter implements IFormatter {
     }
   }
 
-  // :M: api format search results as CSV
+  // ::: api format search results as CSV
   private formatSearchResults(results: SearchResult[]): string {
     const headers = ['File', 'Line', 'Column', 'Contexts', 'Prose'];
     const rows = [headers];
 
     for (const result of results) {
-      const anchor = result.anchor;
+      const waymark = result.waymark;
       rows.push([
-        this.escapeCsvField(anchor.file || ''),
-        anchor.line.toString(),
-        anchor.column.toString(),
-        this.escapeCsvField(anchor.contexts.join(', ')),
-        this.escapeCsvField(anchor.prose || '')
+        this.escapeCsvField(waymark.file || ''),
+        waymark.line.toString(),
+        waymark.column.toString(),
+        this.escapeCsvField(waymark.contexts.join(', ')),
+        this.escapeCsvField(waymark.prose || '')
       ]);
     }
 
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :M: api format list results as CSV
+  // ::: api format list results as CSV
   private formatListResults(results: SearchResult[]): string {
-    // :M: ctx same format as search results
+    // ::: ctx same format as search results
     return this.formatSearchResults(results);
   }
 
-  // :M: api format parse results as CSV
-  private formatParseResults(data: { file: string; result: { anchors: Waymark[]; errors: any[] } }): string {
+  // ::: api format parse results as CSV
+  private formatParseResults(data: { file: string; result: { waymarks: Waymark[]; errors: any[] } }): string {
     const headers = ['File', 'Line', 'Column', 'Contexts', 'Prose', 'Status'];
     const rows = [headers];
 
-    // :M: ctx add anchors
-    for (const anchor of data.result.anchors) {
+    // ::: ctx add waymarks
+    for (const waymark of data.result.waymarks) {
       rows.push([
         this.escapeCsvField(data.file),
-        anchor.line.toString(),
-        anchor.column.toString(),
-        this.escapeCsvField(anchor.contexts.join(', ')),
-        this.escapeCsvField(anchor.prose || ''),
+        waymark.line.toString(),
+        waymark.column.toString(),
+        this.escapeCsvField(waymark.contexts.join(', ')),
+        this.escapeCsvField(waymark.prose || ''),
         'OK'
       ]);
     }
 
-    // :M: ctx add errors
+    // ::: ctx add errors
     for (const error of data.result.errors) {
       rows.push([
         this.escapeCsvField(data.file),
@@ -76,7 +76,7 @@ export class CSVFormatter implements IFormatter {
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :M: api format unique contexts as CSV
+  // ::: api format unique contexts as CSV
   private formatContexts(contexts: string[]): string {
     const headers = ['Context'];
     const rows = [headers];
@@ -88,23 +88,23 @@ export class CSVFormatter implements IFormatter {
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :M: api format default output
+  // ::: api format default output
   private formatDefault(input: FormatterInput): string {
     const headers = ['Type', 'Data'];
     const rows = [headers, [input.type, this.escapeCsvField(JSON.stringify(input.data))]];
     return rows.map(row => row.join(',')).join('\n');
   }
 
-  // :M: api escape CSV field values and prevent formula injection
+  // ::: api escape CSV field values and prevent formula injection
   private escapeCsvField(field: string): string {
-    // :M: sec neutralize potential formula-injection payloads (CVE-2014-3524)
+    // notice ::: neutralize potential formula-injection payloads (CVE-2014-3524) #security
     if (/^[=+\-@]/.test(field)) {
       field = `'${field}`;
     }
     
-    // :M: ctx if field contains comma, quotes, or newline, wrap in quotes
+    // ::: ctx if field contains comma, quotes, or newline, wrap in quotes
     if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-      // :M: ctx escape quotes by doubling them
+      // ::: ctx escape quotes by doubling them
       return `"${field.replace(/"/g, '""')}"`;
     }
     return field;

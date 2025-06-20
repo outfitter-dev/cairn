@@ -1,4 +1,4 @@
-// :M: tldr Tests for WaymarkSearch functionality
+// tldr ::: Tests for WaymarkSearch functionality
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { writeFileSync, unlinkSync, mkdirSync, rmdirSync } from 'fs';
 import { resolve } from 'path';
@@ -10,36 +10,36 @@ describe('WaymarkSearch', () => {
   const testFile2 = `${testDir}/test2.md`;
 
   beforeAll(() => {
-    // :M: ctx create test directory and files
+    // ::: ctx create test directory and files #wm:warn/all-caps-marker
     mkdirSync(testDir, { recursive: true });
     
     writeFileSync(testFile1, `
-// :M: tldr Test file for search functionality
+// tldr ::: Test file for search functionality
 export function test() {
-  // :M: todo implement this function
-  // :M: sec validate all inputs
+  // todo ::: implement this function
+  // notice ::: validate all inputs #security
   return 42;
 }
     `.trim());
     
     writeFileSync(testFile2, `
-<!-- :M: guide Test markdown file -->
+<!-- guide ::: Test markdown file -->
 # Test Document
 
-<!-- :M: todo add more content -->
-<!-- :M: api document the API -->
+<!-- todo ::: add more content -->
+<!-- api ::: document the API -->
 Some content here.
     `.trim());
   });
 
   afterAll(() => {
-    // :M: ctx cleanup test files
+    // ::: ctx cleanup test files #wm:warn/all-caps-marker
     unlinkSync(testFile1);
     unlinkSync(testFile2);
     rmdirSync(testDir);
   });
 
-  it('should search for anchors by context', async () => {
+  it('should search for waymarks by context', async () => {
     const result = await WaymarkSearch.search([testFile1], { contexts: ['todo'] });
     
     expect(result.ok).toBe(true);
@@ -47,8 +47,8 @@ Some content here.
       expect(result.data).toHaveLength(1);
       const firstResult = result.data[0];
       expect(firstResult).toBeDefined();
-      expect(firstResult!.anchor.contexts).toContain('todo');
-      expect(firstResult!.anchor.prose).toBe('implement this function');
+      expect(firstResult!.waymark.contexts).toContain('todo');
+      expect(firstResult!.waymark.prose).toBe('implement this function');
     }
   });
 
@@ -58,8 +58,8 @@ Some content here.
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data).toHaveLength(2);
-      const files = result.data.map((r: any) => r.anchor.file);
-      // :M: ctx globby returns absolute paths
+      const files = result.data.map((r: any) => r.waymark.file);
+      // ::: ctx globby returns absolute paths #wm:warn/all-caps-marker
       expect(files).toContain(resolve(testFile1));
       expect(files).toContain(resolve(testFile2));
     }
@@ -90,7 +90,7 @@ Some content here.
       expect(result.data).toHaveLength(1);
       const firstResult = result.data[0];
       expect(firstResult).toBeDefined();
-      expect(firstResult!.anchor.file).toContain('test1.ts');
+      expect(firstResult!.waymark.file).toContain('test1.ts');
     }
   });
 
@@ -102,7 +102,7 @@ Some content here.
       const contexts = WaymarkSearch.getUniqueContexts(result.data);
       expect(contexts).toContain('tldr');
       expect(contexts).toContain('todo');
-      expect(contexts).toContain('sec');
+      expect(contexts).toContain('notice');
       expect(contexts).toContain('guide');
       expect(contexts).toContain('api');
     }
@@ -126,7 +126,7 @@ Some content here.
     expect(result.ok).toBe(true);
     if (result.ok) {
       const grouped = WaymarkSearch.groupByFile(result.data);
-      // :M: ctx use absolute paths for lookup
+      // ::: ctx use absolute paths for lookup #wm:warn/all-caps-marker
       const absFile1 = resolve(testFile1);
       const absFile2 = resolve(testFile2);
       expect(grouped[absFile1]).toHaveLength(3); // tldr, todo, sec
@@ -148,9 +148,9 @@ Some content here.
     
     expect(result.ok).toBe(true);
     if (result.ok) {
-      // :M: ctx should find both .ts and .md files
+      // ::: ctx should find both .ts and .md files #wm:warn/all-caps-marker
       expect(result.data.length).toBeGreaterThan(0);
-      const files = result.data.map((r: any) => r.anchor.file);
+      const files = result.data.map((r: any) => r.waymark.file);
       expect(files.some((f: string) => f.endsWith('.ts'))).toBe(true);
       expect(files.some((f: string) => f.endsWith('.md'))).toBe(true);
     }

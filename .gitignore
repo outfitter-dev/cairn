@@ -37,6 +37,10 @@ coverage/
 *.temp
 .turbo/
 
+# Project files
+docs-legacy/
+fieldguides/
+
 # OS files
 Thumbs.db
 
@@ -46,6 +50,10 @@ Thumbs.db
 
 # Test files
 test_detection.md
+
+# Waymark logs
+.waymark/logs/*-blaze-report.json
+.waymark/logs/*-*.json
 
 # Claude
 **/.claude/*.local.*

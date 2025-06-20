@@ -1,4 +1,4 @@
-// :M: tldr Tests for formatter implementations
+// tldr ::: Tests for formatter implementations
 import { describe, it, expect } from 'vitest';
 import type { Waymark, SearchResult, ParseResult } from '@waymark/types';
 import {
@@ -17,14 +17,14 @@ import {
 const mockWaymark: Waymark = {
   line: 42,
   column: 1,
-  raw: '// :M: todo, api implement authentication',
+  raw: '// todo :::, api implement authentication',
   contexts: ['todo', 'api'],
   prose: 'implement authentication',
   file: 'src/auth.ts',
 };
 
 const mockSearchResult: SearchResult = {
-  anchor: mockWaymark,
+  waymark: mockWaymark,
   context: {
     before: ['function login() {', '  // Previous line'],
     after: ['  // Next line', '}'],
@@ -32,7 +32,7 @@ const mockSearchResult: SearchResult = {
 };
 
 const mockParseResult: ParseResult = {
-  anchors: [mockWaymark],
+  waymarks: [mockWaymark],
   errors: [],
 };
 
@@ -43,8 +43,8 @@ describe('JSON Formatters', () => {
     const parsed = JSON.parse(output);
     
     expect(parsed).toHaveLength(1);
-    expect(parsed[0].anchor.line).toBe(42);
-    expect(parsed[0].anchor.contexts).toEqual(['todo', 'api']);
+    expect(parsed[0].waymark.line).toBe(42);
+    expect(parsed[0].waymark.contexts).toEqual(['todo', 'api']);
   });
 
   it('should format single waymark as JSON', () => {
@@ -61,7 +61,7 @@ describe('JSON Formatters', () => {
     const output = formatter.format(mockParseResult);
     const parsed = JSON.parse(output);
     
-    expect(parsed.anchors).toHaveLength(1);
+    expect(parsed.waymarks).toHaveLength(1);
     expect(parsed.errors).toHaveLength(0);
   });
 
@@ -98,7 +98,7 @@ describe('Terminal Formatters', () => {
     const formatter = new TerminalSearchResultFormatter();
     const output = formatter.format([]);
     
-    expect(output).toContain('No anchors found');
+    expect(output).toContain('No waymarks found');
   });
 
   it('should format single waymark for terminal', () => {
@@ -114,7 +114,7 @@ describe('Terminal Formatters', () => {
     const formatter = new TerminalParseResultFormatter();
     const output = formatter.format(mockParseResult);
     
-    expect(output).toContain('✓ 1 anchors found');
+    expect(output).toContain('✓ 1 waymarks found');
     expect(output).toContain('src/auth.ts:42');
   });
 
@@ -129,7 +129,7 @@ describe('Terminal Formatters', () => {
 
   it('should handle waymark at line 1 with context', () => {
     const searchResultAtLine1: SearchResult = {
-      anchor: { ...mockWaymark, line: 1 },
+      waymark: { ...mockWaymark, line: 1 },
       context: {
         before: [],
         after: ['// line 2', '// line 3']
@@ -145,7 +145,7 @@ describe('Terminal Formatters', () => {
 
   it('should clamp negative line numbers to 1', () => {
     const searchResultAtLine2: SearchResult = {
-      anchor: { ...mockWaymark, line: 2 },
+      waymark: { ...mockWaymark, line: 2 },
       context: {
         before: ['// line 1'],
         after: ['// line 3']

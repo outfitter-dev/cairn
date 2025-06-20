@@ -1,0 +1,83 @@
+{
+  // tldr ::: waymark configuration with layered ignore system
+  "$schema": "./schema/config.schema.json",
+  
+  // note ::: inherit common ignore patterns from existing files
+  "ignore": {
+    // todo ::: auto-detect and use these if they exist
+    "inherit": [
+      ".gitignore",      // Always check
+      ".npmignore",      // If publishing to npm
+      ".dockerignore"    // If using Docker
+    ],
+    
+    // note ::: waymark-specific ignore patterns
+    "patterns": {
+      // alert ::: these are applied AFTER inherited patterns
+      "files": [
+        // Additional file patterns beyond inherited
+        "**/*.generated.*",
+        "**/archive/**",
+        "node_modules/**",
+        ".pnpm-store/**",
+        "**/vendor/**"
+      ],
+      
+      // note ::: filter waymarks by marker type
+      "markers": [
+        // Ignore deprecated markers during audit
+        "fixme",
+        "temporary", 
+        "wip",
+        "info",
+        "caution",
+        "remove"
+      ],
+      
+      // note ::: filter by waymark context/content
+      "content": [
+        // Ignore waymarks that are examples/documentation
+        "^rg ",              // ripgrep command examples
+        "^find ",            // find command examples  
+        "^sed ",             // sed command examples
+        "\\$\\{.*\\}",       // Template variables
+        "^```",              // Code fence markers
+        "Example:",          // Example descriptions
+        "should be:"         // Migration instructions
+      ],
+      
+      // note ::: ignore specific properties/tags
+      "properties": [
+        "priority:low",
+        "status:wontfix",
+        "status:archived"
+      ],
+      
+      // note ::: ignore specific actors
+      "actors": [
+        "@dependabot",
+        "@renovate",
+        "@github-actions"
+      ]
+    }
+  },
+  
+  // note ::: other waymark configuration
+  "audit": {
+    // todo ::: implement audit-specific overrides
+    "includeDeprecated": false,
+    "includeArchived": false,
+    "followSymlinks": false
+  },
+  
+  // note ::: future expansion for linting rules
+  "lint": {
+    "rules": {
+      "marker-before-sigil": "error",
+      "space-before-sigil": "error",
+      "space-after-sigil": "error",
+      "valid-marker": "error",
+      "no-deprecated-markers": "warn"
+    }
+  }
+}
