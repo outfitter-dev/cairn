@@ -212,19 +212,6 @@ For the base set of Waymark tags, we prefer simple, flat tags.
 
 Hierarchical tags remain a valid part of the syntax for those who need them, but they are not part of the core Waymark pattern language.
 
-Actors represent people, teams, or agents with `@` prefix:
-
-```javascript
-// Direct actor mentions
-// todo ::: @alice implement OAuth integration
-// review ::: @security-team check crypto implementation
-
-// Actors in relational tags
-// fixme ::: memory leak #owner:@bob #cc:@platform,@ops
-```
-
-**Key principle**: Actors never contain slashes (unlike scoped packages).
-
 ### 4. Anchors (Reference Points)
 
 Anchors mark specific locations in code with `##` prefix. They come in two forms:
@@ -343,38 +330,35 @@ Values in a relational array are comma-separated. Each value is parsed independe
 - Only use arrays where multiple values are common
 - Keep it predictable
 
-Anchors mark specific locations in code with `##` prefix. They come in two forms:
-
-#### Generic Anchors
-Mark important locations without categorization:
-
-```javascript
-// Generic anchors - mark specific places
-// about ::: ##auth/login Login implementation
-// about ::: ##payment/retry-logic Retry algorithm
-// important ::: ##security/validation Input validation boundary
-```
-
-#### Typed Anchors  
-Declare what something IS using `type:` prefix:
-
-```javascript
-// Typed anchors - declare canonical artifacts
-// tldr ::: ##docs:@company/auth/api API documentation
-// tldr ::: ##test:@company/billing/e2e End-to-end billing tests
-// tldr ::: ##config:@company/database Production database config
-// about ::: ##pkg:@company/auth Authentication package
-```
-
-**Key principles**:
-
-- Use `##` for definitions (THIS IS the thing)
-- Use `#` for references (pointing to the thing)
-- Generic anchors work for simple names
-- Typed anchors required for special characters (@, :) or canonical artifacts
-- Actors (@alice) don't need anchors - they ARE the identifier
-
 ## Typed Canonical Anchors: The Core Innovation
+
+### Prefix Design Choice
+
+The system uses `##` for canonical anchors. This design was chosen over alternatives like `^#` for several key reasons:
+
+#### Why `##` for Anchors?
+
+**Cognitive Simplicity**: Double the # to make it canonical
+
+- `#anchor` → `##anchor` (canonical anchor definition)
+- Clear distinction between reference and definition
+
+**Visual Distinction**: Impossible to confuse with regular references
+
+- `#docs:schema` vs `##docs:schema` - reference vs canonical definition
+- Double prefix immediately signals "this is the definition"
+
+**Grep Precision**: Clean search patterns without conflicts
+
+```bash
+rg "@alice"     # All alice references
+rg "#docs:"     # All doc references
+rg "##docs:"    # Just canonical doc anchors
+```
+
+**No Symbol Conflicts**: Avoids regex confusion (unlike `^` which means start-of-line)
+
+**Namespace Clarity**: Each prefix has a clear, distinct purpose in the waymark ecosystem
 
 ### The Three-Tier Interaction Model
 
@@ -437,6 +421,33 @@ The typed canonical anchor system creates three semantically distinct ways to in
 
 // In deployment.yml
 // important ::: requires auth config #see:#config:@company/auth
+```
+
+### When to Use Generic vs Typed Anchors
+
+#### Use Generic Anchors When:
+
+- Marking a specific location or algorithm
+- Creating stable reference points in code
+- The anchor name is simple (no special characters)
+
+```javascript
+// about ::: ##auth/validation Input validation logic
+// important ::: ##payment/retry Retry algorithm
+// note ::: ##cache/lru LRU cache implementation
+```
+
+#### Use Typed Anchors When:
+
+- Declaring canonical artifacts (docs, tests, configs)
+- The name contains special characters (@, :)
+- You want to categorize what something IS
+
+```javascript
+// tldr ::: ##docs:@company/auth API documentation
+// tldr ::: ##test:@company/billing Test suite
+// about ::: ##pkg:@company/utils Utility package
+// tldr ::: ##api:v2/users User API endpoints
 ```
 
 ### Artifact Types: Beyond Documentation
