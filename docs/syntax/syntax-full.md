@@ -1,4 +1,5 @@
 <!-- tldr ::: Complete waymark syntax specification using the `:::` sigil -->
+<!-- todo ::: Document appears based on pre-v1.0 syntax (uses `+` tags, property-based priority). Needs comprehensive rewrite to align with simplification proposal #wm:fix -->
 # Waymark Syntax
 
 Waymark syntax is a lightweight marking system for code navigation using the `:::` sigil.

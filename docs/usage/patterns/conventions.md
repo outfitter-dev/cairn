@@ -1,5 +1,14 @@
-<!-- tldr ::: Essential patterns and best practices for waymarks -->
-# Waymark Conventions
+<!-- tldr ::: team conventions and standards from pre-v1.0 syntax (preserved for reference) -->
+# Waymark Conventions (Legacy)
+
+> **Note**: This document uses pre-v1.0 waymark syntax and is preserved for reference. For current conventions, see the [v1.0 documentation](../README.md).
+>
+> Key differences in old syntax:
+> - Used `+tag` instead of `#tag`
+> - Used `alert` instead of `notice`
+> - Used `fix` instead of `fixme`
+> - Used `priority:high` instead of `!` signals
+> - References didn't include `#` prefix (e.g., `fixes:123` vs `#fixes:#123`)
 
 > See [Syntax Specification](../../syntax/README.md) for complete grammar details.
 

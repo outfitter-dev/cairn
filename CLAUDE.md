@@ -8,7 +8,7 @@ About you: @.agents/prompts/MAX.md
 
 ## Project Overview
 
-The Waymark CLI provides tooling for **waymarks** - a standardized way to mark important code locations using the `:::` sign in comments. This allows both humans and AI agents to quickly find relevant code sections using simple grep commands.
+The Waymark CLI provides tooling for **waymarks** - a standardized way to mark important code locations using the `:::` sign in comments. This allows both humans and AI agents to quickly find relevant code locations using simple grep commands.
 
 **Core Value**: Waymarks make codebases AI-navigable and grep-friendly, enabling instant navigation to the right spot in any codebase.
 
@@ -192,4 +192,13 @@ rg ":::" | wc -l                           # Count waymarks
 - Quick reference: llms.txt
 - Main documentation: README.md
 
+## Development Practices
+
+- When looking for waymarks that may not follow the current conventions look up the appropriate scripts in @docs/development/dev-scripts.md and do a --dry-run first to test them out
+
 Remember: The goal is to make codebases navigable. Use waymarks to leave a trail that both humans and AI can follow.
+
+## File Format Guidelines
+
+- **JSON Preferences**: 
+  - If any part of the Waymark project is to use a JSON file, default to using JSONC instead, so that waymarks can be inserted directly inline.

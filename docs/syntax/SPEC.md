@@ -1,4 +1,5 @@
 <!-- tldr ::: canonical waymark syntax specification -->
+<!-- todo ::: Document includes pre-simplification examples (`priority:high`, `+tag`); requires pass to align with v1.0 simplification spec (signals & `#` tags) #wm:fix -->
 # Waymark Syntax Specification
 
 The canonical specification for waymark syntax - a breadcrumb protocol for code navigation.
@@ -151,25 +152,37 @@ Relationships are expressed through properties in the prose section after the si
 // alert ::: deployment triggers(workflow:deploy)      // initiates process
 ```
 
-## Multi-line Waymarks
+## Core Relational Tags
 
-The syntax strongly recommends single-line waymarks to maintain grep-ability:
+A minimal set of relational tags for real development needs:
 
-```javascript
-// Single-line waymarks (preferred)
-// todo ::: implement OAuth integration assign:@alice priority:high
+### Work Relationships
+- `#fixes:#123` - This fixes an issue
+- `#closes:#456` - This closes an issue/PR
+- `#blocks:#789,#234` - This blocks other work
+- `#blocked:#567` - This is blocked by something
+- `#depends:#890,#123` - Dependencies
+- `#issue:#456` - Issue reference
+- `#ticket:#SUP-789` - Support ticket reference
+- `#followup:#ID` - Follow-up work
 
-// Multiple related waymark lines for complex context
-// todo ::: implement OAuth integration assign:@alice priority:high
-// note ::: OAuth flow requires PKCE for security compliance
-// needs ::: user sessions must exist first depends(service:session-api)
-```
+### References
+- `#for:#auth/login` - Context-dependent link
+- `#refs:#anchor` - Reference to anchor
+- `#see:#topic` - Cross-reference
+- `#replaces:#old-thing` - Supersedes something
+- `#link:https://...` - External link
+- `#docs:/path/to/file.md` - Documentation reference
 
-**Benefits:**
+### Source Control
+- `#pr:#234` - Pull request
+- `#commit:abc123f` - Git commit
+- `#branch:feature/auth` - Git branch
 
-- `rg "todo :::"` always finds todo items
-- Simple, consistent search patterns
-- No complex multi-line parsing required
+### Context
+- `#affects:#billing,#auth` - Systems impacted
+- `#owner:@alice,@bob` - Ownership
+- `#cc:@security,@ops` - Keep informed
 
 ## Prose Formatting
 
@@ -292,25 +305,60 @@ See [waymark documentation](../waymark/) for tooling-specific requirements.
 - Focus on LLM context and navigation
 - Waymark syntax must be expressive enough on its own
 
-## Search Examples
+## Search Patterns
 
+### Basic Searches
 ```bash
-# Find all waymarks
+# All waymarks
 rg ":::"
 
-# Find by marker
-rg "todo :::"        # All todo items
-rg "alert :::"       # All alerts
-rg "fix :::"         # All bugs to fix
+# By marker
+rg "todo\s+:::"
+rg "fixme\s+:::"
+rg "!!\w+\s+:::"    # Critical items
+rg "\*\w+\s+:::"    # Branch work
 
-# Find with context
-rg -C2 "sec :::"     # 2 lines context
-rg -B3 -A3 "todo :::" # 3 lines before/after
-
-# Find with signals
-rg "!todo :::"       # Important todos
-rg "\*todo :::"      # Branch-scoped todos
-
-# Find in markdown (including HTML comments)
-rg "<!-- .* :::" --type md
+# By assignment
+rg ":::.*@alice"     # Assigned to alice
+rg "@alice"          # All mentions of alice
 ```
+
+### Tag Searches
+```bash
+# Simple tags
+rg "#backend"
+rg "#security"
+
+# Issue references (always include #)
+rg "#123\b"          # Find issue 123
+rg "#fixes:#\d+"     # All fixes
+rg "#blocked:#\d+"   # Blocked items
+
+# Performance hotspots
+rg "#(perf:)?hotpath" # Both forms
+```
+
+### Advanced Searches
+```bash
+# Count waymarks by type
+rg -o "\b(\w+)\s+:::" | sed 's/\s*::://' | sort | uniq -c | sort -nr
+
+# Find todos by assignee
+rg -o "todo :::.*(@\w+|#owner:@\w+)" | rg -o "(@\w+)" | sort | uniq -c
+
+# Context searches
+rg -C3 "#security"   # 3 lines context
+rg -B2 -A2 "!!fixme" # Critical bugs with context
+```
+
+## Summary
+
+Waymark v1.0 simplifies code navigation with:
+
+- **Clear syntax**: `[signal][marker] ::: [@actor|##anchor] prose #tags`
+- **Simple tags**: Just `#tag` and `#key:value` patterns
+- **Priority via signals**: Use `!` and `!!`, not `#priority:high`
+- **Stable anchors**: Define with `##name`, reference with `#name`
+- **Maximum greppability**: Everything searchable with ripgrep
+
+The result is a system that's both powerful and approachable - exactly what code navigation should be.

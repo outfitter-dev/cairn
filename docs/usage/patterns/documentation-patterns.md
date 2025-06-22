@@ -1,5 +1,14 @@
-<!-- tldr ::: Waymarks complement JSDoc, docstrings, and other documentation systems -->
-# Waymarks in Documentation
+<!-- tldr ::: documentation integration patterns from pre-v1.0 syntax (preserved for reference) -->
+# Waymarks in Documentation (Legacy)
+
+> **Note**: This document uses pre-v1.0 waymark syntax and is preserved for reference. For current documentation patterns, see the [v1.0 documentation](../README.md).
+>
+> Key differences in old syntax:
+> - Used `+tag` instead of `#tag`
+> - Used `alert` instead of `notice`
+> - Used `fix` instead of `fixme`
+> - Used `priority:high` instead of `!` signals
+> - References didn't include `#` prefix (e.g., `fixes:123` vs `#fixes:#123`)
 
 Waymarks enhance existing documentation comments with searchable markers, without replacing or interfering with standard practices.
 

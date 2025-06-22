@@ -20,7 +20,7 @@ This proposal captures the simplification decisions for the Waymark 1.0 spec bas
 - **Waymark sign**: The `:::` separator
 - **Marker**: The type before `:::` (e.g., `todo`, `fixme`)
 - **Tags**: Everything with `#` prefix after `:::`
-- **Actors**: People/teams/agents with `@` prefix (e.g., `@alice`)
+- **Actors**: People/teams/agents with `@` prefix (e.g., `@alice`) - no slashes allowed
 - **Signals**: Intensity/scope modifiers (`!`, `!!`, `?`, `??`, `*`, `-`, `--`)
 
 ### Deprecated Terms (being removed)
@@ -33,30 +33,37 @@ This proposal captures the simplification decisions for the Waymark 1.0 spec bas
 
 ## Major Simplifications
 
-### 1. Drop Hierarchical Tags (`/` syntax)
+### 1. Convention: Avoid Hierarchical Tags in the Core Spec (`/` syntax)
 
-**Remove:**
+**The Old Rule (Removed):**
+The original proposal was to completely remove support for hierarchical tags like `#auth/oauth/google`.
+
+**The New Rule (More Flexible):**
+The Waymark v1.0 syntax **permits** hierarchical tags, but the **core specification** avoids them by convention. They are considered a powerful tool for teams building their own custom tag systems or for defining structured canonical anchors.
+
+For the base set of Waymark tags, we prefer simple, flat tags.
+
+**Core Convention (Simple & Clear - Do This):**
 
 ```javascript
-// OVERLY COMPLEX - Don't do this
-// todo ::: implement auth #auth/oauth/google
-// todo ::: fix UI bug #frontend/components/button
-```
-
-**Instead:**
-
-```javascript
-// SIMPLE AND CLEAR - Do this
 // todo ::: implement auth #auth #oauth #google
 // todo ::: fix UI bug #frontend #components #button
 ```
 
-**Rationale:**
+**Permitted for Custom Extensions (Advanced Use):**
 
-- Hierarchies lead to debates about structure (`#frontend/auth` vs `#auth/frontend`?)
-- Hard to remember the "correct" hierarchy
-- Simple tags + combinations are more flexible
-- Still fully greppable: `rg "#auth.*#oauth.*#google"`
+```javascript
+// A team could define a custom, structured tag system
+// todo ::: implement login button #acme/ui/button
+```
+
+**Rationale for the Convention:**
+
+- **Greppability**: Flat tags are easier to search with simple tools. `rg "#auth.*#oauth.*#google"` is powerful and requires no special parser.
+- **Simplicity**: Flat tags are easier to learn and use, avoiding debates about the "correct" hierarchy (`#frontend/auth` vs `#auth/frontend`?).
+- **Flexibility**: Simple tags can be combined in any order.
+
+Hierarchical tags remain a valid part of the syntax for those who need them, but they are not part of the core Waymark pattern language.
 
 ### 2. Reduce Tag Forms to Just Two
 
@@ -242,6 +249,31 @@ Use `#for:` to link work or documentation to a concept or code anchor. For relat
 - `#depends:#789,#234` - All dependencies searchable
 - `#owner:@alice` - @ is already greppable, no extra # needed
 
+## Actor vs Package Disambiguation
+
+**Actors never contain slashes**, while **package names always do** in the scoped format:
+
+```javascript
+// ✅ Actors (people/teams/agents) - no slashes
+// todo ::: @alice implement OAuth integration
+// review ::: @security-team audit the crypto implementation
+// fixme ::: @bob fix the memory leak you introduced
+
+// ✅ Package references - always @scope/package format  
+// tldr ::: JWT middleware using @company/auth and @types/jsonwebtoken
+// note ::: upgrade required #depends:@company/database,@prisma/client
+// important ::: breaking change in @company/ui affects multiple apps
+
+// ✅ Mixed usage works naturally
+// todo ::: @alice update auth system to use @company/auth v2.0 #owner:@alice #depends:@company/auth
+```
+
+**Package names** are either:
+- **Unscoped**: `lodash`, `express`, `react` (no `@` symbol)  
+- **Scoped**: `@company/auth`, `@babel/core`, `@types/node` (always `@scope/package`)
+
+This natural distinction eliminates any ambiguity between actors and package references.
+
 Search examples:
 
 ```bash
@@ -251,8 +283,17 @@ rg "#123\b"
 # Find all blocking relationships
 rg "#blocks:#\d+"
 
-# Find work assigned to alice
-rg "::: @alice"
+# Find work assigned to alice (actor)
+rg "@alice"
+
+# Find all actors (no slashes)
+rg "@[a-zA-Z0-9_-]+\b"
+
+# Find all package references (has slashes)
+rg "@[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+"
+
+# Find specific package usage
+rg "@company/auth"
 ```
 
 ## Attribute Tags
@@ -473,7 +514,7 @@ A pattern for stable reference points in code using canonical anchors:
 
 With the addition of `test`:
 
-- **Top-level**: `tldr`
+- **Primary**: `tldr`
 - **Work**: `todo`, `fixme`, `refactor`, `review`, `wip`, `stub`, `temp`, `done`, `deprecated`, `test`
 - **Info**: `note`, `idea`, `about`, `example`
 - **Attention**: `notice`, `risk`, `important`
@@ -498,6 +539,7 @@ These simplifications mean:
 ## Examples of the Simplified System
 
 // Agent‑friendly snapshots: performance hotspots, security risks, initialization, and experiments
+
 ```javascript
 // Work with clear relationships
 // *!todo ::: @alice critical auth fix #blocks:#456,#789 #needs:@security #pr:#234
@@ -609,6 +651,160 @@ rg "#blocked:#\d+"      # Find blocked by issues
 rg "#blocked\b"         # Find items marked as blocked
 ```
 
+## Custom Extensions
+
+### Custom Definitions System
+
+The v1.0 spec introduces a flexible system for custom markers and tags beyond the standard vocabulary:
+
+**Core Principle**: Anything not in loaded dictionaries is considered custom.
+
+```json
+{
+  "validation": {
+    "customMarkers": "warn",   // "allow" | "warn" | "error"
+    "customTags": "allow"      // "allow" | "warn" | "error"
+  },
+  "customDefinitions": "standard"  // or "strict" or "liberal"
+}
+```
+
+This separation means:
+- **Dictionaries** define standard vocabulary
+- **Custom definitions** set rules for everything else
+- Teams can innovate while preventing anti-patterns
+
+### Namespace-Style Tags
+
+A powerful pattern emerges from the tag syntax - pseudo-namespaces using colons:
+
+```javascript
+// Namespace-style custom tags
+// todo ::: fix validation #wm:fix/property-priority
+// notice ::: breaking change #api:v2/breaking
+// wip ::: experiment #exp:ml/recommendations
+
+// These work because they're treated as simple tags
+// (no valid reference value after the colon)
+```
+
+This pattern is especially useful for:
+- Project-specific categorization (`#wm:*`, `#proj:*`)
+- API versioning (`#api:v2/*`, `#api:v3/*`)
+- Feature flags (`#exp:*`, `#feat:*`)
+- Team conventions (`#team:backend/*`, `#qa:blocked/*`)
+
+**Note**: These aren't true relational tags - they're simple tags that happen to contain colons. This makes them fully greppable while providing organizational structure.
+
+### Custom Markers
+
+While custom markers are supported, we encourage using the standard vocabulary when possible. If you do need custom markers (e.g., `spike :::` or `hypothesis :::`), keep them simple and document them well.
+
+### Forbidden Patterns
+
+To prevent confusion and maintain consistency, certain patterns are forbidden in custom tags:
+
+```javascript
+// ❌ Forbidden - duplicates core waymark features
+// todo ::: task #priority:high       // Use: !todo or !!todo
+// todo ::: task #assigned-to:alice   // Use: @alice or #owner:@alice
+// todo ::: task #status:blocked      // Use: #blocked or #blocked:#123
+
+// ✅ Correct usage
+// !todo ::: critical task @alice #blocked:#456
+```
+
+### Validation Modes
+
+The three validation modes provide flexibility for different team needs:
+
+1. **`"allow"`** - No restrictions (good for experimentation)
+   ```javascript
+   // Anything goes
+   // dragon-quest ::: slay the beast #loot:epic #xp:5000
+   ```
+
+2. **`"warn"`** - Flags non-standard usage (good for established projects)
+   ```javascript
+   // Warning: 'dragon-quest' not in dictionary, but allowed
+   // dragon-quest ::: slay the beast #loot:epic
+   ```
+
+3. **`"error"`** - Strict enforcement (good for large teams)
+   ```javascript
+   // Error: 'dragon-quest' not in dictionary or custom definitions
+   // Must use standard markers or add to custom dictionary
+   ```
+
+### Custom Definition Presets
+
+For teams that want sensible defaults without detailed configuration:
+
+- **`"liberal"`** - Very permissive, allows most patterns
+- **`"standard"`** - Balanced rules, prevents common mistakes (default)
+- **`"strict"`** - Conservative, requires explicit patterns
+
+### Best Practices for Extensions
+
+1. **Start with standard vocabulary** - Only add custom when needed
+2. **Use namespace prefixes** - Avoid collisions (`#proj:*`, `#team:*`)
+3. **Document your customs** - Keep a WAYMARK-CUSTOM.md file
+4. **Regular reviews** - Audit custom usage quarterly
+5. **Consider dictionaries** - Frequently used customs should become official
+
+## Grammar Extension Points
+
+The v1.0 grammar defines a solid core with explicit extension points where alternative patterns are acknowledged as valid.
+
+### Array Pattern Extensions
+
+The base spec uses simple comma-separated arrays:
+
+```javascript
+// Base pattern (REQUIRED - all tools must support)
+// todo ::: notify team #cc:@alice,@bob,@charlie
+// fixme ::: update systems #affects:#api,#billing,#frontend
+```
+
+However, the grammar acknowledges these alternative patterns as valid extensions:
+
+```javascript
+// Bracketed arrays - space-separated with clear boundaries
+// todo ::: add dependencies #deps:[lodash react typescript]
+// wip ::: matrix testing #test:[ubuntu-latest macos-latest windows-latest]
+
+// Parentheses groups - allows spaces after commas
+// notice ::: system update #affects:(api, frontend, mobile)
+// todo ::: test scenarios #cases:(happy-path, edge-case, error-case)
+
+// Quoted values - for complex strings
+// note ::: sprint goals #tasks:"Bug fixes, Performance improvements, New features"
+// example ::: commit message #type:"feat(auth): Add OAuth support"
+
+// Object-like - for key-value data
+// config ::: deployment settings #env:{prod:true, debug:false, region:us-east}
+// test ::: browser matrix #matrix:{chrome:latest, firefox:esr, safari:16}
+
+// Pipeline/sequence - for ordered steps
+// todo ::: deployment process #workflow:[build -> test -> staging -> production]
+// example ::: data flow #pipeline:[extract -> transform -> load]
+```
+
+**Key Principles**:
+- Tools SHOULD support the base comma-separated pattern
+- Tools MAY support any extension patterns
+- All patterns MUST remain greppable (e.g., `rg "#deps:\["`)
+- Start simple, adopt extensions only when truly beneficial
+- Document which patterns your tools support
+
+**Progressive Enhancement**:
+1. Level 0: Treat as opaque string
+2. Level 1: Recognize as array pattern
+3. Level 2: Parse specific pattern type
+4. Level 3: Understand semantics
+
+This approach lets teams adopt richer array syntax when needed while keeping the core spec simple and universal.
+
 ## Conclusion
 
 This simplified system removes complexity while keeping the patterns that provide clear value:
@@ -618,5 +814,6 @@ This simplified system removes complexity while keeping the patterns that provid
 - Relational tags for connections
 - Anchors for stable reference points
 - Arrays where they make sense
+- Custom extensions with guardrails
 
 The result is a system that's both powerful and approachable - exactly what Waymark 1.0 should be.

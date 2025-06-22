@@ -21,8 +21,8 @@ Welcome to waymark development! This guide will help you get up to speed on cont
 
 3. **Test waymark tooling**:
    ```bash
-   node scripts/audit-waymarks.js --test
-   node scripts/blaze.js --dry-run
+   wm audit --test      # Check test files
+   wm blaze --dry-run   # Preview fixes
    ```
 
 ## Project Structure
@@ -30,15 +30,15 @@ Welcome to waymark development! This guide will help you get up to speed on cont
 ```
 waymark/
 ├── docs/
-│   ├── development/     # This directory - dev docs
-│   ├── syntax/         # Waymark syntax specification
-│   └── tooling/        # Tool documentation
-├── scripts/            # Development scripts
-│   ├── lib/           # Shared script libraries
-│   ├── tests/         # Test files for scripts
-│   ├── audit-waymarks.js  # Main auditing tool
-│   └── blaze.js       # Automated tagging tool
-└── packages/          # Future: waymark packages
+│   ├── development/    # This directory - dev docs
+│   ├── syntax/        # Waymark syntax specification
+│   └── tooling/       # Tool documentation
+├── packages/          # Waymark packages
+│   └── multitool/     # TypeScript CLI tools
+│       ├── src/       # Source code
+│       └── dist/      # Compiled output
+└── scripts/           # Test patterns and utilities
+    └── tests/         # Test files for waymark patterns
 ```
 
 ## Development Workflow
@@ -70,9 +70,9 @@ This project uses **waymarks** extensively. Key patterns:
 
 See [waymark syntax guide](../syntax/README.md) for complete specification.
 
-## Development Scripts
+## Development Tools
 
-See [dev-scripts.md](./dev-scripts.md) for detailed documentation of all development tooling.
+See [Multitool documentation](../tooling/multitool/README.md) for detailed documentation of waymark development tools.
 
 ### Quick Reference
 
@@ -81,11 +81,15 @@ See [dev-scripts.md](./dev-scripts.md) for detailed documentation of all develop
 pnpm ci:local              # Full CI simulation
 pnpm check:all             # All checks + temp marker detection
 
-# Waymark tooling
-node scripts/audit-waymarks.js           # Audit all waymarks
-node scripts/audit-waymarks.js --test    # Test mode only
-node scripts/audit-waymarks.js --legacy  # Show violations only
-node scripts/blaze.js --dry-run          # Preview tagging
+# Waymark tooling (using multitool)
+wm audit                   # Audit all waymarks
+wm audit --test            # Test mode only
+wm audit --legacy          # Show violations only
+wm blaze --dry-run         # Preview tagging
+wm blaze --yes             # Apply tags
+wm tldr-check              # Check TLDR quality
+wm tldr-check --require tags # Require tags in TLDRs
+wm migrate --dry-run       # Preview syntax migration
 
 # Development
 pnpm dev                   # Start development mode
@@ -127,7 +131,7 @@ All PRs are reviewed for:
 ## Resources
 
 - [Waymark Syntax Specification](../syntax/README.md)
-- [Development Scripts](./dev-scripts.md)
+- [Multitool Documentation](../tooling/multitool/README.md)
 - [Tooling Documentation](../tooling/README.md)
 - [Quick Reference](../QUICKSTART.md)
 

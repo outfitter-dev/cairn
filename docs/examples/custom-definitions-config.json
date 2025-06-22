@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "dictionaries": ["base"],
+  "validation": {
+    "customMarkers": "warn",
+    "customTags": "warn"
+  },
+  "customDefinitions": {
+    "customMarkers": {
+      "minLength": 3,
+      "maxLength": 20,
+      "forbiddenPrefixes": ["wm", "_"],
+      "pattern": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$"
+    },
+    "customTags": {
+      "simple": {
+        "allowHierarchical": true
+      },
+      "relational": {
+        "namespacePattern": "^[a-zA-Z][a-zA-Z0-9]*:[a-zA-Z][a-zA-Z0-9/._-]*$",
+        "allowedValueTypes": ["string", "number", "reference", "actor"]
+      },
+      "forbiddenTags": ["priority:high", "priority:low", "assigned-to:*"]
+    }
+  }
+}

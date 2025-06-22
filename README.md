@@ -354,3 +354,19 @@ That mindset — pick a unique string, grep it everywhere, document the contract
 
 - **Blog & transcript**: [latent.space/p/codex](https://www.latent.space/p/codex)
 - **Video**: [youtube.com/watch?v=LIHP4BqwSw0](https://www.youtube.com/watch?v=LIHP4BqwSw0)
+
+## The Foundation: `@waymark/schema`
+
+The entire Waymark tooling ecosystem is built upon a single source of truth: the [`@waymark/schema`](./packages/schema/README.md) package. This package contains a set of modular [JSON Schema](https://json-schema.org/) files that provide a canonical, machine-readable definition of the Waymark language.
+
+By building all tools on this common foundation, we ensure that the parser, linter, IDE extensions, and any future tooling operate with a perfectly consistent understanding of the language's grammar and vocabulary.
+
+## Quick Start
+
+Get started in minutes:
+
+```bash
+npm install -g waymark
+# or
+pnpm add -g waymark
+```

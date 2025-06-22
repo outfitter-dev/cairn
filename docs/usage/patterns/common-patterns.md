@@ -1,5 +1,14 @@
-<!-- tldr ::: Essential waymark patterns and best practices for effective code navigation -->
-# Common Waymark Patterns
+<!-- tldr ::: essential waymark patterns from pre-v1.0 syntax (preserved for reference) -->
+# Common Waymark Patterns (Legacy)
+
+> **Note**: This document uses pre-v1.0 waymark syntax and is preserved for reference. For current patterns, see the [v1.0 documentation](../README.md).
+>
+> Key differences in old syntax:
+> - Used `+tag` instead of `#tag`
+> - Used `alert` instead of `notice`
+> - Used `fix` instead of `fixme`
+> - Used `priority:high` instead of `!` signals
+> - References didn't include `#` prefix (e.g., `fixes:123` vs `#fixes:#123`)
 
 Patterns and practices for making your codebase AI-navigable and human-friendly using waymarks.
 

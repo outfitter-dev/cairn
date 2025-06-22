@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "dictionaries": ["base"],
+  "validation": {
+    "customMarkers": "error",
+    "customTags": "warn"
+  },
+  "customDefinitions": "strict"
+}

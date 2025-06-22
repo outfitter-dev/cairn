@@ -1,63 +1,138 @@
-<!-- tldr ::: Waymark syntax overview and core concepts -->
+<!-- tldr ::: waymark syntax overview and quick reference -->
 # Waymark Syntax
 
-Waymark syntax is a lightweight marking system for code navigation using the `:::` sigil.
+Waymark syntax is a standardized way to mark important code locations using the `:::` sign.
 
 ## Overview
 
-Waymark syntax defines the **structure** for writing searchable code markers:
+Waymarks make codebases discoverable. They're breadcrumbs that both humans and AI agents can follow using simple grep commands. The syntax is designed to be:
 
-- The `:::` sigil with an optional marker
-- Delimiter semantics (`:` for properties, `@` for actors)
-- A fixed namespace of markers organized into semantic groups
-- Properties, tags, and actors for metadata
-- Simple, grep-friendly patterns
+- **Simple**: Learn in 5 minutes, master in 30
+- **Searchable**: Every pattern works with ripgrep
+- **Semantic**: Markers convey clear meaning
+- **Flexible**: Start simple, add features as needed
 
-Think of it like learning to write musical notes - the syntax is simple and consistent, while what you compose with it can be infinitely varied.
-
-## Basic Syntax
+## Quick Reference
 
 ```text
-<comment-leader> [signal][marker] ::: [actor] [context] [prose] [+tags]
+[signal][marker] ::: [@actor|##anchor] prose #tags
 ```
 
-The syntax consists of:
+### Components
 
-1. **Signal**: Optional urgency/emphasis symbol (`!`, `?`, `*`, etc.)
-2. **Marker**: A high-signal keyword from a fixed list (e.g., `todo`, `fix`, `tldr`).
-3. **Sigil**: `:::` separator (always preceded by a space when a marker is present).
-4. **Actor**: Optional `@handle` identifying a person, team, or agent. **Must be the first token after the sigil.**
-5. **Context**: Optional, structured `key:value` pairs using blessed keys (e.g., `fixes:#123`).
-6. **Prose**: Human-readable description.
-7. **Tags**: Classification tags prefixed with `+`.
+| Component | Purpose | Examples |
+|-----------|---------|----------|
+| **Signal** | Priority/scope modifier | `!` (high), `!!` (critical), `*` (branch work) |
+| **Marker** | Semantic type | `todo`, `fixme`, `tldr`, `notice` |
+| **Sign** | The `:::` separator | Always with spaces: ` ::: ` |
+| **Actor** | Assignment to person/team | `@alice`, `@security-team` |
+| **Anchor** | Stable reference point | `##auth/login` (define), `#auth/login` (reference) |
+| **Tags** | Classification/metadata | `#backend`, `#fixes:#123`, `#owner:@alice` |
 
-### Quick Examples
+## Basic Examples
 
 ```javascript
-// todo ::: implement caching                    // Marker with prose
-// fix ::: memory leak in auth priority:high     // Action first, then metadata
-// ::: this is a useful pattern                  // Pure prose (no marker)
-// alert ::: validates all inputs +security      // With a tag
-// todo ::: @alice implement OAuth flow         // Assigned to an actor
-// deprecated ::: use newMethod() instead until:v2.0   // Action first, blessed property after
+// Simple waymark
+// todo ::: implement caching
+
+// With assignment
+// todo ::: @alice add input validation
+
+// With tags
+// fixme ::: memory leak in auth service #backend #critical
+
+// With priority signal
+// !todo ::: important security update
+// !!fixme ::: critical production bug
+
+// Branch work (must complete before merge)
+// *todo ::: finish error handling
 ```
 
-## Feature Documentation
+## Core Concepts
 
-- **[Delimiter Syntax](features/delimiter-syntax.md)** - How `:::`, `:`, and `@` work
-- **[Signal System](features/signal-syntax.md)** - Urgency and emphasis modifiers
-- **[Context System](features/context-syntax.md)** - Properties, tags, and actors
-- **[Star Signal](features/star-signal-ci.md)** - Branch-scoped work tracking
-- **[Multi-line Support](features/multi-line-syntax.md)** - Extended waymark patterns
-- **[TLDR System](features/tldr.md)** - Documentation summary patterns
+### 1. Markers
+The semantic type of the waymark. Core markers include:
+
+- **Work**: `todo`, `fixme`, `refactor`, `review`, `test`
+- **Info**: `tldr`, `note`, `idea`, `about`, `example`
+- **Status**: `wip`, `stub`, `temp`, `done`, `deprecated`
+- **Attention**: `notice`, `risk`, `important`
+
+### 2. Signals
+Optional prefixes that modify meaning:
+
+- `!` / `!!` - Priority levels (P1/P0)
+- `*` - Branch-scoped work
+- `?` / `??` - Uncertainty levels
+- `-` / `--` - Mark for removal
+
+### 3. Tags
+Two types of tags, both with `#` prefix:
+
+- **Simple tags**: `#backend`, `#security`, `#auth`
+- **Relational tags**: `#fixes:#123`, `#owner:@alice`, `#affects:#billing,#auth`
+
+### 4. Actors and Anchors
+- **Actors** (`@`): Assign work or reference people
+- **Anchors** (`##`): Define stable reference points
+
+## Key Principles
+
+1. **Priority via signals, not tags**: Use `!!todo` not `todo ... #priority:high`
+2. **One marker per line**: Keep waymarks atomic and searchable
+3. **Tags use #**: Both simple (`#backend`) and relational (`#fixes:#123`)
+4. **Include # in references**: `#fixes:#123` not `#fixes:123`
+5. **Arrays have no spaces**: `#cc:@alice,@bob` not `@alice, @bob`
+
+## Common Patterns
+
+```javascript
+// File overview (at top of file)
+// tldr ::: user authentication service
+
+// Assigned work with context
+// todo ::: @alice implement OAuth flow #auth #security
+
+// Bug with issue reference
+// fixme ::: race condition in payment processor #fixes:#456
+
+// Stable reference point
+// about ::: ##payment/stripe Stripe webhook handler #payments
+
+// Multi-owner task
+// todo ::: implement RBAC #owner:@alice,@bob #security
+
+// System-wide impact
+// !!notice ::: breaking API change #affects:#frontend,#mobile,#api
+```
+
+## Searching Waymarks
+
+```bash
+# Find all waymarks
+rg ":::"
+
+# Find by marker
+rg "todo\s+:::"      # All todos
+rg "!!fixme"         # Critical bugs
+
+# Find by assignment
+rg "@alice"          # All mentions of alice
+
+# Find by tag
+rg "#security"       # Security-related
+rg "#123\b"          # Issue 123 references
+```
+
+## Next Steps
+
+- **[Full Specification](./SPEC.md)** - Complete syntax reference
+- **[Changelog](./CHANGELOG.md)** - Version history and migration guides
+- **[Quick Start Guide](../QUICKSTART.md)** - Get started in 5 minutes
 
 ## Philosophy
 
-1. **Visual Clarity**: The `:::` sigil clearly separates markers from content.
-2. **Progressive Complexity**: Start simple, add advanced features only when needed.
-3. **Toolability**: A small set of blessed properties are structured for CLI/linting, while prose remains freeform.
-4. **Action-First Principle**: The most actionable content appears first, with metadata as supporting context.
-5. **Flexibility**: An open namespace for tags allows for adaptable classification.
-6. **Searchability**: Every pattern is optimized for grep/ripgrep.
-7. **AI-Friendly**: The structure is optimized for LLM context and navigation.
-8. **Boring solutions for boring problems**: Using proven, simple patterns over unnecessary complexity.
+Waymarks are breadcrumbs, not documentation. They mark the interesting spots in your code - the places where decisions were made, work needs doing, or context matters. Like trail markers on a hike, they guide you to what's important without cluttering the path.
+
+The syntax is intentionally boring. No complex hierarchies, no special parsing rules, no configuration files. Just markers, signs, and tags that work with grep. Because the best syntax is the one you don't have to think about.

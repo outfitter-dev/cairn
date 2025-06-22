@@ -1,320 +1,408 @@
-<!-- tldr ::: Complete guide to searching waymarks with ripgrep and the waymark CLI -->
-# Search Patterns Guide
+<!-- tldr ::: advanced ripgrep patterns and techniques for waymark searches -->
+# Ripgrep Patterns and Recipes
 
-This guide covers searching waymarks using both raw ripgrep/grep commands and the waymark CLI's enhanced capabilities.
+This guide provides advanced ripgrep patterns and recipes for searching waymarks efficiently.
 
-<!-- note ::: This document reflects the new ::: syntax specification -->
+<!-- important ::: all examples use waymark v1.0 syntax with # for tags and signals for priority -->
 
-## Part 1: Using ripgrep/grep
+## Ripgrep Basics for Waymarks
 
-### Basic Patterns
-
-#### Find all waymarks
+### Essential Flags
 
 ```bash
-# Find any waymark
-rg ":::"
+# Context flags
+-C NUM    # Show NUM lines before and after match
+-B NUM    # Show NUM lines before match
+-A NUM    # Show NUM lines after match
 
-# With line numbers (default in rg)
-rg -n ":::"
+# Output control
+-l        # List only filenames
+-c        # Count matches per file
+-o        # Show only matching part
+-n        # Show line numbers (default)
+-N        # Hide line numbers
+-I        # Case insensitive
 
-# Case-insensitive (though not usually needed)
-rg -i ":::"
+# File selection
+-g GLOB   # Include/exclude files
+-t TYPE   # Search only in file type
 ```
 
-#### Find by marker
+### Performance Tips
 
 ```bash
-# Specific marker
-rg "todo :::"
-rg "fix :::"
-rg "alert :::"
+# Use fixed strings when possible (faster)
+rg -F "todo :::"                    # No regex parsing
 
-# Multiple markers (OR)
-rg "(todo|fix) :::"
+# Limit search scope
+rg ":::" src/                       # Search specific directory
+rg ":::" -g "*.js"                  # Only JavaScript files
 
-# Exclude certain markers
-rg ":::" | rg -v "done :::"
+# Use .ripgreprc for defaults
+echo "--smart-case" >> ~/.ripgreprc
+echo "--max-columns=150" >> ~/.ripgreprc
 ```
 
-#### Find by properties
+## Pattern Recipes
+
+### Signal Detection Patterns
 
 ```bash
-# Find specific property
-rg ":::.*priority:high"
-rg ":::.*@alice"
+# Branch work patterns
+rg '^\s*//\s*\*\w+\s+:::'          # Star signals at line start
+rg '\*!!\w+\s+:::'                 # Critical branch work
+rg '\*\w+\s+:::.*#hotfix'          # Branch hotfixes
 
-# Multiple properties (AND)
-rg ":::.*priority:high.*@alice"
+# Priority cascades
+rg '!{1,2}\w+\s+:::'               # Any priority (!todo or !!todo)
+rg '(?:^|\s)!!\w+\s+:::'           # Critical only
+rg '!\w+\s+:::(?!.*!)'             # High but not critical
 
-# Property with any value
-rg ":::.*priority:"
+# Uncertainty patterns
+rg '\?{1,2}\w+\s+:::'              # Questions and uncertainties
+rg '\?\w+\s+:::.*\?'               # Questions in description too
+
+# Removal patterns
+rg '-{1,2}\w+\s+:::'               # Marked for removal
+rg '--\w+\s+:::.*deprecated'       # Urgent removal + deprecated
 ```
 
-#### Find by tags
+### Tag Pattern Variations
 
 ```bash
-# Simple tag search
-rg "\+security"
-rg "\+performance"
+# Flexible tag matching
+rg '#\w+'                          # Any tag
+rg '#\w+\b'                        # Tag at word boundary
+rg '(?<!\w)#\w+'                   # Tag not preceded by word char
 
-# Tags in waymarks only
-rg ":::.*\+security"
+# Compound tags
+rg '#\w+:\w+'                      # Relational tags
+rg '#\w+:#\d+'                     # Issue references
+rg '#\w+:@\w+'                     # Actor references
 
-# Multiple tags
-rg ":::.*\+security.*\+critical"
+# Array values
+rg '#\w+:\w+(?:,\w+)+'            # Arrays like #cc:@alice,@bob
+rg '#affects:#\w+(?:,#\w+)*'      # Multiple affected items
 ```
 
-### Context Searching
-
-#### Show surrounding code
+### Anchor Patterns
 
 ```bash
-# Show 2 lines before and after
-rg -C2 "todo :::"
+# Anchor definitions
+rg ':::\s*##\w+(?:/\w+)*'         # Hierarchical anchors
+rg '^[^#]*##\w+'                  # Anchor at line start
 
-# Show 3 lines before, 1 after
-rg -B3 -A1 "fix :::"
+# Anchor references
+rg '#refs:##?\w+'                 # References (# or ## prefix)
+rg '#refs:#[\w/]+'                # With path segments
 
-# Show only the line after (useful for seeing what comes next)
-rg -A1 "tldr :::" --no-line-number
+# Find orphaned references
+rg -o '#refs:(#\w+(?:/\w+)*)' -r '$1' | sort | uniq > refs.txt
+rg -o '##(\w+(?:/\w+)*)' -r '##$1' | sort | uniq > defs.txt
+comm -23 refs.txt defs.txt        # References without definitions
 ```
 
-#### File-level context
+### Actor Patterns
 
 ```bash
-# Show just filenames with todos
-rg -l "todo :::"
+# Actor assignments
+rg '@\w+(?:\.\w+)*'               # Handles @team.member format
+rg ':::\s*@\w+'                   # Actor as first token
+rg '#(?:owner|cc|reviewer):@\w+'  # Actor in tags
 
-# Count waymarks per file
-rg -c ":::" | sort -t: -k2 -nr
+# Team patterns
+rg '@(?:frontend|backend|qa)'     # Specific teams
+rg ':::.*@\w+team\b'              # Any team assignment
 
-# Files with most todos
-rg -c "todo :::" | sort -t: -k2 -nr | head -10
+# AI agent patterns
+rg '@(?:agent|claude|max|ai)'     # AI delegations
+rg ':::.*@agent\s+\w+'            # Agent with verb
 ```
 
-### Advanced Extraction
+## Advanced Extraction
 
-#### Extract assignees
+### Structured Data Extraction
 
 ```bash
-# Get all assignees from todos
-rg -o "todo :::.*@(\w+)" -r '$1' | sort | uniq
+# Extract marker-actor pairs
+rg -o '(\w+)\s+:::\s*@(\w+)' -r '$1:$2' | sort | uniq
 
-# Count tasks per person
-rg -o "todo :::.*@(\w+)" -r '$1' | sort | uniq -c | sort -nr
+# Extract tag values
+rg -o '#(\w+):(\w+)' -r '$1=$2' | sort | uniq
+
+# Build assignment matrix
+rg -o '(\w+)\s+:::.*@(\w+)' -r '$2,$1' | \
+  awk -F, '{count[$1][$2]++} 
+  END {for(person in count) {
+    printf "%s:", person; 
+    for(marker in count[person]) 
+      printf " %s(%d)", marker, count[person][marker]; 
+    print ""
+  }}'
 ```
 
-#### Extract priorities
+### Multi-File Analysis
 
 ```bash
-# List all priority levels used
-rg -o "priority:(\w+)" -r '$1' | sort | uniq
+# Find files with multiple priority levels
+for file in $(rg -l ":::")
+do
+  critical=$(rg -c "!!\w+\s+:::" "$file" 2>/dev/null || echo 0)
+  high=$(rg -c "!\w+\s+:::" "$file" 2>/dev/null || echo 0)
+  if [[ $critical -gt 0 && $high -gt 0 ]]; then
+    echo "$file: critical=$critical high=$high"
+  fi
+done
 
-# Find critical items across markers
-rg ":::.*priority:(critical|high)"
+# Tag co-occurrence analysis
+rg -o ':::.*' | \
+  grep -o '#\w\+' | \
+  awk '{tags[$0]++} END {for(t in tags) if(tags[t]>5) print tags[t], t}' | \
+  sort -nr
 ```
 
-#### Extract issue references
+### Time-Based Analysis
 
 ```bash
-# Find all issue numbers
-rg -o ":::.*#(\d+)" -r '#$1' | sort -n | uniq
+# Combine with git for temporal analysis
+rg -l "todo\s+:::" | while read file
+do
+  last_modified=$(git log -1 --format="%ar" -- "$file")
+  todo_count=$(rg -c "todo\s+:::" "$file")
+  echo "$last_modified: $file ($todo_count todos)"
+done | sort
 
-# Find waymarks that fix issues
-rg ":::.*fixes:#\d+"
-
-# Find blocked items
-rg ":::.*blocked"
+# Find stale branch work
+rg -l "\*\w+\s+:::" | xargs -I {} git log -1 --format="%ad %ae {}" --date=short {} | \
+  awk '$1 < "'$(date -d '30 days ago' '+%Y-%m-%d')'" {print}'
 ```
 
-### Searching in Different File Types
+## Complex Multi-Pattern Searches
 
-#### Markdown files with HTML comments
+### Conditional Patterns
 
 ```bash
-# Find waymarks in HTML comments
-rg "<!-- .*:::" --type md
+# TODO with no assignee
+rg 'todo\s+:::(?!.*@\w+)'
 
-# Find only tldr in markdown
-rg "<!-- tldr :::" --type md
+# High priority without due date
+rg '!\w+\s+:::(?!.*(?:due|until|by):)'
 
-# Exclude HTML comments
-rg ":::" --type md | rg -v "<!--"
+# Branch work not marked critical
+rg '\*(?!!)\w+\s+:::'
+
+# Security issues not assigned
+rg ':::.*#security(?!.*@\w+)'
 ```
 
-#### Language-specific searches
+### Lookaround Patterns
 
 ```bash
-# JavaScript/TypeScript only
-rg "// .*:::" -g "*.{js,ts,jsx,tsx}"
+# Tags not in waymarks
+rg '(?<!:::.*?)#\w+'
 
-# Python only
-rg "# .*:::" -g "*.py"
+# Waymarks without tags
+rg '\w+\s+:::[^#]*$'
 
-# In docstrings (multiline)
-rg -U "\"\"\"[\s\S]*?:::[\s\S]*?\"\"\"" -g "*.py"
+# Multiple tags required
+rg ':::(?=.*#backend)(?=.*#api)'
+
+# Exclude pattern
+rg ':::(?!.*#deprecated).*#api'
 ```
 
-### Useful Aliases
+## Ripgrep Configuration
 
-Add these to your shell configuration:
+### Project-Specific .ripgreprc
 
 ```bash
-# Find all waymarks
-alias wm='rg ":::"'
+# Create project-specific config
+cat > .ripgreprc << 'EOF'
+# Waymark-specific settings
+--smart-case
+--max-columns=200
+--max-columns-preview
 
-# Find todos
-alias wmt='rg "todo :::"'
+# Type definitions
+--type-add=waymark:*.{js,ts,py,md,java,go,rs}
 
-# Find with context
-alias wmc='rg -C2 ":::"'
+# Ignore patterns
+--glob=!*.min.js
+--glob=!**/node_modules/**
+--glob=!**/dist/**
 
-# Find security issues
-alias wmsec='rg ":::.*\+security"'
-
-# Count waymarks by marker
-alias wmcount='rg "^[^:]*[a-z]+ :::" -o | sed "s/ ::://" | sort | uniq -c | sort -nr'
+# Custom type for docs
+--type-add=docs:*.{md,mdx,rst,txt}
+EOF
 ```
 
-### Complex Queries
-
-#### Time-based searches
+### Useful Shell Functions
 
 ```bash
-# Find waymarks with dates
-rg ":::.*2024-"
+# Add to ~/.bashrc or ~/.zshrc
 
-# Find overdue items (assuming YYYY-MM-DD format)
-rg ":::.*until:2023-" # items that should be done by now
+# Waymark context search
+wmc() {
+  local pattern="${1:-:::}"
+  local context="${2:-2}"
+  rg -C"$context" "$pattern"
+}
+
+# Waymark stats
+wmstats() {
+  echo "=== Waymark Statistics ==="
+  echo "Total: $(rg -c ':::'  | awk -F: '{sum+=$2} END {print sum}')"
+  echo ""
+  echo "By Marker:"
+  rg -o '(\w+)\s+:::'  -r '$1' | sort | uniq -c | sort -nr | head -10
+  echo ""
+  echo "By Priority:"
+  echo "  Critical: $(rg '!!\w+\s+:::'  | wc -l)"
+  echo "  High: $(rg '(?<!!)!\w+\s+:::'  | wc -l)"
+  echo "  Branch: $(rg '\*\w+\s+:::'  | wc -l)"
+  echo ""
+  echo "Top Tags:"
+  rg -o '#\w+' | sort | uniq -c | sort -nr | head -10
+}
+
+# Find waymark in function context
+wmfunc() {
+  local pattern="$1"
+  # Attempt to show the containing function
+  rg -B 20 "$pattern" | tac | grep -m 1 -E '(function|def|class|const.*=.*=>)' | tac
+  rg -A 5 "$pattern"
+}
+
+# Interactive waymark search with fzf
+wmi() {
+  local selected=$(rg ":::" --line-number | fzf --preview 'echo {} | cut -d: -f1-2 | xargs bat --color=always --highlight-line={2}')
+  if [[ -n "$selected" ]]; then
+    local file=$(echo "$selected" | cut -d: -f1)
+    local line=$(echo "$selected" | cut -d: -f2)
+    ${EDITOR:-vim} "+$line" "$file"
+  fi
+}
 ```
 
-#### Multi-condition searches
+## Performance Optimization
+
+### Large Codebase Strategies
 
 ```bash
-# High priority security items
-rg ":::.*priority:high.*\+security"
+# Use file type restrictions
+rg ":::" -t js -t ts              # Only JS/TS files
 
-# Assigned but not done
-rg "@\w+" | rg -v "done :::"
+# Parallel execution for analysis
+find . -name "*.js" -print0 | \
+  xargs -0 -P 8 -I {} rg -c ":::" {} 2>/dev/null | \
+  awk -F: '{sum+=$2; files++} END {print "Files:", files, "Waymarks:", sum}'
 
-# Temporary code in production files
-rg "temp :::" -g "!*test*" -g "!*spec*"
+# Incremental search
+rg -l ":::" > waymark-files.txt
+cat waymark-files.txt | xargs rg "todo\s+:::"
+
+# Binary file exclusion
+rg ":::" --binary-skip
 ```
 
-#### Statistical analysis
+### Memory-Efficient Patterns
 
 ```bash
-# Waymark density (waymarks per 100 lines)
-echo "scale=2; $(rg -c ":::" | awk -F: '{sum+=$2} END {print sum}') / $(find . -name '*.js' -o -name '*.py' -o -name '*.md' | xargs wc -l | tail -1 | awk '{print $1}') * 100" | bc
+# Stream processing for large results
+rg ":::" --max-columns=150 | while read line
+do
+  # Process each line without loading all into memory
+  echo "$line" | grep -q "#critical" && echo "$line"
+done
 
-# Most used hashtags
-rg -o "#\w+" | sort | uniq -c | sort -nr | head -20
+# Chunked processing
+rg -l ":::" | split -l 100 - waymark-chunks-
+for chunk in waymark-chunks-*
+do
+  cat "$chunk" | xargs rg "todo\s+:::" > "results-$chunk"
+done
 ```
 
-## Part 2: Waymark CLI Design
+## Integration Examples
 
-<!-- todo ::: @galligan replace this section with streamlined CLI from cli-design.md -->
-
-The waymark CLI provides ripgrep-style ergonomics with enhanced waymark features. See [CLI Design](../tooling/cli-design.md) for the complete specification.
-
-### Core Commands
-
-#### `waymark find` - Primary search command
+### Git Integration
 
 ```bash
-# Find all waymarks
-waymark find
-
-# Find by marker
-waymark find -m todo
-waymark find -m fix,alert  # multiple markers
-
-# Find with pattern
-waymark find "auth" -m todo
-
-# Find by properties
-waymark find --has priority:high
-
-# Find by tags
-waymark find -t security
+# Pre-commit hook to check branch work
+#!/bin/bash
+if rg -q '\*\w+\s+:::' $(git diff --cached --name-only); then
+  echo "Warning: Branch-scoped waymarks (*) found in commit"
+  echo "These should be resolved before merging:"
+  rg '\*\w+\s+:::' $(git diff --cached --name-only)
+  exit 1
+fi
 ```
 
-#### Category Commands with Special Formatting
+### CI/CD Integration
 
 ```bash
-# Task overview with progress indicators
-waymark task                    # All tasks
-waymark task --open             # Open tasks only
-waymark task --stats            # Task statistics
+# GitHub Actions example
+- name: Check Critical Waymarks
+  run: |
+    if rg -q '!!\w+\s+:::'; then
+      echo "::error::Critical waymarks found"
+      rg -n '!!\w+\s+:::'
+      exit 1
+    fi
 
-# Information waymarks with tree view
-waymark info                    # All info waymarks
-waymark info --tree             # Tree view by directory
-
-# Alerts grouped by severity
-waymark alert                   # All alerts
-waymark alert --critical        # Critical only
-waymark alert --grouped         # Group by severity
-
-# TLDR summaries with file tree
-waymark tldr                    # All file summaries
-waymark tldr --tree             # Tree visualization
-waymark tldr --recent           # Sort by modification time
-```
-
-### Advanced Features
-
-#### Context and Relations
-
-```bash
-# Show nearby waymarks
-waymark find -p todo --near 5
-
-# Find related waymarks in same function/block
-waymark find "cache" --related
-
-# Context lines (ripgrep-compatible)
-waymark find -m alert -C2       # 2 lines before/after
-waymark find -m todo -A3 -B1    # 3 after, 1 before
-```
-
-#### Export and Integration
-
-```bash
-# Export to JSON
-waymark find --json > waymarks.json
-waymark find --csv > waymarks.csv
-
-# File output
-waymark find -o waymarks.txt
-```
-
-### Configuration
-
-Configuration files provide shortcuts and aliases:
-
-```json
-{
-  "shortcuts": {
-    "mine": "@{user}",
-    "urgent": "priority:high|priority:critical"
-  },
-  "aliases": {
-    "standup": "task --done --since yesterday --author @{user}",
-    "sprint": "task --open --priority high,medium"
+# Jenkins pipeline
+stage('Waymark Analysis') {
+  steps {
+    sh '''
+      rg ":::" --stats | tail -10
+      rg '!!\w+\s+:::' || true
+    '''
   }
 }
 ```
 
-Use shortcuts and aliases:
+## Common Pitfalls and Solutions
+
+### Regex Escaping
 
 ```bash
-# Using shortcuts
-waymark find --has mine          # Expands to @yourusername
-waymark task --has urgent        # High/critical priority
+# Wrong: Treats * as regex quantifier
+rg "*todo :::"                    # Error!
 
-# Using aliases
-waymark standup                  # Yesterday's completed tasks
-waymark sprint                   # Current sprint work
+# Right: Escape the asterisk
+rg "\*todo :::"                   # Correct
+
+# Alternative: Use fixed string
+rg -F "*todo :::"                 # Also correct
 ```
+
+### Performance Issues
+
+```bash
+# Slow: Complex lookarounds
+rg '(?=.*#tag1)(?=.*#tag2)(?=.*#tag3)'
+
+# Fast: Progressive filtering
+rg ":::" | rg "#tag1" | rg "#tag2" | rg "#tag3"
+
+# Faster: Limit file scope first
+rg -l "#tag1" | xargs rg "#tag2" | rg "#tag3"
+```
+
+### Unicode and Special Characters
+
+```bash
+# Handle non-ASCII in team names
+rg '@\p{L}+'                      # Unicode letter support
+
+# Handle special chars in paths
+rg '#refs:#[\w/\-\.]+'           # Include dash and dot
+```
+
+## Next Steps
+
+- Review [Search Overview](README.md) for basic patterns
+- See [Syntax Specification](../../syntax/SPEC.md) for complete v1.0 reference
+- Check [Waymark Usage](.agents/partials/waymark-usage.md) for best practices
+
+<!-- tip ::: combine ripgrep with fzf, bat, and delta for powerful interactive workflows -->
