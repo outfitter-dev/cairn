@@ -1,5 +1,7 @@
 <!-- tldr ::: ##docs:@waymark/proposals/streamlined-grammar-complete Complete waymark grammar with typed canonical reference system #proposal -->
 
+<!-- !!todo ::: #issue:#52 Run spell-checker and reflow where necessary -->
+<!-- !!todo ::: #issue:#52 Fix typos/wording issues (`stillTags`, stray "a" bullets, "lingerinq", etc.) -->
 # Waymark Streamlined Grammar & Canonical Reference System
 
 A comprehensive proposal that simplifies waymark terminology while introducing typed canonical anchors for creating self-describing, interconnected knowledge graphs.
@@ -39,6 +41,7 @@ The result is a cleaner, more intuitive system that maintains full search capabi
 
 ### Deprecated Terms (being removed)
 
+<!-- !!todo ::: #issue:#52 Choose and document a single taxonomy for attribute vs relational tags -->
 - **Sigil** → Use "waymark sign" or just "sign"
 - **Properties** → Now just "tags with values" (e.g., `#priority:high`)
 - **Context tokens** → Removed entirely (these are now just tags)
@@ -134,6 +137,7 @@ Key rules:
 // todo ::: optimise parser #hotpath #perf:hotpath
 ```
 
+<!-- !!todo ::: #issue:#52 CRITICAL: Resolve contradiction about `#hotpath` vs `#perf:hotpath` aliases - are they equivalent in v1.0 or future enhancement? -->
 Tooling roadmap ▶  The Waymark CLI will eventually let you declare alias maps so searches for `#hotpath` automatically include `#perf:hotpath` (and vice-versa), maintaining greppability while giving authors freedom of expression.
 
 #### Recommended Usage Patterns
@@ -266,7 +270,7 @@ Declare what something IS using `type:` prefix:
 // !!todo ::: critical bug          // P0 - critical
 // !todo ::: important feature      // P1 - high  
 // todo ::: regular work           // P2 - normal
-// todo ::: nice to have #p3       // P3 - explicit low (rare)
+// todo ::: nice to have #p3       // P3 - explicit low (rare) <!-- !!todo ::: #issue:#52 Resolve: either forbid all priority tags or allow all -->
 ```
 
 **Remove:**
@@ -281,6 +285,7 @@ Declare what something IS using `type:` prefix:
 - One less thing to type
 - Still greppable: `rg "!!todo"` finds all critical items
 
+<!-- !!todo ::: #issue:#52 CRITICAL: Resolve priority system inconsistency - forbids `#priority:high` but allows `#p3` -->
 **IMPORTANT**: We are **NOT** using `#priority:high` syntax anymore. Use signals (`!`, `!!`) for priority.
 
 ### Arrays for Relationships
@@ -299,6 +304,7 @@ Declare what something IS using `type:` prefix:
 // notice ::: deploying update #affects:#billing,#payments,#auth
 ```
 
+<!-- !!todo ::: #issue:#52 Define parsing rules for values containing commas, quotes, empty arrays, whitespace -->
 **Array Syntax Rules:**
 
 Values in a relational array are comma-separated. Each value is parsed independently and should follow standard waymark conventions (e.g., tags start with `#`, actors start with `@`).
@@ -369,10 +375,12 @@ The typed canonical anchor system creates three semantically distinct ways to in
 **Location**: Exactly one declaration per `type:target` pair across the entire repository  
 **Meaning**: "This file IS the canonical [type] for [target]"
 
+<!-- !!todo ::: #issue:#52 Explicitly state uniqueness scope for typed anchors (repo-wide) and rule on duplicates -->
+<!-- !!todo ::: #issue:#52 Specify case sensitivity rules, conflict resolution during merges, handling of file moves/renames -->
 **Uniqueness Rules:**
 - Each `##type:target` combination must be unique across the entire repository
 - Multiple typed anchors are allowed per file (e.g., `##docs:@company/auth/api` and `##config:@company/auth/prod`)
-- Same target with different types is allowed (e.g., `##docs:@company/auth` and `##config:@company/auth`)
+- Same target with different types is allowed (e.g., `##docs:@company/auth` and `##config:@company/auth`) <!-- !!todo ::: #issue:#52 Clarify policy on multiple types for the same target -->
 
 ```markdown
 <!-- In auth-setup.md -->
@@ -931,6 +939,7 @@ Full authentication system example:
 // about ::: The @company/auth package provides authentication and authorization #services #security #critical
 ```
 
+<!-- !!todo ::: #issue:#52 Define escaping rules for waymarks containing --> and multi-line waymark format in HTML comments -->
 ```markdown
 <!-- === Documentation Artifacts (in respective .md files) === -->
 <!-- tldr ::: ##docs:@company/auth/overview Authentication service architecture and design principles -->
@@ -1000,6 +1009,7 @@ Full authentication system example:
 // deploy ::: auth service rollout #see:#docs:@company/auth/deployment #config:@company/auth/prod
 ```
 
+<!-- !!todo ::: #issue:#52 Normalize heading hierarchy (avoid duplicate H2s) -->
 ## Benefits
 
 ### 1. **Visual Hierarchy**
@@ -1132,6 +1142,7 @@ Attribute tags describe characteristics of code rather than relationships. They 
 
 This ensures maximum searchability - you can find all hotpaths with `rg "#hotpath"` whether they're written as `#hotpath`, `#perf:hotpath`, or referenced as `#for:#hotpath`.
 
+<!-- !!todo ::: #issue:#52 CRITICAL: Resolve attribute tag aliases ambiguity - decide if they're equivalent in v1.0 -->
 **Important**: While `#hotpath` and `#perf:hotpath` are intended to mean the same thing, without tooling support they're technically independent tags. For consistency:
 
 - Use standalone shortcuts (`#hotpath`) for quick marking
@@ -1234,6 +1245,7 @@ This ensures maximum searchability - you can find all hotpaths with `rg "#hotpat
 
 ### Attribute Tag Search Patterns
 
+<!-- !!todo ::: #issue:#52 Document grep tool requirements - many patterns assume ripgrep-specific features -->
 ```bash
 # Find all hotpaths (standalone or in category)
 rg "#(perf:)?hotpath"                    # Matches #hotpath and #perf:hotpath
@@ -1322,6 +1334,7 @@ With the addition of `test`:
 - `@team/toolkit` or `pkg:@team/toolkit` - Team-specific tools
 - `@projects/auth-v2` or `pkg:@projects/auth-v2` - Project codenames
 
+<!-- !!todo ::: #issue:#52 CRITICAL: Choose single canonical form for v1.0 - currently allows both formats -->
 **Tooling Note**: Waymark tools should treat `pkg:@scope/package` and `@scope/package` as synonyms. While `pkg:@scope/package` is more explicit for grep searches, both forms are valid and equivalent.
 
 ### Documentation Paths: `#docs:@scope/name/topic` or `#docs:pkg:@scope/name/topic`
@@ -1330,6 +1343,7 @@ With the addition of `test`:
 - `#docs:@company/auth/api` or `#docs:pkg:@company/auth/api` - API documentation
 - `#docs:@projects/auth-v2/timeline` or `#docs:pkg:@projects/auth-v2/timeline` - Project timeline
 
+<!-- !!todo ::: #issue:#52 Standardise package references (`##pkg:@scope/name`) vs bare `@scope/name`; update examples -->
 **Consistency Note**: Both forms work, but within a project, prefer consistency. The `pkg:` prefix makes searches more explicit when mixing packages with other `@` entities.
 
 ### Actor Format: `@username`
@@ -1405,6 +1419,7 @@ class AuthService {
 }
 ```
 
+<!-- !!todo ::: #issue:#52 Fix or remove reference to non-existent jsdoc-integration.md file -->
 The waymark provides a stable navigation anchor (`##api/auth/service`) while JSDoc handles the API documentation. They complement rather than compete. See [JSDoc Integration Proposal](./jsdoc-integration.md) for detailed patterns.
 
 ## Custom Extensions
@@ -1415,6 +1430,7 @@ The v1.0 spec introduces a flexible system for custom markers and tags beyond th
 
 **Core Principle**: Anything not in loaded dictionaries is considered custom.
 
+<!-- !!todo ::: #issue:#52 Either fully specify JSON configuration format, where config files live, default behaviors, or remove references -->
 ```json
 {
   "validation": {
@@ -1496,6 +1512,7 @@ The three validation modes provide flexibility for different team needs:
 
 For teams that want sensible defaults without detailed configuration:
 
+<!-- !!todo ::: #issue:#52 Define what "liberal", "standard", "strict" modes actually include -->
 - **`"liberal"`** - Very permissive, allows most patterns
 - **`"standard"`** - Balanced rules, prevents common mistakes (default)
 - **`"strict"`** - Conservative, requires explicit patterns
@@ -1553,6 +1570,8 @@ However, the grammar acknowledges these alternative patterns as valid extensions
 - Start simple, adopt extensions only when truly beneficial
 - Document which patterns your tools support
 
+<!-- !!todo ::: #issue:#52 Define "Progressive Enhancement" levels more specifically -->
+<!-- !!todo ::: #issue:#52 Specify which array patterns are required vs optional for tools -->
 **Progressive Enhancement**:
 1. Level 0: Treat as opaque string
 2. Level 1: Recognize as array pattern
@@ -1714,6 +1733,7 @@ This system transforms waymarks from simple annotations into a self-describing, 
 
 ## See Also
 
+<!-- !!todo ::: #issue:#52 Fix or remove references to non-existent documentation files -->
 - [Waymark 1.0 Simplification](waymark-1.0-simplification.md) - Core waymark patterns
 - [Custom Tags](../docs/usage/patterns/custom-tags.md) - Creating project-specific tags
 - [Search Patterns](../docs/usage/search/) - Finding waymarks effectively
