@@ -1,0 +1,60 @@
+{
+  "$schema": "./schema/config.schema.json",
+  "ignore": {
+    "inherit": [
+      ".gitignore",
+      ".npmignore",
+      ".dockerignore"
+    ],
+    "patterns": {
+      "files": [
+        "**/*.generated.*",
+        "**/archive/**",
+        "node_modules/**",
+        ".pnpm-store/**",
+        "**/vendor/**"
+      ],
+      "markers": [
+        "fixme",
+        "temporary", 
+        "wip",
+        "info",
+        "caution",
+        "remove"
+      ],
+      "content": [
+        "^rg ",
+        "^find ",
+        "^sed ",
+        "\\$\\{.*\\}",
+        "^```",
+        "Example:",
+        "should be:"
+      ],
+      "properties": [
+        "priority:low",
+        "status:wontfix",
+        "status:archived"
+      ],
+      "actors": [
+        "@dependabot",
+        "@renovate",
+        "@github-actions"
+      ]
+    }
+  },
+  "audit": {
+    "includeDeprecated": false,
+    "includeArchived": false,
+    "followSymlinks": false
+  },
+  "lint": {
+    "rules": {
+      "marker-before-sigil": "error",
+      "space-before-sigil": "error",
+      "space-after-sigil": "error",
+      "valid-marker": "error",
+      "no-deprecated-markers": "warn"
+    }
+  }
+}

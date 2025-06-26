@@ -34,7 +34,7 @@
   "scripts": {
     "build": "pnpm -r run build",
     "dev": "pnpm -r --filter ./packages/* run dev",
-    "test": "vitest run",
+    "test": "vitest",
     "test:watch": "vitest --watch",
     "lint": "waymark lint",
     "typecheck": "tsc -b",
@@ -44,24 +44,32 @@
     "release": "pnpm build && changeset publish",
     "prerelease": "pnpm test && pnpm typecheck",
     "prepare": "husky",
+    "wm": "node packages/multitool/dist/index.js",
     "ci:local": "pnpm run ci:validate && echo '✅ All CI checks passed locally!'",
     "ci:validate": "pnpm test && pnpm typecheck && pnpm build",
     "check:all": "pnpm ci:validate && pnpm run check:waymarks",
-    "check:waymarks": "echo '🔍 Checking for temporary waymarks...' && ! rg '::: (tmp|temp)' --type ts --type js packages/ || (echo '❌ Found temporary waymarks!' && exit 1)"
+    "check:waymarks": "echo '🔍 Checking for temporary waymarks...' && ! rg '::: (tmp|temp)' --type ts --type js packages/ || (echo '❌ Found temporary waymarks!' && exit 1)",
+    "lint:fix": "eslint . --ext .js,.ts --fix",
+    "test:ci": "vitest run",
+    "waymark": "node packages/cli/dist/index.js"
   },
   "devDependencies": {
+    "@apidevtools/json-schema-ref-parser": "^14.0.2",
     "@changesets/cli": "^2.29.4",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@types/glob": "^8.1.0",
     "@types/node": "^20.11.0",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
     "chalk": "^5.4.1",
     "eslint": "^8.56.0",
+    "glob": "^10.3.10",
     "globby": "^14.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.0",
     "minimatch": "^10.0.3",
+    "tsx": "^4.20.3",
     "typescript": "^5.3.0",
     "vitest": "^1.2.0"
   },
@@ -70,5 +78,8 @@
     "*.ts": [
       "eslint --fix"
     ]
+  },
+  "dependencies": {
+    "picocolors": "^1.0.1"
   }
 }

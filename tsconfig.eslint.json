@@ -4,14 +4,10 @@
     "noEmit": true
   },
   "include": [
-    "src/**/*.ts",
-    "packages/**/*.ts",
-    "*.config.ts",
-    "*.workspace.ts"
+    "**/*.js",
+    "**/*.ts",
+    "packages/**/*.js",
+    "packages/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/dist"
-  ]
+  "exclude": ["node_modules", "dist", "coverage"]
 }

@@ -13,7 +13,7 @@
     
     // note ::: waymark-specific ignore patterns
     "patterns": {
-      // alert ::: these are applied AFTER inherited patterns
+      // notice ::: these are applied AFTER inherited patterns
       "files": [
         // Additional file patterns beyond inherited
         "**/*.generated.*",
@@ -23,15 +23,15 @@
         "**/vendor/**"
       ],
       
-      // note ::: filter waymarks by marker type
+      // note ::: filter waymarks by marker type  
       "markers": [
         // Ignore deprecated markers during audit
-        "fixme",
-        "temporary", 
-        "wip",
-        "info",
-        "caution",
-        "remove"
+        // "fixme",       // These are valid waymarks, shouldn't be ignored
+        // "temporary", 
+        // "wip",
+        // "info",
+        // "caution",
+        // "remove"
       ],
       
       // note ::: filter by waymark context/content
