@@ -27,7 +27,7 @@ Implement **git hooks** that automatically validate waymarks at commit time and 
 
 ## Hook Architecture
 
-```
+```text
 .git/hooks/
 ├── pre-commit        # Validate waymark syntax
 ├── prepare-commit-msg # Auto-populate from branch waymarks
@@ -260,8 +260,8 @@ jobs:
 
 ## Configuration
 
-```json
-// .waymark/config.json
+```jsonc
+// .waymark/config.jsonc
 {
   "hooks": {
     "enabled": true,

@@ -19,7 +19,7 @@ Sections are **completely optional** - regular waymarks continue working unchang
 ```javascript
 // todo ::: implement JWT validation #auth
 // fixme ::: session timeout bug #critical  
-// note ::: see authentication docs docs:@company/auth
+// note ::: see authentication docs #docs:@company/auth
 ```
 
 ### Sectional Waymarks (New)
@@ -383,8 +383,8 @@ Sectional enclosures work perfectly with the canonical reference system:
 // ##docs:@company/auth/security :::
 
 // References to the sectional content
-// todo ::: review security model see:docs:@company/auth/security
-// fixme ::: implement rate limiting #security see:docs:@company/auth/security
+// todo ::: review security model #see:#docs:@company/auth/security
+// fixme ::: implement rate limiting #security #see:#docs:@company/auth/security
 ```
 
 ## Migration Strategy
@@ -434,7 +434,7 @@ Update tooling to recognize and leverage sections:
 //
 // ##docs:@company/auth/security :::
 
-// todo ::: implement rate limiting see:docs:@company/auth/security
+// todo ::: implement rate limiting #see:#docs:@company/auth/security
 // (Tools can now extract the entire security guide content)
 ```
 

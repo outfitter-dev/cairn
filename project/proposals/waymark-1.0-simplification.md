@@ -26,14 +26,24 @@ This proposal captures the simplification decisions for the Waymark 1.0 spec bas
 ### Deprecated Terms (being removed)
 
 - **Sigil** → Use "waymark sign" or just "sign"
-- **Properties** → Now just "tags with values" (e.g., `#priority:high`)
+- **Properties** → Now just "tags with values" (e.g., `key:value` or more commonly `key:#value`)
 - **Context tokens** → Removed entirely (these are now just tags)
-- **+tag syntax** → Now `#tag`
-- **References as separate concept** → Now just tags (e.g., `#fixes:#123`)
+- **`+tag` syntax** → Now `#tag`
+- **References as separate concept** → Now just tags (e.g., `#456`, `fixes:#123`, `blocked:#789`)
 
 ## Major Simplifications
 
-### 1. Convention: Avoid Hierarchical Tags in the Core Spec (`/` syntax)
+### Universal Colon Pattern
+
+**IMPORTANT**: The v1.0 spec uses a colon to define relationships, attributes, and references:
+- The key has NO prefix: `owner:@alice`, `fixes:#123`, `depends:@scope/package`
+- The value keeps its natural prefix: `#`, `@`, etc.
+- This replaces the old `#key:#value` syntax with cleaner `key:#value`
+<!-- todo ::: @claude I want to include a sublist item here about how canonical reference anchors and refs are an exception to the above rule -->
+
+This change improves readability and creates a consistent pattern across all relational tags.
+
+### 2. Convention: Avoid Hierarchical Tags in the Core Spec (`/` syntax)
 
 **The Old Rule (Removed):**
 The original proposal was to completely remove support for hierarchical tags like `#auth/oauth/google`.
@@ -65,19 +75,19 @@ For the base set of Waymark tags, we prefer simple, flat tags.
 
 Hierarchical tags remain a valid part of the syntax for those who need them, but they are not part of the core Waymark pattern language.
 
-### 2. Reduce Tag Forms to Just Two
+### 3. Reduce Tag Forms to Just Two
 
 **Keep only:**
 
 1. **Simple tags**: `#backend`, `#security`, `#auth`, `#perf`
-2. **Relational tags**: `#fixes:#123`, `#blocked:#456`, `#owner:@alice`
+2. **Relational tags**: `fixes:#123`, `blocked:#456`, `owner:@alice`
 
 **Remove:**
 
-- Complex type:value patterns (except for relations)
-- Forced expansions/transformations
-- Ambiguous value rules
-- Tag dictionaries and pattern files
+- ❌ Complex type:value patterns (except for relations)
+- ❌ Forced expansions/transformations
+- ❌ Ambiguous value rules
+- ❌ Tag dictionaries and pattern files
 
 **Rationale:**
 
@@ -86,22 +96,21 @@ Hierarchical tags remain a valid part of the syntax for those who need them, but
 - Parser becomes trivial
 - No complex configuration needed
 
-### 3. Simplified Priority System
+### 4. Simplified Priority System
 
 **Use signals for priority:**
 
 ```javascript
 // !!todo ::: critical bug          // P0 - critical
 // !todo ::: important feature      // P1 - high  
-// todo ::: regular work           // P2 - normal
-// todo ::: nice to have #p3       // P3 - explicit low (rare)
+// todo ::: regular work           // P2 - default
 ```
 
 **Remove:**
 
-- `#priority:high` syntax (use signals instead)
-- Complex priority mappings
-- Priority as a core property
+- ❌ `priority:high` syntax | ✅ use signals `!!` or `!` instead
+- ❌ Complex priority mappings
+- ❌ Priority as a core property
 
 **Rationale:**
 
@@ -109,20 +118,20 @@ Hierarchical tags remain a valid part of the syntax for those who need them, but
 - One less thing to type
 - Still greppable: `rg "!!todo"` finds all critical items
 
-### 4. Arrays for Relationships
+### 5. Arrays for Relationships
 
 **Support arrays where they make sense:**
 
 ```javascript
 // Multiple people
-// todo ::: implement auth #owner:@alice,@bob
-// review ::: security audit #cc:@security,@ops,@compliance
+// todo ::: implement auth owner:@alice,@bob
+// review ::: security audit cc:@security,@ops,@compliance
 
 // Multiple references  
-// fixme ::: payment bug #depends:#123,#456 #blocks:#789,#234
+// fixme ::: payment bug depends:#123,#456 blocks:#789,#234
 
 // Multiple systems
-// notice ::: deploying update #affects:#billing,#payments,#auth
+// notice ::: deploying update affects:#billing,#payments,#auth
 ```
 
 **Array Syntax Rules:**
@@ -131,32 +140,29 @@ Values in a relational array are comma-separated. Each value is parsed independe
 
 ```javascript
 // ✅ CORRECT - Commas only, no spaces
-// todo ::: implement feature #owner:@alice,@bob
-// fixme ::: payment bug #depends:#123,#456,#789
+// todo ::: implement feature owner:@alice,@bob
+// fixme ::: payment bug depends:#123,#456,#789
 
 // ❌ WRONG - No spaces after commas
-// todo ::: implement feature #owner:@alice, @bob
-
-// ❌ WRONG - Don't use multiple tags for arrays
-// todo ::: implement feature #owner:@alice #owner:@bob
+// todo ::: implement feature owner:@alice, @bob
 ```
 
 **Single values only (no arrays):**
 
 ```javascript
-#branch:feature/auth     // Not: #branch:main,develop
-#pr:#234                // Not: #pr:#234,#235
-#commit:abc123f         // Not: #commit:abc123f,def456g
+// branch:feature/auth     // Not: "branch:main,develop"
+// pr:#234                // Not: "pr:#234,#235"
+// commit:abc123f         // Not: "commit:abc123f,def456g"
 ```
 
 **Rationale:**
 
-- `#owner:@alice,@bob` is much cleaner than `#owner:@alice #owner:@bob`
+- `owner:@alice,@bob` is much cleaner than `owner:@alice owner:@bob`
 - Commas without spaces ensure consistent parsing
 - Only use arrays where multiple values are common
 - Keep it predictable
 
-### 5. Test Marker Addition
+### 6. Test Marker Addition
 
 Add `test` as a core marker to the Work category:
 
@@ -165,89 +171,90 @@ Add `test` as a core marker to the Work category:
 // test ::: boundary conditions for rate limiter
 
 // Test with specific target
-// test ::: OAuth refresh token flow #for:#auth/oauth
+// test ::: OAuth refresh token flow for:#auth/oauth
 
 // Test with metadata
-// test ::: payment retry logic #for:#payment/stripe #flaky #slow
+// test ::: payment retry logic for:#payment/stripe #flaky #slow
 ```
 
 **Usage guideline**: Use test waymarks when they add information beyond what the test framework provides:
 
 - ❌ `test ::: login test` (redundant with test name)
-- ✅ `test ::: flaky on slow connections #for:#auth/login #flaky`
-- ✅ `test ::: regression from v4.2 #for:#payment/retry #issue:#456`
+- ✅ `test ::: flaky on slow connections for:#auth/login #flaky`
+- ✅ `test ::: regression from v4.2 for:#payment/retry issue:#456`
 
 **Rationale:**
 
 - Tests are work (writing, maintaining, fixing)
 - Extremely common in codebases
-- Enables the `#for:` pattern naturally
+- Enables the `for:` pattern naturally
 - Clear semantic meaning
 
 ## Core Relational Tags
+<!-- todo ::: @claude Update relational tag examples below so keys include a leading # per streamlined grammar (e.g., fixes:#123 → #fixes:#123) #needs:syntax-update -->
 
 A minimal set of relational tags that cover real development needs:
 
 ### Work Relationships
 
-- `#fixes:#123` - This fixes an issue
-- `#closes:#456` - This closes an issue/PR  
-- `#blocks:#789,#234` - This blocks other work
-- `#blocked:#567` - This is blocked by something
-- `#depends:#890,#123` - Dependencies
-- `#issue:#456` - Issue reference
-- `#ticket:#SUP-789` - Support ticket reference
-- `#followup:#ID` - Follow-up work to be addressed later
+- `fixes:#123` - This fixes an issue
+- `closes:#456` - This closes an issue/PR  
+- `blocks:#789,#234` - This blocks other work
+- `blocked:#567` - This is blocked by something
+- `depends:#890,#123` - Dependencies
+- `issue:#456` - Issue reference
+- `ticket:#SUP-789` - Support ticket reference
+- `followup:#ID` - Follow-up work to be addressed later
 
 ### Versatile References
 
-- `#for:#auth/login` - Context-dependent (see below)
-- `#needs:@alice,#api-key,#auth,#rbac` - Flexible requirements
-- `#relates:*` - Generic relationship (loosely related to this)
-- `#see:#billing/tax,RFC-45` - General cross-reference  
-- `#refs:#123,#auth/oauth` - Multiple references
-- `#replaces:#old-thing` - Marks code or other element that this supersedes/replaces
-- `#link:https://docs.api.com` - External link
+- `for:#auth/login` - Context-dependent (see below)
+- `needs:@alice,#api-key,#auth,#rbac` - Flexible requirements
+- `rel:#billing` - Generic relationship (loosely related to this)
+- `see:#billing/tax,RFC-45` - General cross-reference  
+- `refs:#123,#auth/oauth` - Multiple references
+- `replaces:#old-thing` - Marks code or other element that this supersedes/replaces
+- `link:"https://docs.api.com"` - External link
 
 ### Specific References
 
-- `#pr:#234` - Pull request
-- `#commit:abc123f` - Git commit
-- `#branch:feature/auth` - Git branch
-- `#test:auth-suite` - Test suite reference
-- `#feat:chat-v2` - Feature flag
-- `#docs:/path/to/file.md` - Documentation reference (absolute path from repo root)
+- `pr:#234` - Pull request
+- `commit:abc123f` - Git commit
+- `branch:feature/auth` - Git branch
+- `test:auth-suite` - Test suite reference
+- `feat:chat-v2` - Feature flag
+- `docs:"/path/to/file.md"` - Documentation reference (absolute path from repo root)
 
 ### Context
 
-- `#affects:#billing,#auth,#payments` - Systems impacted
-- `#owner:@alice,@bob` - Ownership
-- `#cc:@security,@ops` - Keep informed
+- `affects:#billing,#auth,#payments` - Systems impacted
+- `owner:@alice,@bob` - Ownership
+- `cc:@security,@ops` - Keep informed
 
-## The `#for:` Pattern
+## The `for:` Pattern
 
 A single versatile rel tag that can take on different meanings based on context provided by the marker. This requires no additional tooling, just a consideration of its semantic connection to the marker.
 
 ```javascript
-// With different markers, #for: means different things
-// test ::: validation edge cases #for:#auth/login          // test FOR this
-// docs ::: API usage guide #for:#payment/stripe           // docs FOR this  
-// example ::: retry pattern #for:#patterns/resilience      // example FOR this
-// stub ::: payment processing #for:#billing/checkout       // stub implementation FOR this
+// With different markers, for: means different things
+// test ::: validation edge cases for:#auth/login          // test FOR this
+// docs ::: API usage guide for:#payment/stripe           // docs FOR this  
+// example ::: retry pattern for:#patterns/resilience      // example FOR this
+// stub ::: payment processing for:#billing/checkout       // stub implementation FOR this
 ```
 
-Use `#for:` to link work or documentation to a concept or code anchor. For relationships involving people, status, or issue tracking, prefer the more specific relational tags like `#owner`, `#blocked`, or `#fixes`.
+Use `for:` to link work or documentation to a concept or code anchor. For relationships involving people, status, or issue tracking, prefer the more specific relational tags like `owner:`, `blocked:`, or `fixes:`.
 
-**Key insight**: the meaning of `#for:` can be implied by considering the marker, making it incredibly flexible without adding complexity.
+**Key insight**: the meaning of `for:` can be implied by considering the marker, making it incredibly flexible without adding complexity.
 
 ## Greppability Principle
 
 **Always use `#` for reference values and `@` for actors** - this makes everything searchable:
 
-- `#fixes:#123` - Both `#fixes` and `#123` are greppable
-- `#blocked:#456` - Can find the blocking issue with `rg "#456"`
-- `#depends:#789,#234` - All dependencies searchable
-- `#owner:@alice` - @ is already greppable, no extra # needed
+- `fixes:#123` - `#123` is greppable, and `fixes:` can be searched
+- `blocked:#456` - Can find the blocking issue with `rg "#456"`
+- `depends:#789,#234` - All dependencies searchable
+- `owner:@alice` - @ is already greppable, no extra # needed
 
 ## Actor vs Package Disambiguation
 
@@ -260,17 +267,17 @@ Use `#for:` to link work or documentation to a concept or code anchor. For relat
 // fixme ::: @bob fix the memory leak you introduced
 
 // ✅ Package references - always @scope/package format  
-// tldr ::: JWT middleware using @company/auth and @types/jsonwebtoken
-// note ::: upgrade required #depends:@company/database,@prisma/client
-// important ::: breaking change in @company/ui affects multiple apps
+// tldr ::: JWT middleware using @acme/auth and @types/jsonwebtoken
+// note ::: upgrade required depends:@acme/database,@prisma/client
+// important ::: breaking change in @acme/ui affects multiple apps
 
 // ✅ Mixed usage works naturally
-// todo ::: @alice update auth system to use @company/auth v2.0 #owner:@alice #depends:@company/auth
+// todo ::: @alice update auth system to use @acme/auth v2.0 owner:@alice depends:@acme/auth
 ```
 
 **Package names** are either:
-- **Unscoped**: `lodash`, `express`, `react` (no `@` symbol)  
-- **Scoped**: `@company/auth`, `@babel/core`, `@types/node` (always `@scope/package`)
+- **Unscoped**: `#lodash`, `#express`, `#react` (no `@` symbol)  
+- **Scoped**: `@acme/auth`, `@babel/core`, `@types/node` (always `@scope/package`)
 
 This natural distinction eliminates any ambiguity between actors and package references.
 
@@ -281,7 +288,7 @@ Search examples:
 rg "#123\b"
 
 # Find all blocking relationships
-rg "#blocks:#\d+"
+rg "blocks:#\d+"
 
 # Find work assigned to alice (actor)
 rg "@alice"
@@ -293,7 +300,7 @@ rg "@[a-zA-Z0-9_-]+\b"
 rg "@[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+"
 
 # Find specific package usage
-rg "@company/auth"
+rg "@acme/auth"
 ```
 
 ## Attribute Tags
@@ -302,9 +309,9 @@ Attribute tags describe characteristics of code rather than relationships. They 
 
 ### Format
 
-- Use `#category:attribute` for structured classification
-- Common attributes can be standalone tags for easy searching
-- Can combine: `#hotpath #perf:critical,bottleneck`
+- Use `category:#attribute` for structured classification
+- Common attributes can be standalone tags for easy searching e.g. `#hotpath`
+- Can combine: `perf:#critical,bottleneck`
 
 **When to use standalone tags** (e.g., `#hotpath`):
 
@@ -313,92 +320,92 @@ Attribute tags describe characteristics of code rather than relationships. They 
 - When the category is obvious from context
 - For easier grep searches
 
-**When to use category form** (e.g., `#perf:hotpath`):
+**When to use category form** (e.g., `perf:#hotpath`):
 
 - When precision matters
-- Multiple related attributes (e.g., `#perf:critical,bottleneck`)
+- Multiple related attributes (e.g., `perf:#critical,#bottleneck`)
 - Building tooling that processes categories
 - Avoiding namespace collisions
 
 **Recommended pattern for references**: When using attribute values in relational tags, always include `#`:
 
-- ✅ `#for:#perf/hotpath` or `#refs:#arch/entrypoint`
-- ❌ `#for:perf/hotpath` (missing # makes it less greppable)
+- ✅ `for:perf:#hotpath` or `refs:arch:#entrypoint`
+- ❌ `for:perf:hotpath` (missing # makes it less greppable)
 
-This ensures maximum searchability - you can find all hotpaths with `rg "#hotpath"` whether they're written as `#hotpath`, `#perf:hotpath`, or referenced as `#for:#hotpath`.
+This ensures maximum searchability - you can find all hotpaths with `rg "#hotpath"` whether they're written as `#hotpath`, `perf:#hotpath`, or referenced as `for:#hotpath`.
 
-**Important**: While `#hotpath` and `#perf:hotpath` are intended to mean the same thing, without tooling support they're technically independent tags. For consistency:
+**Important**: While `#hotpath` and `perf:#hotpath` are intended to mean the same thing, without tooling support they're technically independent tags. For consistency:
 
 - Use standalone shortcuts (`#hotpath`) for quick marking
-- Use category form (`#perf:hotpath`) when being explicit
+- Use category form (`perf:#hotpath`) when being explicit
 - Search patterns above show how to find both forms
 - Future tooling may treat them as aliases
 
 ### Core Attribute Categories
 
-#### Performance (`#perf:`)
+#### Performance (`perf:`)
 
-- `#perf:hotpath` - Performance-critical code path
-- `#perf:critical-path` - Must execute efficiently
-- `#perf:bottleneck` - Known performance constraint
-- `#perf:optimized` - Already optimized code
+- `perf:#hotpath` - Performance-critical code path
+- `perf:#critical-path` - Must execute efficiently
+- `perf:#bottleneck` - Known performance constraint
+- `perf:#optimized` - Already optimized code
 
 **Standalone shortcuts**: `#hotpath`, `#critical-path`, `#bottleneck`
 
-#### Architecture (`#arch:`)
+#### Architecture (`arch:`)
 
-- `#arch:entrypoint` - Where execution begins
-- `#arch:boundary` - System/security boundary  
-- `#arch:singleton` - Single instance in system
-- `#arch:state` - State management location
+- `arch:#entrypoint` - Where execution begins
+- `arch:#boundary` - System/security boundary  
+- `arch:#singleton` - Single instance in system
+- `arch:#state` - State management location
 
 **Standalone shortcuts**: `#entrypoint`, `#boundary`
 
-#### Security (`#sec:`)
+#### Security (`sec:`)
 
-- `#sec:boundary` - Security boundary
-- `#sec:input` - External input point
-- `#sec:sanitize` - Input sanitization
-- `#sec:auth` - Authentication logic
-- `#sec:authz` - Authorization logic
-- `#sec:crypto` - Cryptographic operations
+- `sec:#boundary` - Security boundary
+- `sec:#input` - External input point
+- `sec:#sanitize` - Input sanitization
+- `sec:#auth` - Authentication logic
+- `sec:#authz` - Authorization logic
+- `sec:#crypto` - Cryptographic operations
 
-#### Code Behavior (`#code:`)
+#### Code Behavior (`code:`)
 
-- `#code:pure` - No side effects
-- `#code:sideeffect` - Has external effects
-- `#code:async` - Asynchronous operation
-- `#code:callback` - Callback pattern
-- `#code:recursive` - Recursive implementation
+- `code:#pure` - No side effects
+- `code:#sideeffect` - Has external effects
+- `code:#async` - Asynchronous operation
+- `code:#callback` - Callback pattern
+- `code:#recursive` - Recursive implementation
 
-#### Data Flow (`#data:`)
+#### Data Flow (`data:`)
 
-- `#data:source` - Where data originates
-- `#data:transform` - Data transformation
-- `#data:sink` - Where data ends up
-- `#data:sensitive` - PII/sensitive data
+- `data:#source` - Where data originates
+- `data:#transform` - Data transformation
+- `data:#sink` - Where data ends up
+- `data:#sensitive` - PII/sensitive data
 
-#### API (`#api:`)
+#### API (`api:`)
 
-- `#api:endpoint` - API endpoint
-- `#api:internal` - Internal API
-- `#api:external` - External API
-- `#api:deprecated` - Deprecated API
+- `api:#endpoint` - API endpoint
+- `api:#internal` - Internal API
+- `api:#external` - External API
+- `api:#deprecated` - Deprecated API
 
-#### Status (`#status:`)
+#### Status (`status:`)
 
-- `#status:experimental` - Not production ready
-- `#status:stable` - Well-tested, reliable
-- `#status:legacy` - Old code needing care
-- `#status:migration` - Being migrated
+- `status:#experimental` - Not production ready
+- `status:#stable` - Well-tested, reliable
+- `status:#legacy` - Old code needing care
+- `status:#migration` - Being migrated
 
 **Standalone shortcuts**: `#experimental`, `#stable`, `#legacy`
 
-#### Error Handling (`#error:`)
+#### Error Handling (`error:`)
 
-- `#error:handler` - Error handling logic
-- `#error:boundary` - Error boundary
-- `#error:recovery` - Recovery point
+- `error:#handler` - Error handling logic
+- `error:#boundary` - Error boundary
+- `error:#recovery` - Recovery point
 
 ### Examples
 
@@ -408,107 +415,181 @@ This ensures maximum searchability - you can find all hotpaths with `rg "#hotpat
 // todo ::: fix memory leak #bottleneck
 
 // Security boundaries (category form for precision)
-// important ::: validate all user input #sec:boundary,input
-// important ::: sanitize HTML content #sec:sanitize
+// important ::: validate all user input sec:#boundary,input
+// important ::: sanitize HTML content sec:#sanitize
 
 // Architecture points (mix of standalone and category)
 // about ::: ##app/init main entry point #entrypoint
-// important ::: global state store #arch:state,singleton
+// important ::: global state store arch:#state,#singleton
 
 // Data flow (category form for clarity)
-// note ::: user data transformed here #data:transform #api:internal
-// important ::: PII encrypted here #data:sensitive #sec:crypto
+// note ::: user data transformed here data:#transform #api/internal
+// important ::: PII encrypted here data:#sensitive sec:#crypto
 
 // Mixed attributes (combining standalone and category)
-// todo ::: async request handler #async #api:endpoint #critical-path
+// todo ::: async request handler #async api:endpoint #critical-path
 
 // References to attributes (always include #)
-// test ::: performance test #for:#hotpath
-// fixme ::: race condition in handler #refs:#app/init
+// test ::: performance test for:#hotpath
+// fixme ::: race condition in handler refs:#app/init
 ```
 
 ### Search Patterns
 
 ```bash
 # Find all hotpaths (standalone or in category)
-rg "#(perf:)?hotpath"                    # Matches #hotpath and #perf:hotpath
+<!-- todo ::: @claude Review and update the regex patterns in this Search Patterns section to align with the corrected `(perf:#|#)hotpath` logic from the streamlined grammar #regex #needs:fix -->
+rg "(perf:#|#)hotpath"                   # Matches #hotpath and perf:#hotpath
 waymark find #hotpath                    # Simpler: finds all hotpath variations
 
-rg "#(perf:[^#\s]*)?hotpath"            # Also matches #perf:critical,hotpath
+rg "(perf:#[^#\s]*)?hotpath"            # Also matches perf:#critical,hotpath
 waymark find #hotpath                    # Same command handles all cases
 
 # Find all performance-related tags
-rg "#perf:"                              # All performance attributes
+rg "perf:"                               # All performance attributes
 waymark find --category perf             # All perf category tags
 
-rg "#(perf:|hotpath|bottleneck)"         # Performance tags including standalone
+rg "(perf:|#hotpath|#bottleneck)"        # Performance tags including standalone
 waymark find #perf #hotpath #bottleneck  # Multiple tag search (OR by default)
 
 # Find security boundaries (any form)
-rg "#(sec:)?boundary"                    # Matches #boundary and #sec:boundary
+rg "(sec:#|#)boundary"                   # Matches #boundary and sec:#boundary
 waymark find #boundary                   # Finds both forms automatically
 
-rg "#sec:"                               # All security attributes
+rg "sec:"                                # All security attributes
 waymark find --category sec              # All security category tags
 
 # Find experimental code (any form)
-rg "#(status:)?experimental"             # Both forms
+rg "(status:#|#)experimental"            # Both forms
 waymark find #experimental               # Understands both variations
 
 # Complex searches with comma-separated values
-rg "#perf:[^#\s]*hotpath"               # Finds hotpath in any perf: list
-waymark find #perf:hotpath               # Direct search for specific combo
+rg "perf:[^#\s]*hotpath"                # Finds hotpath in any perf: list
+waymark find perf:hotpath                # Direct search for specific combo
 
 # Find by category regardless of order
-rg "#data:(source|transform|sink)"       # Any data flow point
+rg "data:(source|transform|sink)"        # Any data flow point
 waymark find --category data             # All data attributes
 
 # Combining searches
-rg "#code:(pure|sideeffect|async)"      # Any code behavior
-waymark find --any #code:pure #code:async  # Find pure OR async code
-waymark find --all #api:endpoint #async     # Find async endpoints
+rg "code:(pure|sideeffect|async)"       # Any code behavior
+waymark find --any code:pure code:async     # Find pure OR async code
+waymark find --all api:endpoint #async      # Find async endpoints
 ```
 
 These attribute tags create a semantic map that helps both humans and AI agents understand code characteristics at a glance.
 
 ## Canonical Anchors
 
-A pattern for stable reference points in code using canonical anchors:
+The system includes both generic and typed canonical anchors for stable reference points:
 
-### Definition (uses `##`)
+### Generic Anchors
+
+Mark important locations without categorization:
 
 ```javascript
-// Only place ## is used - defining a canonical anchor
-// about ::: ##auth/oauth/google Google OAuth implementation #auth #security
-// about ::: ##billing/tax-engine Tax calculation system #billing #critical
-// example ::: ##patterns/retry Exponential backoff pattern #resilience
-// tldr ::: ##api/webhooks Webhook processing flow #api
+// Generic anchors - mark specific places
+// about ::: ##auth/login Login implementation
+// about ::: ##payment/retry-logic Retry algorithm
+// important ::: ##security/validation Input validation boundary
 ```
 
-### Reference (uses normal `#`)
+### Typed Canonical Anchors
+
+Declare what something IS using `type:` prefix:
 
 ```javascript
-// Reference canonical anchors like any other tag
-// todo ::: implement refresh tokens #refs:#auth/oauth/google
-// fixme ::: race condition #see:#api/webhooks
-// test ::: tax calculation accuracy #for:#billing/tax-engine
+// Typed anchors - declare canonical artifacts
+// tldr ::: ##docs:@acme/auth/api API documentation
+// tldr ::: ##test:@acme/billing/e2e End-to-end billing tests
+// tldr ::: ##config:@acme/database Production database config
+// about ::: ##pkg:@acme/auth Authentication package
+```
+
+### Three-Tier Interaction Model
+
+Typed canonical anchors create three semantically distinct ways to interact with any concept:
+
+#### 1. Identity Declaration (`##type:target`)
+**Purpose**: Establishes file identity and canonical purpose  
+**Meaning**: "This file IS the canonical [type] for [target]"
+
+```markdown
+<!-- In auth-setup.md -->
+<!-- tldr ::: ##docs:@acme/auth/setup Authentication setup guide -->
+```
+
+#### 2. Reference Pointer (`type:target`)
+**Purpose**: Direct reference that implies lookup  
+**Meaning**: "This relates to [target], find canonical [type] by searching for `##type:target`"
+
+```javascript
+// In authentication.js
+// todo ::: implement JWT validation docs:@acme/auth/setup
+```
+
+#### 3. Relational Link (`see:#type:target`)
+**Purpose**: Explicit cross-reference with directional intent  
+**Meaning**: "For more information, see the canonical [type] for [target]"
+
+```javascript
+// In api-gateway.js
+// notice ::: auth middleware required see:#docs:@acme/auth/setup
+```
+
+### When to Use Generic vs Typed Anchors
+
+#### Use Generic Anchors When:
+- Marking a specific location or algorithm
+- Creating stable reference points in code
+- The anchor name is simple (no special characters)
+
+#### Use Typed Anchors When:
+- Declaring canonical artifacts (docs, tests, configs)
+- The name contains special characters (@, :)
+- You want to categorize what something IS
+
+### Common Artifact Types
+
+**Documentation**: `##docs:@acme/auth/api` - API reference  
+**Configuration**: `##config:@acme/database/prod` - Production DB config  
+**Test Suites**: `##test:@acme/payment/integration` - Payment tests  
+**API Specs**: `##api:@acme/billing/v2` - Billing API v2  
+**Data Schemas**: `##schema:@acme/user` - User data model  
+**Runbooks**: `##runbook:@acme/incident/security` - Security incident response  
+
+### Reference Examples
+
+```javascript
+// Reference canonical anchors using relational tags
+// todo ::: implement refresh tokens refs:#auth/oauth/google
+// fixme ::: race condition see:#api/webhooks
+// test ::: tax calculation accuracy for:#billing/tax-engine
+
+// Reference typed anchors directly
+// todo ::: implement JWT validation docs:@acme/auth/setup
+// config ::: auth service deployment config:@acme/auth/prod
+// test ::: auth flow testing test:@acme/auth/integration
 ```
 
 **Rules:**
 
 1. Each canonical anchor `##name` must be unique in the codebase
-2. Canonical anchor name comes immediately after `:::` (like actors)
-3. Hierarchy IS allowed for canonical anchors
-4. Canonical anchors fit best with the `about`, `example`, `tldr`, and `important` markers
+2. Each `##type:target` combination must be unique across the entire repository
+3. Canonical anchor name comes immediately after `:::` (like actors)
+4. Hierarchy IS allowed for canonical anchors
+5. Canonical anchors fit best with the `about`, `example`, `tldr`, and `important` markers
 
 **Rationale:**
 
 - Creates stable reference points better than file:line
 - Hierarchies make sense here - you're creating a namespace
 - Double `##` visually indicates "this is a canonical anchor"
+- Typed anchors enable self-describing architecture
 - Still greppable:
   - `rg "##auth/oauth/google"` finds specific canonical anchor
   - `rg "#auth/oauth/google"` finds canonical anchor and all references
+  - `rg "##docs:"` finds all documentation anchors
 
 ## Updated Core Markers
 
@@ -521,7 +602,7 @@ With the addition of `test`:
 
 ## What We're NOT Doing
 
-1. **No complex tag expansions**: `#urgent` stays `#urgent` and/or using a `!!todo` signaled marker, not `#priority:critical`
+1. **No complex tag expansions**: `#urgent` stays `#urgent` and/or using a `!!todo` signaled marker, not `priority:critical`
 2. **No forced hierarchies**: Teams can use whatever tags make sense
 3. **No ambiguous value policing**: If a team wants `#high`, let them
 4. **No complex configuration**: No tag dictionaries, expansion rules, or pattern files
@@ -542,22 +623,22 @@ These simplifications mean:
 
 ```javascript
 // Work with clear relationships
-// *!todo ::: @alice critical auth fix #blocks:#456,#789 #needs:@security #pr:#234
+// *!todo ::: @alice critical auth fix blocks:#456,#789 needs:@security pr:#234
 
 // Canonical anchor for stable reference point
 // about ::: ##payment/stripe-webhook Stripe webhook handler #payments #critical
 
 // Test with context
-// test ::: webhook retry logic #for:#payment/stripe-webhook #flaky #integration
+// test ::: webhook retry logic for:#payment/stripe-webhook #flaky #integration
 
 // Simple documentation reference
-// note ::: see integration guide #docs:/docs/architecture/auth.md #link:https://docs.stripe.com
+// note ::: see integration guide docs:/docs/architecture/auth.md link:https://docs.stripe.com
 
 // Clean multi-ownership
-// wip ::: implementing RBAC #owner:@security,@alice #branch:feature/rbac
+// wip ::: implementing RBAC owner:@security,@alice branch:feature/rbac
 
 // Clear system impacts
-// !!notice ::: deploying breaking change #affects:#api,#billing,#frontend
+// !!notice ::: deploying breaking change affects:#api,#billing,#frontend
 
 // Performance hotspot (standalone tag for common concept)
 // todo ::: optimize JSON serialization inner loop #hotpath
@@ -566,22 +647,22 @@ These simplifications mean:
 // tldr ::: ##app/init initialize cache and database connections #entrypoint
 
 // Security boundary - where external data enters
-// important ::: validate all user input here #boundary #sec:input
+// important ::: validate all user input here #boundary sec:input
 
 // State management - central source of truth
-// about ::: ##state/user-store global user state management #arch:state,singleton
+// about ::: ##state/user-store global user state management arch:state,singleton
 
 // Error handling - where errors bubble up to
-// important ::: ##errors/handler central error recovery point #error:boundary
+// important ::: ##errors/handler central error recovery point error:boundary
 
 // Data flow - key transformation point
-// note ::: user data transformed for API here #data:transform #api:internal
+// note ::: user data transformed for API here data:transform api:internal
 
 // Integration point - external service connection
-// important ::: ##integration/stripe Stripe webhook handler #api:external #arch:integration
+// important ::: ##integration/stripe Stripe webhook handler api:external arch:integration
 
 // Critical path - must be fast
-// todo ::: optimize query performance #critical-path #data:source
+// todo ::: optimize query performance #critical-path data:source
 
 // Experimental - not production ready
 // wip ::: new search algorithm #experimental
@@ -599,15 +680,15 @@ These simplifications mean:
 
 ### Quick Conversions
 
-- `priority:high` → **REMOVE** - Use signals instead: `!todo` (NOT `#priority:high`)
+- `priority:high` → **REMOVE** - Use signals instead: `!todo` (NOT `priority:high`)
 - `priority:critical` → **REMOVE** - Use signals: `!!todo`
 - `+backend` → `#backend`
-- `fixes:123` → `#fixes:#123` (always include # for references)
-- `branch:feature/auth` → `#branch:feature/auth`
-- `status:blocked` → `#blocked` or `#blocked:#123`
+- `fixes:123` → `fixes:#123` (always include # for references)
+- `branch:feature/auth` → `branch:feature/auth`
+- `status:blocked` → `#blocked` or `blocked:#123`
 - Actors stay the same: `@alice` remains `@alice`
 
-**IMPORTANT**: We are **NOT** using `#priority:high` syntax anymore. Use signals (`!`, `!!`) for priority.
+**IMPORTANT**: We are **NOT** using `priority:high` syntax anymore. Use signals (`!`, `!!`) for priority.
 
 ### Deprecated Markers → v1.0 Core
 
@@ -640,15 +721,16 @@ rg "priority:high"      # NO - old property syntax
 rg "status:blocked"     # NO - old property syntax
 
 # ✅ NEW PATTERNS (USE THESE)
-rg "!todo"              # Find high priority todos
 rg "!!todo"             # Find critical todos
-rg "#p3"                # ONLY for explicit low priority (rare)
+rg "!todo"              # Find high priority todos
+rg "todo"               # Find all todos
+# todo ::: @claude Include an example of a todo search that *doesn't* also match `!!` and `!`
 
 # Finding references (always use #)
 rg "#123\b"             # Find issue 123
-rg "#fixes:#\d+"        # Find all fixes
-rg "#blocked:#\d+"      # Find blocked by issues
-rg "#blocked\b"         # Find items marked as blocked
+rg "fixes:#\d+"         # Find all fixes
+rg "blocked:#\d+"       # Find blocked by issues
+rg "blocked:"           # Find items marked as blocked
 ```
 
 ## Custom Extensions
@@ -677,7 +759,7 @@ This separation means:
 ### Namespace-Style Tags
 
 A powerful pattern emerges from the tag syntax - pseudo-namespaces using colons:
-
+<!-- todo ::: Find a way to go from these "namespace-style tags" to canonical anchors -->
 ```javascript
 // Namespace-style custom tags
 // todo ::: fix validation #wm:fix/property-priority
@@ -706,12 +788,12 @@ To prevent confusion and maintain consistency, certain patterns are forbidden in
 
 ```javascript
 // ❌ Forbidden - duplicates core waymark features
-// todo ::: task #priority:high       // Use: !todo or !!todo
-// todo ::: task #assigned-to:alice   // Use: @alice or #owner:@alice
-// todo ::: task #status:blocked      // Use: #blocked or #blocked:#123
+// todo ::: task priority:high       // Use: !todo or !!todo
+// todo ::: task assigned-to:alice   // Use: @alice or owner:@alice
+// todo ::: task status:blocked      // Use: #blocked or blocked:#123
 
 // ✅ Correct usage
-// !todo ::: critical task @alice #blocked:#456
+// !todo ::: critical task @alice blocked:#456
 ```
 
 ### Validation Modes
@@ -763,7 +845,7 @@ The base spec uses simple comma-separated arrays:
 ```javascript
 // Base pattern (REQUIRED - all tools must support)
 // todo ::: notify team #cc:@alice,@bob,@charlie
-// fixme ::: update systems #affects:#api,#billing,#frontend
+// fixme ::: update systems affects:#api,#billing,#frontend
 ```
 
 However, the grammar acknowledges these alternative patterns as valid extensions:
@@ -774,7 +856,7 @@ However, the grammar acknowledges these alternative patterns as valid extensions
 // wip ::: matrix testing #test:[ubuntu-latest macos-latest windows-latest]
 
 // Parentheses groups - allows spaces after commas
-// notice ::: system update #affects:(api, frontend, mobile)
+// notice ::: system update affects:(api, frontend, mobile)
 // todo ::: test scenarios #cases:(happy-path, edge-case, error-case)
 
 // Quoted values - for complex strings

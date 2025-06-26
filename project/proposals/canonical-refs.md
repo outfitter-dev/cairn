@@ -9,8 +9,8 @@ A proposal for creating self-describing, interconnected knowledge graphs using t
 This system introduces **Typed Canonical Anchors** (`##type:target`) that transform waymarks from simple annotations into a semantic knowledge graph. Files declare their identity and purpose, creating three distinct interaction patterns:
 
 1. **Identity Declaration** (`##type:target`) - "This file IS the canonical X for Y"
-2. **Reference Pointer** (`#type:target`) - "This relates to the canonical X for Y" 
-3. **Relational Link** (`#see:#type:target`) - "For more info, see the canonical X for Y"
+2. **Reference Pointer** (`type:target`) - "This relates to the canonical X for Y" 
+3. **Relational Link** (`see:type:target`) - "For more info, see the canonical X for Y"
 
 The result is a self-describing system where any entity can be traced to its canonical artifacts (docs, configs, tests, schemas) and all usage points.
 
@@ -27,14 +27,14 @@ The system uses `##` for canonical anchors. This design was chosen over alternat
 
 **Visual Distinction**: Impossible to confuse with regular references
 
-- `#docs:schema` vs `##docs:schema` - reference vs canonical definition
+- `docs:schema` vs `##docs:schema` - reference vs canonical definition
 - Double prefix immediately signals "this is the definition"
 
 **Grep Precision**: Clean search patterns without conflicts
 
 ```bash
 rg "@alice"     # All alice references
-rg "#docs:"     # All doc references
+rg "docs:"     # All doc references
 rg "##docs:"    # Just canonical doc anchors
 ```
 
@@ -78,33 +78,33 @@ The typed canonical anchor system creates three semantically distinct ways to in
 // tldr ::: ##schema:@company/user User data structure definition
 ```
 
-#### 2. Reference Pointer (`#type:target`)
+#### 2. Reference Pointer (`type:target`)
 **Purpose**: Direct reference that implies lookup  
 **Location**: Any file  
 **Meaning**: "This relates to [target], find canonical [type] by searching for `##type:target`"
 
 ```javascript
 // In authentication.js
-// todo ::: implement JWT validation #docs:@company/auth/setup
+// todo ::: implement JWT validation docs:@company/auth/setup
 
 // In package.json  
-// note ::: auth service configuration #config:@company/auth
+// note ::: auth service configuration config:@company/auth
 
 // In integration.test.js
-// wip ::: auth flow testing #test:@company/auth
+// wip ::: auth flow testing test:@company/auth
 ```
 
-#### 3. Relational Link (`#see:#type:target`)
+#### 3. Relational Link (`see:type:target`)
 **Purpose**: Explicit cross-reference with directional intent  
 **Location**: Any file  
 **Meaning**: "For more information, see the canonical [type] for [target]"
 
 ```javascript
 // In api-gateway.js
-// notice ::: auth middleware required #see:#docs:@company/auth/setup
+// notice ::: auth middleware required see:docs:@company/auth/setup
 
 // In deployment.yml
-// important ::: requires auth config #see:#config:@company/auth
+// important ::: requires auth config see:config:@company/auth
 ```
 
 ### Artifact Types: Beyond Documentation
@@ -284,13 +284,13 @@ Create intelligent cross-references using the three-tier system:
 // tldr ::: ##test:@company/auth/e2e End-to-end authentication test suite
 
 // === Usage References ===
-// todo ::: implement OAuth flow #docs:@company/auth/api
-// config ::: jwt settings required #config:@company/auth  
-// test ::: auth integration needed #test:@company/auth/e2e
+// todo ::: implement OAuth flow docs:@company/auth/api
+// config ::: jwt settings required config:@company/auth  
+// test ::: auth integration needed test:@company/auth/e2e
 
 // === Cross-References ===
-// notice ::: breaking change in auth #see:#docs:@company/auth/migration
-// important ::: follows security standards #see:#docs:@company/security/guidelines
+// notice ::: breaking change in auth see:docs:@company/auth/migration
+// important ::: follows security standards see:docs:@company/security/guidelines
 ```
 
 **Benefits**:
@@ -318,9 +318,9 @@ rg "##test:"                          # All test suite declarations
 rg "##api:"                           # All API specification declarations
 
 # Reference patterns
-rg "#docs:@company/auth"              # All doc references to auth
-rg "#see:#docs:"                      # All "see also" doc references
-rg "#deps:@company/"                  # All internal dependencies
+rg "docs:@company/auth"              # All doc references to auth
+rg "see:docs:"                      # All "see also" doc references
+rg "deps:@company/"                  # All internal dependencies
 
 # Validation queries
 rg "::: ##"                           # Section starts (potential unclosed)
@@ -348,9 +348,9 @@ Results include:
 - `##docs:@company/auth/overview` - Documentation declarations  
 - `##config:@company/auth` - Configuration declarations
 - `##test:@company/auth/integration` - Test suite declarations
-- `#docs:@company/auth/api` - Documentation references
-- `#config:@company/auth` - Configuration references
-- `#see:#docs:@company/auth/setup` - Cross-references
+- `docs:@company/auth/api` - Documentation references
+- `config:@company/auth` - Configuration references
+- `see:docs:@company/auth/setup` - Cross-references
 
 ### Typed Artifact Discovery
 
@@ -382,19 +382,19 @@ Find usage and cross-references:
 
 ```bash
 # All references to auth documentation
-rg "#docs:@company/auth"
+rg "docs:@company/auth"
 
 # All references to auth configuration  
-rg "#config:@company/auth"
+rg "config:@company/auth"
 
 # All "see also" references to auth docs
-rg "#see:#docs:@company/auth"
+rg "see:docs:@company/auth"
 
 # All dependencies on auth system
-rg "#deps:@company/auth"
+rg "deps:@company/auth"
 
 # All code affected by auth changes
-rg "#affects:@company/auth"
+rg "affects:@company/auth"
 ```
 
 ### Discovery Workflows
@@ -429,13 +429,13 @@ rg "##test:" --no-filename | sed 's/.*##test://' | sort | uniq
 
 ```bash
 # What needs auth documentation?
-rg "#docs:@company/auth"
+rg "docs:@company/auth"
 
 # What references auth config?
-rg "#config:@company/auth"
+rg "config:@company/auth"
 
 # What would be affected by auth changes?
-rg "#affects:@company/auth"
+rg "affects:@company/auth"
 ```
 
 ## Extended Applications
@@ -457,9 +457,9 @@ Document team members and their expertise:
 
 ```javascript
 // === References and Usage ===
-// todo ::: review security implementation #owner:@alice
-// note ::: @alice is our auth expert, consult on security #see:#docs:team/alice-expertise  
-// question ::: JWT implementation approach #ask:@alice
+// todo ::: review security implementation owner:@alice
+// note ::: @alice is our auth expert, consult on security see:docs:team/alice-expertise  
+// question ::: JWT implementation approach ask:@alice
 ```
 
 ### Service-Centered Knowledge
@@ -496,9 +496,9 @@ Complete service documentation with typed artifacts:
 
 ```javascript
 // === Usage and Dependencies ===
-// todo ::: integrate payment processing #deps:@company/billing #docs:@company/billing/api
-// fixme ::: payment timeout on checkout #affects:@company/billing #see:#docs:@company/billing/runbook
-// notice ::: billing service upgrade scheduled #see:#docs:@company/billing/migration
+// todo ::: integrate payment processing deps:@company/billing #docs:@company/billing/api
+// fixme ::: payment timeout on checkout affects:@company/billing see:docs:@company/billing/runbook
+// notice ::: billing service upgrade scheduled see:docs:@company/billing/migration
 ```
 
 ### Project-Centered Coordination
@@ -527,9 +527,9 @@ Organize project artifacts and track progress:
 // tldr ::: ##test:@projects/mobile-redesign/acceptance User acceptance test scenarios
 
 // === Project Work and Progress ===
-// todo ::: implement new navigation #for:@projects/mobile-redesign #docs:@projects/mobile-redesign/design
-// wip ::: user onboarding flow #for:@projects/mobile-redesign #owner:@design-team
-// done ::: login screen redesign #for:@projects/mobile-redesign #see:#docs:@projects/mobile-redesign/timeline
+// todo ::: implement new navigation for:@projects/mobile-redesign #docs:@projects/mobile-redesign/design
+// wip ::: user onboarding flow for:@projects/mobile-redesign owner:@design-team
+// done ::: login screen redesign for:@projects/mobile-redesign see:docs:@projects/mobile-redesign/timeline
 ```
 
 ### Domain-Specific Applications
@@ -670,23 +670,23 @@ Understand exactly what artifacts and code are affected:
 
 ```bash
 # What references auth documentation?
-rg "#docs:@company/auth"
+rg "docs:@company/auth"
 
 # What needs auth configuration?
-rg "#config:@company/auth" 
+rg "config:@company/auth" 
 
 # What would break if we change auth?
-rg "#affects:@company/auth"
+rg "affects:@company/auth"
 
 # What tests cover auth functionality?
-rg "#test:@company/auth"
+rg "test:@company/auth"
 ```
 
 ### 6. Tool Intelligence & Validation
 
 Parsers can understand and validate file relationships:
 
-- **Link Resolution**: Tools can resolve `#docs:@company/auth` to `##docs:@company/auth/overview`
+- **Link Resolution**: Tools can resolve `docs:@company/auth` to `##docs:@company/auth/overview`
 - **Broken Link Detection**: Flag references to non-existent canonical artifacts
 - **Coverage Analysis**: Identify entities missing documentation, tests, or config
 - **Consistency Checks**: Ensure naming conventions across artifact types
@@ -721,7 +721,7 @@ Resolution: Keep one canonical declaration, use cross-references for the other
 ### Documentation Paths: `#docs:@scope/name/topic` or `#docs:pkg:@scope/name/topic`
 
 - `#docs:@waymark/schema/grammar` or `#docs:pkg:@waymark/schema/grammar` - Grammar documentation
-- `#docs:@company/auth/api` or `#docs:pkg:@company/auth/api` - API documentation
+- `docs:@company/auth/api` or `#docs:pkg:@company/auth/api` - API documentation
 - `#docs:@projects/auth-v2/timeline` or `#docs:pkg:@projects/auth-v2/timeline` - Project timeline
 
 **Consistency Note**: Both forms work, but within a project, prefer consistency. The `pkg:` prefix makes searches more explicit when mixing packages with other `@` entities.
@@ -846,36 +846,36 @@ Here's how a complete authentication system would be documented using typed cano
 // === Usage References ===
 
 // In application code
-// todo ::: implement JWT validation #docs:@company/auth/api #config:@company/auth/prod
-// fixme ::: session timeout on mobile #affects:@company/auth #test:@company/auth/e2e
-// note ::: rate limiting required #see:#docs:@company/auth/api
+// todo ::: implement JWT validation docs:@company/auth/api config:@company/auth/prod
+// fixme ::: session timeout on mobile affects:@company/auth test:@company/auth/e2e
+// note ::: rate limiting required see:docs:@company/auth/api
 
 // In infrastructure code  
-// config ::: auth service deployment #config:@company/auth/prod #see:#docs:@company/auth/deployment
-// test ::: auth load testing #test:@company/auth/integration
+// config ::: auth service deployment config:@company/auth/prod see:docs:@company/auth/deployment
+// test ::: auth load testing test:@company/auth/integration
 
 // In other services
-// todo ::: integrate SSO #deps:@company/auth #see:#docs:@company/auth/overview
-// notice ::: auth token format change #affects:@frontend/app,@mobile/app #see:#docs:@company/auth/migration
+// todo ::: integrate SSO deps:@company/auth see:docs:@company/auth/overview
+// notice ::: auth token format change affects:@frontend/app,@mobile/app see:docs:@company/auth/migration
 
 // === Cross-Service References ===
 
 // From user service
-// note ::: depends on auth for user sessions #deps:@company/auth #see:#api:@company/auth/v2
+// note ::: depends on auth for user sessions deps:@company/auth see:api:@company/auth/v2
 
 // From billing service  
-// important ::: requires authenticated requests #deps:@company/auth #see:#docs:@company/auth/api
+// important ::: requires authenticated requests deps:@company/auth see:docs:@company/auth/api
 
 // From admin dashboard
-// config ::: admin auth configuration #see:#config:@company/auth/prod
+// config ::: admin auth configuration see:config:@company/auth/prod
 
 // === Operational References ===
 
 // In monitoring alerts
-// alert ::: auth service down #runbook:@company/auth/incident
+// alert ::: auth service down runbook:@company/auth/incident
 
 // In deployment pipeline
-// deploy ::: auth service rollout #see:#docs:@company/auth/deployment #config:@company/auth/prod
+// deploy ::: auth service rollout see:docs:@company/auth/deployment config:@company/auth/prod
 ```
 
 ## Search Examples
@@ -888,13 +888,13 @@ rg "@company/auth"
 rg "@company/auth"
 
 # All auth documentation
-rg "#docs:@company/auth"
+rg "docs:@company/auth"
 
 # Who owns auth-related work?
-rg "#owner:@\w+.*auth|auth.*#owner:@\w+"
+rg "owner:@\w+.*auth|auth.*owner:@\w+"
 
 # What depends on auth?
-rg "#deps:@company/auth"
+rg "deps:@company/auth"
 ```
 
 ## Benefits Summary
