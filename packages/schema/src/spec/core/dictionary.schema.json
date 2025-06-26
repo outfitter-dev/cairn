@@ -1,0 +1,315 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/waymark-dictionary",
+  "title": "Waymark Dictionary",
+  "description": "Schema for defining a complete waymark vocabulary including markers, tags, and patterns.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to this schema file."
+    },
+    "version": {
+      "type": "string",
+      "description": "Dictionary specification version.",
+      "enum": ["1.0"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of this dictionary.",
+      "examples": ["base", "extended", "project-specific"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of what this dictionary provides."
+    },
+    "extends": {
+      "type": "array",
+      "description": "Other dictionaries this dictionary extends from.",
+      "items": {
+        "type": "string",
+        "format": "uri-reference"
+      }
+    },
+    "signals": {
+      "type": "object",
+      "description": "Available signal prefixes and their meanings.",
+      "properties": {
+        "position": {
+          "type": "object",
+          "description": "Position signals that must appear first.",
+          "patternProperties": {
+            "^[*_]$": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": ["description"]
+            }
+          }
+        },
+        "intensity": {
+          "type": "object",
+          "description": "Intensity signals for priority and clarity.",
+          "patternProperties": {
+            "^[!?\\-]{1,2}$": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "priority": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": ["description"]
+            }
+          }
+        }
+      }
+    },
+    "markers": {
+      "type": "object",
+      "description": "Available waymark markers organized by category.",
+      "properties": {
+        "topLevel": {
+          "type": "object",
+          "description": "File-level overview markers.",
+          "patternProperties": {
+            "^[a-z]+$": {
+              "$ref": "#/$defs/markerDefinition"
+            }
+          }
+        },
+        "work": {
+          "type": "object",
+          "description": "Work item markers.",
+          "patternProperties": {
+            "^[a-z]+$": {
+              "$ref": "#/$defs/markerDefinition"
+            }
+          }
+        },
+        "information": {
+          "type": "object",
+          "description": "Informational markers.",
+          "patternProperties": {
+            "^[a-z]+$": {
+              "$ref": "#/$defs/markerDefinition"
+            }
+          }
+        },
+        "attention": {
+          "type": "object",
+          "description": "Attention-requiring markers.",
+          "patternProperties": {
+            "^[a-z]+$": {
+              "$ref": "#/$defs/markerDefinition"
+            }
+          }
+        }
+      }
+    },
+    "tags": {
+      "type": "object",
+      "description": "Tag definitions and patterns.",
+      "properties": {
+        "simple": {
+          "type": "array",
+          "description": "Simple standalone tags.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9\\-]*$"
+              },
+              "description": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string"
+              }
+            },
+            "required": ["name", "description"]
+          }
+        },
+        "relational": {
+          "type": "object",
+          "description": "Relational tag patterns.",
+          "patternProperties": {
+            "^[a-z]+$": {
+              "$ref": "#/$defs/relationalTagDefinition"
+            }
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "description": "Attribute tag categories and their values.",
+          "patternProperties": {
+            "^[a-z]+$": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "aliases": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": ["name", "description"]
+                  }
+                }
+              },
+              "required": ["description", "values"]
+            }
+          }
+        }
+      }
+    },
+    "patterns": {
+      "type": "object",
+      "description": "Search and validation patterns.",
+      "properties": {
+        "actor": {
+          "type": "string",
+          "description": "Regex pattern for actor references.",
+          "default": "@[a-zA-Z][a-zA-Z0-9\\-_]*"
+        },
+        "anchor": {
+          "type": "string",
+          "description": "Regex pattern for anchor references.",
+          "default": "##[a-zA-Z][a-zA-Z0-9\\-_/]*"
+        },
+        "issue": {
+          "type": "string",
+          "description": "Regex pattern for issue references.",
+          "default": "#\\d+"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "description": "Validation rules for waymark components.",
+      "properties": {
+        "maxDescriptionLength": {
+          "type": "integer",
+          "description": "Maximum length for waymark descriptions.",
+          "default": 200
+        },
+        "allowedCommentStyles": {
+          "type": "array",
+          "description": "Allowed comment patterns for different file types.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "fileTypes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "patterns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["fileTypes", "patterns"]
+          }
+        }
+      }
+    }
+  },
+  "required": ["version", "name", "markers"],
+  "$defs": {
+    "markerDefinition": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "allowedSignals": {
+          "type": "array",
+          "description": "Which signals can be used with this marker.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commonTags": {
+          "type": "array",
+          "description": "Tags commonly used with this marker.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deprecated": {
+          "type": "boolean",
+          "description": "Whether this marker is deprecated.",
+          "default": false
+        },
+        "replacement": {
+          "type": "string",
+          "description": "Suggested replacement if deprecated."
+        }
+      },
+      "required": ["description"]
+    },
+    "relationalTagDefinition": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "valueType": {
+          "type": "string",
+          "enum": ["issue", "actor", "anchor", "string", "path", "url", "commit", "pr", "branch", "featureFlag", "docPath"],
+          "description": "Expected value type for this relational tag."
+        },
+        "multiple": {
+          "type": "boolean",
+          "description": "Whether multiple values are allowed (comma-separated).",
+          "default": false
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether a value is required.",
+          "default": true
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Regex pattern for validating values."
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["description", "valueType"]
+    }
+  }
+}

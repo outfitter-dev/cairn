@@ -1,0 +1,370 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/waymark-grammar",
+  "title": "Waymark Grammar Schema",
+  "description": "Defines the structural grammar rules for waymarks, independent of vocabulary. This schema describes how waymarks are composed, not which specific markers or tags are valid. For extension points like alternative array patterns, see the extensions schema.",
+  "type": "object",
+  "definitions": {
+    "waymarkPattern": {
+      "type": "object",
+      "title": "Waymark Pattern",
+      "description": "The complete structural pattern of a waymark",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Regular expression for the complete waymark structure",
+          "default": "^([*_])?([!?-]{0,2})(\\w+)\\s+:::\\s+((@\\w+|##[\\w/.-]+)\\s+)?(.*)$"
+        },
+        "components": {
+          "type": "object",
+          "properties": {
+            "positionSignal": {
+              "type": "string",
+              "description": "Optional position signal that must come first",
+              "pattern": "^[*_]?$",
+              "examples": ["*", "_", ""]
+            },
+            "intensitySignal": {
+              "type": "string",
+              "description": "Optional intensity/semantic signals",
+              "pattern": "^[!?-]{0,2}$",
+              "examples": ["!", "!!", "?", "??", "-", "--", ""]
+            },
+            "marker": {
+              "type": "string",
+              "description": "The marker word (any valid identifier)",
+              "pattern": "^\\w+$",
+              "examples": ["todo", "fixme", "note", "tldr"]
+            },
+            "separator": {
+              "type": "string",
+              "description": "The waymark separator with required whitespace",
+              "pattern": "^\\s+:::\\s+$",
+              "default": " ::: "
+            },
+            "primarySubject": {
+              "type": "object",
+              "description": "Optional primary subject (actor or anchor) that must be first after separator",
+              "oneOf": [
+                { "$ref": "#/definitions/actorPattern" },
+                { "$ref": "#/definitions/anchorPattern" }
+              ]
+            },
+            "description": {
+              "type": "string",
+              "description": "Free-form description text"
+            },
+            "tags": {
+              "type": "array",
+              "description": "Optional tags that can appear anywhere in the description",
+              "items": {
+                "oneOf": [
+                  { "$ref": "#/definitions/simpleTagPattern" },
+                  { "$ref": "#/definitions/relationalTagPattern" }
+                ]
+              }
+            }
+          },
+          "required": ["marker", "separator"]
+        }
+      }
+    },
+    "signalRules": {
+      "type": "object",
+      "title": "Signal Composition Rules",
+      "description": "Rules for how signals can be combined",
+      "properties": {
+        "positionSignals": {
+          "type": "object",
+          "description": "Signals that must appear first, before any other signals",
+          "properties": {
+            "allowed": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["*", "_"]
+              }
+            },
+            "semantics": {
+              "type": "object",
+              "properties": {
+                "*": { "const": "Branch-scoped work (must be done before merge)" },
+                "_": { "const": "Ignored marker (reserved for tooling)" }
+              }
+            }
+          }
+        },
+        "intensitySignals": {
+          "type": "object",
+          "description": "Signals that indicate priority or uncertainty",
+          "properties": {
+            "allowed": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["!", "!!", "?", "??", "-", "--"]
+              }
+            },
+            "semantics": {
+              "type": "object",
+              "properties": {
+                "!": { "const": "High priority/important" },
+                "!!": { "const": "Critical/urgent" },
+                "?": { "const": "Needs clarification" },
+                "??": { "const": "Highly uncertain" },
+                "-": { "const": "Mark for removal" },
+                "--": { "const": "Remove ASAP" }
+              }
+            }
+          }
+        },
+        "combinationRules": {
+          "type": "array",
+          "description": "Valid signal combinations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": { "type": "string" },
+              "example": { "type": "string" },
+              "meaning": { "type": "string" }
+            }
+          },
+          "examples": [
+            {
+              "pattern": "*!",
+              "example": "*!todo",
+              "meaning": "High-priority branch work"
+            },
+            {
+              "pattern": "*!!",
+              "example": "*!!fixme",
+              "meaning": "Critical branch work"
+            }
+          ]
+        }
+      }
+    },
+    "actorPattern": {
+      "type": "object",
+      "title": "Actor Pattern",
+      "description": "Pattern for actor references (@name)",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Regular expression for actor syntax",
+          "default": "^@[a-zA-Z0-9_-]+$"
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "mustBeFirstToken": {
+              "type": "boolean",
+              "description": "When used as primary subject, must be first token after separator",
+              "default": true
+            },
+            "allowedCharacters": {
+              "type": "string",
+              "description": "Characters allowed in actor names",
+              "default": "alphanumeric, underscore, hyphen"
+            }
+          }
+        },
+        "examples": ["@alice", "@bob-smith", "@agent_1"]
+      }
+    },
+    "anchorPattern": {
+      "type": "object",
+      "title": "Anchor Pattern",
+      "description": "Pattern for anchor definitions (##name)",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Regular expression for anchor syntax",
+          "default": "^##[a-zA-Z0-9/_.-]+$"
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "mustBeFirstToken": {
+              "type": "boolean",
+              "description": "When defining an anchor, must be first token after separator",
+              "default": true
+            },
+            "allowedCharacters": {
+              "type": "string",
+              "description": "Characters allowed in anchor names",
+              "default": "alphanumeric, forward slash, underscore, period, hyphen"
+            },
+            "namespacing": {
+              "type": "boolean",
+              "description": "Supports path-like namespacing with forward slashes",
+              "default": true
+            }
+          }
+        },
+        "examples": ["##auth/login", "##api.v2", "##utils/string-helpers"]
+      }
+    },
+    "simpleTagPattern": {
+      "type": "object",
+      "title": "Simple Tag Pattern",
+      "description": "Pattern for simple tags (#tag)",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Regular expression for simple tag syntax",
+          "default": "^#[a-zA-Z0-9_-]+$"
+        },
+        "examples": ["#backend", "#security", "#hotpath", "#api"]
+      }
+    },
+    "relationalTagPattern": {
+      "type": "object",
+      "title": "Relational Tag Pattern",
+      "description": "Pattern for key-value tags with various value types",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Regular expression for relational tag syntax",
+          "default": "^#[a-zA-Z0-9_-]+:.+$"
+        },
+        "valueTypes": {
+          "type": "array",
+          "description": "Types of values that can follow the colon",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "pattern": { "type": "string" },
+              "examples": { 
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          },
+          "default": [
+            {
+              "type": "reference",
+              "pattern": "^#\\d+$",
+              "examples": ["#fixes:#123", "#blocks:#456"]
+            },
+            {
+              "type": "actor",
+              "pattern": "^@[a-zA-Z0-9_-]+$",
+              "examples": ["#owner:@alice", "#assignee:@bob"]
+            },
+            {
+              "type": "simple",
+              "pattern": "^[a-zA-Z0-9_.-]+$",
+              "examples": ["#priority:high", "#status:wip"]
+            },
+            {
+              "type": "array",
+              "pattern": "^[^,]+(,[^,]+)*$",
+              "examples": ["#cc:@alice,@bob", "#affects:#billing,#auth"]
+            }
+          ]
+        },
+        "arrayConstraints": {
+          "type": "object",
+          "properties": {
+            "separator": {
+              "type": "string",
+              "description": "Character used to separate array elements",
+              "const": ","
+            },
+            "noSpaces": {
+              "type": "boolean",
+              "description": "Spaces are not allowed between array elements",
+              "const": true
+            }
+          }
+        }
+      }
+    },
+    "whitespaceRules": {
+      "type": "object",
+      "title": "Whitespace Requirements",
+      "description": "Critical whitespace rules for waymark parsing",
+      "properties": {
+        "beforeSeparator": {
+          "type": "object",
+          "properties": {
+            "required": { "const": true },
+            "minSpaces": { "const": 1 },
+            "pattern": { "const": "\\s+" }
+          }
+        },
+        "afterSeparator": {
+          "type": "object",
+          "properties": {
+            "required": { "const": true },
+            "minSpaces": { "const": 1 },
+            "pattern": { "const": "\\s+" }
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "default": "Required whitespace prevents false positives and ensures consistent parsing"
+        }
+      }
+    },
+    "anatomyExample": {
+      "type": "object",
+      "title": "Complete Waymark Anatomy",
+      "description": "Example showing all possible components",
+      "properties": {
+        "example": {
+          "type": "string",
+          "default": "*!todo ::: @alice implement caching for API responses #backend #perf:critical #fixes:#123"
+        },
+        "breakdown": {
+          "type": "object",
+          "properties": {
+            "positionSignal": { "const": "*" },
+            "intensitySignal": { "const": "!" },
+            "marker": { "const": "todo" },
+            "separator": { "const": " ::: " },
+            "primarySubject": { "const": "@alice" },
+            "description": { "const": "implement caching for API responses" },
+            "tags": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["#backend", "#perf:critical", "#fixes:#123"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": {
+      "type": "string",
+      "description": "Grammar version",
+      "default": "1.0"
+    },
+    "grammar": {
+      "type": "object",
+      "properties": {
+        "pattern": { "$ref": "#/definitions/waymarkPattern" },
+        "signals": { "$ref": "#/definitions/signalRules" },
+        "actors": { "$ref": "#/definitions/actorPattern" },
+        "anchors": { "$ref": "#/definitions/anchorPattern" },
+        "tags": {
+          "type": "object",
+          "properties": {
+            "simple": { "$ref": "#/definitions/simpleTagPattern" },
+            "relational": { "$ref": "#/definitions/relationalTagPattern" }
+          }
+        },
+        "whitespace": { "$ref": "#/definitions/whitespaceRules" },
+        "examples": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/anatomyExample" }
+        }
+      }
+    }
+  },
+  "required": ["$schema", "version", "grammar"]
+}

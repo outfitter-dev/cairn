@@ -1,0 +1,9 @@
+{
+  "$schema": "https://waymarks.dev/schema/config/waymark-config",
+  "version": "1.0",
+  "sign": ":m:",
+  "issues": {
+    "url": "https://github.com/owner/repo/issues/{id}"
+  },
+  "_comment": "Example using :m: sign to avoid conflicts with ::: in codebase"
+}

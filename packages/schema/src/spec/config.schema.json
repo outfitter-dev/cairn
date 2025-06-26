@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/config",
+  "title": "Waymark Configuration",
+  "description": "Optional configuration for customizing waymark behavior in a project.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Waymark spec version.",
+      "enum": ["1.0"]
+    },
+    "sign": {
+      "type": "string",
+      "description": "Custom waymark sign if ::: conflicts with your codebase.",
+      "pattern": "^[^a-zA-Z0-9\\s]{3,}$",
+      "default": ":::",
+      "examples": [":m:", ">>>", "~~~", "===", "---"]
+    },
+    "issues": {
+      "type": "object",
+      "description": "Issue tracking configuration.",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri-template",
+          "description": "URL template for issue links. Use {id} placeholder (e.g., 'https://github.com/owner/repo/issues/{id}')."
+        },
+        "docs": {
+          "type": "string",
+          "description": "Path to internal issue documentation (e.g., './docs/issues.md')."
+        }
+      }
+    },
+    "dictionaries": {
+      "type": "array",
+      "description": "Names of built-in dictionaries to use for marker and tag validation. Determines which markers and tags are considered valid.",
+      "default": ["base"],
+      "items": {
+        "type": "string",
+        "enum": ["base", "extended", "minimal"]
+      },
+      "examples": [
+        ["base"],
+        ["base", "extended"],
+        ["minimal"]
+      ]
+    },
+    "customDictionaries": {
+      "type": "array",
+      "description": "Paths to custom dictionary files that define additional valid markers and tags. Paths are relative to the config file.",
+      "items": {
+        "type": "string",
+        "pattern": "^[^<>:\"|?*]+\\.(json|jsonc|yaml|yml)$"
+      },
+      "examples": [
+        ["./waymark-dictionaries/team-markers.json"],
+        ["../shared/waymark-dict.yaml", "./project-specific.json"]
+      ]
+    },
+    "validation": {
+      "type": "object",
+      "description": "Controls how waymark validation handles custom markers and tags not found in the configured dictionaries.",
+      "properties": {
+        "customMarkers": {
+          "type": "string",
+          "description": "How to handle markers not defined in any loaded dictionary. 'allow' permits any marker, 'warn' shows warnings, 'error' treats as validation errors.",
+          "enum": ["allow", "warn", "error"],
+          "default": "warn"
+        },
+        "customTags": {
+          "type": "string",
+          "description": "How to handle tags not defined in any loaded dictionary. 'allow' permits any tag, 'warn' shows warnings, 'error' treats as validation errors.",
+          "enum": ["allow", "warn", "error"],
+          "default": "allow"
+        }
+      },
+      "additionalProperties": false
+    },
+    "customDefinitions": {
+      "description": "Rules for validating custom markers and tags. When validation mode is 'warn' or 'error', these rules determine what custom markers/tags are acceptable.",
+      "oneOf": [
+        {
+          "type": "string",
+          "description": "Use a preset custom definition ruleset",
+          "enum": ["strict", "standard", "liberal"],
+          "default": "standard"
+        },
+        {
+          "$ref": "./core/custom-definitions.schema.json",
+          "description": "Detailed custom definition rules"
+        }
+      ],
+      "examples": [
+        "liberal",
+        {
+          "customMarkers": {
+            "minLength": 4,
+            "forbiddenPrefixes": ["wm", "waymark"]
+          },
+          "customTags": {
+            "simple": {
+              "allowHierarchical": false
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": ["version"]
+}

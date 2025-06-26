@@ -1,0 +1,8 @@
+{
+  "$schema": "https://waymarks.dev/schema/config/waymark-config",
+  "version": "1.0",
+  "issues": {
+    "url": "https://github.com/owner/repo/issues/{id}"
+  },
+  "_comment": "Basic configuration with default ::: sign and GitHub issues"
+}

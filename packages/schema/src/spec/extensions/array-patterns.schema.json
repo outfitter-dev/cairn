@@ -1,0 +1,330 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/extensions/array-patterns",
+  "title": "Waymark Array Pattern Extensions",
+  "description": "Alternative ways to express array values beyond the base comma-separated pattern",
+  "type": "object",
+  "properties": {
+    "base": {
+      "type": "object",
+      "description": "The required base pattern that all tools MUST support",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "const": "value1,value2,value3",
+          "description": "Comma-separated values with no spaces"
+        },
+        "separator": {
+          "type": "string",
+          "const": ",",
+          "description": "The separator character"
+        },
+        "example": {
+          "type": "string",
+          "const": "#cc:@alice,@bob,@charlie"
+        },
+        "support": {
+          "type": "string",
+          "const": "REQUIRED",
+          "description": "All waymark tools MUST support this pattern"
+        }
+      },
+      "required": ["pattern", "separator", "support"]
+    },
+    "extensions": {
+      "type": "array",
+      "description": "Valid alternative patterns that tools MAY support",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Extension pattern name"
+          },
+          "pattern": {
+            "type": "string",
+            "description": "The pattern format"
+          },
+          "regex": {
+            "type": "string",
+            "description": "Regex to match this pattern"
+          },
+          "separator": {
+            "type": "string",
+            "description": "Value separator for this pattern"
+          },
+          "example": {
+            "type": "string",
+            "description": "Example usage"
+          },
+          "useCase": {
+            "type": "string",
+            "description": "When to use this pattern"
+          },
+          "support": {
+            "type": "string",
+            "enum": ["OPTIONAL", "RECOMMENDED"],
+            "default": "OPTIONAL"
+          }
+        },
+        "required": ["name", "pattern", "example"]
+      }
+    },
+    "patterns": {
+      "type": "object",
+      "description": "Predefined extension patterns",
+      "properties": {
+        "bracketed": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "bracketed" },
+            "pattern": { "const": "[value1 value2 value3]" },
+            "regex": { "const": "\\[([^\\]]+)\\]" },
+            "separator": { "const": " " },
+            "example": { "const": "#deps:[lodash react typescript]" },
+            "useCase": { "const": "Space-separated values, clear boundaries" },
+            "grepPattern": { "const": "#tag:\\[" },
+            "queryPatterns": {
+              "type": "object",
+              "properties": {
+                "contains": { "const": "#\\w+:\\[[^\\]]*{value}[^\\]]*\\]" },
+                "startsWith": { "const": "#\\w+:\\[{value}[^\\]]*\\]" },
+                "exact": { "const": "#\\w+:\\[[^\\]]*\\b{value}\\b[^\\]]*\\]" }
+              },
+              "description": "Patterns to find specific values within bracketed arrays"
+            }
+          }
+        },
+        "parentheses": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "parentheses" },
+            "pattern": { "const": "(value1, value2, value3)" },
+            "regex": { "const": "\\(([^)]+)\\)" },
+            "separator": { "const": ",\\s*" },
+            "example": { "const": "#affects:(api, frontend, mobile)" },
+            "useCase": { "const": "Grouped values, optional spaces after commas" },
+            "grepPattern": { "const": "#tag:\\(" },
+            "queryPatterns": {
+              "type": "object",
+              "properties": {
+                "contains": { "const": "#\\w+:\\([^)]*{value}[^)]*\\)" },
+                "exact": { "const": "#\\w+:\\([^)]*\\b{value}\\b[^)]*\\)" }
+              }
+            }
+          }
+        },
+        "quoted": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "quoted" },
+            "pattern": { "const": "\"value1, value2, value3\"" },
+            "regex": { "const": "\"([^\"]+)\"" },
+            "separator": { "const": ",\\s*" },
+            "example": { "const": "#description:\"Bug fix, performance improvement, refactor\"" },
+            "useCase": { "const": "Values containing commas or special characters" },
+            "grepPattern": { "const": "#tag:\"" },
+            "queryPatterns": {
+              "type": "object",
+              "properties": {
+                "contains": { "const": "#\\w+:\"[^\"]*{value}[^\"]*\"" }
+              }
+            }
+          }
+        },
+        "objectLike": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "objectLike" },
+            "pattern": { "const": "{key1:val1, key2:val2}" },
+            "regex": { "const": "\\{([^}]+)\\}" },
+            "example": { "const": "#config:{env:prod, debug:false}" },
+            "useCase": { "const": "Key-value pairs, configuration-like data" },
+            "grepPattern": { "const": "#tag:\\{" },
+            "queryPatterns": {
+              "type": "object",
+              "properties": {
+                "hasKey": { "const": "#\\w+:\\{[^}]*{key}:[^}]*\\}" },
+                "hasValue": { "const": "#\\w+:\\{[^}]*:{value}[^}]*\\}" },
+                "hasKeyValue": { "const": "#\\w+:\\{[^}]*{key}:{value}[^}]*\\}" }
+              }
+            }
+          }
+        },
+        "pipeline": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "pipeline" },
+            "pattern": { "const": "[step1 -> step2 -> step3]" },
+            "regex": { "const": "\\[([^\\]]+)\\]" },
+            "separator": { "const": "\\s*->\\s*" },
+            "example": { "const": "#workflow:[build -> test -> deploy]" },
+            "useCase": { "const": "Ordered sequences, process flows" },
+            "grepPattern": { "const": "#tag:\\[.*->" },
+            "queryPatterns": {
+              "type": "object",
+              "properties": {
+                "hasStep": { "const": "#\\w+:\\[[^\\]]*{value}[^\\]]*\\]" },
+                "startsWithStep": { "const": "#\\w+:\\[{value}\\s*->" },
+                "endsWithStep": { "const": "#\\w+:\\[.*->\\s*{value}\\]" }
+              }
+            }
+          }
+        },
+        "angleBrackets": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "angleBrackets" },
+            "pattern": { "const": "<value1 value2 value3>" },
+            "regex": { "const": "\\<([^>]+)\\>" },
+            "separator": { "const": " " },
+            "example": { "const": "#cc:<alice bob charlie>" },
+            "useCase": { "const": "Space-separated values inside angle brackets" },
+            "grepPattern": { "const": "#tag:\\<" },
+            "queryPatterns": {
+              "type": "object",
+              "properties": {
+                "contains": { "const": "#\\w+:<[^>]*{value}[^>]*>" },
+                "exact": { "const": "#\\w+:<[^>]*\\b{value}\\b[^>]*>" }
+              }
+            }
+          }
+        },
+        "pipeSeparated": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "pipeSeparated" },
+            "pattern": { "const": "value1|value2|value3" },
+            "regex": { "const": "[^|]+(\\\\|[^|]+)+" },
+            "separator": { "const": "|" },
+            "example": { "const": "#env:prod|staging|dev" },
+            "useCase": { "const": "Pipe-separated values with no spaces" },
+            "grepPattern": { "const": "#tag:.*\\|" },
+            "queryPatterns": {
+              "type": "object",
+              "properties": {
+                "contains": { "const": "#\\w+:[^|]*{value}[^|]*\\|" },
+                "exact": { "const": "#\\w+:[^|]*\\b{value}\\b[^|]*" }
+              }
+            }
+          }
+        },
+        "semicolonSeparated": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "semicolonSeparated" },
+            "pattern": { "const": "value1;value2;value3" },
+            "regex": { "const": "[^;]+(;[^;]+)+" },
+            "separator": { "const": ";" },
+            "example": { "const": "#deps:lodash;react;typescript" },
+            "useCase": { "const": "Semicolon-separated values" },
+            "grepPattern": { "const": "#tag:.*;" }
+          }
+        },
+        "jsonArray": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "jsonArray" },
+            "pattern": { "const": "[\"value1\",\"value2\",\"value3\"]" },
+            "regex": { "const": "\\[[^\\]]+\\]" },
+            "separator": { "const": "\",\\s*\"" },
+            "example": { "const": "#cases:[\"happy\",\"edge\",\"error\"]" },
+            "useCase": { "const": "Valid JSON array for tooling interchange" },
+            "grepPattern": { "const": "#tag:\\[\\\"" }
+          }
+        },
+        "range": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "range" },
+            "pattern": { "const": "start..end" },
+            "regex": { "const": "[^\\.\\s]+\\.\\.[^\\.\\s]+" },
+            "separator": { "const": ".." },
+            "example": { "const": "#ports:8000..8005" },
+            "useCase": { "const": "Numeric or alphanumeric ranges" },
+            "grepPattern": { "const": "#tag:.*\\.\\." }
+          }
+        },
+        "plusSeparated": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "plusSeparated" },
+            "pattern": { "const": "value1+value2+value3" },
+            "regex": { "const": "[^+]+(\\\\+[^+]+)+" },
+            "separator": { "const": "+" },
+            "example": { "const": "#flags:read+write+delete" },
+            "useCase": { "const": "Plus-separated capability strings" },
+            "grepPattern": { "const": "#tag:.*\\+" }
+          }
+        }
+      }
+    },
+    "principles": {
+      "type": "array",
+      "description": "Core principles for array pattern extensions",
+      "items": { "type": "string" },
+      "default": [
+        "All patterns MUST remain greppable",
+        "Tools SHOULD support the base pattern",
+        "Tools MAY support any extensions",
+        "Start with base pattern, extend only when needed",
+        "Document which patterns your tool supports"
+      ]
+    },
+    "supportLevels": {
+      "type": "object",
+      "description": "Levels of tool support for array patterns",
+      "properties": {
+        "level0": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "String Treatment" },
+            "description": { "const": "Treats array value as opaque string" },
+            "capabilities": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["Store raw value", "No parsing"]
+            }
+          }
+        },
+        "level1": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "Pattern Recognition" },
+            "description": { "const": "Recognizes array pattern type" },
+            "capabilities": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["Identify pattern type", "Validate pattern syntax"]
+            }
+          }
+        },
+        "level2": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "Value Parsing" },
+            "description": { "const": "Parses individual array values" },
+            "capabilities": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["Extract values", "Handle separators", "Return array"]
+            }
+          }
+        },
+        "level3": {
+          "type": "object",
+          "properties": {
+            "name": { "const": "Semantic Understanding" },
+            "description": { "const": "Understands value types and meanings" },
+            "capabilities": {
+              "type": "array",
+              "items": { "type": "string" },
+              "default": ["Validate value types", "Resolve references", "Rich tooling"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["base", "principles"]
+}

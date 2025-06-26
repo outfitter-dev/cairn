@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/tags/affects",
+  "title": "Affects Tag",
+  "description": "Tag indicating what systems or components are affected.",
+  "allOf": [
+    {
+      "$ref": "https://waymarks.dev/schema/base/tag-base"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "tag"
+        },
+        "name": {
+          "const": "affects"
+        },
+        "value": {
+          "description": "System/component references or tags that are affected.",
+          "type": "string",
+          "pattern": "^#[^,]+(,#[^,]+)*$"
+        }
+      },
+      "required": ["kind", "name", "value"]
+    }
+  ]
+}

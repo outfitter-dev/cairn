@@ -1,0 +1,447 @@
+{
+  "$schema": "../spec/core/dictionary.schema.json",
+  "version": "1.0",
+  "name": "base",
+  "description": "Base waymark dictionary with core markers and tags for v1.0",
+  "signals": {
+    "position": {
+      "*": {
+        "description": "Branch work - must be completed before merge",
+        "priority": 10
+      },
+      "_": {
+        "description": "Ignore marker (reserved for future use)",
+        "priority": 20
+      }
+    },
+    "intensity": {
+      "!": {
+        "description": "Important/high priority",
+        "level": 1
+      },
+      "!!": {
+        "description": "Critical/urgent priority",
+        "level": 2
+      },
+      "?": {
+        "description": "Needs clarification",
+        "level": 1
+      },
+      "??": {
+        "description": "Highly uncertain",
+        "level": 2
+      },
+      "-": {
+        "description": "Mark for removal",
+        "level": 1
+      },
+      "--": {
+        "description": "Remove ASAP",
+        "level": 2
+      }
+    }
+  },
+  "markers": {
+    "tldr": {
+      "category": "primary",
+      "description": "Brief summary or overview",
+      "placement": ["file-top", "module-top", "class-top"],
+      "examples": ["Brief API client for external services", "User authentication module"]
+    },
+    "todo": {
+      "category": "work",
+      "description": "Task to be completed",
+      "allowSignals": true,
+      "examples": ["implement error handling", "@alice add validation"]
+    },
+    "fixme": {
+      "category": "work",
+      "description": "Bug that needs fixing",
+      "allowSignals": true,
+      "examples": ["memory leak in parser", "race condition on startup"]
+    },
+    "refactor": {
+      "category": "work",
+      "description": "Code that needs improvement",
+      "allowSignals": true,
+      "examples": ["extract common logic", "simplify nested conditions"]
+    },
+    "review": {
+      "category": "work",
+      "description": "Needs code review",
+      "allowSignals": true,
+      "examples": ["@security-team check auth logic", "performance implications unclear"]
+    },
+    "wip": {
+      "category": "work",
+      "description": "Work in progress",
+      "allowSignals": true,
+      "examples": ["implementing new algorithm", "partial implementation"]
+    },
+    "stub": {
+      "category": "work",
+      "description": "Placeholder implementation",
+      "examples": ["returns mock data for now", "simplified logic - enhance later"]
+    },
+    "temp": {
+      "category": "work",
+      "description": "Temporary code",
+      "allowSignals": true,
+      "examples": ["workaround for upstream bug", "demo code - remove after meeting"]
+    },
+    "done": {
+      "category": "work",
+      "description": "Completed work (usually removed)",
+      "deprecated": true,
+      "deprecationMessage": "Remove waymarks when work is complete instead of marking as done"
+    },
+    "deprecated": {
+      "category": "work",
+      "description": "Code marked for future removal",
+      "examples": ["use newMethod() instead", "will be removed in v2.0"]
+    },
+    "test": {
+      "category": "work",
+      "description": "Test-related marker",
+      "examples": ["flaky test - investigate", "add edge case coverage"]
+    },
+    "note": {
+      "category": "information",
+      "description": "General informational note",
+      "examples": ["algorithm from paper X", "optimization possible here"]
+    },
+    "idea": {
+      "category": "information",
+      "description": "Future possibility or enhancement",
+      "examples": ["could use caching here", "consider async approach"]
+    },
+    "about": {
+      "category": "information",
+      "description": "Describes context or purpose",
+      "examples": ["##auth/handler Main authentication flow", "handles user registration"]
+    },
+    "example": {
+      "category": "information",
+      "description": "Usage example or demonstration",
+      "examples": ["api.get('/users', auth)", "pattern for error handling"]
+    },
+    "notice": {
+      "category": "attention",
+      "description": "Important information",
+      "allowSignals": true,
+      "examples": ["breaking change in next release", "external dependency required"]
+    },
+    "risk": {
+      "category": "attention",
+      "description": "Potential issue or concern",
+      "allowSignals": true,
+      "examples": ["untested edge case", "possible race condition"]
+    },
+    "important": {
+      "category": "attention",
+      "description": "Critical information",
+      "allowSignals": true,
+      "examples": ["do not modify without updating tests", "security implications"]
+    }
+  },
+  "tags": {
+    "simple": [
+      "backend",
+      "frontend",
+      "api",
+      "auth",
+      "security",
+      "performance",
+      "ui",
+      "ux",
+      "database",
+      "testing",
+      "docs",
+      "bug",
+      "feature",
+      "enhancement",
+      "breaking",
+      "hotpath",
+      "boundary",
+      "async",
+      "experimental",
+      "stable",
+      "legacy",
+      "p1",
+      "p2",
+      "p3"
+    ],
+    "relational": {
+      "fixes": {
+        "category": "work-tracking",
+        "valueType": "issue-reference",
+        "description": "References issue(s) this work fixes",
+        "examples": ["#123", "#123,#456"]
+      },
+      "closes": {
+        "category": "work-tracking",
+        "valueType": "issue-reference",
+        "description": "References issue(s) this work closes",
+        "examples": ["#123", "#789"]
+      },
+      "blocks": {
+        "category": "work-tracking",
+        "valueType": "issue-reference",
+        "description": "References issue(s) this blocks",
+        "examples": ["#456", "#123,#789"]
+      },
+      "blocked": {
+        "category": "work-tracking",
+        "valueType": "issue-reference",
+        "description": "References what blocks this work",
+        "examples": ["#789", "#external-api"]
+      },
+      "depends": {
+        "category": "work-tracking",
+        "valueType": "reference",
+        "description": "References dependencies",
+        "examples": ["#123", "#auth-module", "@external-lib"]
+      },
+      "issue": {
+        "category": "work-tracking",
+        "valueType": "issue-reference",
+        "description": "General issue reference",
+        "examples": ["#123", "#JIRA-456"]
+      },
+      "pr": {
+        "category": "work-tracking",
+        "valueType": "issue-reference",
+        "description": "Pull request reference",
+        "examples": ["#234", "#567"]
+      },
+      "commit": {
+        "category": "work-tracking",
+        "valueType": "string",
+        "pattern": "^[0-9a-f]{7,40}$",
+        "description": "Git commit reference",
+        "examples": ["abc123", "1a2b3c4d5e6f"]
+      },
+      "branch": {
+        "category": "work-tracking",
+        "valueType": "string",
+        "description": "Git branch reference",
+        "examples": ["feature/auth", "hotfix/security-patch"]
+      },
+      "owner": {
+        "category": "assignment",
+        "valueType": "actor-reference",
+        "description": "Primary owner/assignee",
+        "examples": ["@alice", "@alice,@bob"]
+      },
+      "cc": {
+        "category": "assignment",
+        "valueType": "actor-reference",
+        "allowMultiple": true,
+        "description": "Additional people to notify",
+        "examples": ["@charlie", "@security-team,@ops", "[Note: Arrays can use extension patterns like [alice bob] or (alice, bob)]"]
+      },
+      "for": {
+        "category": "context",
+        "valueType": "reference",
+        "description": "What this is for/related to",
+        "examples": ["#auth/login", "#user-dashboard", "@customer"]
+      },
+      "affects": {
+        "category": "context",
+        "valueType": "reference",
+        "allowMultiple": true,
+        "description": "What this affects or impacts",
+        "examples": ["#api", "#billing,#payments", "(api, frontend, mobile)"]
+      },
+      "refs": {
+        "category": "context",
+        "valueType": "reference",
+        "allowMultiple": true,
+        "description": "General references",
+        "examples": ["#auth/oauth", "#RFC-123", "@stdlib/crypto"]
+      },
+      "link": {
+        "category": "external",
+        "valueType": "url",
+        "description": "External link reference",
+        "examples": ["https://example.com/docs", "https://github.com/org/repo/issues/123"]
+      },
+      "docs": {
+        "category": "external",
+        "valueType": "path",
+        "description": "Documentation reference",
+        "examples": ["/docs/api.md", "./README.md", "https://docs.example.com"]
+      },
+      "ticket": {
+        "category": "work-tracking",
+        "valueType": "string",
+        "description": "Generic ticket reference for non-specific tracking systems",
+        "examples": ["#SUP-789", "#DESK-1234"]
+      },
+      "followup": {
+        "category": "work-tracking",
+        "valueType": "issue-reference",
+        "description": "Follow-up work to be addressed later",
+        "examples": ["#456", "#next-sprint"]
+      },
+      "needs": {
+        "category": "context",
+        "valueType": "reference",
+        "allowMultiple": true,
+        "description": "Flexible requirements or dependencies",
+        "examples": ["@alice", "#api-key", "#auth,#rbac"]
+      },
+      "relates": {
+        "category": "context",
+        "valueType": "reference",
+        "allowMultiple": true,
+        "description": "Generic relationship (loosely related to)",
+        "examples": ["#billing", "#RFC-45", "#payment/stripe"]
+      },
+      "see": {
+        "category": "context",
+        "valueType": "reference",
+        "allowMultiple": true,
+        "description": "General cross-reference",
+        "examples": ["#billing/tax", "RFC-45", "#auth/oauth"]
+      },
+      "replaces": {
+        "category": "context",
+        "valueType": "reference",
+        "description": "Marks code or element that this supersedes/replaces",
+        "examples": ["#old-auth", "#legacy-payment"]
+      },
+      "test": {
+        "category": "work-tracking",
+        "valueType": "string",
+        "description": "Test suite reference",
+        "examples": ["auth-suite", "integration-tests"]
+      },
+      "feat": {
+        "category": "context",
+        "valueType": "string",
+        "description": "Feature flag reference",
+        "examples": ["chat-v2", "new-dashboard"]
+      },
+      "version": {
+        "category": "context",
+        "valueType": "string",
+        "pattern": "^v?\d+\.\d+(\.\d+)?(-.*)?$",
+        "description": "Version reference",
+        "examples": ["v1.2.3", "2.0-beta", "3.0.0-rc1"]
+      }
+    },
+    "attribute": {
+      "perf": {
+        "description": "Performance characteristics",
+        "attributes": {
+          "hotpath": "Performance-critical code path",
+          "critical-path": "On the critical execution path",
+          "bottleneck": "Known performance bottleneck",
+          "optimized": "Has been performance optimized",
+          "memory-intensive": "Uses significant memory",
+          "cpu-intensive": "Uses significant CPU",
+          "io-intensive": "Heavy I/O operations",
+          "network-intensive": "Heavy network operations"
+        }
+      },
+      "arch": {
+        "description": "Architectural characteristics",
+        "attributes": {
+          "entrypoint": "System or module entry point",
+          "boundary": "System or module boundary",
+          "singleton": "Singleton instance",
+          "state": "Manages state",
+          "layer": "Architectural layer marker",
+          "service": "Service component",
+          "component": "Reusable component"
+        }
+      },
+      "sec": {
+        "description": "Security characteristics",
+        "attributes": {
+          "boundary": "Security boundary",
+          "input": "User input handling",
+          "sanitize": "Input sanitization point",
+          "auth": "Authentication logic",
+          "authz": "Authorization logic",
+          "crypto": "Cryptographic operations",
+          "sensitive": "Handles sensitive data"
+        }
+      },
+      "code": {
+        "description": "Code behavior characteristics",
+        "attributes": {
+          "pure": "Pure function (no side effects)",
+          "sideeffect": "Has side effects",
+          "async": "Asynchronous operation",
+          "callback": "Callback-based",
+          "recursive": "Recursive implementation",
+          "generated": "Generated code",
+          "legacy": "Legacy code"
+        }
+      },
+      "data": {
+        "description": "Data flow characteristics",
+        "attributes": {
+          "source": "Data source/origin",
+          "transform": "Data transformation",
+          "sink": "Data destination",
+          "sensitive": "Sensitive data handling",
+          "validation": "Data validation point",
+          "cache": "Caching point"
+        }
+      },
+      "api": {
+        "description": "API characteristics",
+        "attributes": {
+          "endpoint": "API endpoint",
+          "internal": "Internal API",
+          "external": "External API",
+          "deprecated": "Deprecated API",
+          "versioned": "Versioned API",
+          "public": "Public API",
+          "private": "Private API"
+        }
+      },
+      "status": {
+        "description": "Code status/maturity",
+        "attributes": {
+          "experimental": "Experimental code",
+          "stable": "Stable code",
+          "deprecated": "Deprecated (use deprecated marker instead)",
+          "legacy": "Legacy code",
+          "migration": "Under migration",
+          "preview": "Preview/beta feature"
+        }
+      },
+      "error": {
+        "description": "Error handling characteristics",
+        "attributes": {
+          "handler": "Error handler",
+          "boundary": "Error boundary",
+          "recovery": "Error recovery logic",
+          "fallback": "Fallback behavior",
+          "retry": "Retry logic"
+        }
+      }
+    }
+  },
+  "patterns": {
+    "issueReference": {
+      "description": "Pattern for issue references",
+      "pattern": "^#\\d+$",
+      "examples": ["#123", "#4567"]
+    },
+    "actorReference": {
+      "description": "Pattern for actor references",
+      "pattern": "^@[a-zA-Z0-9][a-zA-Z0-9_-]*$",
+      "examples": ["@alice", "@bob-smith", "@team_name"]
+    },
+    "anchorReference": {
+      "description": "Pattern for anchor references",
+      "pattern": "^#[a-zA-Z][a-zA-Z0-9_-]*(/[a-zA-Z][a-zA-Z0-9_-]*)*$",
+      "examples": ["#auth/login", "#api/v2/users", "#component"]
+    }
+  }
+}

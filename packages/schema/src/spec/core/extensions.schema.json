@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/core/extensions",
+  "title": "Waymark Extension Points",
+  "description": "Schema for defining grammar extension points where alternative patterns are explicitly allowed",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Extension point specification version",
+      "const": "1.0"
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Available extension points in the waymark grammar",
+      "properties": {
+        "arrayPatterns": {
+          "$ref": "../extensions/array-patterns.schema.json",
+          "description": "Alternative ways to express array values"
+        }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "description": "Future extension points",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Extension point name"
+          },
+          "description": {
+            "type": "string",
+            "description": "What this extension point allows"
+          },
+          "schema": {
+            "type": "string",
+            "description": "Reference to the extension schema"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["proposed", "experimental", "stable"],
+            "description": "Extension point maturity"
+          }
+        }
+      }
+    },
+    "philosophy": {
+      "type": "object",
+      "description": "Core philosophy for waymark extensions",
+      "properties": {
+        "principles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "Core patterns are REQUIRED - all tools must support them",
+            "Extensions are OPTIONAL - tools may support them",
+            "All patterns are VALID - extensions aren't 'wrong'",
+            "Greppability is SACRED - all patterns must be searchable",
+            "Progressive enhancement - tools can support at different levels"
+          ]
+        },
+        "guidelines": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "Start with core patterns",
+            "Adopt extensions only when truly beneficial",
+            "Document which extensions your tools support",
+            "Maintain backward compatibility",
+            "Keep extensions simple and focused"
+          ]
+        }
+      }
+    },
+    "toolSupport": {
+      "type": "object",
+      "description": "How tools declare their extension support",
+      "properties": {
+        "declarationFormat": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string",
+              "description": "Waymark version supported"
+            },
+            "extensions": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string",
+                "enum": ["none", "basic", "full"],
+                "description": "Support level for each extension"
+              }
+            }
+          }
+        },
+        "example": {
+          "type": "object",
+          "default": {
+            "version": "1.0",
+            "extensions": {
+              "arrayPatterns": {
+                "base": "full",
+                "bracketed": "full",
+                "parentheses": "basic",
+                "quoted": "none"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "required": ["version", "extensions", "philosophy"]
+}

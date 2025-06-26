@@ -1,0 +1,16 @@
+{
+  "name": "@waymark/schema",
+  "version": "0.1.0",
+  "description": "The canonical JSON Schema definition for the Waymark language.",
+  "main": "dist/waymark-base.schema.json",
+  "scripts": {
+    "build": "tsx src/build.ts"
+  },
+  "keywords": [
+    "waymark",
+    "schema",
+    "json-schema"
+  ],
+  "author": "Waymark",
+  "license": "MIT"
+} 

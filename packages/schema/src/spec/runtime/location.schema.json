@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/runtime/location",
+  "title": "Waymark Location",
+  "description": "Describes the location of a waymark within a source file.",
+  "type": "object",
+  "properties": {
+    "file": {
+      "type": "string",
+      "description": "The absolute path to the file."
+    },
+    "line": {
+      "type": "integer",
+      "description": "The one-based line number where the waymark appears.",
+      "minimum": 1
+    },
+    "column": {
+      "type": "integer",
+      "description": "The one-based column number where the waymark sigil ':::' starts.",
+      "minimum": 1
+    }
+  },
+  "required": ["file", "line", "column"]
+}

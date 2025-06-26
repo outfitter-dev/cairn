@@ -1,0 +1,336 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/helpers/grep-patterns",
+  "title": "Waymark Grep Patterns",
+  "description": "Ripgrep patterns for querying waymark components, accounting for the ::: sign and relative positions",
+  "type": "object",
+  "definitions": {
+    "grepPattern": {
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "The ripgrep pattern"
+        },
+        "description": {
+          "type": "string",
+          "description": "What this pattern matches"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "command": { "type": "string" },
+              "matches": { "type": "string" }
+            }
+          }
+        },
+        "variants": {
+          "type": "object",
+          "description": "Pattern variants for different contexts",
+          "properties": {
+            "exact": { "type": "string", "description": "Match exact value" },
+            "prefix": { "type": "string", "description": "Match values starting with" },
+            "contains": { "type": "string", "description": "Match values containing" },
+            "afterSign": { "type": "string", "description": "Match after ::: sign" }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "core": {
+      "type": "object",
+      "description": "Core waymark component patterns",
+      "properties": {
+        "waymarkSign": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": ":::",
+            "description": "The waymark sign itself",
+            "examples": [
+              {
+                "command": "rg ':::'",
+                "matches": "All waymarks"
+              }
+            ]
+          }
+        },
+        "anyWaymark": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "\\b\\w+\\s+:::",
+            "description": "Any waymark with marker",
+            "examples": [
+              {
+                "command": "rg '\\b\\w+\\s+:::'",
+                "matches": "All waymarks with markers"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "markers": {
+      "type": "object",
+      "description": "Patterns for finding specific markers",
+      "properties": {
+        "specific": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "\\btodo\\s+:::",
+            "description": "Specific marker (replace 'todo' with marker name)",
+            "variants": {
+              "exact": "\\btodo\\s+:::",
+              "withSignals": "[*!?-]*todo\\s+:::",
+              "critical": "!!todo\\s+:::",
+              "branch": "\\*todo\\s+:::"
+            },
+            "examples": [
+              {
+                "command": "rg '\\btodo\\s+:::'",
+                "matches": "All todo waymarks"
+              },
+              {
+                "command": "rg '!!todo\\s+:::'",
+                "matches": "Critical todos"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "actors": {
+      "type": "object",
+      "description": "Patterns for finding actors",
+      "properties": {
+        "assigned": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": ":::\\s*@\\w+",
+            "description": "Waymarks assigned to actors",
+            "variants": {
+              "specific": ":::\\s*@alice",
+              "anyActor": ":::\\s*@\\w+",
+              "inDescription": ":::.*@\\w+"
+            },
+            "examples": [
+              {
+                "command": "rg ':::\\s*@alice'",
+                "matches": "Work assigned to alice"
+              },
+              {
+                "command": "rg ':::\\s*@\\w+'",
+                "matches": "All assigned waymarks"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "tags": {
+      "type": "object",
+      "description": "Patterns for finding tags",
+      "properties": {
+        "simple": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": ":::.*#backend",
+            "description": "Simple tags after :::",
+            "variants": {
+              "exact": "#backend\\b",
+              "afterSign": ":::.*#backend",
+              "anywhere": "#backend"
+            },
+            "examples": [
+              {
+                "command": "rg ':::.*#backend'",
+                "matches": "Waymarks tagged #backend"
+              }
+            ]
+          }
+        },
+        "relational": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": ":::.*#owner:@\\w+",
+            "description": "Relational tags with values",
+            "variants": {
+              "specificOwner": ":::.*#owner:@alice",
+              "anyOwner": ":::.*#owner:@\\w+",
+              "issueRef": ":::.*#fixes:#\\d+",
+              "multiValue": ":::.*#cc:@\\w+(,@\\w+)*"
+            },
+            "examples": [
+              {
+                "command": "rg ':::.*#owner:@alice'",
+                "matches": "Work owned by alice"
+              },
+              {
+                "command": "rg ':::.*#fixes:#\\d+'",
+                "matches": "Waymarks fixing issues"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "arrays": {
+      "type": "object",
+      "description": "Patterns for querying within arrays",
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "#\\w+:([^,\\s]+,)*alice",
+            "description": "Find value in comma-separated array",
+            "variants": {
+              "contains": "#cc:[^#]*@alice",
+              "startsWith": "#cc:@alice",
+              "anywhere": "#cc:@\\w*(,@\\w*)*alice"
+            },
+            "examples": [
+              {
+                "command": "rg '#cc:[^#]*@alice'",
+                "matches": "Arrays containing @alice"
+              }
+            ]
+          }
+        },
+        "bracketed": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "#\\w+:\\[[^\\]]*react[^\\]]*\\]",
+            "description": "Find value in bracketed array",
+            "examples": [
+              {
+                "command": "rg '#deps:\\[[^\\]]*react[^\\]]*\\]'",
+                "matches": "Dependency arrays containing react"
+              }
+            ]
+          }
+        },
+        "parentheses": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "#\\w+:\\([^)]*api[^)]*\\)",
+            "description": "Find value in parentheses array",
+            "examples": [
+              {
+                "command": "rg '#affects:\\([^)]*api[^)]*\\)'",
+                "matches": "Affects arrays containing api"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "anchors": {
+      "type": "object",
+      "description": "Patterns for anchors",
+      "properties": {
+        "definition": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": ":::\\s*##\\w+(/\\w+)*",
+            "description": "Anchor definitions",
+            "variants": {
+              "specific": ":::\\s*##auth/login",
+              "namespace": ":::\\s*##auth/",
+              "any": ":::\\s*##\\w+(/\\w+)*"
+            }
+          }
+        },
+        "reference": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "#refs:#auth/login",
+            "description": "References to anchors",
+            "variants": {
+              "inTag": "#refs:#auth/login",
+              "anywhere": "#auth/login\\b"
+            }
+          }
+        }
+      }
+    },
+    "complex": {
+      "type": "object",
+      "description": "Complex query patterns",
+      "properties": {
+        "priorityWithTag": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "!!\\w+\\s+:::.*#security",
+            "description": "Critical waymarks with specific tag",
+            "examples": [
+              {
+                "command": "rg '!!\\w+\\s+:::.*#security'",
+                "matches": "Critical security issues"
+              }
+            ]
+          }
+        },
+        "assignedAndTagged": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": ":::\\s*@alice.*#backend|:::\\s*.*#backend.*@alice",
+            "description": "Assigned to alice AND tagged backend",
+            "examples": [
+              {
+                "command": "rg ':::\\s*@alice.*#backend|:::\\s*.*#backend.*@alice'",
+                "matches": "Alice's backend work"
+              }
+            ]
+          }
+        },
+        "branchWorkByTag": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "\\*\\w+\\s+:::.*#hotfix",
+            "description": "Branch work with specific tag",
+            "examples": [
+              {
+                "command": "rg '\\*\\w+\\s+:::.*#hotfix'",
+                "matches": "Hotfixes that must be done before merge"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "utilities": {
+      "type": "object",
+      "description": "Utility patterns for analysis",
+      "properties": {
+        "extractMarkers": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "-o '\\b(\\w+)\\s+:::' | sed 's/\\s*::://'",
+            "description": "Extract just the marker names",
+            "examples": [
+              {
+                "command": "rg -o '\\b(\\w+)\\s+:::' | sed 's/\\s*::://' | sort | uniq -c",
+                "matches": "Count waymarks by marker type"
+              }
+            ]
+          }
+        },
+        "extractTags": {
+          "$ref": "#/definitions/grepPattern",
+          "default": {
+            "pattern": "-o '#\\w+' | sort | uniq -c",
+            "description": "Extract and count tags",
+            "examples": [
+              {
+                "command": "rg -o ':::.*' | rg -o '#\\w+' | sort | uniq -c",
+                "matches": "Count tag usage"
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

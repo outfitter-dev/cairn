@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/root",
+  "title": "Waymark Schema System v1.0",
+  "description": "The root schema for Waymark v1.0. The waymark system consists of grammar (syntax rules), dictionary (vocabulary), extensions (optional patterns), custom definitions (validation rules), and configuration (project settings).",
+  "type": "object",
+  "properties": {
+    "grammar": {
+      "$ref": "./core/grammar.schema.json",
+      "description": "The structural grammar rules that define waymark syntax"
+    },
+    "dictionary": {
+      "$ref": "./core/dictionary.schema.json",
+      "description": "The vocabulary definitions for markers, tags, and their categories"
+    },
+    "extensions": {
+      "$ref": "./core/extensions.schema.json",
+      "description": "Optional extension points where alternative patterns are valid"
+    },
+    "grepPatterns": {
+      "$ref": "./helpers/grep-patterns.schema.json",
+      "description": "Ripgrep patterns for querying waymark components"
+    },
+    "customDefinitions": {
+      "$ref": "./core/custom-definitions.schema.json",
+      "description": "Rules and guidelines for custom markers and tags outside the standard vocabulary"
+    },
+    "config": {
+      "$ref": "./config.schema.json",
+      "description": "Project-specific waymark configuration"
+    },
+    "runtime": {
+      "type": "object",
+      "description": "Runtime representation schemas for parsed waymarks",
+      "properties": {
+        "node": {
+          "$ref": "./runtime/node.schema.json",
+          "description": "Base structure for parsed waymark nodes"
+        },
+        "location": {
+          "$ref": "./runtime/location.schema.json",
+          "description": "Source location tracking for waymarks"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

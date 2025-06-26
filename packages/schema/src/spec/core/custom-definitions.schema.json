@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/core/custom-definitions",
+  "title": "Waymark Custom Definitions Schema",
+  "description": "Defines formatting rules for custom markers and tags not in standard dictionaries",
+  "type": "object",
+  "properties": {
+    "customMarkers": {
+      "description": "Rules for what constitutes a valid custom marker",
+      "type": "object",
+      "properties": {
+        "pattern": {
+          "description": "Regex pattern for valid custom marker names",
+          "type": "string",
+          "default": "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
+          "examples": ["quest", "hypothesis", "spike", "tech-debt"]
+        },
+        "minLength": {
+          "description": "Minimum length for custom marker names",
+          "type": "integer",
+          "default": 3,
+          "minimum": 2
+        },
+        "maxLength": {
+          "description": "Maximum length for custom marker names",
+          "type": "integer",
+          "default": 20,
+          "maximum": 30
+        },
+        "forbiddenPrefixes": {
+          "description": "Prefixes reserved for future waymark spec use",
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["waymark", "wm", "_", "__"],
+          "examples": ["waymark-", "wm-", "_internal"]
+        },
+        "guidelines": {
+          "description": "Human-readable guidelines for custom markers",
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "Use lowercase with hyphens for multi-word markers",
+            "Keep markers short and meaningful",
+            "Avoid markers that conflict with core waymark semantics",
+            "Document custom markers in your project"
+          ]
+        }
+      }
+    },
+    "customTags": {
+      "description": "Rules for what constitutes valid custom tags",
+      "type": "object",
+      "properties": {
+        "simple": {
+          "description": "Rules for simple custom tags",
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "description": "Regex pattern for valid simple custom tags",
+              "type": "string",
+              "default": "^[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*(/[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*)*$",
+              "examples": ["dragons", "ui-v2", "api/v3/experimental"]
+            },
+            "allowHierarchical": {
+              "description": "Whether to allow hierarchical tags with slashes",
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "relational": {
+          "description": "Rules for custom relational tags",
+          "type": "object",
+          "properties": {
+            "keyPattern": {
+              "description": "Pattern for relational tag keys",
+              "type": "string",
+              "default": "^[a-zA-Z][a-zA-Z0-9]*(-[a-zA-Z0-9]+)*$",
+              "examples": ["timeboxed", "spike", "experiment"]
+            },
+            "allowedValueTypes": {
+              "description": "Types of values allowed in custom relational tags",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["string", "number", "reference", "actor", "url", "path", "timestamp"]
+              },
+              "default": ["string", "number", "reference"]
+            }
+          }
+        },
+        "forbiddenTags": {
+          "description": "Tag patterns that should not be used as custom tags",
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [
+            "priority:*",
+            "status:*",
+            "assigned-to:*",
+            "assigned:*"
+          ],
+          "examples": ["Tags that duplicate core waymark functionality"]
+        }
+      }
+    },
+    "validation": {
+      "description": "Validation behavior for custom definitions",
+      "type": "object",
+      "properties": {
+        "allowUndocumented": {
+          "description": "Whether to allow custom markers/tags not explicitly documented",
+          "type": "boolean",
+          "default": true
+        },
+        "requirePrefix": {
+          "description": "Whether custom tags should have a project-specific prefix",
+          "type": "boolean",
+          "default": false
+        },
+        "suggestedPrefixes": {
+          "description": "Suggested prefixes for custom tags to avoid collisions",
+          "type": "array",
+          "items": { "type": "string" },
+          "examples": ["proj:", "team:", "exp:", "local:"]
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "description": "Liberal custom definitions (startup/experimental)",
+      "customMarkers": {
+        "minLength": 3,
+        "maxLength": 25
+      },
+      "customTags": {
+        "simple": {
+          "allowHierarchical": true
+        },
+        "relational": {
+          "allowedValueTypes": ["string", "number", "reference", "actor", "url"]
+        }
+      },
+      "validation": {
+        "allowUndocumented": true,
+        "requirePrefix": false
+      }
+    },
+    {
+      "description": "Strict custom definitions (enterprise)",
+      "customMarkers": {
+        "minLength": 4,
+        "maxLength": 15,
+        "forbiddenPrefixes": ["waymark", "wm", "_", "__", "core", "std"]
+      },
+      "customTags": {
+        "simple": {
+          "allowHierarchical": false
+        },
+        "relational": {
+          "allowedValueTypes": ["string", "reference"]
+        },
+        "forbiddenTags": ["priority:*", "status:*", "assigned*", "urgent", "critical"]
+      },
+      "validation": {
+        "allowUndocumented": false,
+        "requirePrefix": true,
+        "suggestedPrefixes": ["acme:", "dept:", "team:"]
+      }
+    }
+  ]
+}

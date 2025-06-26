@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://waymarks.dev/schema/runtime/node",
+  "title": "Base Waymark Node",
+  "description": "The base structure for any recognized Waymark pattern element.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A unique identifier for this specific waymark instance.",
+      "format": "uuid"
+    },
+    "kind": {
+      "type": "string",
+      "description": "The discriminant kind of the waymark pattern (e.g., 'marker', 'tag')."
+    },
+    "location": {
+      "$ref": "./location.schema.json",
+      "description": "The source file and line location of the waymark."
+    },
+    "raw": {
+      "type": "string",
+      "description": "The raw text content of the waymark node itself (e.g., '#backend', '!!todo')."
+    },
+    "comment": {
+      "type": "string",
+      "description": "The full text of the comment line containing the waymark."
+    }
+  },
+  "required": ["id", "kind", "location", "raw", "comment"]
+}

@@ -1,0 +1,7 @@
+{
+  "$schema": "https://waymarks.dev/schema/config/waymark-config",
+  "version": "1.0",
+  "issues": {
+    "url": "https://linear.app/acme/issue/{id}"
+  }
+}
