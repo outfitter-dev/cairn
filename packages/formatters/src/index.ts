@@ -1,4 +1,4 @@
-// tldr ::: Main entry point for @waymark/formatters package
+// tldr ::: Main entry point for waymark formatters package
 export * from './interfaces/index.js';
 export * from './formatter-factory.js';
 export * from './formatters/json.formatter.js';

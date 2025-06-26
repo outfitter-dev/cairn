@@ -159,7 +159,7 @@ export class WaymarkSearch {
       return statResult;
     }
 
-    // perf ::: handle large files with streaming
+    // todo ::: handle large files with streaming #perf
     if (statResult.data.size > WaymarkSearch.MAX_FILE_SIZE) {
       return WaymarkSearch.processLargeFile(file, options);
     }
